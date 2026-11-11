@@ -1,0 +1,528 @@
+trait:
+  name: Decision
+  version: 1.0.0
+  description: |
+    The record of one ask to one actor and the answer it became: who asked, and for whom; who was asked; who answered,
+    and for whom when a delegate or an agent answered; about exactly what, at what level of yes, and what that yes
+    means. An approval is a decision, not a status. The Approval object composes this trait, and the importer
+    proposes it for another system's table of approvals, so every field lives here and a proposal can bind what the
+    source has.
+
+    The answer itself is not a field of this trait. It is the record's own lifecycle, through Stateful: not yet asked,
+    waiting, approved, declined, and the ways a yes ends (out of date, taken back, expired, withdrawn, not needed,
+    used). A refusal changes nothing on the thing, so it is kept here and not as a line in the thing's history.
+
+    A reference to a person, an agent or a thing is an id and a kept name. The name is kept on the record, so it still
+    reads after the person leaves or the thing is deleted, and it is shown wherever the id is. The kinds are the Actor
+    trait's three words: person, agent or system.
+
+    The level is one of the names the product declares in `levels`, in order, the way it declares a lifecycle's states;
+    the thing approved declares the same names through Approvable. The meaning is one kept line saying what this yes
+    means and permits, in words, written by the product when it asks ("Sign-off: you answer for this release"): 21 CFR
+    11.50 requires a signed record to show "the meaning (such as review, approval, responsibility, or authorship)
+    associated with the signature".
+
+    OODS Foundry keeps and shows this record. It does not ask anyone, check who may answer, count answers, expire an
+    ask or stop a change.
+  category: core
+  # Compound tags: a trait's tags are inherited by the components it places (Text), and an intent's words never match a
+  # compound tag, so these describe the trait without changing how any screen picks its components.
+  tags:
+    - approval-record
+    - decision-record
+    - actor-reference
+    - kept-meaning
+
+parameters:
+  - name: levels
+    type: string[]
+    required: true
+    description: |
+      The levels of yes the product declares, in order, each named for the kind of yes asked for, so it reads beside
+      any answer ("Sign-off, declined"). A record's level is one of them. The thing approved declares the same list
+      through Approvable. The defaults are four example levels taken from working systems.
+    default:
+      - acknowledgement
+      - review
+      - approval
+      - sign_off
+
+# Every field but the comment is written by the product, when it asks and when it records the answer, so a form never
+# edits it (readOnly); the comment is what the person answering says. The four facts are still read on the form (below).
+schema:
+  requested_by_id:
+    type: string
+    required: false
+    readOnly: true
+    description: Who asked for the yes, by the id the product knows them by.
+  requested_by_name:
+    type: string
+    required: false
+    readOnly: true
+    description: Who asked, as shown ("Billing Agent"). Kept on the record.
+  requested_by_kind:
+    type: string
+    required: false
+    readOnly: true
+    description: What kind of actor asked (person, agent or system), as the Actor trait names them.
+    validation:
+      enum:
+        - person
+        - agent
+        - system
+  requested_for_id:
+    type: string
+    required: false
+    readOnly: true
+    description: Who the asker acted for, when an agent or a delegate asked for someone.
+  requested_for_name:
+    type: string
+    required: false
+    readOnly: true
+    description: Who the asker acted for, as shown ("Tidewater Co-op"). Kept on the record.
+  asked_of_id:
+    type: string
+    required: false
+    readOnly: true
+    description: Who was asked, by the id the product knows them by. One record is one ask to one actor.
+  asked_of_name:
+    type: string
+    required: false
+    readOnly: true
+    description: Who was asked, as shown ("Ruth Adeyemi"). Kept on the record.
+  answered_by_id:
+    type: string
+    required: false
+    readOnly: true
+    description: Who answered, when someone has. A delegate or an agent may answer for the one who was asked.
+  answered_by_name:
+    type: string
+    required: false
+    readOnly: true
+    description: Who answered, as shown. Kept on the record.
+  answered_by_kind:
+    type: string
+    required: false
+    readOnly: true
+    description: What kind of actor answered (person, agent or system), so a rule can say which levels an agent's yes may satisfy.
+    validation:
+      enum:
+        - person
+        - agent
+        - system
+  answered_for_id:
+    type: string
+    required: false
+    readOnly: true
+    description: Who the answer was given for, when a delegate or an agent answered for the one who was asked.
+  answered_for_name:
+    type: string
+    required: false
+    readOnly: true
+    description: Who the answer was given for, as shown. Kept on the record.
+  subject_type:
+    type: string
+    required: false
+    readOnly: true
+    description: What kind of thing is approved ("Transaction", "Article").
+  subject_id:
+    type: string
+    required: false
+    readOnly: true
+    description: The thing approved, by the id the product calls it by (a payment's reference, an article's slug).
+  subject_name:
+    type: string
+    required: true
+    readOnly: true
+    description: The thing approved, as shown. Kept on the record, so it still reads after the thing is deleted.
+  shown:
+    type: string
+    required: true
+    readOnly: true
+    description: |
+      Exactly what the person was shown, in one line: for a document, its version ("Version 3, saved 1 Jul 2026"); for
+      an agent's action, the action and its particulars ("Resend $12,000.00 by bank transfer for INV-2026-0155").
+    validation:
+      maxLength: 240
+  level:
+    type: string
+    required: true
+    readOnly: true
+    description: The level of yes asked for, one of the levels the product declares.
+    validation:
+      enumFromParameter: levels
+  meaning:
+    type: string
+    required: true
+    readOnly: true
+    description: |
+      What this yes means and permits, in words, kept on the record ("Sign-off: you answer for this release"). The
+      product writes it when it asks; OODS Foundry keeps it and shows it.
+    validation:
+      maxLength: 240
+  asked_at:
+    type: datetime
+    required: false
+    readOnly: true
+    description: When the person was asked. Absent while the ask is not yet theirs.
+    validation:
+      format: date-time
+  due_at:
+    type: datetime
+    required: false
+    readOnly: true
+    description: When an answer is due, when the product sets a date.
+    validation:
+      format: date-time
+  answered_at:
+    type: datetime
+    required: false
+    readOnly: true
+    description: When the answer was given. Absent while it is waiting.
+    validation:
+      format: date-time
+  comment:
+    type: string
+    required: false
+    description: What the person who answered said with their answer.
+    validation:
+      maxLength: 500
+
+semantics:
+  requested_by_id:
+    semantic_type: decision.requested_by.id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked by
+      displayLabelField: requested_by_name
+  requested_by_name:
+    semantic_type: decision.requested_by.name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked by
+  requested_by_kind:
+    semantic_type: decision.requested_by.kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of asker
+  requested_for_id:
+    semantic_type: decision.requested_for.id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked for
+      displayLabelField: requested_for_name
+  requested_for_name:
+    semantic_type: decision.requested_for.name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked for
+  asked_of_id:
+    semantic_type: decision.asked_of.id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked of
+      displayLabelField: asked_of_name
+  asked_of_name:
+    semantic_type: decision.asked_of.name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked of
+  answered_by_id:
+    semantic_type: decision.answered_by.id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Answered by
+      displayLabelField: answered_by_name
+  answered_by_name:
+    semantic_type: decision.answered_by.name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Answered by
+  answered_by_kind:
+    semantic_type: decision.answered_by.kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of answerer
+  answered_for_id:
+    semantic_type: decision.answered_for.id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Answered for
+      displayLabelField: answered_for_name
+  answered_for_name:
+    semantic_type: decision.answered_for.name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Answered for
+  subject_type:
+    semantic_type: decision.subject.type
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of thing
+  subject_id:
+    semantic_type: decision.subject.id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Approving
+      displayLabelField: subject_name
+  subject_name:
+    semantic_type: decision.subject.name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Approving
+  shown:
+    semantic_type: decision.shown
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: What was shown
+  level:
+    semantic_type: decision.level
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Level
+  meaning:
+    semantic_type: decision.meaning
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: What this yes means
+  asked_at:
+    semantic_type: decision.asked_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      label: Asked
+  due_at:
+    semantic_type: decision.due_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      label: Due
+  answered_at:
+    semantic_type: decision.answered_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      label: Answered
+  comment:
+    semantic_type: decision.comment
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Comment
+
+view_extensions:
+  # The record travels with its facts on every surface it is read on. Each renders as labelled text, so a level or a
+  # meaning never reads as part of the value beside it. A reference is placed by its id, which shows its kept name; the
+  # row for the kept name alone is placed too, and the detail drops it wherever the id already shows the name, so a
+  # source that keeps only a name still shows it and one that keeps only an id shows the id.
+  list:
+    - component: Text
+      position: after
+      props:
+        field: level
+    - component: Text
+      position: after
+      props:
+        field: asked_of_id
+  # s245-m02: a card names the thing in the record's own name already, so it adds the level and who was asked.
+  card:
+    - component: Text
+      position: after
+      props:
+        field: level
+        label: Level
+    - component: Text
+      position: after
+      props:
+        field: asked_of_id
+        label: Asked of
+  detail:
+    - component: Text
+      position: main
+      priority: 80
+      props:
+        field: subject_id
+    - component: Text
+      position: main
+      priority: 79
+      props:
+        field: subject_name
+    - component: Text
+      position: main
+      priority: 78
+      props:
+        field: subject_type
+    - component: Text
+      position: main
+      priority: 77
+      props:
+        field: shown
+    - component: Text
+      position: main
+      priority: 76
+      props:
+        field: level
+    - component: Text
+      position: main
+      priority: 75
+      props:
+        field: meaning
+    - component: Text
+      position: main
+      priority: 74
+      props:
+        field: requested_by_id
+    - component: Text
+      position: main
+      priority: 73
+      props:
+        field: requested_by_name
+    - component: Text
+      position: main
+      priority: 72
+      props:
+        field: requested_by_kind
+    - component: Text
+      position: main
+      priority: 71
+      props:
+        field: requested_for_id
+    - component: Text
+      position: main
+      priority: 70
+      props:
+        field: requested_for_name
+    - component: Text
+      position: main
+      priority: 69
+      props:
+        field: asked_of_id
+    - component: Text
+      position: main
+      priority: 68
+      props:
+        field: asked_of_name
+    - component: Text
+      position: main
+      priority: 67
+      props:
+        field: answered_by_id
+    - component: Text
+      position: main
+      priority: 66
+      props:
+        field: answered_by_name
+    - component: Text
+      position: main
+      priority: 65
+      props:
+        field: answered_by_kind
+    - component: Text
+      position: main
+      priority: 64
+      props:
+        field: answered_for_id
+    - component: Text
+      position: main
+      priority: 63
+      props:
+        field: answered_for_name
+    # The times are labelled rows too, read as dates beside the other facts.
+    - component: Text
+      position: main
+      priority: 62
+      props:
+        field: asked_at
+    - component: Text
+      position: main
+      priority: 61
+      props:
+        field: due_at
+    - component: Text
+      position: main
+      priority: 60
+      props:
+        field: answered_at
+    - component: Text
+      position: main
+      priority: 59
+      props:
+        field: comment
+
+  # s245-m02: on the form, the screen where an answer is given, the four facts are read beside the answer and are not
+  # edited there: the thing, exactly what was shown, the level and its meaning. `fact: true` is the mark that makes a form
+  # view a fact (no 0.12.0 form view carries it): the field stays in the form's record and gets no editing control.
+  form:
+    - component: Text
+      position: top
+      priority: 80
+      fact: true
+      props:
+        field: subject_id
+    - component: Text
+      position: top
+      priority: 79
+      fact: true
+      props:
+        field: subject_name
+    - component: Text
+      position: top
+      priority: 78
+      fact: true
+      props:
+        field: shown
+    - component: Text
+      position: top
+      priority: 77
+      fact: true
+      props:
+        field: level
+    - component: Text
+      position: top
+      priority: 76
+      fact: true
+      props:
+        field: meaning
+
+# The answer is the record's lifecycle, so the record composes Stateful beside this trait.
+dependencies:
+  - Stateful
+
+metadata:
+  created: "2026-11-11"
+  owners:
+    - Core team
+  maturity: alpha
+  accessibility:
+    keyboard: The record's facts add no interactive control; they render as labelled text.
+    screenreader: Each fact is read with its visible label ("Level, Approval"; "What this yes means, Sign-off. You answer for this release").
+  regionsUsed:
+    - list
+    - card
+    - detail
+    - form
+  examples:
+    - Approval
+  references:
+    - "21 CFR 11.50: a signed electronic record shows the signer's name, the date and time, and the meaning associated with the signature"
+    - "ServiceNow sysapproval_approver: one approval record per approver, with Approving (document_id), Approver and State"
+    - "Coupa /api/approvals/<approval id>: approvable_type and approvable_id name the thing approved"
+    - "Jira Service Management ApproverDTO: approver (UserDTO) and approverDecision (approved, declined, pending)"

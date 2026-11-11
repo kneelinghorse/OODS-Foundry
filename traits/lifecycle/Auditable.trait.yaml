@@ -1,6 +1,6 @@
 trait:
   name: Auditable
-  version: 1.1.0
+  version: 1.2.0
   description: |
     Compliance-grade audit trail trait that captures state transitions with actor,
     reason, and timestamp metadata. Auditable observes Stateful transitions and
@@ -18,6 +18,8 @@ trait:
     - Retention Policy: configurable retention period for log entries
     - Actor Tracking: optional actor_id capture for accountability, with the optional names of who
       acted, who it acted for and who approved it (actor_name, on_behalf_of_name, approved_by_name)
+    - Approval Trace: an optional pointer to the approval a change rests on and its level of yes
+      (approval_id, approval_level)
     - Reason Enforcement: optional requirement for transition justification
   category: lifecycle
   tags:
@@ -115,6 +117,16 @@ schema:
           type: string
           required: false
           description: Identifier of who approved the change.
+        # s245-m01: a change someone approved can say which approval it belongs to and what level of yes it was. Both
+        # optional; the id stays in the record's data, a pointer and not a link.
+        approval_id:
+          type: string
+          required: false
+          description: Identifier of the Approval record the yes is kept in.
+        approval_level:
+          type: string
+          required: false
+          description: The level of yes, one of the levels the product declares ("approval").
         reason:
           type: string
           required: false
@@ -127,7 +139,7 @@ schema:
           required: false
           description: |
             Arbitrary key-value pairs for domain-specific context
-            (e.g., approval_id, ticket_number, automation_rule).
+            (e.g., ticket_number, automation_rule).
           default: {}
 
 semantics:

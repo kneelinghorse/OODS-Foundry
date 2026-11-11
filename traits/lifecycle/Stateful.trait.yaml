@@ -1,6 +1,6 @@
 trait:
   name: Stateful
-  version: 2.1.0
+  version: 2.2.0
   description: |
     Normalizes lifecycle state transitions, exposes canonical status semantics, and provides
     optional transition governance for production workflows. Many objects compose Stateful
@@ -105,6 +105,13 @@ schema:
         - on_behalf_of_name / on_behalf_of_id: string (the person or organization it acted for)
         - approved_by_name / approved_by_id: string (who approved the change, when someone did)
       StatusTimeline then reads "Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi".
+
+      A change someone approved can also say which approval it belongs to and what level of yes it was. Both
+      optional; the id stays in the record's data, a pointer and not a link, and an entry without them renders as it
+      always has:
+        - approval_id: string (the Approval record the yes is kept in)
+        - approval_level: string (the level of yes, one of the levels the product declares: "approval")
+      StatusTimeline then reads "Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval)".
     default: []
 
   allowed_transitions:
@@ -184,7 +191,7 @@ dependencies: []
 
 metadata:
   created: "2025-10-12"
-  updated: "2026-11-07"
+  updated: "2026-11-11"
   owners:
     - Design team
     - Engineering team

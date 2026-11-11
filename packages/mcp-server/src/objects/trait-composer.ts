@@ -100,8 +100,23 @@ function bindTraitFields(trait: TraitDefinition, ref: TraitReference, object: Ob
       && !(extension.component === 'RelativeTimestamp' && typeof extension.props?.fallbackField === 'string' && name(extension.props.fallbackField) !== null)),
   )])) };
   const filtered = withoutBindings(supported, ({ field }) => name(field) === null);
+  // s245-m01: a kept name follows the binding. A reference's hint names the trait field that keeps its name
+  // (displayLabelField, displayFallbackField); binding renames the trait's fields, so the hint is renamed with them, and
+  // it is dropped when that field is bound to null, so an id kept without its name composes and shows the id itself.
+  const semantics = Object.fromEntries(Object.entries(remap(trait.semantics)).map(([field, semantic]) => {
+    if (!semantic.ui_hints) return [field, semantic];
+    const ui_hints = { ...semantic.ui_hints };
+    for (const key of ['displayLabelField', 'displayFallbackField']) {
+      const target = ui_hints[key];
+      if (typeof target !== 'string' || !Object.hasOwn(trait.schema, target)) continue;
+      const bound = name(target);
+      if (bound === null) delete ui_hints[key];
+      else ui_hints[key] = bound;
+    }
+    return [field, { ...semantic, ui_hints }];
+  }));
   return {
-    ...filtered, schema: remap(trait.schema), semantics: remap(trait.semantics),
+    ...filtered, schema: remap(trait.schema), semantics,
     view_extensions: Object.fromEntries(Object.entries(filtered.view_extensions).map(([context, extensions]) => [context, extensions.map(extension => ({
       ...extension, ...(extension.props ? { props: Object.fromEntries(Object.entries(extension.props).map(([key, value]) => [key,
         (key === 'field' || key.endsWith('Field')) && typeof value === 'string' ? name(value) : value,

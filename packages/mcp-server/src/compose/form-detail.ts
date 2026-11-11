@@ -43,6 +43,18 @@ const findNode = (node: UiElement, match: (node: UiElement) => boolean): UiEleme
   for (const child of node.children ?? []) { const found = findNode(child, match); if (found) return found; }
   return undefined;
 };
+/** s245-m02: marks a form row that shows a fact: a field read beside the answer and not edited there. */
+export const FORM_FACT = 'form-fact';
+
+/**
+ * s245-m02: the record fields a composed object's form views show as facts: a view says so with `fact: true` (Decision's
+ * four facts beside an approval's answer). A display component alone is not a fact: a Text or a StatusBadge in a form view
+ * means what it meant in 0.12.0, and no 0.12.0 form view carries the mark.
+ */
+export function formFactFields(composed: ComposedObject | undefined): Set<string> {
+  return new Set((composed?.viewExtensions?.form ?? []).filter(extension => extension.fact === true).flatMap(extension => boundFields(extension.props)));
+}
+
 /** The record fields a node binds through `field` and its `*Field` props. */
 const boundFields = (props: Record<string, unknown> | undefined): string[] => Object.entries(props ?? {}).flatMap(([key, value]) => (key === 'field' || key.endsWith('Field')) && typeof value === 'string' ? [value] : []);
 
@@ -100,9 +112,29 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         if (typeof field === 'string') owned.add(field);
       }
     });
+    // s245-m02: a field a form view shows as a fact is read there, not edited: no control is given for it, none is kept, and
+    // its row is a label over its value. An id whose kept name the form already reads is not repeated.
+    const facts = formFactFields(composed);
+    if (facts.size) for (const screen of schema.screens) walk(screen, parent => {
+      parent.children = parent.children?.flatMap(node => {
+        const bound = boundFields(node.props).filter(field => facts.has(field));
+        if (!bound.length || node.meta?.intent === 'read-only-field') return [node];
+        if (node.component !== 'Text') return controls.has(node.component) || node.component === 'DetailHeader' || /(?:Editor|Form|Picker|Selector)$/.test(node.component) ? [] : [node];
+        const field = bound[0]!;
+        // The thing is kept as an id and its kept name; when the form reads the name, the id's row would only repeat it.
+        const keptName = fields[field]?.displayLabelField;
+        if (typeof keptName === 'string' && facts.has(keptName) && fields[keptName]) return [];
+        const label = fields[field]?.displayLabel ?? composed.semantics[field]?.ui_hints?.label;
+        // A label over its value, styled as the detail page's read rows are (the `-read-field` suffix).
+        return [{ id: `${node.id}-read-field`, component: 'Stack', meta: { intent: FORM_FACT }, children: [
+          { id: `${node.id}-label`, component: 'Text', props: { as: 'strong', content: typeof label === 'string' ? label : fieldLabel(field) } },
+          { id: node.id, meta: { intent: 'read-only-field' }, component: 'Text', props: { field } },
+        ] }];
+      });
+    });
     // The slot budget limits optional suggestions, never the data needed to save a record.
     // Reconcile after trait ownership is known so composite editors are not duplicated.
-    const edited = new Set([...fieldEditors, ...owned]);
+    const edited = new Set([...fieldEditors, ...owned, ...facts]);
     for (const screen of schema.screens) walk(screen, node => {
       if (controls.has(node.component) || /(?:Editor|Form|Picker|Selector)$/.test(node.component)) {
         for (const field of boundFields(node.props)) edited.add(field);
@@ -200,6 +232,18 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         node.bindings = { ...node.bindings, onChange: `handle${node.component}Change` };
       }
     });
+    // s245-m02: one field, one editor. An expanded field slot the grouping left empty takes a field by affinity that an
+    // earlier slot already edits, so Approval's form asked for its comment twice; the later control goes, and a field
+    // group it leaves empty with it. No other object's form had a repeated control.
+    const editing = new Set<string>();
+    for (const screen of schema.screens) walk(screen, node => {
+      node.children = node.children?.filter(child => {
+        if (!fieldControls.has(child.component) || typeof child.props?.field !== 'string' || child.collectionControl) return true;
+        if (editing.has(child.props.field)) return false;
+        editing.add(child.props.field);
+        return true;
+      }).filter(child => !(/^form-field-group-/.test(child.id) && child.component === 'Stack' && !child.children?.length));
+    });
     // The native Save owns submit; field controls own edits. Cancellation belongs to detail.
     for (const screen of schema.screens) if (screen.bindings) {
       delete screen.bindings.onChange; delete screen.bindings.onCancel;
@@ -240,7 +284,12 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
     const covered = new Set([identifier, 'id'].filter((name): name is string => Boolean(name && fields[name]?.type === 'uuid')));
     for (const [name, field] of Object.entries(fields)) if (field.semanticType === 'identifier.primary' && /^uuid\??$/.test(field.type)) covered.add(name);
     // A resolved reference already displays its declared name; do not repeat the name as a second field.
-    for (const field of Object.values(fields)) if (field.displayLabelField) covered.add(field.displayLabelField);
+    // s245-m02: unless a view places the kept name itself (Decision's parties): the name's row is read, and the id's row
+    // would only repeat it, or read "Asked for unavailable" for an optional party nobody filled. Without the name's view,
+    // the id's row shows the name as before.
+    const placedNames = new Set<string>();
+    walk(screen, node => { if (node.component === 'Text' && typeof node.props?.field === 'string') placedNames.add(node.props.field); });
+    for (const [name, field] of Object.entries(fields)) if (field.displayLabelField) covered.add(placedNames.has(field.displayLabelField) && fields[field.displayLabelField] ? name : field.displayLabelField);
     walk(screen, node => {
       if (node.component === 'DetailHeader' && labelField) { covered.add(labelField); if (fields.description) covered.add('description'); return; }
       // The classification recipe owns these displayed fields even before its summary rows are materialized.
@@ -432,6 +481,21 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
     };
     const ranked = rows.map((row, index) => ({ row, key: rank(row, index) }));
     ranked.sort((a, b) => a.key[0] - b.key[0] || a.key[1] - b.key[1]);
-    panel.children = ranked.map(entry => entry.row);
+    const ordered = ranked.map(entry => entry.row);
+    // s245-m01: the tab slots are dealt a detail's main views round-robin, so rows one trait places came back interleaved
+    // (an approval read "Approving, Comment, Kind of asker, …"). The rows of each trait keep the places they hold and are
+    // arranged among them in the order the trait declares its detail views, by priority, so no row moves between traits.
+    const declared = new Map<string, { trait: number; order: number }>();
+    composed.traits.forEach((trait, index) => {
+      const views = [...(trait.definition.view_extensions?.detail ?? [])].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+      views.forEach((view, order) => { for (const field of boundFields(view.props)) if (!declared.has(field)) declared.set(field, { trait: index, order }); });
+    });
+    const traitOf = (row: UiElement) => { const field = fieldOf(row); return field && !own.includes(field) && !recordTimes.includes(field) ? declared.get(field) : undefined; };
+    for (const trait of new Set(ordered.flatMap(row => { const placed = traitOf(row); return placed ? [placed.trait] : []; }))) {
+      const places = ordered.flatMap((row, index) => traitOf(row)?.trait === trait ? [index] : []);
+      const rowsOfTrait = places.map(index => ordered[index]!).sort((a, b) => traitOf(a)!.order - traitOf(b)!.order);
+      places.forEach((place, index) => { ordered[place] = rowsOfTrait[index]!; });
+    }
+    panel.children = ordered;
   }
 }

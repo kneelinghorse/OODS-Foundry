@@ -982,7 +982,8 @@ async function main() {
       // traits core/Assessable (result state) and core/Provenanced. Sprint 209 adds Comparison and ComparisonSignal,
       // the derived Stage1 comparison; its literal moved only in Sprint 211 m01, when the tripwire first ran again.
       // Sprint 244 m01 adds core/Actor and m02 the Agent object (#2829).
-      { components: 114, traits: 50, objects: 17 },
+      // Sprint 245 m01 adds core/Decision and core/Approvable, and m02 the Approval object.
+      { components: 114, traits: 52, objects: 18 },
     );
     assert.deepEqual(health.warnings ?? [], []);
     const builtScopes = await loadJson(path.join(runtimeRoot, 'packages/tokens/dist/css-variables-by-scope.json'));

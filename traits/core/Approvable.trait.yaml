@@ -1,0 +1,202 @@
+trait:
+  name: Approvable
+  version: 1.0.0
+  description: |
+    The ability to be approved: the thing's own rule for which change needs which level of yes, from how many and from
+    whom, and its outcome, worked out from the approvals that still stand. The approvals themselves are records of
+    their own (the Approval object, through the Decision trait): one ask to one actor that becomes their answer.
+
+    The rule is the parameters. `levels` names the levels of yes the product declares, in order, as Decision does on
+    the Approval; `levelDefinitions` says what each one is, in six short texts; `requiredLevels` says which change (a
+    state the thing moves to, or a named action) needs which level; `approvalsNeeded`, `askerMayAnswer`,
+    `agentLevels` and `lapsesOnChange` say how many, whether the asker may answer, which levels an agent's yes may
+    satisfy, and whether a yes lapses when the thing changes. The definitions are kept with the rule; no screen
+    changes by level.
+
+    The outcome is two read-only fields: `approval_state`, under a name of its own so it never collides with the
+    lifecycle's `status`, and `approval_summary`, one kept line ("Approved by Ruth Adeyemi · version 3 · 2 Nov").
+    The product's own code works the outcome out from the approvals and writes both fields; they are kept off the
+    thing's form and shown on its detail page. The summary restates the Approval records, because OODS Foundry cannot
+    yet list the records that point at a record.
+
+    OODS Foundry shows the outcome; it does not work it out. It does not count approvals, check who may approve,
+    expire an ask, lock the thing or stop a change.
+  category: core
+  # Compound tags, as Decision's: inherited by StatusBadge and Text, they change how no screen picks its components.
+  tags:
+    - approval-rule
+    - approval-outcome
+    - declared-levels
+
+parameters:
+  - name: levels
+    type: string[]
+    required: true
+    description: |
+      The levels of yes the product declares, in order, each named for the kind of yes asked for. Every level the rule
+      names is one of these, and the approvals of this thing are asked at these levels (Decision's `levels`).
+    default:
+      - acknowledgement
+      - review
+      - approval
+      - sign_off
+
+  - name: levelDefinitions
+    type: "Record<string, LevelDefinition>"
+    required: false
+    description: |
+      What each level is, keyed by its name: who may give it, what it permits, what must be in front of the person,
+      what a wrong one costs, how deliberate the act is, and when it lapses. Each key is a declared level. A product
+      declares its own, beside its own levels; the four example levels' definitions are in this trait's metadata.
+    default: {}
+
+  - name: requiredLevels
+    type: "Record<string, string>"
+    required: false
+    description: |
+      Which change needs which level: each key is a change (a lifecycle state the thing moves to, such as published,
+      or a named action, such as resend), each value a declared level. A change not named needs no approval.
+    default: {}
+
+  - name: approvalsNeeded
+    type: "Record<string, number>"
+    required: false
+    description: |
+      How many yeses each level needs, from different people, keyed by level. A level not named needs one. Counting
+      rules beyond a declared number are not modelled.
+    default: {}
+
+  - name: askerMayAnswer
+    type: boolean
+    required: false
+    description: Whether the one who asked may also give the yes. Off by default, so no one approves their own ask.
+    default: false
+
+  - name: agentLevels
+    type: string[]
+    required: false
+    description: The levels an agent's yes may satisfy. Empty by default, so only a person's yes counts.
+    default: []
+
+  - name: lapsesOnChange
+    type: boolean
+    required: false
+    description: Whether a yes stops standing when the thing changes after it was given (it becomes out of date).
+    default: true
+
+  - name: outcomes
+    type: string[]
+    required: true
+    description: |
+      The outcomes `approval_state` can hold, as the product works them out: not required, waiting, approved,
+      declined, out of date by default.
+    default:
+      - not_required
+      - waiting
+      - approved
+      - declined
+      - out_of_date
+
+schema:
+  approval_state:
+    type: string
+    required: false
+    readOnly: true
+    description: |
+      The outcome, worked out by the product from the approvals that still stand and written here. Named apart from
+      Stateful's `status`, so a thing keeps its lifecycle and its approval outcome side by side. Read-only: it is shown
+      on the detail page and kept off the form.
+    validation:
+      enumFromParameter: outcomes
+  approval_summary:
+    type: string
+    required: false
+    readOnly: true
+    description: |
+      One kept line saying what the outcome rests on ("Approved by Ruth Adeyemi · version 3 · 2 Nov"), or why no
+      approval was asked. It restates the Approval records, because OODS Foundry cannot yet list the records that point
+      at a record. Read-only.
+    validation:
+      maxLength: 240
+
+semantics:
+  approval_state:
+    semantic_type: approval.outcome
+    token_mapping: tokenMap(status.state.*)
+    ui_hints:
+      component: StatusBadge
+      showIcon: true
+  approval_summary:
+    semantic_type: approval.outcome.summary
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Approvals
+
+view_extensions:
+  # The outcome sits on the detail page beside the record's other facts, as a labelled state and the line it rests on.
+  # Approvable places nothing on the form: both fields are read-only, so the thing's form is the one it had.
+  detail:
+    - component: StatusBadge
+      position: main
+      priority: 58
+      props:
+        statusField: approval_state
+        emphasis: subtle
+        showIcon: true
+    - component: Text
+      position: main
+      priority: 57
+      props:
+        field: approval_summary
+
+dependencies: []
+
+metadata:
+  created: "2026-11-11"
+  owners:
+    - Core team
+  maturity: alpha
+  accessibility:
+    keyboard: Approvable adds no interactive control; its outcome renders as text.
+    screenreader: The outcome is announced as visible text through StatusBadge, never by colour alone, with its summary as labelled text.
+  regionsUsed:
+    - detail
+  # Illustrative only: the four example levels, each defined in the six parts a level names. A product declares its
+  # own in levelDefinitions, beside its own levels.
+  levelExamples:
+    acknowledgement:
+      who: Anyone the thing is shown to
+      permits: Nothing; it records that the person has seen it
+      shown: The thing, as it is now
+      cost: Little; a missed one is asked again
+      act: One step
+      lapses: Never; it records a moment
+    review:
+      who: Someone who knows the subject
+      permits: Nothing on its own; it counts toward an approval
+      shown: The thing and what changed
+      cost: A mistake that someone else may still catch
+      act: A careful read, then one step
+      lapses: When the thing changes
+    approval:
+      who: The person whose decision it is
+      permits: The change it was asked for
+      shown: Exactly what will change
+      cost: The change happens when it should not
+      act: A deliberate yes or no
+      lapses: When the thing changes, or once it is used
+    sign_off:
+      who: The person who answers for the result
+      permits: The thing to go out under their name
+      shown: The exact version, and what the yes means
+      cost: A person answers for something they did not mean to
+      act: The most deliberate, with its meaning written down
+      lapses: Never for that version; a new version needs a new sign-off
+  examples:
+    - Transaction
+    - Article
+  references:
+    - "Gerrit: Code-Review +1 'Looks good to me, but someone else must approve' and +2 'Looks good to me, approved'"
+    - "Docusign: 'Needs to View' recipients, and Part 11 signing that asks the signer for a reason"
+    - "21 CFR Part 11 and eIDAS: a signature bound to the content and its meaning"

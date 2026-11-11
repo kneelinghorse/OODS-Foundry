@@ -61,7 +61,8 @@ describe('Canonical object registry integration', () => {
     {
       name: 'Transaction',
       expectedFields: ['transaction_id', 'payment_method', 'channel'],
-      expectedTraits: ['Stateful', 'Timestampable', 'Priceable', 'Cancellable', 'Archivable'],
+      // s245-m02: a payment can be approved (core/Approvable, its rule and outcome).
+      expectedTraits: ['Stateful', 'Timestampable', 'Priceable', 'Cancellable', 'Archivable', 'Approvable'],
       unionSnippet: "payment_method: 'card' | 'bank_transfer' | 'digital_wallet' | 'invoice';",
     },
     {

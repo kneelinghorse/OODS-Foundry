@@ -18,6 +18,8 @@ export interface StateTransition {
   readonly on_behalf_of_id?: string;
   readonly approved_by_name?: string;
   readonly approved_by_id?: string;
+  readonly approval_id?: string;
+  readonly approval_level?: string;
 }
 
 export interface Product {

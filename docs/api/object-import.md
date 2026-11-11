@@ -157,6 +157,8 @@ Codes this tool can return, derived from the shipped module graph in `@oods/foun
 | `OODS-V218` | warning | Team component mapping has advisory limits |
 | `OODS-V219` | error | Mapping creation refused |
 | `OODS-V220` | error | Object import refused or rolled back |
+| `OODS-V221` | error | Approval answer screen leaves out a fact the record keeps |
+| `OODS-V222` | warning | Approval record keeps no fact its answer screen should show |
 | `OODS-W001` | warning | Fragment output ignores document scope options |
 | `OODS-W002` | warning | Non-strict fragments reclassify unknown-component errors per node |
 | `OODS-W003` | warning | A dry-run render returns no HTML |

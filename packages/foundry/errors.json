@@ -1,6 +1,6 @@
 {
   "schema": "oods-foundry-errors/v1",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "codes": [
     {
       "code": "OODS-A11Y-R-01",
@@ -4088,6 +4088,52 @@
       "tools": [
         "object_import",
         "object_import_read"
+      ]
+    },
+    {
+      "code": "OODS-V221",
+      "family": "V",
+      "category": "validation",
+      "severity": "error",
+      "retryable": false,
+      "message": "Approval answer screen leaves out a fact the record keeps",
+      "cause": "A screen where an approval can be answered leaves out the thing, exactly what was shown, the level or the meaning, though the record keeps it.",
+      "fix": "Place the Decision trait's form views for the facts, or bind a node on the screen to each fact the record keeps.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "object_import",
+        "object_import_read",
+        "object_register",
+        "pipeline_run",
+        "schema_render"
+      ]
+    },
+    {
+      "code": "OODS-V222",
+      "family": "V",
+      "category": "validation",
+      "severity": "warning",
+      "retryable": false,
+      "message": "Approval record keeps no fact its answer screen should show",
+      "cause": "The record keeps no field for the thing, exactly what was shown, the level or the meaning, so the screen where an answer is given cannot show it.",
+      "fix": "Bind the Decision field for each missing fact to a field the source keeps, or accept that the person answering sees only what the record keeps.",
+      "tools": [
+        "a11y_scan",
+        "code_generate",
+        "design_compose",
+        "design_preview",
+        "fidelity_preview",
+        "object_registry",
+        "object_import",
+        "object_import_read",
+        "object_register",
+        "pipeline_run",
+        "schema_render"
       ]
     },
     {

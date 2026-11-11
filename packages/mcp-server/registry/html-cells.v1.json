@@ -10,11 +10,12 @@
     "artifacts/product-reality/sprint-215/m04/fixed/ledger.json": "sha256:e4c4cb294b3c711c5e913b6ade91990fd088d248dd0db64f05b05d296c405b68",
     "artifacts/product-reality/sprint-215/m04/buttons/ledger.json": "sha256:15705d4fa558dccda83db9f7a6ca38716544db4330ca5f4200e5202bc3e3cc8c",
     "artifacts/product-reality/sprint-216/m01/html-final/ledger.json": "sha256:74b248d47161e575fb05485f7721637ab65a85663f9bcc1a0c623523a50a5df4",
-    "artifacts/product-reality/sprint-244/m04/html-agent-2/ledger.json": "sha256:de934b6498ad0e6b473dfbe034aa6c106136dda3bdc7a16499acde6000828294"
+    "artifacts/product-reality/sprint-244/m04/html-agent-2/ledger.json": "sha256:de934b6498ad0e6b473dfbe034aa6c106136dda3bdc7a16499acde6000828294",
+    "artifacts/product-reality/sprint-245/m04/html-1/ledger.json": "sha256:f4148e126f00251686d1beb04decb03aa6e234dc65a88bdb8eb0d7e634ddf34a"
   },
   "semanticReview": {
-    "receipt": "artifacts/product-reality/sprint-244/m04/html-semantic-review.json",
-    "sha256": "sha256:83d57022037c23050ea5c5156d08049b246f194ada8e5d9e93fbe4f0a3828e96"
+    "receipt": "artifacts/product-reality/sprint-245/m04/html-semantic-review.json",
+    "sha256": "sha256:40b7b0f75f0073e0110ca373b167ca65fb95d070eed59180a6ca1bad86a5b5c3"
   },
   "rows": [
     {
@@ -228,14 +229,224 @@
       "sourceFingerprint": "sha256:a83760c0b06febe8035eae6b6aaefdd20610a64f701c61c2a72e34c06142c787"
     },
     {
+      "id": "Approval/card/dark",
+      "object": "Approval",
+      "context": "card",
+      "theme": "dark",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/card/hc",
+      "object": "Approval",
+      "context": "card",
+      "theme": "hc",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/card/light",
+      "object": "Approval",
+      "context": "card",
+      "theme": "light",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/detail/dark",
+      "object": "Approval",
+      "context": "detail",
+      "theme": "dark",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/detail/hc",
+      "object": "Approval",
+      "context": "detail",
+      "theme": "hc",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/detail/light",
+      "object": "Approval",
+      "context": "detail",
+      "theme": "light",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/form/dark",
+      "object": "Approval",
+      "context": "form",
+      "theme": "dark",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/form/hc",
+      "object": "Approval",
+      "context": "form",
+      "theme": "hc",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/form/light",
+      "object": "Approval",
+      "context": "form",
+      "theme": "light",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/inline/dark",
+      "object": "Approval",
+      "context": "inline",
+      "theme": "dark",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/inline/hc",
+      "object": "Approval",
+      "context": "inline",
+      "theme": "hc",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/inline/light",
+      "object": "Approval",
+      "context": "inline",
+      "theme": "light",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/list/dark",
+      "object": "Approval",
+      "context": "list",
+      "theme": "dark",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/list/hc",
+      "object": "Approval",
+      "context": "list",
+      "theme": "hc",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/list/light",
+      "object": "Approval",
+      "context": "list",
+      "theme": "light",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/timeline/dark",
+      "object": "Approval",
+      "context": "timeline",
+      "theme": "dark",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/timeline/hc",
+      "object": "Approval",
+      "context": "timeline",
+      "theme": "hc",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/timeline/light",
+      "object": "Approval",
+      "context": "timeline",
+      "theme": "light",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/workflow/dark",
+      "object": "Approval",
+      "context": "workflow",
+      "theme": "dark",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/workflow/hc",
+      "object": "Approval",
+      "context": "workflow",
+      "theme": "hc",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
+      "id": "Approval/workflow/light",
+      "object": "Approval",
+      "context": "workflow",
+      "theme": "light",
+      "status": "pass",
+      "reasons": [],
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
+    },
+    {
       "id": "Article/card/dark",
       "object": "Article",
       "context": "card",
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/card/hc",
@@ -244,8 +455,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/card/light",
@@ -254,8 +465,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/detail/dark",
@@ -264,8 +475,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/detail/hc",
@@ -274,8 +485,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/detail/light",
@@ -284,8 +495,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/form/dark",
@@ -294,8 +505,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-216/m01/html-final/ledger.json",
-      "sourceFingerprint": "sha256:cf60297973335c17b032977c2428b38168e9c32ad253af67f17c5e24ff329295"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/form/hc",
@@ -304,8 +515,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-216/m01/html-final/ledger.json",
-      "sourceFingerprint": "sha256:cf60297973335c17b032977c2428b38168e9c32ad253af67f17c5e24ff329295"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/form/light",
@@ -314,8 +525,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-216/m01/html-final/ledger.json",
-      "sourceFingerprint": "sha256:cf60297973335c17b032977c2428b38168e9c32ad253af67f17c5e24ff329295"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/inline/dark",
@@ -324,8 +535,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/inline/hc",
@@ -334,8 +545,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/inline/light",
@@ -344,8 +555,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/list/dark",
@@ -354,8 +565,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/list/hc",
@@ -364,8 +575,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/list/light",
@@ -374,8 +585,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/timeline/dark",
@@ -384,8 +595,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/timeline/hc",
@@ -394,8 +605,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/timeline/light",
@@ -404,8 +615,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/workflow/dark",
@@ -414,8 +625,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-216/m01/html-final/ledger.json",
-      "sourceFingerprint": "sha256:cf60297973335c17b032977c2428b38168e9c32ad253af67f17c5e24ff329295"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/workflow/hc",
@@ -424,8 +635,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-216/m01/html-final/ledger.json",
-      "sourceFingerprint": "sha256:cf60297973335c17b032977c2428b38168e9c32ad253af67f17c5e24ff329295"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Article/workflow/light",
@@ -434,8 +645,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-216/m01/html-final/ledger.json",
-      "sourceFingerprint": "sha256:cf60297973335c17b032977c2428b38168e9c32ad253af67f17c5e24ff329295"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/card/dark",
@@ -444,8 +655,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/card/hc",
@@ -454,8 +665,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/card/light",
@@ -464,8 +675,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/detail/dark",
@@ -474,8 +685,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/detail/hc",
@@ -484,8 +695,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/detail/light",
@@ -494,8 +705,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/inline/dark",
@@ -504,8 +715,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/inline/hc",
@@ -514,8 +725,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/inline/light",
@@ -524,8 +735,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/list/dark",
@@ -534,8 +745,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/list/hc",
@@ -544,8 +755,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/list/light",
@@ -554,8 +765,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/timeline/dark",
@@ -564,8 +775,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/timeline/hc",
@@ -574,8 +785,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "CapturedArtifact/timeline/light",
@@ -584,8 +795,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Comparison/card/dark",
@@ -2604,8 +2815,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/fixed/ledger.json",
-      "sourceFingerprint": "sha256:5c6158a8f116ee9bfadacd39462eacaa00b6018d68658f5ab8b4a73dd6a55032"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/card/hc",
@@ -2614,8 +2825,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/fixed/ledger.json",
-      "sourceFingerprint": "sha256:5c6158a8f116ee9bfadacd39462eacaa00b6018d68658f5ab8b4a73dd6a55032"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/card/light",
@@ -2624,8 +2835,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/fixed/ledger.json",
-      "sourceFingerprint": "sha256:5c6158a8f116ee9bfadacd39462eacaa00b6018d68658f5ab8b4a73dd6a55032"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/detail/dark",
@@ -2634,8 +2845,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/detail/hc",
@@ -2644,8 +2855,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/detail/light",
@@ -2654,8 +2865,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/form/dark",
@@ -2664,8 +2875,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/form/hc",
@@ -2674,8 +2885,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/form/light",
@@ -2684,8 +2895,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/inline/dark",
@@ -2694,8 +2905,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/inline/hc",
@@ -2704,8 +2915,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/inline/light",
@@ -2714,8 +2925,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/list/dark",
@@ -2724,8 +2935,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/list/hc",
@@ -2734,8 +2945,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/list/light",
@@ -2744,8 +2955,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/timeline/dark",
@@ -2754,8 +2965,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/timeline/hc",
@@ -2764,8 +2975,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/timeline/light",
@@ -2774,8 +2985,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/measured/ledger.json",
-      "sourceFingerprint": "sha256:7df598c93fe91133d99452be9e22d825139a2f65ddf7341e6dac3fa95ef3591f"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/workflow/dark",
@@ -2784,8 +2995,8 @@
       "theme": "dark",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/workflow/hc",
@@ -2794,8 +3005,8 @@
       "theme": "hc",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Transaction/workflow/light",
@@ -2804,8 +3015,8 @@
       "theme": "light",
       "status": "pass",
       "reasons": [],
-      "receipt": "artifacts/product-reality/sprint-215/m04/buttons/ledger.json",
-      "sourceFingerprint": "sha256:33a3e3f3846af60b28aed00d5ac4592c4844a8af03af775cc9d806edb1cfe0f7"
+      "receipt": "artifacts/product-reality/sprint-245/m04/html-1/ledger.json",
+      "sourceFingerprint": "sha256:d6ec1f79c90df9da2937b925e31bd9964b34418611b251ab336a78c4301ce868"
     },
     {
       "id": "Usage/card/dark",
@@ -3229,8 +3440,8 @@
     }
   ],
   "summary": {
-    "cells": 321,
-    "pass": 321,
+    "cells": 342,
+    "pass": 342,
     "fail": 0
   }
 }

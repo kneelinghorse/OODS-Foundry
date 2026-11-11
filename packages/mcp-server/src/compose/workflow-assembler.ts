@@ -4,6 +4,7 @@ import type { DesignComposeInput, DesignComposeOutput } from '../tools/design.co
 import { cancellationMode } from '../objects/cancellation-mode.js';
 import { composeObject } from '../objects/trait-composer.js';
 import { loadObject } from '../objects/object-loader.js';
+import { fallbackKeyField } from '../objects/record-identity.js';
 import { supportsContext } from '../objects/supported-contexts.js';
 import { handle as validate } from '../tools/repl.validate.js';
 import { createSchemaRef, describeSchemaRef } from '../tools/schema-ref.js';
@@ -34,7 +35,7 @@ function workflowData(first: DesignComposeOutput): WorkflowData {
   const idField = Object.keys(fields).find((field) => field === 'id')
     ?? Object.keys(fields).find((field) => field === `${object.object.name.toLowerCase()}_id`)
     ?? Object.keys(fields).find((field) => field.endsWith('_id'))
-    ?? Object.keys(fields)[0]!;
+    ?? fallbackKeyField(fields)!;
   return {
     idField, traits: first.objectUsed!.traits, sampleCount: sampleCountFor(definition.samples),
     ...(Array.isArray(addressable.roles) ? { addressRoles: addressable.roles.map(String), defaultAddressRole: String(addressable.defaultRole ?? addressable.roles[0]) } : {}),

@@ -12,6 +12,8 @@
     "good_standing": { "tone": "success", "icon": "icon.status.success", "description": "In good standing." },
     "in_stock": { "tone": "success", "icon": "icon.status.success", "description": "In stock." },
     "ok": { "tone": "success", "icon": "icon.status.success", "description": "Working as expected." },
+    "approved": { "tone": "success", "icon": "icon.status.success", "description": "Approved." },
+    "used": { "tone": "success", "icon": "icon.status.success", "description": "Used: the one-time yes was spent on the change." },
     "invited": { "tone": "info", "icon": "icon.status.pending", "description": "Invited and not yet joined." },
     "onboarding": { "tone": "info", "icon": "icon.status.processing", "description": "Being set up." },
     "pending": { "tone": "info", "icon": "icon.status.pending", "description": "Waiting to be processed." },
@@ -24,6 +26,7 @@
     "posted": { "tone": "info", "icon": "icon.status.pending", "description": "Finalized and posted." },
     "open": { "tone": "info", "icon": "icon.status.pending", "description": "Open and awaiting action." },
     "future": { "tone": "info", "icon": "icon.status.future", "description": "Starts later." },
+    "waiting": { "tone": "info", "icon": "icon.status.pending", "description": "Waiting for an answer." },
     "trialing": { "tone": "accent", "icon": "icon.status.trial", "description": "In a trial period." },
     "private_beta": { "tone": "accent", "icon": "icon.status.trial", "description": "Available to a limited group." },
     "retrying": { "tone": "warning", "icon": "icon.status.processing", "description": "Failed once and retrying." },
@@ -33,6 +36,8 @@
     "backorder": { "tone": "warning", "icon": "icon.status.warning", "description": "Out of stock and on order." },
     "suspended": { "tone": "warning", "icon": "icon.status.paused", "description": "Suspended for now." },
     "deprecated": { "tone": "warning", "icon": "icon.status.warning", "description": "Being phased out." },
+    "declined": { "tone": "warning", "icon": "icon.status.critical", "description": "Declined: the answer was no." },
+    "out_of_date": { "tone": "warning", "icon": "icon.status.warning", "description": "Out of date: the thing changed after the yes." },
     "past_due": { "tone": "critical", "icon": "icon.status.warning", "description": "Past its due date." },
     "failed": { "tone": "critical", "icon": "icon.status.critical", "description": "Failed." },
     "unpaid": { "tone": "critical", "icon": "icon.status.critical", "description": "Unpaid." },
@@ -50,6 +55,12 @@
     "discontinued": { "tone": "neutral", "icon": "icon.status.canceled", "description": "Discontinued." },
     "deactivated": { "tone": "neutral", "icon": "icon.status.canceled", "description": "Deactivated." },
     "terminated": { "tone": "neutral", "icon": "icon.status.canceled", "description": "Ended." },
-    "churned": { "tone": "neutral", "icon": "icon.status.canceled", "description": "No longer a customer." }
+    "churned": { "tone": "neutral", "icon": "icon.status.canceled", "description": "No longer a customer." },
+    "not_required": { "tone": "neutral", "icon": "icon.status.default", "description": "No approval was needed." },
+    "not_yet_asked": { "tone": "neutral", "icon": "icon.status.draft", "description": "Not yet asked: it is not this person’s turn yet." },
+    "taken_back": { "tone": "neutral", "icon": "icon.status.refunded", "description": "Taken back: the yes no longer stands." },
+    "expired": { "tone": "neutral", "icon": "icon.status.future", "description": "Expired: never answered in time." },
+    "withdrawn": { "tone": "neutral", "icon": "icon.status.canceled", "description": "Withdrawn by the one who asked." },
+    "not_needed": { "tone": "neutral", "icon": "icon.status.default", "description": "Not needed: it was never asked." }
   }
 }

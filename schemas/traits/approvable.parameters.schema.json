@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/approvable",
+  "title": "Approvable Trait Parameters",
+  "description": "Configuration contract for the Approvable trait: the thing's rule for which change needs which level of yes, from how many and from whom, and the outcomes it can hold. Every level the rule names is checked against levels when the object is validated.",
+  "type": "object",
+  "definitions": {
+    "levelName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32,
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "levelDefinition": {
+      "type": "object",
+      "description": "What one level is, in six short texts.",
+      "properties": {
+        "who": { "type": "string", "minLength": 1, "maxLength": 160, "description": "Who may give it." },
+        "permits": { "type": "string", "minLength": 1, "maxLength": 160, "description": "What it permits." },
+        "shown": { "type": "string", "minLength": 1, "maxLength": 160, "description": "What must be in front of the person." },
+        "cost": { "type": "string", "minLength": 1, "maxLength": 160, "description": "What a wrong one costs." },
+        "act": { "type": "string", "minLength": 1, "maxLength": 160, "description": "How deliberate the act is." },
+        "lapses": { "type": "string", "minLength": 1, "maxLength": 160, "description": "When it lapses." }
+      },
+      "required": ["who", "permits", "shown", "cost", "act", "lapses"],
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "levels": {
+      "type": "array",
+      "description": "The levels of yes the product declares, in order, each named for the kind of yes asked for.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/definitions/levelName" }
+    },
+    "levelDefinitions": {
+      "type": "object",
+      "description": "What each level is, keyed by a declared level's name.",
+      "propertyNames": { "$ref": "#/definitions/levelName" },
+      "additionalProperties": { "$ref": "#/definitions/levelDefinition" }
+    },
+    "requiredLevels": {
+      "type": "object",
+      "description": "Which change needs which level: each key is a change (a lifecycle state the thing moves to, or a named action), each value a declared level.",
+      "propertyNames": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$" },
+      "additionalProperties": { "$ref": "#/definitions/levelName" }
+    },
+    "approvalsNeeded": {
+      "type": "object",
+      "description": "How many yeses each level needs, from different people, keyed by level. A level not named needs one.",
+      "propertyNames": { "$ref": "#/definitions/levelName" },
+      "additionalProperties": { "type": "integer", "minimum": 1, "maximum": 20 }
+    },
+    "askerMayAnswer": {
+      "type": "boolean",
+      "description": "Whether the one who asked may also give the yes.",
+      "default": false
+    },
+    "agentLevels": {
+      "type": "array",
+      "description": "The levels an agent's yes may satisfy.",
+      "uniqueItems": true,
+      "items": { "$ref": "#/definitions/levelName" }
+    },
+    "lapsesOnChange": {
+      "type": "boolean",
+      "description": "Whether a yes stops standing when the thing changes after it was given.",
+      "default": true
+    },
+    "outcomes": {
+      "type": "array",
+      "description": "The outcomes approval_state can hold, as the product works them out.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-z0-9_]+$"
+      }
+    }
+  },
+  "required": ["levels", "outcomes"],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "levels": ["acknowledgement", "review", "approval", "sign_off"],
+      "requiredLevels": { "resend": "approval" },
+      "outcomes": ["not_required", "waiting", "approved", "declined", "out_of_date"]
+    },
+    {
+      "levels": ["review", "sign_off"],
+      "requiredLevels": { "published": "review" },
+      "approvalsNeeded": { "sign_off": 2 },
+      "agentLevels": ["review"],
+      "outcomes": ["not_required", "waiting", "approved", "declined", "out_of_date"]
+    }
+  ]
+}

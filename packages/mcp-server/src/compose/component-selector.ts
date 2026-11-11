@@ -14,6 +14,7 @@
  *   6. Trait coverage bonus
  */
 import type { ComponentCatalogSummary } from '../tools/types.js';
+import { traitEntry } from '../objects/trait-loader.js';
 import { scoreFieldAffinity, type FieldHint } from './field-affinity.js';
 import { getPositionAffinity, type SlotPosition } from './position-affinity.js';
 import { resolveIntent, type SynonymResolution } from './intent-synonyms.js';
@@ -350,6 +351,22 @@ function isSearchOrientedSlot(
   return [...keywords, ...contextKeywords].some((keyword) => SEARCH_SIGNAL_KEYWORDS.has(keyword));
 }
 
+/**
+ * s245-m01: the shipped traits that placed each primitive in 0.12.0. A primitive (Text, Banner) is the block traits place
+ * their fields in, so how many traits place it, and what they are called, say nothing about how well it fits a slot. The
+ * selector weighs a primitive by these and by a team's own traits, exactly as 0.12.0 did, so a shipped trait added since
+ * (Decision and Approvable place Text and StatusBadge) moves no screen, shipped or a team's. Other components are weighed
+ * by every trait that places them.
+ */
+const PRIMITIVE_TRAITS_0_12: Readonly<Record<string, readonly string[]>> = { Text: ['Provenanced', 'Supersedable'], Banner: ['Statusable'] };
+
+function weighedTraits(component: ComponentCatalogSummary): string[] {
+  const traits = component.traits ?? [];
+  if (!component.categories?.includes('primitive')) return traits;
+  const census = PRIMITIVE_TRAITS_0_12[component.name] ?? [];
+  return traits.filter(name => census.includes(name) || traitEntry(name)?.source === 'user');
+}
+
 function intersectionList(a: string[], b: string[]): string[] {
   const setB = new Set((b || []).map(s => s.toLowerCase()));
   const matches: string[] = [];
@@ -383,7 +400,7 @@ function scoreComponent(
   let score = 0;
   const reasons: string[] = [];
   const componentTags = component.tags ?? [];
-  const componentTraits = component.traits ?? [];
+  const componentTraits = weighedTraits(component);
   const keywordTagMatches = intersectionList(keywords, componentTags);
   const keywordTraitMatches = intersectionList(keywords, componentTraits);
   const contextTagMatches = intersectionList(contextKeywords, componentTags);

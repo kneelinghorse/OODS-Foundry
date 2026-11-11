@@ -77,3 +77,24 @@ export function s244Field<T extends Record<string, unknown>>(object: string, nam
   }
   return field;
 }
+
+/**
+ * s245-m01: Stateful's state_history also documents the optional approval pointer and level a recorded change can carry
+ * (approval_id, approval_level). The paragraph below follows Sprint 244's; every other key is held to the baseline exactly.
+ */
+export const S245_STATE_HISTORY_APPROVAL = '\nA change someone approved can also say which approval it belongs to and what level of yes it was. Both\noptional; the id stays in the record\'s data, a pointer and not a link, and an entry without them renders as it\nalways has:\n  - approval_id: string (the Approval record the yes is kept in)\n  - approval_level: string (the level of yes, one of the levels the product declares: \"approval\")\nStatusTimeline then reads \"Billing Agent for Tidewater Co-op \u00b7 approved by Ruth Adeyemi (level: Approval)\".\n';
+
+/** A baseline field as Sprint 245 declares it: Sprint 244's, with state_history's description gaining the approval paragraph. */
+export function s245Field<T extends Record<string, unknown>>(object: string, name: string, field: T): T {
+  const declared = s244Field(object, name, field);
+  return name === 'state_history' && typeof declared.description === 'string' ? { ...declared, description: declared.description + S245_STATE_HISTORY_APPROVAL } : declared;
+}
+
+/**
+ * s245-m02: Transaction and Article compose Approvable, whose two outcome fields join the composed schema after the
+ * traits' fields and before the object's own. Both are read-only, so a form leaves them out. Every other key of every
+ * baseline field is held to the baseline exactly.
+ */
+export function s245AddedFields(object: string, context: string): string[] {
+  return ['Transaction', 'Article'].includes(object) && context !== 'form' ? ['approval_state', 'approval_summary'] : [];
+}

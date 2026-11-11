@@ -1,6 +1,6 @@
 import { identifierField, recordKeyField } from '../objects/record-identity.js';
 import { sampleValue } from './samples.js';
-import { suggestTraits } from './proposals.js';
+import { approvalRecord, initialStateOf, suggestTraits } from './proposals.js';
 import { dump } from 'js-yaml';
 import { validateDefinition } from '../tools/object.validate.js';
 import { normalizeObjectDocument } from '../objects/object-loader.js';
@@ -11,7 +11,7 @@ import { populateObjectSchema } from '../compose/object-slot-filler.js';
 import type { ObjectDefinition, FieldDefinition, SemanticMapping, TraitReference } from '../objects/types.js';
 import type { UiSchema } from '../schemas/generated.js';
 import { normalizeSource, type Hub, type Normalized, type ReportEntry } from './hub.js';
-import { canonical, escapePointer, hash, isMap, walk, type MapValue, type Origin, type SourceInput } from './source.js';
+import { canonical, escapePointer, hash, isMap, walk, wrappedReference, type MapValue, type Origin, type SourceInput } from './source.js';
 
 export type Proposal = { id: string; trait: TraitReference; grade: 'strong' | 'medium' | 'weak'; evidence: Array<Origin & { kind: 'declaration' | 'structure' | 'name'; reason: string }>; effects: string; valid: boolean; errors: string[] };
 export type Draft = { name: string; sourceName: string; origin: Origin; yaml: string; definition: ObjectDefinition; proposals: Proposal[]; dependencies: string[] };
@@ -133,6 +133,8 @@ export function draftSource(input: SourceInput): ImportResult {
     const fields: Record<string, FieldDefinition> = {}, semantics: Record<string, SemanticMapping> = {};
     const relationships: NonNullable<ObjectDefinition['relationships']> = [];
     const proposals: Proposal[] = [];
+    /** Each string enum's Stateful configuration and its evidence, by field. */
+    const lifecycles = new Map<string, { trait: TraitReference; evidence: Proposal['evidence'][number] }>();
     const sampleSchemas: Record<string, MapValue> = {};
     const samples: Array<Record<string, unknown>> = [{}, {}, {}, {}, {}];
     const propose = (trait: TraitReference, grade: Proposal['grade'], evidence: Proposal['evidence']) => {
@@ -200,14 +202,19 @@ export function draftSource(input: SourceInput): ImportResult {
         const types = schema.type.filter((type: string) => type !== 'null');
         if (types.length === 1) schema = { ...schema, type: types[0] }; else { markField('unmapped', 'Multiple non-null types retained as a union in the hub.'); continue; }
       }
-      let target = targetName(referenceSchema), many = false;
-      if (schema.type === 'array') { many = true; if (isMap(schema.items)) target = targetName(schema.items); }
+      // s245-m03 (a): a reference wrapped in allOf beside nothing but annotations is that reference (Jira's
+      // ApproverDTO.approver -> UserDTO); its $ref sits at /allOf/0/$ref.
+      const wrapped = schema.type === 'array' ? (isMap(schema.items) ? wrappedReference(schema.items) : undefined) : wrappedReference(referenceSchema);
+      const refAt = wrapped ? '/allOf/0/$ref' : '/$ref';
+      let target = targetName(wrapped ?? referenceSchema), many = false;
+      if (schema.type === 'array') { many = true; if (isMap(schema.items)) target = targetName(wrapped ?? schema.items); }
+      const referenced = target;
       // s244-m03 (#2836): a status reference whose target holds one state enum is this record's lifecycle (A2A's Task.status
       // -> TaskStatus.state). The field is flattened to those states so Stateful binds a real value; the target stays its
       // own draft, its state field included.
       const followed = !many && target && objectNames.has(target) && /^(status|state)$/i.test(field) ? statusStates(target) : undefined;
       if (followed) {
-        for (const place of places) mark(provenance[`${place.path}/$ref`], 'mapped', `Status reference followed to ${target}.${followed.field}; the field holds its ${followed.values.length} states and ${target} stays its own draft.`, 'link');
+        for (const place of places) mark(provenance[`${place.path}${refAt}`], 'mapped', `Status reference followed to ${target}.${followed.field}; the field holds its ${followed.values.length} states and ${target} stays its own draft.`, 'link');
         schema = { type: 'string', enum: followed.values, ...(typeof schema.description === 'string' ? { description: schema.description } : {}) };
         target = undefined;
       }
@@ -216,7 +223,7 @@ export function draftSource(input: SourceInput): ImportResult {
       if (target && objectNames.has(target)) {
         type = many ? 'string[]' : 'string';
         relationships.push({ target, via: field, cardinality: many ? 'one-to-many' : 'many-to-one', label: text(raw.title, field.replace(/_/g, ' ')) });
-        for (const place of places) mark(provenance[`${place.path}${many ? '/items' : ''}/$ref`], 'mapped', `Named schema reference becomes a relationship to ${target}.`, 'link');
+        for (const place of places) mark(provenance[`${place.path}${many ? '/items' : ''}${refAt}`], 'mapped', `Named schema reference becomes a relationship to ${target}.`, 'link');
       } else if (schema['x-oods-conflict'] || schema.oneOf || schema.anyOf) {
         markField('unmapped', schema['x-oods-conflict'] ?? 'oneOf/anyOf variants retained separately; no variant is selected automatically.'); continue;
       } else if (['string', 'integer', 'number', 'boolean'].includes(schema.type)) type = schema.type === 'string' ? (formats[schema.format] ?? 'string') : schema.type;
@@ -262,13 +269,18 @@ export function draftSource(input: SourceInput): ImportResult {
         semantics[field] = { semantic_type: 'money.amount', token_mapping: 'tokenMap(text.primary)', ui_hints: { ...semantics[field]?.ui_hints, component: 'CurrencyAmount', currencyField: annotation.currency.field, ...(annotation.currency.minorUnits ? { minorUnits: annotation.currency.minorUnits } : {}) } };
         mark(provenance[`${fieldPath}/x-oods`], 'mapped', 'Explicit currency and unit declaration becomes money semantics.');
       }
-      const targetOrigin = followed ? provenance[`/$defs/${escapePointer(targetName(referenceSchema)!)}/properties/${escapePointer(followed.field)}`] : undefined;
+      const targetOrigin = followed ? provenance[`/$defs/${escapePointer(referenced!)}/properties/${escapePointer(followed.field)}`] : undefined;
       const enumEvidence = followed && targetOrigin
-        ? { ...targetOrigin, pointer: `${targetOrigin.pointer}${followed.protobuf ? `/${followed.protobuf.key}/${followed.protobuf.index}` : ''}/enum`, reason: `The status reference to ${targetName(referenceSchema)} is followed one step: its ${followed.field} enum supplies the possible states, on this record's ${field} field; lifecycle meaning and initial state require acceptance.` }
+        ? { ...targetOrigin, pointer: `${targetOrigin.pointer}${followed.protobuf ? `/${followed.protobuf.key}/${followed.protobuf.index}` : ''}/enum`, reason: `The status reference to ${referenced} is followed one step: its ${followed.field} enum supplies the possible states, on this record's ${field} field; lifecycle meaning and initial state require acceptance.` }
         : protobuf
           ? { ...fieldOrigin, pointer: `${fieldOrigin.pointer}/${protobuf.key}/${protobuf.index}/enum`, reason: 'A proto3 JSON enum (string values beside the UNSPECIFIED sentinel and the int32 wire form) supplies possible states; the sentinel is not a state. Lifecycle meaning and initial state require acceptance.' }
           : { ...fieldOrigin, pointer: `${fieldOrigin.pointer}/enum`, reason: 'String enum supplies possible states; lifecycle meaning and initial state require acceptance.' };
-      if (Array.isArray(validation.enum) && validation.enum.length > 1) propose({ name: 'Stateful', fieldBindings: { status: field }, parameters: { states: validation.enum, initialState: validation.enum.includes(schema.default) ? schema.default : validation.enum[0] } }, 'medium', [{ ...enumEvidence, kind: 'structure' }]);
+      if (Array.isArray(validation.enum) && validation.enum.length > 1) {
+        // s245-m03 (d): a pending value, not an answer, is the guess for where the record starts (initialStateOf).
+        const lifecycle: TraitReference = { name: 'Stateful', fieldBindings: { status: field }, parameters: { states: validation.enum, initialState: initialStateOf(validation.enum, schema.default) } };
+        lifecycles.set(field, { trait: lifecycle, evidence: { ...enumEvidence, kind: 'structure' } });
+        propose(lifecycle, 'medium', [{ ...enumEvidence, kind: 'structure' }]);
+      }
       else if (/^(status|state)$/i.test(field)) propose({ name: 'Stateful', fieldBindings: { status: field }, parameters: {} }, 'weak', [{ ...fieldOrigin, kind: 'name', reason: 'Name alone suggests status; no state values or lifecycle structure were declared.' }]);
     }
     const timestamps = Object.entries(sampleSchemas).filter(([, schema]) => schema.format === 'date-time');
@@ -289,6 +301,21 @@ export function draftSource(input: SourceInput): ImportResult {
     }
     suggestTraits({ ...shape, title: name }, shape.properties, field => fieldOrigins(field)[0]?.origin ?? origin, propose, (field, reason) => report.push({ ...(fieldOrigins(field)[0]?.origin ?? origin), object: name, kind: 'keyword', outcome: 'unmapped', reason }));
     for (const edge of annotations?.relationships ?? []) if (fields[edge.via] && objectNames.has(edge.target) && !relationships.some(item => item.via === edge.via)) relationships.push(edge);
+    // s245-m03 (c): a table of approvals, one person's answer per row, proposes Decision on structure (approvalRecord).
+    const approval = approvalRecord(fields, relationships.map(edge => ({ target: edge.target, via: edge.via, cardinality: edge.cardinality ?? '' })), field => fieldOrigins(field)[0]?.origin ?? origin, field => lifecycles.get(field)?.evidence ?? fieldOrigins(field)[0]?.origin ?? origin);
+    if (approval) {
+      propose(approval.trait, 'medium', approval.evidence);
+      // The record keeps one answer, so its lifecycle is the answer, ahead of another enum that sorts first (Bitbucket's
+      // participant: role, then state). A declared lifecycle is never replaced.
+      const lifecycle = proposals.find(proposal => proposal.trait.name === 'Stateful'), chosen = lifecycles.get(approval.answer);
+      if (lifecycle && chosen && lifecycle.grade !== 'strong' && lifecycle.trait.fieldBindings?.status !== approval.answer) {
+        report.push({ ...chosen.evidence, object: name, kind: 'keyword', outcome: 'unmapped', reason: `Alternative Stateful configuration (${String(lifecycle.trait.fieldBindings?.status ?? 'unbound')}) retained as evidence; the record keeps one answer, so its lifecycle is ${approval.answer}.` });
+        lifecycle.trait = chosen.trait; lifecycle.grade = 'medium';
+        lifecycle.errors = parameterProblems('Stateful', chosen.trait.parameters ?? {}).map(problem => problem.message); lifecycle.valid = !lifecycle.errors.length;
+        if (!lifecycle.evidence.some(item => canonical(item) === canonical(chosen.evidence))) lifecycle.evidence.push(chosen.evidence);
+        lifecycle.id = hash(canonical({ name, trait: lifecycle.trait, evidence: lifecycle.evidence })).slice(0, 16);
+      }
+    }
     // Acceptance cannot invent facts the source does not supply. View-state traits are deliberately not record data.
     for (const proposal of proposals) if (hasTrait(proposal.trait.name)) {
       const trait = loadTrait(proposal.trait.name);

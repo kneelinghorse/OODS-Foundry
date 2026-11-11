@@ -177,7 +177,12 @@ export function normalizeSource(input: SourceInput): Normalized {
         if (child === true && typeof value[inclusive] === 'number') { result[key] = value[inclusive]; provenance[dest] = at; }
         entry.reason = 'Boolean exclusive bound upgraded to the 2020-12 numeric bound.';
       } else if ((key === 'minimum' && value.exclusiveMinimum === true) || (key === 'maximum' && value.exclusiveMaximum === true) || (key === 'additionalItems' && Array.isArray(value.items))) continue;
-      else Object.defineProperty(result, key, { value: copy(child, at, dest), enumerable: true, writable: true, configurable: true });
+      else if (key === 'type' && child === 'file') {
+        // s245-m03: Swagger 2.0's file type (a download or an upload, Gitea's raw and media files) is OpenAPI 3's binary string.
+        result.type = 'string'; provenance[dest] = at;
+        if (value.format === undefined) { result.format = 'binary'; provenance[`${destination}/format`] = at; }
+        entry.outcome = 'mapped'; entry.reason = "Swagger 2.0's file type is read as a binary string, OpenAPI 3's form for a file.";
+      } else Object.defineProperty(result, key, { value: copy(child, at, dest), enumerable: true, writable: true, configurable: true });
       if (['minimum', 'maximum', 'exclusiveMinimum', 'exclusiveMaximum', 'multipleOf'].includes(key) && typeof result[key] === 'string') {
         if (/^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?$/.test(result[key]) && Number.isFinite(Number(result[key]))) {
           result[key] = Number(result[key]); entry.reason = 'Numeric string bound normalized to a JSON Schema number; original location retained.';

@@ -1,22 +1,34 @@
 import type { Proposal } from './draft.js';
-import type { TraitReference } from '../objects/types.js';
-import { isMap, type MapValue, type Origin } from './source.js';
+import type { FieldDefinition, TraitReference } from '../objects/types.js';
+import { isMap, wrappedReference, type MapValue, type Origin } from './source.js';
 
 type Propose = (trait: TraitReference, grade: Proposal['grade'], evidence: Proposal['evidence']) => void;
 
-/** The named schema a field points at, one level through a nullable union or an array's items. */
+/** The named schema a field points at, one level through a nullable union, an array's items or an allOf wrapper (s245-m03). */
 function referenceOf(schema: MapValue): { target: string; many: boolean } | undefined {
   if (!isMap(schema)) return undefined;
   const union = Array.isArray(schema.anyOf) ? schema.anyOf : Array.isArray(schema.oneOf) ? schema.oneOf : undefined;
   if (union?.length === 2 && union.some((branch: MapValue) => branch?.type === 'null')) return referenceOf(union.find((branch: MapValue) => branch?.type !== 'null'));
-  const name = (value: MapValue) => isMap(value) && typeof value.$ref === 'string' && value.$ref.startsWith('#/$defs/') ? value.$ref.slice(8).replace(/~1/g, '/').replace(/~0/g, '~') : undefined;
+  const name = (value: MapValue) => { const reference = wrappedReference(value) ?? value; return isMap(reference) && typeof reference.$ref === 'string' && reference.$ref.startsWith('#/$defs/') ? reference.$ref.slice(8).replace(/~1/g, '/').replace(/~0/g, '~') : undefined; };
   if (schema.type === 'array' || Array.isArray(schema.type) && schema.type.includes('array')) { const target = name(schema.items); return target ? { target, many: true } : undefined; }
   const target = name(schema);
   return target ? { target, many: false } : undefined;
 }
-/** s244-m03 (#2837): a record that people or groups are named by: a user, an account, an organization, a team, a group or a directory object. */
-const PRINCIPAL = /^(user|account|organi[sz]ation|team|group|directoryobject|person|member|principal)$/i;
-const principal = (target: string) => PRINCIPAL.test(target.split('.').pop() ?? target);
+/**
+ * s244-m03 (#2837): a record that people or groups are named by: a user, an account, an organization, a team, a group or a
+ * directory object. s245-m03: the last part of the record's name is read with one technical suffix taken off (DTO, VO,
+ * Model, Entity, Bean, Resource, Response, Schema, Representation) and with a plural s, so Jira's UserDTO and a users
+ * table name people. A name with any other word beside the principal word (UserLinkDTO, CommitUser) does not.
+ */
+const PRINCIPAL = /^(user|account|organi[sz]ation|team|group|directoryobject|person|member|principal)s?$/i;
+const TECHNICAL = /(?:dto|vo|model|entity|bean|resource|response|schema|representation)$/i;
+const principalWord = (target: string): string | undefined => {
+  const last = (target.split('.').pop() ?? target).replace(/[^A-Za-z0-9]/g, '');
+  return [last, last.replace(TECHNICAL, '')].find(candidate => PRINCIPAL.test(candidate));
+};
+export const principal = (target: string) => principalWord(target) !== undefined;
+/** A person before a group, when a record references both (Gitea's PullReview has a user and a team). */
+const PERSON = /^(user|account|person|member|principal)s?$/i;
 /** A boolean field, nullable or not (OData and JSON Schema write a nullable one as type [boolean, null]). */
 const boolean = (schema: MapValue) => schema.type === 'boolean' || Array.isArray(schema.type) && schema.type.includes('boolean') && schema.type.every((type: string) => type === 'boolean' || type === 'null');
 /** An app or installation record beside a bot flag says the flagged records are an app's (an agent's). */
@@ -64,7 +76,7 @@ export function suggestTraits(shape: MapValue, fields: Record<string, MapValue>,
     propose({ name: 'Supersedable', parameters: { states: ['active', 'superseded'], initialState: 'active' } }, 'medium', [...validity.map(([field]) => evidence(field, 'Timestamp pair with an open-ended nullable boundary.')[0]), ...evidence(current[0], 'Current-row flag beside validity boundaries suggests type-2 history; confirm replacement meaning.')]);
   }
 
-  if (annotation.lifecycle?.states?.length) propose({ name: 'Stateful', ...(fields[annotation.lifecycle.field] ? { fieldBindings: { status: annotation.lifecycle.field } } : {}), parameters: { states: annotation.lifecycle.states, initialState: annotation.lifecycle.initialState ?? annotation.lifecycle.states[0] } }, 'strong', evidence(annotation.lifecycle.field ?? '', 'Explicit lifecycle state declaration.', 'declaration'));
+  if (annotation.lifecycle?.states?.length) propose({ name: 'Stateful', ...(fields[annotation.lifecycle.field] ? { fieldBindings: { status: annotation.lifecycle.field } } : {}), parameters: { states: annotation.lifecycle.states, initialState: annotation.lifecycle.initialState ?? initialStateOf(annotation.lifecycle.states) } }, 'strong', evidence(annotation.lifecycle.field ?? '', 'Explicit lifecycle state declaration.', 'declaration'));
   if (annotation.history) propose({ name: 'Supersedable', parameters: {} }, 'strong', evidence(annotation.history.field ?? '', 'Declared record history; review whether revisions replace one another before accepting Supersedable.', 'declaration'));
   for (const relationship of annotation.relationships ?? []) {
     const field = relationship.via;
@@ -108,4 +120,93 @@ export function suggestTraits(shape: MapValue, fields: Record<string, MapValue>,
     }
   }
   if (annotation.sortFields?.length) propose({ name: 'Sortable', parameters: { sortableFields: annotation.sortFields, defaultSortField: annotation.sortFields[0] } }, 'strong', evidence(annotation.sortFields[0], 'Declared sortable fields.', 'declaration'));
+}
+
+/** A value or a field name in one spelling: lower case, words joined by underscores (REQUEST_CHANGES, changesRequested). */
+const word = (value: string) => value.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase().replace(/[\s-]+/g, '_');
+const APPROVE = new Set(['approve', 'approved']);
+const REFUSE = new Set(['reject', 'rejected', 'decline', 'declined', 'deny', 'denied', 'disapprove', 'disapproved', 'request_changes', 'changes_requested']);
+/** s245-m03: the values of an ask still waiting for its answer, in no order of their own. */
+export const PENDING_STATES = ['pending', 'waiting', 'awaiting', 'requested', 'not_requested', 'request_review', 'review_requested', 'awaiting_approval', 'pending_approval', 'not_yet_asked'];
+/** How an ask is answered other than yes or no, or how it ends unanswered. */
+const ASK_ENDINGS = new Set(['comment', 'commented', 'dismissed', 'abstain', 'abstained', 'withdrawn', 'cancelled', 'canceled', 'expired', 'revoked', 'stale', 'out_of_date', 'outdated', 'taken_back', 'not_needed', 'not_required', 'no_longer_required', 'used', 'duplicate', 'skipped', 'timed_out']);
+const approves = (value: string) => APPROVE.has(word(value));
+const refuses = (value: string) => REFUSE.has(word(value));
+const pendingState = (value: string) => PENDING_STATES.includes(word(value));
+
+/**
+ * s245-m03 (d): the proposed initial state. A default the schema names wins. Otherwise the first value, unless it is an
+ * answer: a record does not start approved or declined (Jira's approved, declined, pending is alphabetical), so the first
+ * pending value, in the source's order, is the guess instead. A lifecycle that starts before it waits (new, open,
+ * pending, solved) keeps its first value.
+ */
+export function initialStateOf(states: string[], declared?: unknown): string {
+  if (typeof declared === 'string' && states.includes(declared)) return declared;
+  const first = states[0];
+  return typeof first === 'string' && (approves(first) || refuses(first)) ? states.find(pendingState) ?? first : first;
+}
+
+/** One person's answer: an approve value, a reject or decline value, and every value an answer, the wait for one or an ending. */
+export function answerValues(values: unknown[]): { approve: string; refuse: string } | undefined {
+  if (!values.every((value): value is string => typeof value === 'string')) return undefined;
+  const approve = values.find(approves), refuse = values.find(refuses);
+  return approve && refuse && values.every(value => approves(value) || refuses(value) || pendingState(value) || ASK_ENDINGS.has(word(value))) ? { approve, refuse } : undefined;
+}
+
+type Edge = { target: string; via: string; cardinality: string };
+type Evidence = Proposal['evidence'][number];
+/** A reference to a person named for who asked, or who owns or wrote the thing: not the one whose answer is kept. */
+const ASKER = /^(requested_by|requester|requestor|author|creator|created_by|owners?|submitter|submitted_by|initiator|reporter)(_id)?$/;
+const WHEN: Array<[string, RegExp, string]> = [
+  ['answered_at', /^(submitted|answered|decided|responded|reviewed|approved|participated|completed|actioned)(_(at|on|date|time))?$/, 'when the answer was given'],
+  ['asked_at', /^(requested|asked|sent)(_(at|on|date|time))?$/, 'when the person was asked'],
+  ['due_at', /^(due|deadline|expires|expiry|expiration)(_(at|on|date|time))?$/, 'when the answer is due'],
+];
+const COMMENT = /^(body|comments?|notes?|remarks?|message|reason)$/;
+const SHOWN = /^(commit(_(id|sha))?|(head_)?sha|revision(_id)?)$/;
+const typeOf = (field: FieldDefinition) => field.type.replace(/\?$/, '');
+
+/**
+ * s245-m03 (c): another system's table of approvals, one person's answer per row, recognised on structure (#2651). Two
+ * facts together earn medium: a single reference to a person or other principal (the one asked), and an answer enum
+ * (answerValues). Neither alone proposes anything: references to people are everywhere, and an approve/decline enum with
+ * no person beside it may be the outcome kept on the thing, which the importer does not read. A reference named for the
+ * asker or the owner is not the one asked. What else the record has is bound where its name says what it is: the asker,
+ * the one other record it points at (the thing), the dates, the comment and the version shown. Every other Decision field
+ * stays unbound, so a fact the source lacks is not on the record; design_compose names it when the answer screen is
+ * composed (OODS-V222). Strong stays for a declaration.
+ */
+export function approvalRecord(fields: Record<string, FieldDefinition>, relationships: Edge[], originOf: (field: string) => Origin, answerOrigin: (field: string) => Origin): { trait: TraitReference; evidence: Proposal['evidence']; answer: string } | undefined {
+  const names = Object.keys(fields);
+  const answer = names.find(field => Array.isArray(fields[field].validation?.enum) && answerValues(fields[field].validation!.enum as unknown[]));
+  if (!answer) return undefined;
+  const { approve, refuse } = answerValues(fields[answer].validation!.enum as unknown[])!;
+  const single = relationships.filter(edge => edge.cardinality === 'many-to-one' && fields[edge.via] && typeOf(fields[edge.via]) === 'string');
+  const people = single.filter(edge => principal(edge.target) && !ASKER.test(word(edge.via)));
+  const asked = people.find(edge => PERSON.test(principalWord(edge.target)!.replace(TECHNICAL, ''))) ?? people[0];
+  if (!asked) return undefined;
+  const bindings: Record<string, string> = { asked_of_id: asked.via };
+  const evidence: Evidence[] = [
+    { ...originOf(asked.via), kind: 'structure', reason: `${asked.via} references ${asked.target}, a person or other principal: the one asked, whose answer the record keeps (asked_of_id).` },
+    { ...answerOrigin(answer), kind: 'structure', reason: `${answer} holds an approve value (${approve}) and a ${/change/.test(word(refuse)) ? 'request-changes' : 'reject or decline'} value (${refuse}), and each of its values is an answer, the wait for one or how an ask ends: the record keeps one answer, and ${answer} is its lifecycle (Stateful).` },
+  ];
+  const named = (field: string, role: string, reason: string) => { bindings[role] = field; evidence.push({ ...originOf(field), kind: 'name', reason }); };
+  const asker = single.find(edge => edge.via !== asked.via && principal(edge.target) && ASKER.test(word(edge.via)));
+  if (asker) named(asker.via, 'requested_by_id', `${asker.via} references ${asker.target} and is named for who asked (requested_by_id).`);
+  const others = single.filter(edge => !principal(edge.target));
+  if (others.length === 1) {
+    bindings.subject_id = others[0].via;
+    evidence.push({ ...originOf(others[0].via), kind: 'structure', reason: `${others[0].via} references ${others[0].target}, the one record it points at besides people: the thing approved (subject_id).` });
+  }
+  const unbound = (field: string) => !Object.values(bindings).includes(field) && field !== answer;
+  for (const [role, pattern, meaning] of WHEN) {
+    const field = names.find(name => unbound(name) && typeOf(fields[name]) === 'datetime' && pattern.test(word(name)));
+    if (field) named(field, role, `${field} is a date-time named for ${meaning} (${role}).`);
+  }
+  const text = (name: string) => unbound(name) && typeOf(fields[name]) === 'string' && !fields[name].validation?.enum;
+  const comment = names.find(name => text(name) && COMMENT.test(word(name)));
+  if (comment) named(comment, 'comment', `${comment} is free text named as the answer's comment (comment).`);
+  const shown = names.find(name => text(name) && SHOWN.test(word(name)));
+  if (shown) named(shown, 'shown', `${shown} names the version the answer is about, which is what the person was shown (shown).`);
+  return { trait: { name: 'Decision', parameters: {}, fieldBindings: bindings }, evidence, answer };
 }

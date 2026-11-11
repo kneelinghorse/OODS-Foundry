@@ -46,7 +46,8 @@ import { composeObject, viewStateFields, type ComposedObject } from '../objects/
 import type { FieldDefinition, SemanticMapping, StateMachineDefinition, TraitAction } from '../objects/types.js';
 import { resolveIntentObject, fuzzyMatchObject } from '../compose/intent-object-resolver.js';
 import { populateCollections, populateListStates } from '../compose/collections.js';
-import { reconcileFormDetail, KEPT_BESIDE_PATTERN } from '../compose/form-detail.js';
+import { reconcileFormDetail, KEPT_BESIDE_PATTERN, formFactFields } from '../compose/form-detail.js';
+import { enforceApprovalFacts } from '../compose/approval-facts.js';
 import { populateRecordDisplay } from '../compose/record-display.js';
 import { populateObjectSchema, populateBindings, fillSlotsWithObject, wireFieldProps, applySelectionsToSchema, dropUnfilledInteractiveSlots, neutralizeUnfilledSurfaceSlots, bindCardHeadingField } from '../compose/object-slot-filler.js';
 import { enforceResultStateFamily } from '../compose/result-state.js';
@@ -1021,7 +1022,8 @@ const FORM_INTENT_PRIORITY = [
 function buildSemanticTypeMap(
   semantics?: Record<string, SemanticMapping>,
 ): Record<string, string> {
-  const semanticTypes: Record<string, string> = {};
+  // s245-m03: no prototype, so a field named like a built-in member (Jira's ChangeDetails.toString) finds no type.
+  const semanticTypes: Record<string, string> = Object.create(null);
   if (!semantics) return semanticTypes;
 
   for (const [name, sem] of Object.entries(semantics)) {
@@ -1535,7 +1537,8 @@ export async function swappableCandidates(input: DesignComposeInput, schema: UiS
         options: { ...(input.options ?? {}), transient: true, validate: false },
       });
     } catch (error) {
-      if (error instanceof ToolError && ['OODS-V204', 'OODS-V211'].includes(error.opiCode)) continue;
+      // A swap that would break a screen rule is not offered: the result family (V211), or an answer screen's facts (V221).
+      if (error instanceof ToolError && ['OODS-V204', 'OODS-V211', 'OODS-V221'].includes(error.opiCode)) continue;
       throw error;
     }
     if (trial.status !== 'ok' || !trial.schema) continue;
@@ -1763,8 +1766,14 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   // s213-m01: neither is a field the object's contract never supplies (unavailable).
   // Imported schemas carry explicit access direction. Do not expose write-only samples on read screens,
   // or place read-only fields in editable forms. The stored definition retains the complete source contract.
+  // s245-m02: a field a form view shows as a fact (Decision's four facts) stays in the form's record even when it is
+  // read-only, so the fact can be read beside the answer; it is never a field slot's candidate, so it gets no control.
+  const formFacts = layoutType === 'form' ? formFactFields(composed) : new Set<string>();
+  // The record's whole contract, before a screen hides its read-only or write-only fields (the approval-facts rule asks
+  // what the record keeps, not what this screen shows).
+  const recordSchema = composed?.schema;
   if (composed) {
-    const visible = Object.fromEntries(Object.entries(composed.schema).filter(([, field]) => layoutType === 'form' ? !field.readOnly : !field.writeOnly));
+    const visible = Object.fromEntries(Object.entries(composed.schema).filter(([name, field]) => layoutType === 'form' ? !field.readOnly || formFacts.has(name) : !field.writeOnly));
     const hidden = new Set(Object.keys(composed.schema).filter(field => !Object.hasOwn(visible, field)));
     const semantics = Object.fromEntries(Object.entries(composed.semantics).map(([field, semantic]) => {
       const ui_hints = { ...semantic.ui_hints };
@@ -1775,7 +1784,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   }
   const recordFields = composed ? Object.fromEntries(Object.entries(composed.schema).filter(([name, field]) => !viewState.has(name) && field.unavailable !== true)) : undefined;
   const formFields = composed && layoutType === 'form'
-    ? Object.fromEntries(Object.entries(recordFields!).filter(([, field]) => (
+    ? Object.fromEntries(Object.entries(recordFields!).filter(([name, field]) => !formFacts.has(name) && (
       Boolean(field.validation?.enum?.length)
       || ['string', 'datetime', 'email', 'date', 'url', 'uuid', 'integer', 'number', 'boolean'].includes(field.type.replace(/\?$/, ''))
     )))
@@ -2242,6 +2251,8 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   nameStatusTables(schema);
   // A result state renders in its own family, never a severity colour (s205-m03, traits/core/Assessable).
   enforceResultStateFamily(schema);
+  // An approval is answered only beside the thing, exactly what was shown, the level and the meaning (s245-m02).
+  if (composed) warnings.push(...enforceApprovalFacts(schema, recordSchema ? { ...composed, schema: recordSchema } : composed));
   // Every screen root is named after its object and context: the generated shell's heading when the screen places none.
   labelScreens(schema, effectiveObject, effectiveContext);
 

@@ -45,16 +45,17 @@ The line an agent leaves in another record's history is its most-seen screen. Ev
 | `actor_kind` | person, agent or system |
 | `on_behalf_of_name`, `on_behalf_of_id` | who it acted for |
 | `approved_by_name`, `approved_by_id` | who approved it, when someone did |
+| `approval_id`, `approval_level` | the approval the yes is kept in, and its level of yes |
 
 Every history in OODS Foundry prints them as one line:
 
-- **Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi**: an agent acting for an organization, with a person's approval;
+- **Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval)**: an agent acting for an organization, with a person's approval at the level the change needed;
 - **Ruth Adeyemi**: a person acting for herself;
 - **Billing Agent**: an agent acting as itself.
 
 A history written before these fields, with no names, shows exactly as it always has.
 
-![A payment's timeline: the transfer was returned, then sent again by the Billing Agent for Tidewater Co-op, approved by Ruth Adeyemi](agents-as-actors/transaction-timeline-light.png)
+![A payment's timeline: the transfer was returned, then sent again by the Billing Agent for Tidewater Co-op, approved by Ruth Adeyemi at the Approval level](agents-as-actors/transaction-timeline-light.png)
 
 ## On whose behalf: delegation
 
@@ -66,7 +67,7 @@ A history written before these fields, with no names, shows exactly as it always
 
 ## Approval and work
 
-Approval is a rule per action, not a trait of the agent: an action is allowed, asked first, or never taken. That is what `allowed_actions`, `asks_first_for` and `never_allowed` record. When a person approves an action the agent asked about, the change names them (`approved_by_name`).
+Approval is a rule per action, not a trait of the agent: an action is allowed, asked first, or never taken. That is what `allowed_actions`, `asks_first_for` and `never_allowed` record. When a person approves an action the agent asked about, the change names them (`approved_by_name`), and can point at the approval itself (`approval_id`) and name its level (`approval_level`). The approval is a record of its own: see [Approvals as decisions](approvals-as-decisions.md).
 
 An agent's work keeps the states its protocol gives it. A2A's task states (submitted, working, input-required, auth-required, completed, failed, canceled, rejected) arrive through the importer as a `Stateful` lifecycle on the record that holds them.
 

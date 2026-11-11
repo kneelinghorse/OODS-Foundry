@@ -1,0 +1,317 @@
+object:
+  name: Approval
+  version: 1.0.0
+  domain: core.governance
+  description: One ask to one person or agent for a yes, about one version of one thing, and the answer it became.
+  tags:
+    - universal
+    - governance
+    - core
+    - approval
+
+# An approval is a decision, not a status. One record is one ask to one actor that becomes their answer: who asked, and
+# for whom; who was asked; who answered, and for whom when a delegate or an agent answered; about exactly what they were
+# shown, at what level of yes, and what that yes means (the Decision trait's fields). It always points at one thing, a
+# Transaction or an Article in the samples, and keeps that thing's name, so it still reads after the thing changes or is
+# deleted. The answer is the record's lifecycle. The rule for which change needs which level, and the outcome worked out
+# from the approvals that still stand, live on the thing (Approvable). OODS Foundry keeps and shows the record; it does
+# not ask anyone, check who may answer, count answers, expire an ask or stop a change.
+traits:
+  - name: core/Decision
+    parameters:
+      levels:
+        - acknowledgement
+        - review
+        - approval
+        - sign_off
+  - name: lifecycle/Stateful
+    alias: ApprovalAnswer
+    parameters:
+      states:
+        - not_yet_asked
+        - waiting
+        - approved
+        - declined
+        - out_of_date
+        - taken_back
+        - expired
+        - withdrawn
+        - not_needed
+        - used
+      initialState: not_yet_asked
+  - name: lifecycle/Timestampable
+    alias: ApprovalTimes
+    parameters:
+      recordedEvents:
+        - created
+        - asked
+        - answered
+        - ended
+        - updated
+      timezone: UTC
+
+schema:
+  approval_id:
+    type: uuid
+    required: true
+    description: Primary identifier for the approval, the id a history entry's approval_id points at.
+  name:
+    type: string
+    required: true
+    description: What is asked, in a few words ("Approve the resend of PAY-2026-0429").
+    validation:
+      minLength: 1
+      maxLength: 120
+
+semantics:
+  approval_id:
+    semantic_type: governance.approval.id
+    token_mapping: tokenMap(identity.id.primary)
+  name:
+    semantic_type: text.label
+    token_mapping: tokenMap(identity.name.primary)
+  # The one-line summary under the approval's name in lists: exactly what the person was shown.
+  shown:
+    semantic_type: text.summary
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: What was shown
+
+tokens:
+  identity.id.primary: "var(--text-strong)"
+  identity.name.primary: "var(--text-strong)"
+
+metadata:
+  owners:
+    - Core team
+    - Platform team
+  steward: Design team
+  maturity: alpha
+  changelog:
+    - version: 1.0.0
+      date: "2026-11-11"
+      description: Initial Approval object, the thirteenth public reference object; an approval is a decision, not a status.
+
+# Eight authored sample approvals, each about a Transaction or Article sample, named by that record's reference or slug and
+# its name. One is asked by the Billing Agent for Tidewater Co-op; one is answered by a delegate; two are asked in order
+# about one article. Every approval is created as not yet asked (the lifecycle's initial state), and each history ends in
+# the approval's status.
+samples:
+  - approval_id: 7b3d5f9a-1c2e-4a6b-8d0f-2e4a6c8e0a01
+    name: Approve the resend of PAY-2026-0429
+    subject_type: Transaction
+    subject_id: PAY-2026-0429
+    subject_name: PAY-2026-0429
+    shown: Resend $12,000.00 by bank transfer for INV-2026-0155
+    level: approval
+    meaning: 'Approval: go ahead with the change as shown; it is yours to decide'
+    requested_by_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01
+    requested_by_name: Billing Agent
+    requested_by_kind: agent
+    requested_for_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05
+    requested_for_name: Tidewater Co-op
+    asked_of_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02
+    asked_of_name: Ruth Adeyemi
+    answered_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02
+    answered_by_name: Ruth Adeyemi
+    answered_by_kind: person
+    asked_at: '2026-09-28T20:41:00Z'
+    answered_at: '2026-09-28T20:55:00Z'
+    comment: Go ahead, with the invoice number in the reference
+    status: used
+    state_history:
+      - { title: Created, from: null, to: not_yet_asked, at: '2026-09-28T20:40:00Z', reason: Created when the bank returned the transfer, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01, actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05, on_behalf_of_name: Tidewater Co-op }
+      - { title: Asked, from: not_yet_asked, to: waiting, at: '2026-09-28T20:41:00Z', reason: Asked Ruth Adeyemi before resending, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01, actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05, on_behalf_of_name: Tidewater Co-op }
+      - { title: Approved, from: waiting, to: approved, at: '2026-09-28T20:55:00Z', reason: Approved for one resend with the invoice number, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02, actor_name: Ruth Adeyemi, actor_kind: person }
+      - { title: Used, from: approved, to: used, at: '2026-09-28T21:00:00Z', reason: Used by the resend of PAY-2026-0429, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01, actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05, on_behalf_of_name: Tidewater Co-op }
+    created_at: '2026-09-28T20:40:00Z'
+    updated_at: '2026-09-28T21:00:00Z'
+    last_event: ended
+    last_event_at: '2026-09-28T21:00:00Z'
+  - approval_id: 7b3d5f9a-1c2e-4a6b-8d0f-2e4a6c8e0a02
+    name: Approve publishing How prorations work when plans change
+    subject_type: Article
+    subject_id: how-prorations-work
+    subject_name: How prorations work when plans change
+    shown: Version 3, saved 1 Jul 2026
+    level: approval
+    meaning: 'Approval: go ahead with the change as shown; it is yours to decide'
+    requested_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02
+    requested_by_name: Marcus Hale
+    requested_by_kind: person
+    asked_of_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e04
+    asked_of_name: Sofia Brandt
+    answered_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e04
+    answered_by_name: Sofia Brandt
+    answered_by_kind: person
+    asked_at: '2026-07-01T10:00:00Z'
+    answered_at: '2026-07-08T13:30:00Z'
+    status: approved
+    state_history:
+      - { title: Created, from: null, to: not_yet_asked, at: '2026-07-01T10:00:00Z', reason: Created when the article went to review, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02, actor_name: Marcus Hale, actor_kind: person }
+      - { title: Asked, from: not_yet_asked, to: waiting, at: '2026-07-01T10:00:00Z', reason: Asked the billing lead, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02, actor_name: Marcus Hale, actor_kind: person }
+      - { title: Approved, from: waiting, to: approved, at: '2026-07-08T13:30:00Z', reason: Approved for publishing, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e04, actor_name: Sofia Brandt, actor_kind: person }
+    created_at: '2026-07-01T10:00:00Z'
+    updated_at: '2026-07-08T13:30:00Z'
+    last_event: answered
+    last_event_at: '2026-07-08T13:30:00Z'
+  - approval_id: 7b3d5f9a-1c2e-4a6b-8d0f-2e4a6c8e0a03
+    name: Approve publishing Set up automatic payment retries
+    subject_type: Article
+    subject_id: set-up-automatic-payment-retries
+    subject_name: Set up automatic payment retries
+    shown: Version 2, saved 11 Aug 2026
+    level: approval
+    meaning: 'Approval: go ahead with the change as shown; it is yours to decide'
+    requested_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e03
+    requested_by_name: Ines Duarte
+    requested_by_kind: person
+    asked_of_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e05
+    asked_of_name: Kwame Asante
+    answered_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e08
+    answered_by_name: Theo Nakamura
+    answered_by_kind: person
+    answered_for_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e05
+    answered_for_name: Kwame Asante
+    asked_at: '2026-08-12T09:00:00Z'
+    answered_at: '2026-08-19T12:30:00Z'
+    comment: Approving for Kwame while he is away
+    status: approved
+    state_history:
+      - { title: Created, from: null, to: not_yet_asked, at: '2026-08-12T09:00:00Z', reason: Created when the article went to review, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e03, actor_name: Ines Duarte, actor_kind: person }
+      - { title: Asked, from: not_yet_asked, to: waiting, at: '2026-08-12T09:00:00Z', reason: Asked the support lead, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e03, actor_name: Ines Duarte, actor_kind: person }
+      - { title: Approved, from: waiting, to: approved, at: '2026-08-19T12:30:00Z', reason: Approved by a delegate while the support lead was away, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e08, actor_name: Theo Nakamura, actor_kind: person, on_behalf_of_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e05, on_behalf_of_name: Kwame Asante }
+    created_at: '2026-08-12T09:00:00Z'
+    updated_at: '2026-08-19T12:30:00Z'
+    last_event: answered
+    last_event_at: '2026-08-19T12:30:00Z'
+  - approval_id: 7b3d5f9a-1c2e-4a6b-8d0f-2e4a6c8e0a04
+    name: Approve publishing Refund a duplicate charge
+    subject_type: Article
+    subject_id: refund-a-duplicate-charge
+    subject_name: Refund a duplicate charge
+    shown: Version 1, saved 24 Sep 2026
+    level: approval
+    meaning: 'Approval: go ahead with the change as shown; it is yours to decide'
+    requested_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e03
+    requested_by_name: Ines Duarte
+    requested_by_kind: person
+    asked_of_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e05
+    asked_of_name: Kwame Asante
+    asked_at: '2026-09-25T11:00:00Z'
+    due_at: '2026-10-02T11:00:00Z'
+    status: waiting
+    state_history:
+      - { title: Created, from: null, to: not_yet_asked, at: '2026-09-25T11:00:00Z', reason: Created when the article went to review, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e03, actor_name: Ines Duarte, actor_kind: person }
+      - { title: Asked, from: not_yet_asked, to: waiting, at: '2026-09-25T11:00:00Z', reason: Asked the support lead, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e03, actor_name: Ines Duarte, actor_kind: person }
+    created_at: '2026-09-25T11:00:00Z'
+    updated_at: '2026-09-25T11:00:00Z'
+    last_event: asked
+    last_event_at: '2026-09-25T11:00:00Z'
+  - approval_id: 7b3d5f9a-1c2e-4a6b-8d0f-2e4a6c8e0a05
+    name: Sign off Invoice numbers, tax IDs and legal names
+    subject_type: Article
+    subject_id: invoice-numbers-tax-ids
+    subject_name: Invoice numbers, tax IDs and legal names
+    shown: Version 2, saved 15 Sep 2026
+    level: sign_off
+    meaning: 'Sign-off: you answer for its tax and legal content'
+    requested_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02
+    requested_by_name: Marcus Hale
+    requested_by_kind: person
+    asked_of_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e09
+    asked_of_name: Lena Hoffmann
+    status: not_needed
+    state_history:
+      - { title: Created, from: null, to: not_yet_asked, at: '2026-09-16T08:00:00Z', reason: Created to follow the finance review, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02, actor_name: Marcus Hale, actor_kind: person }
+      - { title: Not needed, from: not_yet_asked, to: not_needed, at: '2026-09-18T08:00:00Z', reason: 'Not needed: the finance team sent the article back', actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02, actor_name: Marcus Hale, actor_kind: person }
+    created_at: '2026-09-16T08:00:00Z'
+    updated_at: '2026-09-18T08:00:00Z'
+    last_event: ended
+    last_event_at: '2026-09-18T08:00:00Z'
+  - approval_id: 7b3d5f9a-1c2e-4a6b-8d0f-2e4a6c8e0a06
+    name: Review Invoice numbers, tax IDs and legal names
+    subject_type: Article
+    subject_id: invoice-numbers-tax-ids
+    subject_name: Invoice numbers, tax IDs and legal names
+    shown: Version 2, saved 15 Sep 2026
+    level: review
+    meaning: 'Review: you have read it and it looks right; someone else decides'
+    requested_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02
+    requested_by_name: Marcus Hale
+    requested_by_kind: person
+    asked_of_id: 4e2a6c8e-0b1d-4f3a-9c5e-7a9b1c3d5e01
+    asked_of_name: Finance team
+    answered_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e06
+    answered_by_name: Nadia Farouk
+    answered_by_kind: person
+    answered_for_id: 4e2a6c8e-0b1d-4f3a-9c5e-7a9b1c3d5e01
+    answered_for_name: Finance team
+    asked_at: '2026-09-16T08:00:00Z'
+    answered_at: '2026-09-18T08:00:00Z'
+    comment: Needs the EU VAT section before it can go out
+    status: declined
+    state_history:
+      - { title: Created, from: null, to: not_yet_asked, at: '2026-09-16T08:00:00Z', reason: Created when the article went to review, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02, actor_name: Marcus Hale, actor_kind: person }
+      - { title: Asked, from: not_yet_asked, to: waiting, at: '2026-09-16T08:00:00Z', reason: Asked the finance team, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02, actor_name: Marcus Hale, actor_kind: person }
+      - { title: Declined, from: waiting, to: declined, at: '2026-09-18T08:00:00Z', reason: Needs the EU VAT section, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e06, actor_name: Nadia Farouk, actor_kind: person, on_behalf_of_id: 4e2a6c8e-0b1d-4f3a-9c5e-7a9b1c3d5e01, on_behalf_of_name: Finance team }
+    created_at: '2026-09-16T08:00:00Z'
+    updated_at: '2026-09-18T08:00:00Z'
+    last_event: answered
+    last_event_at: '2026-09-18T08:00:00Z'
+  - approval_id: 7b3d5f9a-1c2e-4a6b-8d0f-2e4a6c8e0a07
+    name: Approve publishing Introducing usage-based billing
+    subject_type: Article
+    subject_id: introducing-usage-based-billing
+    subject_name: Introducing usage-based billing
+    shown: Version 4, saved 23 Sep 2026
+    level: approval
+    meaning: 'Approval: go ahead with the change as shown; it is yours to decide'
+    requested_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e01
+    requested_by_name: Elena Park
+    requested_by_kind: person
+    asked_of_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e07
+    asked_of_name: Maya Lindgren
+    answered_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e07
+    answered_by_name: Maya Lindgren
+    answered_by_kind: person
+    asked_at: '2026-09-15T09:00:00Z'
+    answered_at: '2026-09-24T15:30:00Z'
+    status: out_of_date
+    state_history:
+      - { title: Created, from: null, to: not_yet_asked, at: '2026-09-15T09:00:00Z', reason: Created when the article went to review, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e01, actor_name: Elena Park, actor_kind: person }
+      - { title: Asked, from: not_yet_asked, to: waiting, at: '2026-09-15T09:00:00Z', reason: Asked product marketing, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e01, actor_name: Elena Park, actor_kind: person }
+      - { title: Approved, from: waiting, to: approved, at: '2026-09-24T15:30:00Z', reason: Approved for the October 6 launch, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e07, actor_name: Maya Lindgren, actor_kind: person }
+      - { title: Out of date, from: approved, to: out_of_date, at: '2026-09-30T10:00:00Z', reason: 'Out of date: the article was edited after the approval', actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e01, actor_name: Elena Park, actor_kind: person }
+    created_at: '2026-09-15T09:00:00Z'
+    updated_at: '2026-09-30T10:00:00Z'
+    last_event: ended
+    last_event_at: '2026-09-30T10:00:00Z'
+  - approval_id: 7b3d5f9a-1c2e-4a6b-8d0f-2e4a6c8e0a08
+    name: Approve publishing Pause a subscription for the off-season
+    subject_type: Article
+    subject_id: pause-a-subscription
+    subject_name: Pause a subscription for the off-season
+    shown: Version 2, saved 18 May 2026
+    level: approval
+    meaning: 'Approval: go ahead with the change as shown; it is yours to decide'
+    requested_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e03
+    requested_by_name: Ines Duarte
+    requested_by_kind: person
+    asked_of_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e05
+    asked_of_name: Kwame Asante
+    answered_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e05
+    answered_by_name: Kwame Asante
+    answered_by_kind: person
+    asked_at: '2026-05-19T10:00:00Z'
+    answered_at: '2026-05-26T11:30:00Z'
+    status: approved
+    state_history:
+      - { title: Created, from: null, to: not_yet_asked, at: '2026-05-19T10:00:00Z', reason: Created when the article went to review, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e03, actor_name: Ines Duarte, actor_kind: person }
+      - { title: Asked, from: not_yet_asked, to: waiting, at: '2026-05-19T10:00:00Z', reason: Asked the support lead, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e03, actor_name: Ines Duarte, actor_kind: person }
+      - { title: Approved, from: waiting, to: approved, at: '2026-05-26T11:30:00Z', reason: Approved for publishing, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e05, actor_name: Kwame Asante, actor_kind: person }
+    created_at: '2026-05-19T10:00:00Z'
+    updated_at: '2026-05-26T11:30:00Z'
+    last_event: answered
+    last_event_at: '2026-05-26T11:30:00Z'

@@ -44,6 +44,28 @@ A per-record bot or app flag says some records are agents; OODS keeps agents in 
 
 Work states arrive through `Stateful`. A proto3 JSON enum (its string values beside an `*_UNSPECIFIED` sentinel pattern and the int32 wire form, as in A2A's `TaskStatus.state`) is read as its string values, without the sentinel. A `status` or `state` field that references a record holding one state enum is flattened to those states, so A2A's `Task` is proposed `Stateful` with its eight task states, and `TaskStatus` stays its own object.
 
+A person or other principal is a record whose name is user, account, organization, team, group, directory object, person, member or principal. The name is read with one technical suffix off (DTO, VO, Model, Entity, Bean, Resource, Response, Schema, Representation) and with a plural s, so Jira's `UserDTO` and a `users` table count; a name with another word beside it, such as `UserLinkDTO` or `CommitUser`, does not. The same match feeds every rule on this page.
+
+### Approval records
+
+An approval is a decision, not a status: one person's answer about one thing, kept as a record of its own (see [Approvals as decisions](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.13.0/docs/concepts/approvals-as-decisions.md)). Where another system keeps a table of approvals, one answer per row, the importer proposes `Decision` for it, graded on structure:
+
+| Evidence in the schema | Proposal | Grade |
+|---|---|---|
+| A single reference to a person or other principal, beside an answer enum: an approve value, a reject, decline or request-changes value, and every other value the wait for an answer or how an ask ends (pending, requested, comment, dismissed, withdrawn, expired and the like) | `Decision`, with the person as the one asked (`asked_of_id`), and `Stateful` on the answer | medium |
+| The same, with a reference to one other record, dates, a comment or a commit | the same, with those bound too | medium |
+| An answer enum with no person beside it, a person with no answer enum, a person named as the asker, author or owner, or a lifecycle with states beyond an answer (draft, published) | nothing | |
+
+The two structural facts decide; names only say where the rest goes. Beside them, the importer binds what the record has where its name says what it is: a reference named for the asker (`requested_by`, `requester`, `author`) as `requested_by_id`; the one other record it references as the thing (`subject_id`); a date-time named for when it was answered (`submitted_at`, `decided_at`), asked (`requested_at`) or due (`due_date`) as `answered_at`, `asked_at` or `due_at`; free text named `body`, `comment` or `notes` as the comment; and a `commit_id`, `sha` or `revision` as what was shown. Every other `Decision` field stays unbound: a fact the source lacks is not on the record, and nothing is invented for it. An id bound without its name is shown as the id.
+
+The record's lifecycle is its answer, even where another enum sorts first (Bitbucket's `participant` has `role`, then `state`); the other enum is reported as an alternative. A record does not start in an answer: where an enum's first value is one (Jira's `approved`, `declined`, `pending` is alphabetical), the first pending value in the source's order is the proposed initial state. The pending values are pending, waiting, awaiting, requested, not requested, request review, review requested, awaiting approval, pending approval and not yet asked. A default the schema names still wins, and a lifecycle that starts before it waits (new, open, pending) keeps its first value.
+
+Accepting `Decision` never fails for a fact the source lacks. The screen where an answer is given needs four facts beside the answer: the thing, exactly what was shown, the level and the meaning. Where the record keeps none of some of them, the accepted object's form composes, and `design_compose`'s reply warns `OODS-V222`, naming them; the warning is not shown at acceptance, so compose the form to see it. If you bind a fact and a screen leaves it out, `design_compose` refuses that screen (`OODS-V221`).
+
+Measured on three published schemas: Jira Service Management's `ApproverDTO` is proposed `Decision` with its approver and answer, keeping neither the thing, what was shown, the level nor the meaning; Gitea's `PullReview` with its reviewer, answer, submission time, body and commit; Bitbucket Cloud's `participant` with its user, answer and time of taking part. Jira's `ApprovalDTO`, the ask that holds its approvers and their final decision, has no person beside its outcome, so it gets no `Decision`; its two dates are links to `DateDTO`, a record of three text renderings and a number, not date fields.
+
+The importer does not propose `Approvable`: an approval outcome kept as a field on the thing, such as GitHub's `reviewDecision`, is not read. A person referenced through a numeric key, such as an integer foreign key, is not bound, because `Decision` keeps ids as text, so that table gets no proposal.
+
 ```json
 {"action":"apply","importId":"<from draft>","objects":[{"name":"YourObject","proposals":["<accepted proposal id>"]}]}
 ```
@@ -54,7 +76,7 @@ Omit `proposals` to accept an object with no traits. Accept dependencies in the 
 
 ## What is preserved
 
-Primitive fields, supported formats, nullability, examples, defaults and constraints become object fields. Compatible `allOf` declarations merge; conflicting intersections are reported. `oneOf`/`anyOf` alternatives remain distinct, including discriminators; a null-plus-one-type union can become a nullable field. Named object references become relationship identifier fields. Source names and every normalized value retain file/pointer provenance.
+Primitive fields, supported formats, nullability, examples, defaults and constraints become object fields. Compatible `allOf` declarations merge; conflicting intersections are reported. `oneOf`/`anyOf` alternatives remain distinct, including discriminators; a null-plus-one-type union can become a nullable field. Named object references become relationship identifier fields, including a reference wrapped in `allOf` beside nothing but annotations, the way OpenAPI 3.0 writes a described reference. Swagger 2.0's `file` type is read as a binary string. Source names and every normalized value retain file/pointer provenance.
 
 Read-only fields are omitted from editable forms. Write-only fields and their samples are omitted from read screens. Maps, nested documents, unconstrained values, unsupported unions and unsupported metadata remain in the hub with explicit unmapped outcomes. API operations do not become executable actions. Samples without supplied examples are illustrative, not customer records. The report's mapped, proposed and unmapped counts sum to its total.
 

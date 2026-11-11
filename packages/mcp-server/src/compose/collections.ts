@@ -2,6 +2,7 @@ import type { FieldSchemaEntry, UiElement, UiSchema } from '../schemas/generated
 import { fieldLabel } from './label-generator.js';
 import { enumOptionLabel } from './internal-fields.js';
 import { recordNameField, recordSummaryField } from './record-label.js';
+import { fallbackKeyField } from '../objects/record-identity.js';
 
 const walk = (nodes: UiElement[]): UiElement[] => nodes.flatMap(node => [node, ...walk(node.children ?? [])]);
 
@@ -68,7 +69,7 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
   const keyField = Object.keys(fields).find(name => name === 'id')
     ?? Object.keys(fields).find(name => name === `${objectName.toLowerCase()}_id`)
     ?? Object.keys(fields).find(name => name.endsWith('_id'))
-    ?? Object.keys(fields)[0]!;
+    ?? fallbackKeyField(fields)!;
   // s206-m01: a row names the record with the field its object declares (recordNameField), not a trait's generic label.
   const labelField = recordNameField(objectName, fields) ?? keyField;
   // s210-m01: the record's one-line summary (the field marked text.summary) reads under its name on every row.

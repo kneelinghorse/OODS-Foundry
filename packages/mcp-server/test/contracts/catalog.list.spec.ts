@@ -373,7 +373,8 @@ describe('catalog.list', () => {
       expect(statusBadge.traits.length).toBe(unique.size);
       // s212-m01 adopted the fresh export (#2324), the first to record Assessable (s205-m03) and Supersedable (s203-m02),
       // whose view extensions place StatusBadge; each trait is named once however many contexts it places it in.
-      expect(statusBadge.traits).toEqual(['Assessable', 'Stateful', 'Statusable', 'Supersedable']);
+      // s245-m01: Approvable places StatusBadge for its outcome, and is named once too.
+      expect(statusBadge.traits).toEqual(['Approvable', 'Assessable', 'Stateful', 'Statusable', 'Supersedable']);
     }
   });
 

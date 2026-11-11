@@ -24,7 +24,8 @@ const PROVENANCE_LABELS: Record<string, string> = {
 };
 
 export function fieldLabel(name: string, _description?: string): string {
-  if (PROVENANCE_LABELS[name]) return PROVENANCE_LABELS[name]!;
+  // Own entries only: a field named like a built-in member (Jira's ChangeDetails.toString) is labelled by its name.
+  if (Object.hasOwn(PROVENANCE_LABELS, name)) return PROVENANCE_LABELS[name]!;
   const unitLabel = unitFieldLabel(name);
   if (unitLabel) return unitLabel;
   const words = name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/[_-]+/g, ' ');
@@ -47,7 +48,7 @@ export function fieldHelp(name: string, description?: string): string | undefine
     placeholder: 'Shown when the label is empty.',
     tag_count: 'Number of tags assigned to this record.',
   };
-  return description ? help[name] ?? description : undefined;
+  return description ? (Object.hasOwn(help, name) ? help[name] : undefined) ?? description : undefined;
 }
 
 /** Resolve anonymous form-slot labels before framework normalization can emit Field N. */

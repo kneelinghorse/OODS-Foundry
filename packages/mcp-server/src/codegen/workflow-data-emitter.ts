@@ -32,6 +32,9 @@ export function neutralFieldValue(field: FieldSchemaEntry): unknown {
   // An empty date renders as not recorded; the epoch invents a historical event.
   if (type === 'date' || type === 'datetime') return field.required ? '' : undefined;
   if (type === 'uuid') return field.required ? '' : undefined;
+  // s245-m02: an optional enum a record leaves out is not recorded; an empty string is no member of it (a waiting
+  // approval has no answerer, so no answerer's kind).
+  if (field.enum?.length && !field.required) return undefined;
   return '';
 }
 

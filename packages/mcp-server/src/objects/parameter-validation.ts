@@ -41,8 +41,38 @@ export function parameterProblems(name: string, supplied: Record<string, unknown
         required: definition.parameters.filter(p => p.required && p.default === undefined).map(p => p.name) });
     }
   }
-  if (validate!(parameters)) return [];
-  return (validate!.errors ?? []).map(error => ({
+  const problems = validate!(parameters) ? [] : (validate!.errors ?? []).map(error => ({
     path: error.instancePath || '/', message: `${definition.trait.name}${error.instancePath}: ${error.message} (${JSON.stringify(error.params)})`,
   }));
+  return traitEntry(name)?.source === 'shipped' ? [...problems, ...levelProblems(definition.trait.name, parameters)] : problems;
+}
+
+/**
+ * s245-m01: a thing's approval rule may name only the levels its trait declares in `levels`. A parameter schema cannot
+ * hold one parameter's keys or values to another parameter's list, so the shipped trait's references are checked here,
+ * each problem naming the level that is not declared and where it is named.
+ */
+const LEVEL_REFERENCES: Readonly<Record<string, ReadonlyArray<{ parameter: string; at: 'keys' | 'values' | 'items'; names: string }>>> = {
+  Approvable: [
+    { parameter: 'levelDefinitions', at: 'keys', names: 'defines' },
+    { parameter: 'requiredLevels', at: 'values', names: 'requires' },
+    { parameter: 'approvalsNeeded', at: 'keys', names: 'counts' },
+    { parameter: 'agentLevels', at: 'items', names: 'lets an agent give' },
+  ],
+};
+
+function levelProblems(trait: string, parameters: Record<string, unknown>): Array<{ path: string; message: string }> {
+  const references = LEVEL_REFERENCES[trait];
+  const levels = parameters.levels;
+  if (!references || !Array.isArray(levels) || !levels.every(level => typeof level === 'string')) return [];
+  const declared = new Set(levels as string[]);
+  return references.flatMap(({ parameter, at, names }) => {
+    const value = parameters[parameter];
+    const named: Array<[string, unknown]> = Array.isArray(value) ? (at === 'items' ? value.map((level, index) => [String(index), level]) : [])
+      : value && typeof value === 'object' ? Object.entries(value).map(([key, level]) => [key, at === 'keys' ? key : level]) : [];
+    return named.filter(([, level]) => typeof level === 'string' && !declared.has(level)).map(([key, level]) => ({
+      path: `/${parameter}/${key}`,
+      message: `${trait}/${parameter}/${key}: ${names} the level "${level}", which levels does not declare (${[...declared].join(', ')}).`,
+    }));
+  });
 }

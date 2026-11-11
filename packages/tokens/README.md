@@ -50,4 +50,4 @@ Generated apps pin the OODS release that generated them; to upgrade, regenerate 
 
 ## License
 
-Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/tokens@0.12.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/tokens@0.12.0/NOTICE). The Geist, Geist Mono and DM Sans font files are under the SIL Open Font License 1.1, and the colour calibration derived from Radix Colors (`dist/radix-calibration.json`) is under the MIT License; NOTICE carries those licences and where the files come from. Generated output belongs to its user; installed package dependencies retain their own licenses.
+Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/tokens@0.13.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/tokens@0.13.0/NOTICE). The Geist, Geist Mono and DM Sans font files are under the SIL Open Font License 1.1, and the colour calibration derived from Radix Colors (`dist/radix-calibration.json`) is under the MIT License; NOTICE carries those licences and where the files come from. Generated output belongs to its user; installed package dependencies retain their own licenses.

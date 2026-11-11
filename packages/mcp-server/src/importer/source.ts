@@ -11,6 +11,21 @@ export function canonical(value: unknown): string {
   return JSON.stringify(value, (_key, entry) => isMap(entry) ? Object.fromEntries(Object.keys(entry).sort().map(key => [key, entry[key]])) : entry);
 }
 export type Origin = { file: string; pointer: string };
+/** Keywords that describe a schema without constraining it, plus x- extensions. */
+const ANNOTATIONS = new Set(['title', 'description', 'default', 'example', 'examples', 'deprecated', 'readOnly', 'writeOnly', '$comment', 'externalDocs', 'xml']);
+const annotation = (key: string) => ANNOTATIONS.has(key) || key.startsWith('x-');
+/**
+ * s245-m03: a field that is an allOf of one reference, beside nothing but annotations, is that reference. OpenAPI 3.0
+ * ignores a $ref's siblings, so a described reference is written { allOf: [{ $ref }], description } (Jira Service
+ * Management's ApproverDTO.approver). Returns the branch holding the $ref. A shape built from allOf is not one and keeps
+ * merging.
+ */
+export function wrappedReference(schema: unknown): MapValue | undefined {
+  if (!isMap(schema) || schema.$ref !== undefined || !Array.isArray(schema.allOf) || schema.allOf.length !== 1) return undefined;
+  const [branch] = schema.allOf;
+  if (!isMap(branch) || typeof branch.$ref !== 'string' || !Object.keys(branch).every(key => key === '$ref' || annotation(key))) return undefined;
+  return Object.keys(schema).every(key => key === 'allOf' || annotation(key)) ? branch : undefined;
+}
 export type SourceInput = { path?: string; content?: string; name?: string; format?: 'openapi' | 'json-schema' | 'sql' | 'prisma' | 'dbt' | 'odata' | 'graphql' };
 export const MAX_SOURCE_BYTES = 128 * 1024 * 1024;
 const MAX_INLINE_BYTES = 1024 * 1024;

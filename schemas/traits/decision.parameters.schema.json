@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/07/schema",
+  "$id": "https://trait-engine.dev/schemas/traits/decision",
+  "title": "Decision Trait Parameters",
+  "description": "Configuration contract for the Decision trait: the levels of yes a record of one ask and its answer can be asked at.",
+  "type": "object",
+  "properties": {
+    "levels": {
+      "type": "array",
+      "description": "The levels of yes the product declares, in order, each named for the kind of yes asked for. A record's level is one of them.",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[A-Za-z0-9_-]+$",
+        "description": "A level's name, such as acknowledgement, review, approval or sign_off."
+      }
+    }
+  },
+  "required": ["levels"],
+  "additionalProperties": false,
+  "examples": [
+    { "levels": ["acknowledgement", "review", "approval", "sign_off"] },
+    { "levels": ["review", "approval"] }
+  ]
+}

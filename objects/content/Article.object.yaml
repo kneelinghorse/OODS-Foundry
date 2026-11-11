@@ -1,6 +1,6 @@
 object:
   name: Article
-  version: 1.0.0
+  version: 1.1.0
   domain: content.publication
   description: Canonical editorial article with hybrid taxonomy + tag classification for CMS surfaces.
   tags:
@@ -40,6 +40,42 @@ traits:
       tag_policy: moderated
       max_tags: 24
       require_primary_category: true
+  # s245-m02: an article can be approved. Its rule: a knowledge-base or how-to article, or an announcement, needs an
+  # approval before it is published; release notes publish with each release. The outcome is written by the product from
+  # the Approval records that name the article, and kept off the form; OODS Foundry shows it and does not work it out.
+  - name: core/Approvable
+    alias: ArticleApprovals
+    parameters:
+      levels:
+        - review
+        - approval
+        - sign_off
+      levelDefinitions:
+        review:
+          who: Someone who knows the subject
+          permits: Nothing on its own; it counts toward the approval
+          shown: The version and what changed in it
+          cost: A mistake that the approver may still catch
+          act: A careful read, then one step
+          lapses: When the article changes
+        approval:
+          who: The lead whose readers the article serves
+          permits: Publishing the version they saw
+          shown: The version, as it will be published
+          cost: Wrong help in front of customers
+          act: A deliberate yes or no
+          lapses: When the article changes after the yes
+        sign_off:
+          who: Legal, for tax and legal content
+          permits: Publishing what the company answers for
+          shown: The version and what the yes means
+          cost: A legal statement the company did not mean to make
+          act: The most deliberate, with its meaning written down
+          lapses: Never for that version; a new version needs a new sign-off
+      requiredLevels:
+        publish_knowledge_base: approval
+        publish_how_to: approval
+        publish_announcement: approval
 
 schema:
   article_id:
@@ -148,6 +184,9 @@ metadata:
     - Docs team
   steward: Publishing team
   changelog:
+    - version: 1.1.0
+      date: "2026-11-11"
+      description: Composes Approvable; guides and announcements need an approval to publish, and each sample says its outcome.
     - version: 1.0.0
       date: "2025-11-18"
       description: Initial article object composing hybrid Classifiable mode for taxonomy + tags.
@@ -186,6 +225,8 @@ samples:
     primary_category_id: updates-release-notes
     primary_category_path: Updates > Release notes
     tag_preview: releases
+    approval_state: not_required
+    approval_summary: 'No approval asked: release notes publish with each release after a product review'
     status: published
     state_history:
       - { title: Drafted, from: null, to: draft, at: '2026-09-22T09:00:00Z', reason: Drafted from the release checklist }
@@ -214,6 +255,8 @@ samples:
     primary_category_id: billing-plans
     primary_category_path: Billing > Plans
     tag_preview: prorations, upgrades
+    approval_state: approved
+    approval_summary: Approved by Sofia Brandt · version 3 · 8 Jul
     status: published
     state_history:
       - { title: Drafted, from: null, to: draft, at: '2026-06-22T10:00:00Z', reason: Requested by the support team }
@@ -241,6 +284,8 @@ samples:
     primary_category_id: billing-payments
     primary_category_path: Billing > Payments
     tag_preview: retries, dunning
+    approval_state: approved
+    approval_summary: Approved by Theo Nakamura for Kwame Asante · version 2 · 19 Aug
     status: published
     state_history:
       - { title: Drafted, from: null, to: draft, at: '2026-08-05T09:00:00Z', reason: Drafted for the retries launch }
@@ -267,6 +312,8 @@ samples:
     primary_category_id: updates-announcements
     primary_category_path: Updates > Announcements
     tag_preview: usage, launch
+    approval_state: out_of_date
+    approval_summary: 'Out of date: edited on 30 Sep, after Maya Lindgren approved version 4'
     status: scheduled
     state_history:
       - { title: Drafted, from: null, to: draft, at: '2026-09-01T09:00:00Z', reason: Drafted for the October launch }
@@ -274,9 +321,9 @@ samples:
       - { title: Scheduled, from: in_review, to: scheduled, at: '2026-09-24T16:00:00Z', reason: Scheduled for October 6 }
     published_at: null
     created_at: '2026-09-01T09:00:00Z'
-    updated_at: '2026-09-24T16:00:00Z'
-    last_event: scheduled
-    last_event_at: '2026-09-24T16:00:00Z'
+    updated_at: '2026-09-30T10:00:00Z'
+    last_event: updated
+    last_event_at: '2026-09-30T10:00:00Z'
   - label: Refund a duplicate charge
     description: Find and refund a charge made twice
     slug: refund-a-duplicate-charge
@@ -293,6 +340,8 @@ samples:
     primary_category_id: billing-payments
     primary_category_path: Billing > Payments
     tag_preview: refunds
+    approval_state: waiting
+    approval_summary: Waiting for Kwame Asante · version 1 · due 2 Oct
     status: in_review
     state_history:
       - { title: Drafted, from: null, to: draft, at: '2026-09-17T11:00:00Z', reason: Written after a support ticket }
@@ -318,6 +367,8 @@ samples:
     primary_category_id: billing-invoices
     primary_category_path: Billing > Invoices
     tag_preview: invoices, tax
+    approval_state: declined
+    approval_summary: Declined by Nadia Farouk for the finance team · needs the EU VAT section
     status: draft
     state_history:
       - { title: Drafted, from: null, to: draft, at: '2026-09-08T08:00:00Z', reason: Drafted for the tax settings page }
@@ -344,6 +395,8 @@ samples:
     primary_category_id: updates-announcements
     primary_category_path: Updates > Announcements
     tag_preview: plans
+    approval_state: not_required
+    approval_summary: 'No approval asked: published in October 2025, before this help centre kept approvals'
     status: archived
     state_history:
       - { title: Drafted, from: null, to: draft, at: '2025-10-01T09:00:00Z', reason: Drafted with the pricing change }
@@ -371,6 +424,8 @@ samples:
     primary_category_id: billing-subscriptions
     primary_category_path: Billing > Subscriptions
     tag_preview: subscriptions
+    approval_state: approved
+    approval_summary: Approved by Kwame Asante · version 2 · 26 May
     status: published
     state_history:
       - { title: Drafted, from: null, to: draft, at: '2026-05-11T10:00:00Z', reason: Requested by seasonal customers }
