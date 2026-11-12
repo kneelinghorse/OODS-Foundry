@@ -1,6 +1,6 @@
 trait:
   name: Stateful
-  version: 2.2.0
+  version: 2.2.1
   description: |
     Normalizes lifecycle state transitions, exposes canonical status semantics, and provides
     optional transition governance for production workflows. Many objects compose Stateful
@@ -11,7 +11,9 @@ trait:
     status. When governance is enabled via transitionRules, it additionally enforces which
     transitions are allowed, records the actor and reason for each transition, and materializes
     the set of valid next states — making it suitable for auditable workflows where arbitrary
-    state jumps are not permitted.
+    state jumps are not permitted. The product does that enforcing: OODS Foundry keeps the order as
+    data and moves no record, the product checks each change against it and writes
+    allowed_transitions, and a generated StatusSelector offers every state.
   category: lifecycle
   tags:
     - lifecycle
@@ -191,7 +193,7 @@ dependencies: []
 
 metadata:
   created: "2025-10-12"
-  updated: "2026-11-11"
+  updated: "2026-11-12"
   owners:
     - Design team
     - Engineering team

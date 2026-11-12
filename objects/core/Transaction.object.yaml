@@ -1,6 +1,6 @@
 object:
   name: Transaction
-  version: 1.2.0
+  version: 1.2.1
   domain: core.commerce
   description: Canonical transaction record tracking monetary movement, lifecycle, and audit metadata.
   tags:
@@ -71,10 +71,10 @@ traits:
         approval:
           who: A person at the customer who may move its money
           permits: The one resend or refund it was asked for
-          shown: The amount, the method and the invoice it is for
+          shown: The amount, the method, the invoice it is for, and anything this resend must do differently
           cost: Money sent twice, or to the wrong place
           act: A deliberate yes or no
-          lapses: Once it is used, or when the amount changes
+          lapses: Once it is used (the resend is sent and recorded, not when the bank answers), or when the amount changes
         sign_off:
           who: The customer's finance lead
           permits: A payment above the customer's own limit
@@ -202,6 +202,9 @@ metadata:
     - Risk team
   steward: Platform team
   changelog:
+    - version: 1.2.1
+      date: "2026-11-12"
+      description: The approval level says what its shown line carries, anything the resend must do differently included, and when a yes is used.
     - version: 1.2.0
       date: "2026-11-11"
       description: Composes Approvable; a resend needs an approval, and each sample says its outcome. The Billing Agent's resend points at its Approval.

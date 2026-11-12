@@ -214,7 +214,7 @@ describe('acceptance', () => {
     expect(JSON.stringify(applied)).not.toContain('OODS-V22');
     const form = await compose({ object: 'ApproverDTO', context: 'form', options: { transient: true } });
     expect(form.status).toBe('ok');
-    expect((form.warnings ?? []).filter((warning: any) => warning.code === 'OODS-V222').map((warning: any) => warning.message)).toEqual([expect.stringContaining('do not keep the thing, exactly what was shown, the level or the meaning')]);
+    expect((form.warnings ?? []).filter((warning: any) => warning.code === 'OODS-V222').map((warning: any) => warning.message)).toEqual([expect.stringContaining('do not keep the thing, exactly what was shown, the level, the meaning or who is asking')]);
     const detail = await compose({ object: 'ApproverDTO', context: 'detail', options: { transient: true } });
     expect(detail.status).toBe('ok');
   });

@@ -3,10 +3,10 @@
  * becomes their answer, about one version of one thing. These specs pin why each part matters:
  * - its samples tell true stories about the other samples: each names a real payment or article by its reference or slug
  *   and its name, and the thing's outcome follows from its approvals by one stated mapping;
- * - on the screen where an answer is given, the thing, exactly what was shown, the level and the meaning are read and
- *   never edited, in every renderer and in the generated app;
- * - the composer holds that screen to those four facts: a fact the record keeps and the screen leaves out is refused;
- *   a fact the record does not keep is a warning, and the screen still composes;
+ * - on the screen where an answer is given, the thing, exactly what was shown, the level and the meaning, and (s246) who
+ *   is asking and for whom, are read and never edited, in every renderer and in the generated app;
+ * - the composer holds that screen to those five facts: a fact the record keeps and the screen leaves out is refused;
+ *   a fact the record does not keep is a warning, and the screen still composes (where each must sit: s246's spec);
  * - a form view is a fact only when it says so, so every 0.12.0 form composes as it did, a team's Statusable one included.
  */
 import { vi } from 'vitest';
@@ -35,7 +35,8 @@ import { renderGenerated, runGeneratedStore } from '../product-reality/render-ge
 const { JSDOM } = createRequire(import.meta.url)('jsdom') as { JSDOM: { fragment(html: string): DocumentFragment } };
 const text = (html: string) => (JSDOM.fragment(html).textContent ?? '').replace(/\s+/g, ' ');
 type Sample = Record<string, unknown>;
-const FACT_FIELDS = ['subject_id', 'subject_name', 'shown', 'level', 'meaning'];
+const FACT_FIELDS = ['subject_id', 'subject_name', 'shown', 'level', 'meaning', 'requested_by_id', 'requested_by_name', 'requested_for_id', 'requested_for_name'];
+const FACT_LABELS = ['Approving', 'What was shown', 'Level', 'What this yes means', 'Asked by', 'Asked for'];
 const CONTROLS = new Set(['Input', 'Select', 'SegmentedControl', 'Combobox', 'Textarea', 'DatePicker', 'Checkbox', 'Switch', 'Toggle', 'StatusSelector']);
 const bound = (node: UiElement) => Object.entries(node.props ?? {}).flatMap(([key, value]) => (key === 'field' || key.endsWith('Field')) && typeof value === 'string' ? [value] : []);
 
@@ -62,7 +63,7 @@ const nameOf = (type: string, sample: Sample) => String(type === 'Transaction' ?
 describe('Approval is the thirteenth public object', () => {
   it('composes Decision, Stateful and Timestampable, with a lifecycle that starts before anyone is asked', () => {
     const approval = loadObject('Approval');
-    expect(approval.object).toMatchObject({ name: 'Approval', version: '1.0.0' });
+    expect(approval.object).toMatchObject({ name: 'Approval', version: '1.1.0' });
     expect(approval.object).not.toHaveProperty('visibility');
     expect(approval.traits.map(trait => trait.name)).toEqual(['core/Decision', 'lifecycle/Stateful', 'lifecycle/Timestampable']);
     const lifecycle = approval.traits[1]!.parameters!;
@@ -91,7 +92,7 @@ describe('Approval is the thirteenth public object', () => {
 
   it('marks a form view a fact only where Decision says so: no other shipped form view carries the mark', () => {
     const marked = listTraits().flatMap(name => (loadTrait(name).view_extensions.form ?? []).filter(view => view.fact !== undefined).map(view => `${name}:${String(view.props?.field)}`));
-    expect(marked).toEqual(['Decision:subject_id', 'Decision:subject_name', 'Decision:shown', 'Decision:level', 'Decision:meaning']);
+    expect(marked).toEqual(['Decision:subject_id', 'Decision:subject_name', 'Decision:shown', 'Decision:level', 'Decision:meaning', 'Decision:requested_by_id', 'Decision:requested_by_name', 'Decision:requested_for_id', 'Decision:requested_for_name']);
     for (const name of listObjects()) expect(JSON.stringify(loadObject(name)), name).not.toContain('"fact":');
   });
 
@@ -191,12 +192,12 @@ describe('the eight Approval samples tell true stories about the Transaction and
   });
 });
 
-describe('on Approval\'s form the four facts are read beside the answer and never edited', () => {
+describe('on Approval\'s form the facts are read beside the answer and never edited', () => {
   it('places each fact as a labelled row with no control, and keeps one required input for the answer form', async () => {
     const { schema } = await compose({ object: 'Approval', context: 'form', options: { transient: true } } as never) as { schema: UiSchema };
     const nodes = schemaNodes(schema);
     const facts = nodes.filter(node => node.meta?.intent === FORM_FACT);
-    expect(facts.map(row => row.children?.[0]?.props?.content)).toEqual(['Approving', 'What was shown', 'Level', 'What this yes means']);
+    expect(facts.map(row => row.children?.[0]?.props?.content)).toEqual(FACT_LABELS);
     for (const field of FACT_FIELDS) expect(nodes.filter(node => CONTROLS.has(node.component) && bound(node).includes(field)), field).toEqual([]);
     // The answer is the lifecycle's own control; the approval's name is the required input a form keeps.
     expect(nodes.filter(node => node.component === 'StatusSelector').map(node => node.props?.field)).toEqual(['status']);
@@ -218,7 +219,7 @@ describe('on Approval\'s form the four facts are read beside the answer and neve
     }
     for (const [renderer, page] of Object.entries(pages)) {
       const fragment = JSDOM.fragment(page);
-      for (const label of ['Approving', 'What was shown', 'Level', 'What this yes means']) expect(text(page), `${renderer}: ${label}`).toContain(label);
+      for (const label of FACT_LABELS) expect(text(page), `${renderer}: ${label}`).toContain(label);
       for (const field of FACT_FIELDS) expect(fragment.querySelectorAll(`input[name="${field}"], select[name="${field}"], textarea[name="${field}"]`).length, `${renderer}: ${field}`).toBe(0);
     }
     for (const framework of ['react', 'vue'] as const) {
@@ -230,13 +231,13 @@ describe('on Approval\'s form the four facts are read beside the answer and neve
   });
 });
 
-describe('the composer holds the screen where an answer is given to the four facts', () => {
+describe('the composer holds the screen where an answer is given to the five facts', () => {
   it('passes Approval\'s own form, and refuses each fact left out, naming it', async () => {
     const result = await compose({ object: 'Approval', context: 'form', options: { transient: true } } as never) as { status: string; schema: UiSchema; warnings?: Array<{ code: string }> };
     expect(result.status).toBe('ok');
     expect((result.warnings ?? []).map(warning => warning.code)).not.toContain('OODS-V222');
     const composed = composeObject(loadObject('Approval'));
-    for (const [fact, fields] of [['the thing', ['subject_id', 'subject_name']], ['exactly what was shown', ['shown']], ['the level', ['level']], ['the meaning', ['meaning']]] as const) {
+    for (const [fact, fields] of [['the thing', ['subject_id', 'subject_name']], ['exactly what was shown', ['shown']], ['the level', ['level']], ['the meaning', ['meaning']], ['who is asking', ['requested_by_id', 'requested_by_name']], ['who it is asked for', ['requested_for_id', 'requested_for_name']]] as const) {
       const schema = structuredClone(result.schema);
       const drop = (node: UiElement): void => { node.children = node.children?.filter(child => !bound(child).some(field => (fields as readonly string[]).includes(field))); node.children?.forEach(drop); };
       schema.screens.forEach(drop);
@@ -328,11 +329,11 @@ describe('the composer holds the screen where an answer is given to the four fac
     it('warns in design_compose\'s reply naming every fact a record does not keep, and the form composes (Jira\'s ApproverDTO)', async () => {
       const none = await composeIn('NoFacts', 'form');
       expect(none.status).toBe('ok');
-      expect(none.warnings?.filter(warning => warning.code === 'OODS-V222').map(warning => warning.message)).toEqual([expect.stringContaining('do not keep the thing, exactly what was shown, the level or the meaning')]);
+      expect(none.warnings?.filter(warning => warning.code === 'OODS-V222').map(warning => warning.message)).toEqual([expect.stringContaining('do not keep the thing, exactly what was shown, the level, the meaning or who is asking')]);
       const one = await composeIn('OnlyLevel', 'form');
       expect(one.status).toBe('ok');
       const message = one.warnings?.find(warning => warning.code === 'OODS-V222')?.message ?? '';
-      expect(message).toContain('the thing, exactly what was shown or the meaning');
+      expect(message).toContain('the thing, exactly what was shown, the meaning or who is asking');
       expect(message).not.toContain('the level');
       // The fact the record keeps is read on the form, with no control.
       expect(schemaNodes(one.schema).filter(node => node.meta?.intent === FORM_FACT).map(row => row.children?.[1]?.props?.field)).toEqual(['approval_level_name']);

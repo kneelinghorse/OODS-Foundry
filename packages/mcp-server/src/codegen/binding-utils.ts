@@ -832,8 +832,9 @@ export function resolveFieldProps(
   const entry = ownFieldSchemaEntry(objectSchema, fieldProp);
   if (!entry) return null;
   const strategy = getContentStrategy(node.component);
-  // A DatePicker binds its value through form state (content strategy none) but still takes required (#2442).
-  if (strategy === 'none' && node.component !== 'DatePicker') return null;
+  // A DatePicker binds its value through form state (content strategy none) but still takes required (#2442), and so
+  // does a Textarea (s246-m02).
+  if (strategy === 'none' && node.component !== 'DatePicker' && node.component !== 'Textarea') return null;
 
   const existing = (node.props as Record<string, unknown>) ?? {};
   const props: FieldPropEnrichment = {};
@@ -861,9 +862,10 @@ export function resolveFieldProps(
       const inputType = SEMANTIC_TYPE_TO_INPUT[entry.type.replace(/\?$/, '')];
       if (inputType) props.type = inputType;
     }
-  } else if (node.component === 'Select' || node.component === 'DatePicker' || node.component === 'Combobox') {
+  } else if (node.component === 'Select' || node.component === 'DatePicker' || node.component === 'Combobox' || node.component === 'Textarea') {
     // s219-m01 (#2442): a declared-required date gets the browser's native enforcement, like Input and Select. The
     // DatePicker contract and all three renderers already carried required; this function never passed it.
+    // s246-m02: so does a required field edited in a text area (Article's body), which kept its mark as an Input.
     if (entry.required && existing.required === undefined) {
       props.required = true;
     }

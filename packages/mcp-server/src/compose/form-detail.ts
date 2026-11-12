@@ -8,6 +8,7 @@ import { recordTitleField } from './record-label.js';
 import { VIZ_CONTROL_IDS, componentContracts } from '@oods/component-contracts';
 import { resolveTraitRecipeProps } from './trait-recipes.js';
 import { isLevelOneHeading, RECORD_SUMMARY_INTENT } from '../codegen/screen-shell.js';
+import { isLongTextField } from './long-text.js';
 
 /** s213-m03: marks a trait component the status-timeline pattern group kept beside its own fields (design.compose). */
 export const KEPT_BESIDE_PATTERN = 'kept-beside-pattern';
@@ -48,7 +49,7 @@ export const FORM_FACT = 'form-fact';
 
 /**
  * s245-m02: the record fields a composed object's form views show as facts: a view says so with `fact: true` (Decision's
- * four facts beside an approval's answer). A display component alone is not a fact: a Text or a StatusBadge in a form view
+ * five facts beside an approval's answer). A display component alone is not a fact: a Text or a StatusBadge in a form view
  * means what it meant in 0.12.0, and no 0.12.0 form view carries the mark.
  */
 export function formFactFields(composed: ComposedObject | undefined): Set<string> {
@@ -147,7 +148,11 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
     if (fieldStack) for (const [name, entry] of missing) {
       fieldEditors.add(name);
       const type = entry.type.replace(/\?$/, '');
-      const component = entry.enum?.length ? 'Select' : type === 'boolean' ? 'Checkbox' : 'Input';
+      // s246-m02 (next step 1859): a long text field the slots missed is edited in a text area, as a slotted one is, so
+      // a multi-line value keeps its lines (Article's body read "Payments.2. Under Retries" in a one-line input).
+      const definition = composed.schema[name];
+      const component = entry.enum?.length ? 'Select' : type === 'boolean' ? 'Checkbox'
+        : definition && isLongTextField(name, { ...definition, type }, composed.semantics) ? 'Textarea' : 'Input';
       fieldStack.children ??= [];
       fieldStack.children.push({ id: `${fieldStack.id}-required-${name}`, component,
         props: { field: name, ...(entry.enum?.length ? { options: entry.enum.map(value => ({ value, label: enumOptionLabel(value, entry.enumLabels) })) } : {}) },
@@ -187,8 +192,9 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       if (entry && controls.has(node.component)) {
         const type = entry.type.replace(/\?$/, '');
         // Selector heuristics must not turn names/status codes into paragraphs,
-        // or a timezone/period label into a native date input.
-        if (node.component === 'Textarea' && !/description|reason|notes|body|content|instructions/.test(String(field))) node.component = 'Input';
+        // or a timezone/period label into a native date input. s246-m02: a comment is written in a text area (Approval's,
+        // typed beside the answer, was cut off in a one-line input on a phone).
+        if (node.component === 'Textarea' && !/description|reason|notes|body|content|instructions|comment/.test(String(field))) node.component = 'Input';
         if (node.component === 'DatePicker' && !['date', 'datetime'].includes(type)) node.component = 'Input';
         if (entry.enum?.length && ['Input', 'Textarea'].includes(node.component)) { node.component = 'Select'; node.props = { field }; }
         const requested = composed.semantics?.[field as string]?.ui_hints?.component;
@@ -390,8 +396,14 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
     const parent = title ? findNode(screen, node => Boolean(node.children?.includes(title))) : undefined;
     // The title's region stacks the title, its summary and the actions: a row of them does not wrap at phone width.
     if (parent?.layout?.type === 'inline') parent.layout = { ...parent.layout, type: 'stack', gapToken: 'stack-default' };
-    if (title && parent && summary.length) {
-      parent.children!.splice(parent.children!.indexOf(title) + 1, 0, { id: `${screen.id}-record-summary`, component: 'Stack', layout: { type: 'inline', gapToken: 'cluster-tight' }, meta: { intent: RECORD_SUMMARY_INTENT }, children: summary });
+    // s246-m02 (next step 1853): a record with no title reads its state at the head of the header. Its timeline is removed
+    // when it has no history and covers the status, so a record with no name and no history (Jira's ApproverDTO) showed
+    // its answer nowhere on its page. Every shipped object has a title, so none moves.
+    const holder = title ? parent : header;
+    if (holder && summary.length) {
+      const row: UiElement = { id: `${screen.id}-record-summary`, component: 'Stack', layout: { type: 'inline', gapToken: 'cluster-tight' }, meta: { intent: RECORD_SUMMARY_INTENT }, children: summary };
+      if (title) holder.children!.splice(holder.children!.indexOf(title) + 1, 0, row);
+      else holder.children = [row, ...(holder.children ?? [])];
       for (const node of summary) for (const field of boundFields(node.props)) covered.add(field);
       // s222-m03: a plan's price is a row in its details tab and now in its header; the header's copy is the one that stays.
       const shown = new Set(summary.flatMap(node => [node.props?.statusField ?? node.props?.amountField].filter((field): field is string => typeof field === 'string')));
@@ -399,7 +411,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         node.children = node.children?.filter(child => !(child.id.endsWith('-read-field') && child.children?.some(item => item.meta?.intent === 'read-only-field' && [item.props?.field, item.props?.statusField, item.props?.amountField].some(field => typeof field === 'string' && shown.has(field)))));
         node.children?.forEach(dropShown);
       };
-      for (const child of screen.children ?? []) if (child !== parent) dropShown(child);
+      for (const child of screen.children ?? []) if (child !== holder) dropShown(child);
     }
     const remaining = Object.keys(fields).filter(name => isScalar(name) && summaryField(name) && !covered.has(name) && !isInternalField(name, fields) && !isUnavailableField(name, fields));
     if (remaining.length && !tabs) {

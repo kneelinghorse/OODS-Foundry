@@ -1,6 +1,6 @@
 trait:
   name: Decision
-  version: 1.0.0
+  version: 1.1.0
   description: |
     The record of one ask to one actor and the answer it became: who asked, and for whom; who was asked; who answered,
     and for whom when a delegate or an agent answered; about exactly what, at what level of yes, and what that yes
@@ -48,7 +48,7 @@ parameters:
       - sign_off
 
 # Every field but the comment is written by the product, when it asks and when it records the answer, so a form never
-# edits it (readOnly); the comment is what the person answering says. The four facts are still read on the form (below).
+# edits it (readOnly); the comment is what the person answering says. The five facts are still read on the form (below).
 schema:
   requested_by_id:
     type: string
@@ -140,8 +140,11 @@ schema:
     required: true
     readOnly: true
     description: |
-      Exactly what the person was shown, in one line: for a document, its version ("Version 3, saved 1 Jul 2026"); for
-      an agent's action, the action and its particulars ("Resend $12,000.00 by bank transfer for INV-2026-0155").
+      Exactly what the person was shown, in one line, which is what a yes approves: for a document, its version
+      ("Version 3, saved 1 Jul 2026"); for an agent's action, the action and its particulars, with anything it must do
+      differently this time:
+      "Resend $12,000.00 by bank transfer for INV-2026-0155, with the invoice number in the reference".
+      A comment never changes it.
     validation:
       maxLength: 240
   level:
@@ -467,9 +470,10 @@ view_extensions:
       props:
         field: comment
 
-  # s245-m02: on the form, the screen where an answer is given, the four facts are read beside the answer and are not
-  # edited there: the thing, exactly what was shown, the level and its meaning. `fact: true` is the mark that makes a form
-  # view a fact (no 0.12.0 form view carries it): the field stays in the form's record and gets no editing control.
+  # s245-m02: on the form, the screen where an answer is given, the facts are read beside the answer and are not edited
+  # there: the thing, exactly what was shown, the level and its meaning, and (s246-m01) who is asking and for whom.
+  # `fact: true` is the mark that makes a form view a fact (no 0.12.0 form view carries it): the field stays in the form's
+  # record and gets no editing control.
   form:
     - component: Text
       position: top
@@ -501,6 +505,33 @@ view_extensions:
       fact: true
       props:
         field: meaning
+    # s246-m01: who is asking, and for whom, read after the meaning and before the answer, in the detail page's order. Each
+    # party is placed by its id and its kept name, as the thing is: an import binds an asker by its id alone, and where
+    # both are kept the form reads the name and leaves the id's row out.
+    - component: Text
+      position: top
+      priority: 75
+      fact: true
+      props:
+        field: requested_by_id
+    - component: Text
+      position: top
+      priority: 74
+      fact: true
+      props:
+        field: requested_by_name
+    - component: Text
+      position: top
+      priority: 73
+      fact: true
+      props:
+        field: requested_for_id
+    - component: Text
+      position: top
+      priority: 72
+      fact: true
+      props:
+        field: requested_for_name
 
 # The answer is the record's lifecycle, so the record composes Stateful beside this trait.
 dependencies:

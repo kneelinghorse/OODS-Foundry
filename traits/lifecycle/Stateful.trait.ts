@@ -9,7 +9,7 @@ export type TransitionRules = Record<string, string[]>;
 const StatefulTrait = {
   trait: {
     name: 'Stateful',
-    version: '2.2.0',
+    version: '2.2.1',
     description:
       'Normalizes lifecycle state transitions, exposes canonical status semantics, and provides ' +
       'optional transition governance for production workflows. Most-composed trait (18 objects).',

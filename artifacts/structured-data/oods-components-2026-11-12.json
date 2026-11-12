@@ -8,7 +8,7 @@
     "approvedRuntimeCensus": null,
     "classificationStatus": "proposed-awaiting-approval"
   },
-  "generatedAt": "2026-11-11T12:16:01Z",
+  "generatedAt": "2026-11-12T09:02:32Z",
   "stats": {
     "componentCount": 114,
     "traitCount": 52,
@@ -11885,6 +11885,50 @@
         {
           "trait": "Decision",
           "traitCategory": "core",
+          "context": "form",
+          "position": "top",
+          "priority": 75,
+          "props": {
+            "field": "requested_by_id"
+          },
+          "source": "traits/core/Decision.trait.yaml"
+        },
+        {
+          "trait": "Decision",
+          "traitCategory": "core",
+          "context": "form",
+          "position": "top",
+          "priority": 74,
+          "props": {
+            "field": "requested_by_name"
+          },
+          "source": "traits/core/Decision.trait.yaml"
+        },
+        {
+          "trait": "Decision",
+          "traitCategory": "core",
+          "context": "form",
+          "position": "top",
+          "priority": 73,
+          "props": {
+            "field": "requested_for_id"
+          },
+          "source": "traits/core/Decision.trait.yaml"
+        },
+        {
+          "trait": "Decision",
+          "traitCategory": "core",
+          "context": "form",
+          "position": "top",
+          "priority": 72,
+          "props": {
+            "field": "requested_for_name"
+          },
+          "source": "traits/core/Decision.trait.yaml"
+        },
+        {
+          "trait": "Decision",
+          "traitCategory": "core",
           "context": "list",
           "position": "after",
           "priority": null,
@@ -12276,6 +12320,10 @@
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/5",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/12",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/13",
+              "packages/mcp-server/registry/runtime-cells.v1.json#/rows/18",
+              "packages/mcp-server/registry/runtime-cells.v1.json#/rows/19",
+              "packages/mcp-server/registry/runtime-cells.v1.json#/rows/26",
+              "packages/mcp-server/registry/runtime-cells.v1.json#/rows/27",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/32",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/33",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/40",
@@ -18720,7 +18768,7 @@
     },
     {
       "name": "Decision",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "description": "The record of one ask to one actor and the answer it became: who asked, and for whom; who was asked; who answered,\nand for whom when a delegate or an agent answered; about exactly what, at what level of yes, and what that yes\nmeans. An approval is a decision, not a status. The Approval object composes this trait, and the importer\nproposes it for another system's table of approvals, so every field lives here and a proposal can bind what the\nsource has.\n\nThe answer itself is not a field of this trait. It is the record's own lifecycle, through Stateful: not yet asked,\nwaiting, approved, declined, and the ways a yes ends (out of date, taken back, expired, withdrawn, not needed,\nused). A refusal changes nothing on the thing, so it is kept here and not as a line in the thing's history.\n\nA reference to a person, an agent or a thing is an id and a kept name. The name is kept on the record, so it still\nreads after the person leaves or the thing is deleted, and it is shown wherever the id is. The kinds are the Actor\ntrait's three words: person, agent or system.\n\nThe level is one of the names the product declares in `levels`, in order, the way it declares a lifecycle's states;\nthe thing approved declares the same names through Approvable. The meaning is one kept line saying what this yes\nmeans and permits, in words, written by the product when it asks (\"Sign-off: you answer for this release\"): 21 CFR\n11.50 requires a signed record to show \"the meaning (such as review, approval, responsibility, or authorship)\nassociated with the signature\".\n\nOODS Foundry keeps and shows this record. It does not ask anyone, check who may answer, count answers, expire an\nask or stop a change.",
       "category": "core",
       "tags": [
@@ -19016,6 +19064,42 @@
           "props": {
             "field": "meaning"
           }
+        },
+        {
+          "component": "Text",
+          "context": "form",
+          "position": "top",
+          "priority": 75,
+          "props": {
+            "field": "requested_by_id"
+          }
+        },
+        {
+          "component": "Text",
+          "context": "form",
+          "position": "top",
+          "priority": 74,
+          "props": {
+            "field": "requested_by_name"
+          }
+        },
+        {
+          "component": "Text",
+          "context": "form",
+          "position": "top",
+          "priority": 73,
+          "props": {
+            "field": "requested_for_id"
+          }
+        },
+        {
+          "component": "Text",
+          "context": "form",
+          "position": "top",
+          "priority": 72,
+          "props": {
+            "field": "requested_for_name"
+          }
         }
       ],
       "parameters": [
@@ -19141,7 +19225,7 @@
           "type": "string",
           "required": true,
           "readOnly": true,
-          "description": "Exactly what the person was shown, in one line: for a document, its version (\"Version 3, saved 1 Jul 2026\"); for\nan agent's action, the action and its particulars (\"Resend $12,000.00 by bank transfer for INV-2026-0155\").\n",
+          "description": "Exactly what the person was shown, in one line, which is what a yes approves: for a document, its version\n(\"Version 3, saved 1 Jul 2026\"); for an agent's action, the action and its particulars, with anything it must do\ndifferently this time:\n\"Resend $12,000.00 by bank transfer for INV-2026-0155, with the invoice number in the reference\".\nA comment never changes it.\n",
           "validation": {
             "maxLength": 240
           }
@@ -26253,8 +26337,8 @@
     },
     {
       "name": "Stateful",
-      "version": "2.2.0",
-      "description": "Normalizes lifecycle state transitions, exposes canonical status semantics, and provides\noptional transition governance for production workflows. Many objects compose Stateful\n(User, Subscription and Product among them), and it serves as the data source for the\nColorized visual trait.\n\nAt its simplest, Stateful defines an ordered list of valid states and tracks the current\nstatus. When governance is enabled via transitionRules, it additionally enforces which\ntransitions are allowed, records the actor and reason for each transition, and materializes\nthe set of valid next states — making it suitable for auditable workflows where arbitrary\nstate jumps are not permitted.",
+      "version": "2.2.1",
+      "description": "Normalizes lifecycle state transitions, exposes canonical status semantics, and provides\noptional transition governance for production workflows. Many objects compose Stateful\n(User, Subscription and Product among them), and it serves as the data source for the\nColorized visual trait.\n\nAt its simplest, Stateful defines an ordered list of valid states and tracks the current\nstatus. When governance is enabled via transitionRules, it additionally enforces which\ntransitions are allowed, records the actor and reason for each transition, and materializes\nthe set of valid next states — making it suitable for auditable workflows where arbitrary\nstate jumps are not permitted. The product does that enforcing: OODS Foundry keeps the order as\ndata and moves no record, the product checks each change against it and writes\nallowed_transitions, and a generated StatusSelector offers every state.",
       "category": "lifecycle",
       "tags": [
         "lifecycle",
@@ -26417,7 +26501,7 @@
       "dependencies": [],
       "metadata": {
         "created": "2025-10-12",
-        "updated": "2026-11-11",
+        "updated": "2026-11-12",
         "owners": [
           "Design team",
           "Engineering team"
@@ -27618,7 +27702,7 @@
     },
     {
       "name": "Approval",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "domain": "core.governance",
       "description": "One ask to one person or agent for a yes, about one version of one thing, and the answer it became.",
       "tags": [
@@ -27656,7 +27740,36 @@
               "not_needed",
               "used"
             ],
-            "initialState": "not_yet_asked"
+            "initialState": "not_yet_asked",
+            "transitionRules": {
+              "not_yet_asked": [
+                "waiting",
+                "withdrawn",
+                "not_needed"
+              ],
+              "waiting": [
+                "approved",
+                "declined",
+                "expired",
+                "withdrawn",
+                "not_needed"
+              ],
+              "approved": [
+                "used",
+                "out_of_date",
+                "taken_back",
+                "expired",
+                "withdrawn",
+                "not_needed"
+              ],
+              "declined": [],
+              "out_of_date": [],
+              "taken_back": [],
+              "expired": [],
+              "withdrawn": [],
+              "not_needed": [],
+              "used": []
+            }
           }
         },
         {
@@ -27708,6 +27821,11 @@
         "steward": "Design team",
         "maturity": "alpha",
         "changelog": [
+          {
+            "version": "1.1.0",
+            "date": "2026-11-12",
+            "description": "Declares the order of its states, with the endings final; the resend's shown line carries the correction it approves, so the comment is a remark."
+          },
           {
             "version": "1.0.0",
             "date": "2026-11-11",
@@ -30164,7 +30282,7 @@
     },
     {
       "name": "Transaction",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "domain": "core.commerce",
       "description": "Canonical transaction record tracking monetary movement, lifecycle, and audit metadata.",
       "tags": [
@@ -30260,10 +30378,10 @@
               "approval": {
                 "who": "A person at the customer who may move its money",
                 "permits": "The one resend or refund it was asked for",
-                "shown": "The amount, the method and the invoice it is for",
+                "shown": "The amount, the method, the invoice it is for, and anything this resend must do differently",
                 "cost": "Money sent twice, or to the wrong place",
                 "act": "A deliberate yes or no",
-                "lapses": "Once it is used, or when the amount changes"
+                "lapses": "Once it is used (the resend is sent and recorded, not when the bank answers), or when the amount changes"
               },
               "sign_off": {
                 "who": "The customer's finance lead",
@@ -30360,6 +30478,11 @@
         ],
         "steward": "Platform team",
         "changelog": [
+          {
+            "version": "1.2.1",
+            "date": "2026-11-12",
+            "description": "The approval level says what its shown line carries, anything the resend must do differently included, and when a yes is used."
+          },
           {
             "version": "1.2.0",
             "date": "2026-11-11",

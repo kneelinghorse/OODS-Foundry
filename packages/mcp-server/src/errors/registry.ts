@@ -656,12 +656,13 @@ const registry: ReadonlyMap<string, ErrorDefinition> = new Map<string, ErrorDefi
   ['OODS-V220', { code: 'OODS-V220', category: 'validation', message: 'Object import refused or rolled back', retryable: true, severity: 'error',
     cause: 'Source, references, staging integrity, accepted proposals or composed batch failed validation.',
     fix: 'Read the source pointer or rollback details, correct the input, draft again and explicitly accept the intended objects.' }],
-  // The approval-facts rule (s245-m02, traits/core/Decision): an answer is given only beside the four facts it is about.
+  // The approval-facts rule (s245-m02, s246-m01, traits/core/Decision): an answer is given only beside the five facts it is
+  // about, on its own screen and not in another tab or across a dialog's edge.
   ['OODS-V221', { code: 'OODS-V221', category: 'validation', message: 'Approval answer screen leaves out a fact the record keeps', retryable: false, severity: 'error',
-    cause: 'A screen where an approval can be answered leaves out the thing, exactly what was shown, the level or the meaning, though the record keeps it.',
-    fix: "Place the Decision trait's form views for the facts, or bind a node on the screen to each fact the record keeps." }],
+    cause: 'A screen where an approval can be answered does not show, beside the answer, the thing, exactly what was shown, the level, the meaning, who is asking, or who it is asked for, though the record keeps it; a fact in another tab, in a dialog the answer is not in or on another screen is not beside it.',
+    fix: "Place the Decision trait's form views for the facts, or bind a node beside the answer to each fact the record keeps, on its screen, in its tab and inside the same dialog." }],
   ['OODS-V222', { code: 'OODS-V222', category: 'validation', message: 'Approval record keeps no fact its answer screen should show', retryable: false, severity: 'warning',
-    cause: 'The record keeps no field for the thing, exactly what was shown, the level or the meaning, so the screen where an answer is given cannot show it.',
+    cause: 'The record keeps no field for the thing, exactly what was shown, the level, the meaning or who is asking, so the screen where an answer is given cannot show it.',
     fix: 'Bind the Decision field for each missing fact to a field the source keeps, or accept that the person answering sees only what the record keeps.' }],
 
   // ── Conflict ────────────────────────────────────────────────────────────

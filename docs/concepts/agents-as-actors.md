@@ -65,6 +65,8 @@ A history written before these fields, with no names, shows exactly as it always
 - its lifecycle is the grant's: proposed (requested), active, paused, then terminated (revoked) or completed (expired);
 - the agent's `acts_for` names the same grant on its own page.
 
+**Handing work to another agent passes on no authority.** Each agent acts under its own grant. A second agent, such as one that checks the tax on an invoice, is its own `Agent`, with its own sponsor, roles, rules and grants; being given the work gives it none of the first agent's authority. A grant passed on from one agent to another is not modelled: a delegation runs from the person or organization acted for to the agent, and nothing ties an agent-to-agent grant to the grant it came from, limits it to that grant's scope and end, or ends it when that grant ends. A history line names one party acted for, not a chain.
+
 ## Approval and work
 
 Approval is a rule per action, not a trait of the agent: an action is allowed, asked first, or never taken. That is what `allowed_actions`, `asks_first_for` and `never_allowed` record. When a person approves an action the agent asked about, the change names them (`approved_by_name`), and can point at the approval itself (`approval_id`) and name its level (`approval_level`). The approval is a record of its own: see [Approvals as decisions](approvals-as-decisions.md).

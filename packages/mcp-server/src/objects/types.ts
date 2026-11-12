@@ -130,7 +130,7 @@ export interface ViewExtension {
   priority?: number;
   props?: Record<string, unknown>;
   /**
-   * s245-m02: a form view that shows its field as a fact, read and not edited there (Decision's four facts beside an
+   * s245-m02: a form view that shows its field as a fact, read and not edited there (Decision's five facts beside an
    * approval's answer). The field stays in the form's record and gets no editing control. No 0.12.0 view carries it.
    */
   fact?: boolean;

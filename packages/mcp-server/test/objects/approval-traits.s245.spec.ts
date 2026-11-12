@@ -50,7 +50,7 @@ describe('core/Decision and core/Approvable are shipped traits', () => {
   it('Decision holds the record\'s fields, every id a plain string so an imported reference can bind', () => {
     expect(listTraits()).toEqual(expect.arrayContaining(['Decision', 'Approvable']));
     const decision = loadTrait('core/Decision');
-    expect(decision.trait).toMatchObject({ name: 'Decision', version: '1.0.0', category: 'core' });
+    expect(decision.trait).toMatchObject({ name: 'Decision', version: '1.1.0', category: 'core' });
     expect(Object.keys(decision.schema)).toEqual(DECISION_FIELDS);
     for (const field of DECISION_FIELDS.filter(name => name.endsWith('_id'))) expect(decision.schema[field]!.type, field).toBe('string');
     expect(Object.entries(decision.schema).filter(([, field]) => field.required).map(([name]) => name)).toEqual(['subject_name', 'shown', 'level', 'meaning']);
@@ -159,7 +159,7 @@ describe('the two traits composed onto test objects, in every context where each
       '    subject_type: Transaction',
       '    subject_id: PAY-2026-0429',
       '    subject_name: PAY-2026-0429 for INV-2026-0155',
-      '    shown: Resend $12,000.00 by bank transfer for INV-2026-0155',
+      '    shown: Resend $12,000.00 by bank transfer for INV-2026-0155, with the invoice number in the reference',
       '    level: approval',
       '    meaning: "Approval: go ahead with this one resend"',
       '    requested_by_id: agt_billing',
@@ -283,7 +283,7 @@ describe('the two traits composed onto test objects, in every context where each
 
   it('Decision places its facts on the detail page as labelled rows, in the order it declares them, in all three renderers', async () => {
     const { html, react, vue } = await pages('Probe', 'detail');
-    const order = ['Approving', 'PAY-2026-0429 for INV-2026-0155', 'Kind of thing', 'What was shown', 'Resend $12,000.00 by bank transfer for INV-2026-0155',
+    const order = ['Approving', 'PAY-2026-0429 for INV-2026-0155', 'Kind of thing', 'What was shown', 'Resend $12,000.00 by bank transfer for INV-2026-0155, with the invoice number in the reference',
       'Level', 'Approval', 'What this yes means', 'Approval: go ahead with this one resend', 'Asked by', 'Billing Agent', 'Kind of asker', 'Agent',
       'Asked for', 'Tidewater Co-op', 'Asked of', 'Ruth Adeyemi', 'Answered by', 'Kind of answerer', 'Person', 'Asked', 'Answered', 'Comment', 'Go ahead.'];
     for (const [renderer, page] of [['html', html], ['react', react], ['vue', vue]] as const) {

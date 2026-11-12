@@ -103,7 +103,8 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   // Sprint 241 retains its owner-role refresh pair; only the manifest closure ships.
   // Sprint 244 m04 retains its Agent/Actor refresh pair (#2829), the 2026-11-08 exports; only the manifest closure ships.
   // Sprint 245 m04 retains its Approval/Decision/Approvable refresh pair (#2848), the 2026-11-11 exports; likewise.
-  "artifacts/structured-data": 69,
+  // Sprint 246 m04 retains its 0.13.1 refresh pair (#2878), the 2026-11-12 exports; likewise.
+  "artifacts/structured-data": 71,
 });
 
 export const ABSOLUTE_PATH_EXEMPTIONS = new Set([

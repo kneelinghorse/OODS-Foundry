@@ -15,13 +15,13 @@ export interface StatefulTraitParameters {
    */
   initialState: string;
   /**
-   * Allowed state transition map. Keys are source states; values are arrays of permitted target states. Null means open model (all transitions allowed).
+   * Allowed state transition map. Keys are source states; values are arrays of permitted target states, and an empty array marks a final state. Null means open model (all transitions allowed).
    */
   transitionRules?: {
     /**
-     * @minItems 1
+     * @minItems 0
      */
-    [k: string]: [string, ...string[]];
+    [k: string]: string[];
   } | null;
   /**
    * When true, every state transition must include a human-readable reason.

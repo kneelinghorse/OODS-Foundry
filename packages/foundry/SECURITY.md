@@ -1,6 +1,6 @@
 # Security
 
-This note describes OODS Foundry 0.13.0. It does not claim a completed network audit.
+This note describes OODS Foundry 0.13.1. It does not claim a completed network audit.
 
 ## What runs on your machine
 
@@ -34,7 +34,7 @@ These are source-qualified configuration statements, not a claim that every exec
 Before a release is published, every package in its runtime archive is checked, name and version, against npm's
 advisory data. The package's own manifest declares no dependencies because the runtime travels inside it, so the check
 reads the archive itself. A high or critical advisory stops the release unless an exception names that package,
-version and advisory with a reason and a decision. 0.13.0 has no exception.
+version and advisory with a reason and a decision. 0.13.1 has no exception.
 
 Releases up to this one fixed these advisories by upgrading or removing the affected dependency. The
 [CHANGELOG](CHANGELOG.md) names the release that made each change.
@@ -56,6 +56,8 @@ Releases up to this one fixed these advisories by upgrading or removing the affe
 - `zod` 3.25.76: GHSA-mrhx-c7xc-m3w5 (high, memory exhaustion while validating oversized constrained collections).
   Upgraded to 4.6.7 in 0.11.3. <!-- history -->
 - Apache ECharts 6.0.0: GHSA-fgmj-fm8m-jvvx (moderate, cross-site scripting). Upgraded to 6.1.0.
+- `fast-xml-parser` 5.11.2: GHSA-474x-hrwr-fgx4 (low, quadratic CPU use when scanning unterminated stop-node tags; the
+  OData reader sets no stop nodes). Upgraded to 5.12.0 in 0.13.1. <!-- history -->
 
 These were matches by package name and version; they did not establish that an OODS Foundry tool reached the
 affected code. The current token build requires Node.js 22 or later.

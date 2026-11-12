@@ -60,7 +60,7 @@
       ]
     }
   ],
-  "head": "f161585c8d9ede4e46ab5545af80d835578374f4",
+  "head": "b1b779e24ced6bee953e9b648a879982d0860801",
   "builderSelfCertified": false,
   "methodology": {
     "testImportLocation": "Where a spec that imports the tool's handler module lives: packages/mcp-server/test/product-reality, then test/contracts, then any other mcp-server spec. A literal runtime import is source evidence that a test reaches the handler, not proof of invocation, passing execution or browser certification. Grouped action imports roll up to their registered family. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not count.",
@@ -1366,6 +1366,11 @@
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
+            "path": "packages/mcp-server/test/compose/small-fixes.s246.spec.ts",
+            "line": 23,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
             "path": "packages/mcp-server/test/e2e/object-codegen-pipeline.spec.ts",
             "line": 11,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
@@ -1408,6 +1413,11 @@
           {
             "path": "packages/mcp-server/test/objects/actor.s244.spec.ts",
             "line": 21,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/approval-followups.s246.spec.ts",
+            "line": 31,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -2136,6 +2146,11 @@
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
+            "path": "packages/mcp-server/test/compose/small-fixes.s246.spec.ts",
+            "line": 22,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
             "path": "packages/mcp-server/test/compose/timeline-placement.s222.spec.ts",
             "line": 15,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
@@ -2183,6 +2198,11 @@
           {
             "path": "packages/mcp-server/test/objects/actor.s244.spec.ts",
             "line": 20,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/approval-followups.s246.spec.ts",
+            "line": 30,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2347,7 +2367,7 @@
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/design.compose.ts",
           "reason": "An intent sentence is matched against keyword tables. A sentence with no layout keyword uses the dashboard default without numeric confidence and reports OODS-V116; no object is chosen. Naming an object and a context is the reliable input.",
-          "line": 320,
+          "line": 321,
           "observed": {
             "receiptSha256": "sha256:d17b61cf074ca5f736b21ed71f9dcbc630408ac2bebb18d7cb63c2de23176be9",
             "probes": [
@@ -2711,6 +2731,11 @@
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
           },
           {
+            "path": "packages/mcp-server/test/compose/small-fixes.s246.spec.ts",
+            "line": 24,
+            "handler": "packages/mcp-server/src/tools/pipeline.ts"
+          },
+          {
             "path": "packages/mcp-server/test/e2e/action-mappings.e2e.spec.ts",
             "line": 28,
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
@@ -2723,6 +2748,11 @@
           {
             "path": "packages/mcp-server/test/objects/actor.s244.spec.ts",
             "line": 22,
+            "handler": "packages/mcp-server/src/tools/pipeline.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/approval-followups.s246.spec.ts",
+            "line": 32,
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
           },
           {
@@ -2882,7 +2912,7 @@
           },
           {
             "path": "packages/mcp-server/test/objects/approval.s245.spec.ts",
-            "line": 78,
+            "line": 79,
             "handler": "packages/mcp-server/src/tools/health.ts"
           },
           {
@@ -4560,6 +4590,11 @@
         ],
         "other-spec": [
           {
+            "path": "packages/mcp-server/test/compose/small-fixes.s246.spec.ts",
+            "line": 26,
+            "handler": "packages/mcp-server/src/tools/object.register.ts"
+          },
+          {
             "path": "packages/mcp-server/test/importer/approval-evidence.s245.spec.ts",
             "line": 23,
             "handler": "packages/mcp-server/src/tools/object.register.ts"
@@ -4603,6 +4638,11 @@
             "path": "packages/mcp-server/test/objects/actor.s244.spec.ts",
             "line": 23,
             "handler": "packages/mcp-server/src/tools/object.validate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/approval-followups.s246.spec.ts",
+            "line": 34,
+            "handler": "packages/mcp-server/src/tools/object.register.ts"
           },
           {
             "path": "packages/mcp-server/test/objects/approval-traits.s245.spec.ts",
@@ -5124,6 +5164,11 @@
         "test/contracts": [],
         "other-spec": [
           {
+            "path": "packages/mcp-server/test/compose/small-fixes.s246.spec.ts",
+            "line": 25,
+            "handler": "packages/mcp-server/src/tools/object.import.ts"
+          },
+          {
             "path": "packages/mcp-server/test/importer/approval-evidence.s245.spec.ts",
             "line": 21,
             "handler": "packages/mcp-server/src/tools/object.import.ts"
@@ -5151,6 +5196,11 @@
           {
             "path": "packages/mcp-server/test/intake/unknown-drafts.s238.spec.ts",
             "line": 8,
+            "handler": "packages/mcp-server/src/tools/object.import.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/approval-followups.s246.spec.ts",
+            "line": 33,
             "handler": "packages/mcp-server/src/tools/object.import.ts"
           }
         ]

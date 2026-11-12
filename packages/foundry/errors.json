@@ -1,6 +1,6 @@
 {
   "schema": "oods-foundry-errors/v1",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "codes": [
     {
       "code": "OODS-A11Y-R-01",
@@ -4097,8 +4097,8 @@
       "severity": "error",
       "retryable": false,
       "message": "Approval answer screen leaves out a fact the record keeps",
-      "cause": "A screen where an approval can be answered leaves out the thing, exactly what was shown, the level or the meaning, though the record keeps it.",
-      "fix": "Place the Decision trait's form views for the facts, or bind a node on the screen to each fact the record keeps.",
+      "cause": "A screen where an approval can be answered does not show, beside the answer, the thing, exactly what was shown, the level, the meaning, who is asking, or who it is asked for, though the record keeps it; a fact in another tab, in a dialog the answer is not in or on another screen is not beside it.",
+      "fix": "Place the Decision trait's form views for the facts, or bind a node beside the answer to each fact the record keeps, on its screen, in its tab and inside the same dialog.",
       "tools": [
         "a11y_scan",
         "code_generate",
@@ -4120,7 +4120,7 @@
       "severity": "warning",
       "retryable": false,
       "message": "Approval record keeps no fact its answer screen should show",
-      "cause": "The record keeps no field for the thing, exactly what was shown, the level or the meaning, so the screen where an answer is given cannot show it.",
+      "cause": "The record keeps no field for the thing, exactly what was shown, the level, the meaning or who is asking, so the screen where an answer is given cannot show it.",
       "fix": "Bind the Decision field for each missing fact to a field the source keeps, or accept that the person answering sees only what the record keeps.",
       "tools": [
         "a11y_scan",

@@ -48,6 +48,7 @@ import { resolveIntentObject, fuzzyMatchObject } from '../compose/intent-object-
 import { populateCollections, populateListStates } from '../compose/collections.js';
 import { reconcileFormDetail, KEPT_BESIDE_PATTERN, formFactFields } from '../compose/form-detail.js';
 import { enforceApprovalFacts } from '../compose/approval-facts.js';
+import { isLongTextField } from '../compose/long-text.js';
 import { populateRecordDisplay } from '../compose/record-display.js';
 import { populateObjectSchema, populateBindings, fillSlotsWithObject, wireFieldProps, applySelectionsToSchema, dropUnfilledInteractiveSlots, neutralizeUnfilledSurfaceSlots, bindCardHeadingField } from '../compose/object-slot-filler.js';
 import { enforceResultStateFamily } from '../compose/result-state.js';
@@ -1044,31 +1045,6 @@ function humanizeFieldName(fieldName: string): string {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function isLongTextField(
-  fieldName: string,
-  field: FieldDefinition,
-  semantics?: Record<string, SemanticMapping>,
-): boolean {
-  if (field.type !== 'string') return false;
-
-  const uiHints = semantics?.[fieldName]?.ui_hints;
-  const hintMaxLength = typeof uiHints?.maxLength === 'number'
-    ? uiHints.maxLength
-    : undefined;
-  const validationMaxLength = typeof field.validation?.maxLength === 'number'
-    ? field.validation.maxLength
-    : undefined;
-  const normalizedName = fieldName.replace(/[_-]+/g, ' ');
-  const lowerText = `${normalizedName} ${field.description}`.toLowerCase();
-
-  return Boolean(
-    uiHints?.multiline === true
-    || (hintMaxLength && hintMaxLength >= 120)
-    || (validationMaxLength && validationMaxLength >= 120)
-    || /\b(description|summary|notes?|message|comment|reason|details?|body|content|bio|explanation|free form)\b/.test(lowerText),
-  );
-}
-
 function inferFormSlotIntentFromFields(
   fieldNames: string[],
   schema: Record<string, FieldDefinition>,
@@ -1766,7 +1742,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   // s213-m01: neither is a field the object's contract never supplies (unavailable).
   // Imported schemas carry explicit access direction. Do not expose write-only samples on read screens,
   // or place read-only fields in editable forms. The stored definition retains the complete source contract.
-  // s245-m02: a field a form view shows as a fact (Decision's four facts) stays in the form's record even when it is
+  // s245-m02: a field a form view shows as a fact (Decision's five facts) stays in the form's record even when it is
   // read-only, so the fact can be read beside the answer; it is never a field slot's candidate, so it gets no control.
   const formFacts = layoutType === 'form' ? formFactFields(composed) : new Set<string>();
   // The record's whole contract, before a screen hides its read-only or write-only fields (the approval-facts rule asks
@@ -2251,7 +2227,8 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   nameStatusTables(schema);
   // A result state renders in its own family, never a severity colour (s205-m03, traits/core/Assessable).
   enforceResultStateFamily(schema);
-  // An approval is answered only beside the thing, exactly what was shown, the level and the meaning (s245-m02).
+  // An approval is answered only beside the thing, exactly what was shown, the level, the meaning and who is asking
+  // (s245-m02, s246-m01).
   if (composed) warnings.push(...enforceApprovalFacts(schema, recordSchema ? { ...composed, schema: recordSchema } : composed));
   // Every screen root is named after its object and context: the generated shell's heading when the screen places none.
   labelScreens(schema, effectiveObject, effectiveContext);

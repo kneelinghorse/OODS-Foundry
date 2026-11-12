@@ -97,7 +97,8 @@ describe('s198 form craft and one attributable seed policy', () => {
       const field = String(node.props?.field ?? '');
       const entry = schema.objectSchema?.[field];
       if (node.component === 'DatePicker' && entry) expect(entry.type).toMatch(/^date/);
-      if (node.component === 'Textarea') expect(field).toMatch(/description|reason|notes|body|content|instructions/);
+      // s246-m02: the composer's list of fields a text area may edit; a comment joined it.
+      if (node.component === 'Textarea') expect(field).toMatch(/description|reason|notes|body|content|instructions|comment/);
     }
     expect(nodes.filter(node => node.component === 'Button' && node.props?.type === 'submit')).toHaveLength(1);
     if (object === 'Invoice') expect(nodes.find(node => node.props?.field === 'billing_contact_name')?.component).toBe('Input');

@@ -1,6 +1,6 @@
 object:
   name: Approval
-  version: 1.0.0
+  version: 1.1.0
   domain: core.governance
   description: One ask to one person or agent for a yes, about one version of one thing, and the answer it became.
   tags:
@@ -39,6 +39,20 @@ traits:
         - not_needed
         - used
       initialState: not_yet_asked
+      # s246-m01: the order the product enforces. An ask is made, then answered, and a yes ends once; the endings are final
+      # (empty lists), so a declined or used approval never moves again and a new ask is a new record. OODS Foundry does
+      # not move an approval or refuse a change: it keeps the order and checks only its own samples against it.
+      transitionRules:
+        not_yet_asked: [waiting, withdrawn, not_needed]
+        waiting: [approved, declined, expired, withdrawn, not_needed]
+        approved: [used, out_of_date, taken_back, expired, withdrawn, not_needed]
+        declined: []
+        out_of_date: []
+        taken_back: []
+        expired: []
+        withdrawn: []
+        not_needed: []
+        used: []
   - name: lifecycle/Timestampable
     alias: ApprovalTimes
     parameters:
@@ -89,6 +103,9 @@ metadata:
   steward: Design team
   maturity: alpha
   changelog:
+    - version: 1.1.0
+      date: "2026-11-12"
+      description: Declares the order of its states, with the endings final; the resend's shown line carries the correction it approves, so the comment is a remark.
     - version: 1.0.0
       date: "2026-11-11"
       description: Initial Approval object, the thirteenth public reference object; an approval is a decision, not a status.
@@ -103,7 +120,7 @@ samples:
     subject_type: Transaction
     subject_id: PAY-2026-0429
     subject_name: PAY-2026-0429
-    shown: Resend $12,000.00 by bank transfer for INV-2026-0155
+    shown: Resend $12,000.00 by bank transfer for INV-2026-0155, with the invoice number in the reference
     level: approval
     meaning: 'Approval: go ahead with the change as shown; it is yours to decide'
     requested_by_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01
