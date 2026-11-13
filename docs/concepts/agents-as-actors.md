@@ -46,16 +46,17 @@ The line an agent leaves in another record's history is its most-seen screen. Ev
 | `on_behalf_of_name`, `on_behalf_of_id` | who it acted for |
 | `approved_by_name`, `approved_by_id` | who approved it, when someone did |
 | `approval_id`, `approval_level` | the approval the yes is kept in, and its level of yes |
+| `task_id`, `task_name` | the task the change was made under |
 
 Every history in OODS Foundry prints them as one line:
 
-- **Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval)**: an agent acting for an organization, with a person's approval at the level the change needed;
+- **Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval) · task: Get INV-2026-0155 paid**: an agent acting for an organization, with a person's approval at the level the change needed, as part of a task;
 - **Ruth Adeyemi**: a person acting for herself;
 - **Billing Agent**: an agent acting as itself.
 
 A history written before these fields, with no names, shows exactly as it always has.
 
-![A payment's timeline: the transfer was returned, then sent again by the Billing Agent for Tidewater Co-op, approved by Ruth Adeyemi at the Approval level](agents-as-actors/transaction-timeline-light.png)
+![A payment's timeline: the transfer was returned, then sent again by the Billing Agent for Tidewater Co-op, approved by Ruth Adeyemi at the Approval level, as part of the task Get INV-2026-0155 paid](agents-as-actors/transaction-timeline-light.png)
 
 ## On whose behalf: delegation
 
@@ -65,13 +66,13 @@ A history written before these fields, with no names, shows exactly as it always
 - its lifecycle is the grant's: proposed (requested), active, paused, then terminated (revoked) or completed (expired);
 - the agent's `acts_for` names the same grant on its own page.
 
-**Handing work to another agent passes on no authority.** Each agent acts under its own grant. A second agent, such as one that checks the tax on an invoice, is its own `Agent`, with its own sponsor, roles, rules and grants; being given the work gives it none of the first agent's authority. A grant passed on from one agent to another is not modelled: a delegation runs from the person or organization acted for to the agent, and nothing ties an agent-to-agent grant to the grant it came from, limits it to that grant's scope and end, or ends it when that grant ends. A history line names one party acted for, not a chain.
+**Handing work to another agent passes on no authority.** Each agent acts under its own grant. A second agent, such as one that checks the tax on an invoice, is its own `Agent`, with its own sponsor, roles, rules and grants. The work it is given now has a record, its own `Task`, which names the task it came from and the first ask; being given the work still gives it none of the first agent's authority (see [Tasks as asks](tasks-as-asks.md)). A grant passed on from one agent to another is not modelled: a delegation runs from the person or organization acted for to the agent, and nothing ties an agent-to-agent grant to the grant it came from, limits it to that grant's scope and end, or ends it when that grant ends. A history line names one party acted for, not a chain.
 
 ## Approval and work
 
 Approval is a rule per action, not a trait of the agent: an action is allowed, asked first, or never taken. That is what `allowed_actions`, `asks_first_for` and `never_allowed` record. When a person approves an action the agent asked about, the change names them (`approved_by_name`), and can point at the approval itself (`approval_id`) and name its level (`approval_level`). The approval is a record of its own: see [Approvals as decisions](approvals-as-decisions.md).
 
-An agent's work keeps the states its protocol gives it. A2A's task states (submitted, working, input-required, auth-required, completed, failed, canceled, rejected) arrive through the importer as a `Stateful` lifecycle on the record that holds them.
+The work an agent is asked to do is a `Task`: one ask to one actor, with who asked, for whom, who is doing it and who answers for it (see [Tasks as asks](tasks-as-asks.md)). An agent protocol's own task record keeps the states its protocol gives it. A2A v1.0.1 defines nine task states, written as that version writes them: `TASK_STATE_SUBMITTED`, `TASK_STATE_WORKING`, `TASK_STATE_INPUT_REQUIRED`, `TASK_STATE_AUTH_REQUIRED`, `TASK_STATE_COMPLETED`, `TASK_STATE_FAILED`, `TASK_STATE_CANCELED`, `TASK_STATE_REJECTED` and `TASK_STATE_UNSPECIFIED`. Eight arrive through the importer as a `Stateful` lifecycle on the record that holds them; the ninth, which A2A describes as an unknown or indeterminate state, is read as a placeholder and left out.
 
 ## Bringing your own agent records
 

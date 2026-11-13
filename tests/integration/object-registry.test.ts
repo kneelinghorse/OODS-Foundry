@@ -10,7 +10,8 @@ import { ParameterValidator } from '../../src/validation/parameter-validator.ts'
 
 const OBJECTS_ROOT = path.resolve('objects', 'core');
 const TRAIT_ROOTS = [path.resolve('traits'), path.resolve('examples/traits')];
-// s244-m02 (#2829): Agent joins objects/core and resolves through the same pipeline. s245-m02: Approval too.
+// s244-m02 (#2829): Agent joins objects/core and resolves through the same pipeline. s245-m02: Approval too. s247-m02:
+// Task too, its record trait with the parameter schema file the pipeline requires.
 const CANONICAL_OBJECTS = [
   'Agent',
   'Approval',
@@ -18,6 +19,7 @@ const CANONICAL_OBJECTS = [
   'Product',
   'Relationship',
   'Subscription',
+  'Task',
   'Transaction',
   'User',
 ] as const;

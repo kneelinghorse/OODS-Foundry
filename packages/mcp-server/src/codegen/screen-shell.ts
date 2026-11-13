@@ -2,6 +2,7 @@ import type { FieldSchemaEntry, UiElement, UiSchema } from '../schemas/generated
 import type { CodegenOptions } from './types.js';
 import { listObjects } from '../objects/object-loader.js';
 import { cancellableStates } from '../objects/cancellation-mode.js';
+import { declaredCancelOrder } from '../objects/declared-order.js';
 import { javascriptSingleQuotedString } from './emission-safety.js';
 
 /**
@@ -135,15 +136,16 @@ export function screenActionLabel(event: string, objectName: string | undefined,
  * s221-m01 (#2479, learning #781): the record state a screen action needs, read from the object's own fields, or undefined
  * when no state governs it. Cancel needs a status its lifecycle can still cancel from (cancellableStates, the rule the
  * generated store enforces) and a record that is not archived; inside a workflow app the archiving action needs a record
- * not archived yet. `never` means no status allows the action, so it is not rendered.
+ * not archived yet. `never` means no status allows the action, so it is not rendered. s247-m01: Cancel follows the order
+ * an object that composes Cancellable declares (declared-order.ts), looked up by the object's name.
  */
 export interface ScreenActionGate { statuses?: readonly string[]; notArchived?: boolean; never?: boolean }
 
-export function screenActionGate(event: string, objectSchema: Record<string, FieldSchemaEntry> | undefined, workflow: boolean): ScreenActionGate | undefined {
+export function screenActionGate(event: string, objectSchema: Record<string, FieldSchemaEntry> | undefined, workflow: boolean, objectName?: string): ScreenActionGate | undefined {
   const archivable = objectSchema?.is_archived?.type === 'boolean';
   if (event === 'onCancel') {
     const states = objectSchema?.status?.enum?.map(String);
-    const statuses = states?.length ? cancellableStates(states) : undefined;
+    const statuses = states?.length ? cancellableStates(states, declaredCancelOrder(objectName)) : undefined;
     if (statuses?.length === 0) return { never: true };
     if (!statuses && !archivable) return undefined;
     return { ...(statuses ? { statuses } : {}), ...(archivable ? { notArchived: true } : {}) };

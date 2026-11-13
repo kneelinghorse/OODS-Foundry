@@ -65,6 +65,8 @@ export function renderObjectInterfaceFile(options: ObjectInterfaceTemplateOption
   readonly approved_by_id?: string;
   readonly approval_id?: string;
   readonly approval_level?: string;
+  readonly task_id?: string;
+  readonly task_name?: string;
 }
 
 ` : '';

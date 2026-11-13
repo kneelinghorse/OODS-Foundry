@@ -17,11 +17,18 @@
  *   approval_level                the level of yes, printed in the words a level is shown in on every screen
  * "Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval)". An entry without a level prints exactly
  * what it printed before.
+ *
+ * s247-m01: a change made as part of a task can also point at its task and name it:
+ *   task_id                       the Task record the change was made under: a pointer kept in the record's data, never printed
+ *   task_name                     the task, as shown, printed after who acted and who approved
+ * "Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval) · task: Get INV-2026-0155 paid". An entry
+ * without a task name prints exactly what it printed before.
  */
 export interface HistoryAttribution {
   /**
    * "Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi"; "Ruth Adeyemi" alone for a person acting for herself;
-   * "… · approved by Ruth Adeyemi (level: Approval)" when the entry names its level of yes.
+   * "… · approved by Ruth Adeyemi (level: Approval)" when the entry names its level of yes; "… · task: Get INV-2026-0155
+   * paid" when it names the task it was made under.
    */
   text: string;
   /** True when the entry names who acted, so its actor id is not printed beside the name. */
@@ -42,7 +49,7 @@ const levelWords = (level: string): string => {
   return words.charAt(0).toUpperCase() + words.slice(1);
 };
 
-/** The phrase for an entry's named parties and its level of yes, or undefined when it names neither. */
+/** The phrase for an entry's named parties, its level of yes and its task, or undefined when it names none of them. */
 export function historyAttribution(entry: unknown): HistoryAttribution | undefined {
   if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return undefined;
   const row = entry as Record<string, unknown>;
@@ -50,11 +57,14 @@ export function historyAttribution(entry: unknown): HistoryAttribution | undefin
   const principal = named(row, 'on_behalf_of_name');
   const approver = named(row, 'approved_by_name');
   const level = named(row, 'approval_level');
+  const task = named(row, 'task_name');
   // A person acting for themselves, or an agent acting as itself, is named once.
   const forWhom = principal && principal !== actor ? principal : undefined;
   const who = actor ? (forWhom ? `${actor} for ${forWhom}` : actor) : forWhom ? `For ${forWhom}` : undefined;
   const approved = approver || level ? `${who ? 'approved' : 'Approved'}${approver ? ` by ${approver}` : ''}` : undefined;
   const approval = approved && level ? `${approved} (level: ${levelWords(level)})` : approved;
-  const text = [who, approval].filter(Boolean).join(' · ');
+  // The task is named last, after who acted and who approved: the line reads who did it, on whose yes, as part of what.
+  const work = task ? `${who || approval ? 'task' : 'Task'}: ${task}` : undefined;
+  const text = [who, approval, work].filter(Boolean).join(' · ');
   return text ? { text, namesActor: actor !== undefined } : undefined;
 }

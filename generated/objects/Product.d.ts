@@ -20,6 +20,8 @@ export interface StateTransition {
   readonly approved_by_id?: string;
   readonly approval_id?: string;
   readonly approval_level?: string;
+  readonly task_id?: string;
+  readonly task_name?: string;
 }
 
 export interface Product {
@@ -37,7 +39,7 @@ export interface Product {
   activeFilters?: Record<string, unknown>[];
 
   /**
-   * Materialized valid next states from current status, computed from transitionRules. Used by StatusSelector to disable invalid options.
+   * Materialized next states the product allows from the current status, written by the product from transitionRules. Listed by StatusTimeline; a generated StatusSelector offers every state.
    *
    * Source: Stateful (trait)
    *

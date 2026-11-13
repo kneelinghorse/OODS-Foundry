@@ -2,6 +2,7 @@ import { BILLING_INTERVALS, billingSummary, summaryValue, formatDateTime, auditS
 import { createRequire } from 'node:module';
 import type { GeneratedArtifactAction } from '../../packages/mcp-server/src/codegen/types.js';
 import type { UiElement, UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
+import { holdsValue, omitEmptyFields } from '../../packages/mcp-server/src/codegen/binding-utils.js';
 
 const { JSDOM } = createRequire(import.meta.url)('jsdom') as {
   JSDOM: { fragment(html: string): DocumentFragment };
@@ -240,6 +241,13 @@ export function deriveMountObligations(schema: UiSchema, source: string, model: 
     if (!inactive.has(node.id) && emptyTraitEventCard(node, model)) inactive.set(node.id, `event card ${node.id} with no event renders nothing (s223-m01, #2527 ruling 7)`);
     if (!inactive.has(node.id) && hiddenDefaultChip(node, model)) inactive.set(node.id, `default chip ${node.id} hidden by hideWhenFalse (s223-m01, #2527 ruling 7)`);
     if (!inactive.has(node.id) && hiddenDefaultSummary(node, model)) inactive.set(node.id, `default summary ${node.id} hidden by hideWhenDefault (s224-m01, #2542 ruling 6)`);
+    // s247-m04: a place a view opts out of drawing when empty (data-oods-omit-empty, s247-m01) is not drawn, in React, Vue
+    // and HTML, where the mounted record holds no value for any field it shows (for a reference, neither its id nor its
+    // kept name). The same two helpers the generated code uses decide it, and the place's own nodes are then not required.
+    const omitted = inactive.has(node.id) ? undefined : omitEmptyFields(node, schema.objectSchema);
+    if (omitted && !omitted.some(field => holdsValue(model[modelKey(field)]))) {
+      for (const inner of schemaNodes({ version: '1.0', screens: [node] })) if (!inactive.has(inner.id)) inactive.set(inner.id, `${node.id} shows no value and opts out of drawing an empty place (s247-m01)`);
+    }
   }
   const collections = new Map<string, number>();
   for (const collection of schemaNodes(schema).filter(node => node.collection)) {

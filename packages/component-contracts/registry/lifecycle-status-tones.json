@@ -26,7 +26,7 @@
     "posted": { "tone": "info", "icon": "icon.status.pending", "description": "Finalized and posted." },
     "open": { "tone": "info", "icon": "icon.status.pending", "description": "Open and awaiting action." },
     "future": { "tone": "info", "icon": "icon.status.future", "description": "Starts later." },
-    "waiting": { "tone": "info", "icon": "icon.status.pending", "description": "Waiting for an answer." },
+    "waiting": { "tone": "info", "icon": "icon.status.pending", "description": "Waiting on something else before it can go on." },
     "trialing": { "tone": "accent", "icon": "icon.status.trial", "description": "In a trial period." },
     "private_beta": { "tone": "accent", "icon": "icon.status.trial", "description": "Available to a limited group." },
     "retrying": { "tone": "warning", "icon": "icon.status.processing", "description": "Failed once and retrying." },
@@ -61,6 +61,12 @@
     "taken_back": { "tone": "neutral", "icon": "icon.status.refunded", "description": "Taken back: the yes no longer stands." },
     "expired": { "tone": "neutral", "icon": "icon.status.future", "description": "Expired: never answered in time." },
     "withdrawn": { "tone": "neutral", "icon": "icon.status.canceled", "description": "Withdrawn by the one who asked." },
-    "not_needed": { "tone": "neutral", "icon": "icon.status.default", "description": "Not needed: it was never asked." }
+    "not_needed": { "tone": "neutral", "icon": "icon.status.default", "description": "Not needed: it was never asked." },
+    "not_started": { "tone": "neutral", "icon": "icon.status.default", "description": "Not started yet." },
+    "working": { "tone": "info", "icon": "icon.status.processing", "description": "Being worked on." },
+    "needs_input": { "tone": "warning", "icon": "icon.status.info", "description": "Needs input from a person before it can go on." },
+    "outcome_unknown": { "tone": "warning", "icon": "icon.status.warning", "description": "Outcome unknown: the last step was taken, and whether it took is not known." },
+    "finished": { "tone": "neutral", "icon": "icon.status.success", "description": "Finished, by the account of whoever did the work." },
+    "handed_over": { "tone": "neutral", "icon": "icon.status.refunded", "description": "Handed over to someone else to carry on." }
   }
 }

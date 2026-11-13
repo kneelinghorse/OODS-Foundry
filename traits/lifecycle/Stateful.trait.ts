@@ -9,7 +9,7 @@ export type TransitionRules = Record<string, string[]>;
 const StatefulTrait = {
   trait: {
     name: 'Stateful',
-    version: '2.2.1',
+    version: '2.3.0',
     description:
       'Normalizes lifecycle state transitions, exposes canonical status semantics, and provides ' +
       'optional transition governance for production workflows. Most-composed trait (18 objects).',
@@ -41,7 +41,8 @@ const StatefulTrait = {
       required: false,
       description:
         'JSON-encoded allowed state transition map (Record<string, string[]>). Keys are source states; ' +
-        'values are arrays of permitted targets. When null, all transitions are allowed (open model).',
+        'values are arrays of permitted targets, and an empty array marks a final state. An order that names a state ' +
+        'the lifecycle lacks is refused. The product enforces the order. When null, all transitions are allowed (open model).',
       default: null,
     },
     {
@@ -75,8 +76,8 @@ const StatefulTrait = {
       type: 'string[]',
       required: false,
       description:
-        'Materialized valid next states from current status, computed from transitionRules. ' +
-        'Used by StatusSelector to disable invalid options.',
+        'Materialized next states the product allows from the current status, written by the product from transitionRules. ' +
+        'Listed by StatusTimeline; a generated StatusSelector offers every state.',
       default: [],
     },
   },
@@ -103,7 +104,7 @@ const StatefulTrait = {
       token_mapping: 'computed',
       ui_hints: {
         component: 'StatusSelector',
-        description: 'Drives the set of enabled options in the state transition UI.',
+        description: 'The next states the product allows, as the product writes them; listed on the detail page, never used to disable an option.',
       },
     },
   },
@@ -172,14 +173,14 @@ const StatefulTrait = {
 
   metadata: {
     created: '2025-10-12',
-    updated: '2026-02-28',
+    updated: '2026-11-13',
     owners: ['Design team', 'Engineering team'],
     maturity: 'stable',
     accessibility: {
       keyboard:
-        'StatusSelector is keyboard-navigable. Disabled states (not in allowed_transitions) are skipped.',
+        'StatusSelector is a labelled native select: arrow keys move through the states. It offers every state and disables none.',
       screenreader:
-        'StatusBadge announces current state and available transition count. ' +
+        'StatusBadge announces the current state ("Status: Active"). ' +
         'StateTransitionEvent entries announce from-state, to-state, actor, and reason.',
     },
     regionsUsed: ['list', 'detail', 'form', 'card'],

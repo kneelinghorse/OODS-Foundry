@@ -1,6 +1,6 @@
 import { identifierField, recordKeyField } from '../objects/record-identity.js';
 import { sampleValue } from './samples.js';
-import { approvalRecord, initialStateOf, suggestTraits } from './proposals.js';
+import { approvalRecord, initialStateOf, suggestTraits, workRecord } from './proposals.js';
 import { dump } from 'js-yaml';
 import { validateDefinition } from '../tools/object.validate.js';
 import { normalizeObjectDocument } from '../objects/object-loader.js';
@@ -299,23 +299,31 @@ export function draftSource(input: SourceInput): ImportResult {
     for (const declared of Array.isArray(annotations?.traitProposals) ? annotations.traitProposals : []) {
       if (isMap(declared) && typeof declared.name === 'string') propose({ name: declared.name, parameters: declared.parameters ?? {}, ...(declared.fieldBindings ? { fieldBindings: declared.fieldBindings } : {}) }, declared.evidence.every((e: MapValue) => e.kind === 'name') ? 'weak' : declared.grade, declared.evidence);
     }
-    suggestTraits({ ...shape, title: name }, shape.properties, field => fieldOrigins(field)[0]?.origin ?? origin, propose, (field, reason) => report.push({ ...(fieldOrigins(field)[0]?.origin ?? origin), object: name, kind: 'keyword', outcome: 'unmapped', reason }));
     for (const edge of annotations?.relationships ?? []) if (fields[edge.via] && objectNames.has(edge.target) && !relationships.some(item => item.via === edge.via)) relationships.push(edge);
+    const edges = relationships.map(edge => ({ target: edge.target, via: edge.via, cardinality: edge.cardinality ?? '' }));
+    const originOf = (field: string) => fieldOrigins(field)[0]?.origin ?? origin;
+    const stateOrigin = (field: string) => lifecycles.get(field)?.evidence ?? originOf(field);
+    // s247-m03: a record of work, one ask to one actor, proposes Assignment on structure (workRecord). Where it fires, the
+    // references it binds are not guessed again as an owner or a category tree.
+    const work = workRecord(name, fields, edges, originOf, stateOrigin, Object.fromEntries(Object.entries(loadTrait('Assignment').schema).map(([field, definition]) => [field, definition.type])));
+    suggestTraits({ ...shape, title: name }, shape.properties, originOf, propose, (field, reason) => report.push({ ...originOf(field), object: name, kind: 'keyword', outcome: 'unmapped', reason }), new Set(work?.claimed ?? []));
+    /**
+     * The record keeps one state of its own (an answer, or its work's), so that enum is its lifecycle, ahead of another
+     * that sorts first (Bitbucket's participant: role, then state). A declared lifecycle is never replaced.
+     */
+    const preferLifecycle = (field: string, why: string) => {
+      const lifecycle = proposals.find(proposal => proposal.trait.name === 'Stateful'), chosen = lifecycles.get(field);
+      if (!lifecycle || !chosen || lifecycle.grade === 'strong' || lifecycle.trait.fieldBindings?.status === field) return;
+      report.push({ ...chosen.evidence, object: name, kind: 'keyword', outcome: 'unmapped', reason: `Alternative Stateful configuration (${String(lifecycle.trait.fieldBindings?.status ?? 'unbound')}) retained as evidence; ${why}, so its lifecycle is ${field}.` });
+      lifecycle.trait = chosen.trait; lifecycle.grade = 'medium';
+      lifecycle.errors = parameterProblems('Stateful', chosen.trait.parameters ?? {}).map(problem => problem.message); lifecycle.valid = !lifecycle.errors.length;
+      if (!lifecycle.evidence.some(item => canonical(item) === canonical(chosen.evidence))) lifecycle.evidence.push(chosen.evidence);
+      lifecycle.id = hash(canonical({ name, trait: lifecycle.trait, evidence: lifecycle.evidence })).slice(0, 16);
+    };
+    if (work) { propose(work.trait, 'medium', work.evidence); preferLifecycle(work.state, 'the record keeps the state of its work'); }
     // s245-m03 (c): a table of approvals, one person's answer per row, proposes Decision on structure (approvalRecord).
-    const approval = approvalRecord(fields, relationships.map(edge => ({ target: edge.target, via: edge.via, cardinality: edge.cardinality ?? '' })), field => fieldOrigins(field)[0]?.origin ?? origin, field => lifecycles.get(field)?.evidence ?? fieldOrigins(field)[0]?.origin ?? origin);
-    if (approval) {
-      propose(approval.trait, 'medium', approval.evidence);
-      // The record keeps one answer, so its lifecycle is the answer, ahead of another enum that sorts first (Bitbucket's
-      // participant: role, then state). A declared lifecycle is never replaced.
-      const lifecycle = proposals.find(proposal => proposal.trait.name === 'Stateful'), chosen = lifecycles.get(approval.answer);
-      if (lifecycle && chosen && lifecycle.grade !== 'strong' && lifecycle.trait.fieldBindings?.status !== approval.answer) {
-        report.push({ ...chosen.evidence, object: name, kind: 'keyword', outcome: 'unmapped', reason: `Alternative Stateful configuration (${String(lifecycle.trait.fieldBindings?.status ?? 'unbound')}) retained as evidence; the record keeps one answer, so its lifecycle is ${approval.answer}.` });
-        lifecycle.trait = chosen.trait; lifecycle.grade = 'medium';
-        lifecycle.errors = parameterProblems('Stateful', chosen.trait.parameters ?? {}).map(problem => problem.message); lifecycle.valid = !lifecycle.errors.length;
-        if (!lifecycle.evidence.some(item => canonical(item) === canonical(chosen.evidence))) lifecycle.evidence.push(chosen.evidence);
-        lifecycle.id = hash(canonical({ name, trait: lifecycle.trait, evidence: lifecycle.evidence })).slice(0, 16);
-      }
-    }
+    const approval = approvalRecord(fields, edges, originOf, stateOrigin);
+    if (approval) { propose(approval.trait, 'medium', approval.evidence); preferLifecycle(approval.answer, 'the record keeps one answer'); }
     // Acceptance cannot invent facts the source does not supply. View-state traits are deliberately not record data.
     for (const proposal of proposals) if (hasTrait(proposal.trait.name)) {
       const trait = loadTrait(proposal.trait.name);

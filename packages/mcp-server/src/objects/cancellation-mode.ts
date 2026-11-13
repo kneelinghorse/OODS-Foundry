@@ -27,10 +27,19 @@ export function cancellationMode(states: readonly unknown[] | undefined): Cancel
  * record pending cancellation or terminated never cancels, nor one immediate cancellation has ended), which stays as it
  * was so no generated store moves; test/codegen/action-state.s221.spec.ts checks the two agree for every Stateful
  * workflow object and each state its samples reach. None when the lifecycle has no state to cancel into.
+ *
+ * s247-m01: where the object declares the order of its states (`order`, declared-order.ts), Cancel follows the order: a
+ * record may be cancelled only from a state whose declared targets include the state cancelling moves to, `cancelled`,
+ * or `pending_cancellation` where the lifecycle cancels at a period's end. A final state, or any state the order does not
+ * let move there, offers no Cancel. Without an order the rule is the lifecycle's names, exactly as before.
  */
-export function cancellableStates(states: readonly unknown[] | undefined): string[] {
+export function cancellableStates(states: readonly unknown[] | undefined, order?: Readonly<Record<string, readonly string[]>>): string[] {
   const mode = cancellationMode(states);
   if (mode === 'none') return [];
+  if (order) {
+    const target = mode === 'deferred' ? 'pending_cancellation' : 'cancelled';
+    return (states ?? []).map(String).filter(state => (order[state] ?? []).includes(target));
+  }
   return (states ?? []).map(String).filter(state => state !== 'terminated' && state !== 'pending_cancellation'
     && !(mode === 'immediate' && ['completed', 'cancelled', 'final'].includes(state)));
 }

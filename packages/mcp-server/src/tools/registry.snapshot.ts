@@ -148,10 +148,15 @@ function indexObjects(values: unknown[] | undefined, detail: 'summary' | 'full')
   return output;
 }
 
-/** A summary keeps a description's first paragraph on one line, at most 240 characters; full detail keeps all of it. */
+/**
+ * A summary keeps a description's first sentence on one line, at most 240 characters; full detail keeps all of it.
+ * s247-m01: it kept the first paragraph until the 53rd trait took the default summary past 50,000 characters, where Claude
+ * Code saves a reply to a file instead of reading it; the first sentence says what each trait and object is.
+ */
 function brief(description: string, detail: 'summary' | 'full'): string {
   if (detail === 'full') return description;
-  const first = description.split(/\n\s*\n/)[0]!.replace(/\s+/g, ' ').trim();
+  const paragraph = description.split(/\n\s*\n/)[0]!.replace(/\s+/g, ' ').trim();
+  const first = /^.*?[.!?](?=\s|$)/.exec(paragraph)?.[0] ?? paragraph;
   return first.length > 240 ? `${first.slice(0, 239).trimEnd()}…` : first;
 }
 

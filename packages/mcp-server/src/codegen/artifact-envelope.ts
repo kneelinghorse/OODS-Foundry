@@ -20,7 +20,7 @@ type DependencyCatalogEntry = Omit<GeneratedDependency, 'name'>;
  * Generated applications pin the OODS release that generated them. The alignment
  * test checks this value against all six published manifests on every release.
  */
-const GENERATED_OODS_VERSION = '0.13.1';
+const GENERATED_OODS_VERSION = '0.14.0';
 export const GENERATED_DEPENDENCY_CATALOG = {
   '@oods/component-contracts': { version: GENERATED_OODS_VERSION, kind: 'dependency' },
   '@oods/component-styles': { version: GENERATED_OODS_VERSION, kind: 'dependency' },

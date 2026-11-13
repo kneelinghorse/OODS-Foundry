@@ -97,7 +97,8 @@ describe('New traits discoverable in structured data', () => {
 
     // s244-m01 (#2832): 1.1.0 declares the optional history names on audit_log entries; still v1.
     // s245-m01: 1.2.0 declares the optional approval pointer and level (approval_id, approval_level) beside them.
-    expect(auditable.version).toBe('1.2.0');
+    // s247-m01: 1.3.0 declares the optional task pointer and name (task_id, task_name) after them.
+    expect(auditable.version).toBe('1.3.0');
     expect(auditable.category).toBe('lifecycle');
     const paramNames = auditable.parameters.map((p) => p.name);
     expect(paramNames).toContain('retentionDays');

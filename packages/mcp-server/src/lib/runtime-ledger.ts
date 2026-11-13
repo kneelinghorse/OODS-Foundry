@@ -11,7 +11,8 @@ import { fileURLToPath } from 'node:url';
 // s233-m02: the measured public population excludes repository-only integrations. Retained rows keep their original run identity.
 // s244-m02 (#2829): + Agent, the twelfth public object; adding it means one fresh sweep of every row at one head.
 // s245-m02: + Approval, the thirteenth public object; it sorts second, so Agent stays the first row.
-export const OBJECTS = ['Agent', 'Approval', 'Article', 'CapturedArtifact', 'Comparison', 'ComparisonSignal', 'Finding', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Run', 'Subscription', 'Transaction', 'Usage', 'User'] as const;
+// s247-m02: + Task, the fourteenth public object; it sorts after Subscription, so Agent stays the first row.
+export const OBJECTS = ['Agent', 'Approval', 'Article', 'CapturedArtifact', 'Comparison', 'ComparisonSignal', 'Finding', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Run', 'Subscription', 'Task', 'Transaction', 'Usage', 'User'] as const;
 export const CONTEXTS = ['card', 'detail', 'form', 'inline', 'list', 'timeline'] as const;
 export const FRAMEWORKS = ['react', 'vue'] as const;
 export const BROWSER_IMAGE = 'mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a';

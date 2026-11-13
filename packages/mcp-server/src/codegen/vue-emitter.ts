@@ -28,6 +28,8 @@ import {
   isReferenceField,
   referenceFieldExpression,
   statusTimelineCondition,
+  omitEmptyCondition,
+  OMIT_EMPTY_PROP,
   hasSlotBoundDates,
   isDateFieldEntry,
   slotDateHelperSource,
@@ -344,7 +346,7 @@ function vueScreenActionSurface(
     (occurrence): occurrence is DomainBindingOccurrence => (
       occurrence.kind === 'domain' && occurrence.scope === 'screen' && !wiredCollectionAction(node, occurrence.event)
       && !(occurrence.event === 'onSubmit' && hasSubmitControl(node))
-      && !screenActionGate(occurrence.event, objectSchema, workflow)?.never
+      && !screenActionGate(occurrence.event, objectSchema, workflow, objectName)?.never
     ),
   );
   if (occurrences.length === 0) return '';
@@ -353,7 +355,7 @@ function vueScreenActionSurface(
   // s221-m01: an action the record's state governs renders only while that state allows it (screenActionGate).
   const buttons = orderScreenActions(occurrences).map((occurrence) => {
     const label = screenActionLabel(occurrence.event, objectName, workflow, SCREEN_ACTION_LABELS);
-    const gate = screenActionGate(occurrence.event, objectSchema, workflow);
+    const gate = screenActionGate(occurrence.event, objectSchema, workflow, objectName);
     const condition = gate ? ` v-if="${escapeDoubleQuotedAttr(screenActionCondition(gate))}"` : '';
     // s221-m01: as in React since s216-m05 (#2412), an action that needs a row id, a column or criteria from the
     // application renders disabled and says so; Vue had kept inventing those operands.
@@ -449,7 +451,9 @@ function emitTemplateNode(
   const body = anchor ? `${nodeBody}\n${VUE_ACTION_ANCHORS[anchor]}` : nodeBody;
   const actionSurface = vueScreenActionSurface(node, bindingAnalysis, objectSchema, options.objectName, Boolean(options.workflowCollections));
   const surface = actionSurface ? placeAtAnchor(body, VUE_ACTION_ANCHORS, actionSurface) ?? `${body}\n${actionSurface}` : body;
-  const timelineCondition = statusTimelineCondition(node, objectSchema);
+  // s247-m01: a place that opts in is drawn only where the record holds a value for it.
+  const emptyCondition = omitEmptyCondition(node, objectSchema);
+  const timelineCondition = [statusTimelineCondition(node, objectSchema), emptyCondition && `(${emptyCondition})`].filter(Boolean).join(' && ') || undefined;
   const code = timelineCondition ? `<template v-if="${escapeDoubleQuotedAttr(timelineCondition)}">${surface}</template>` : surface;
   if (node.state === undefined) return code;
   const condition = escapeDoubleQuotedAttr(
@@ -480,6 +484,8 @@ function emitTemplateNodeBody(
   let propsObject = node.props && typeof node.props === 'object'
     ? { ...(node.props as Record<string, unknown>) }
     : null;
+  // s247-m01: the opt-in to leave an empty place undrawn is a v-if around the node (emitTemplateNode), never an attribute.
+  if (propsObject) delete propsObject[OMIT_EMPTY_PROP];
   const tailwindVariant = tailwindVariants.get(tag);
   const localBinding = localBindingForNode(bindingAnalysis, node.id);
   const readonlyField = bindingAnalysis.readonlyFieldSubscriptions.find((subscription) => subscription.nodeId === node.id);

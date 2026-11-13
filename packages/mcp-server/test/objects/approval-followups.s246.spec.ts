@@ -280,11 +280,13 @@ describe('Approval declares the order of its states, and the product enforces it
     expect(parameterProblems('lifecycle/Stateful', { states: ['a', 'b'], initialState: 'a', transitionRules: { a: [''] } }).length).toBeGreaterThan(0);
   });
 
-  it('says who enforces it: Stateful 2.2.1 names the product, and the samples leave allowed_transitions to it', () => {
+  // s247-m01 (next steps 1863, 1866): Stateful 2.3.0 says one thing about who enforces the order, in every line that spoke
+  // of it, and adds the one place OODS Foundry reads it at run time (Cancel in generated React and Vue screens).
+  it('says who enforces it: Stateful 2.3.0 names the product, and the samples leave allowed_transitions to it', () => {
     const stateful = loadTrait('lifecycle/Stateful');
-    expect(stateful.trait.version).toBe('2.2.1');
-    expect(stateful.trait.description).toContain('The product does that enforcing');
-    expect(stateful.trait.description).toContain('a generated StatusSelector offers every state');
+    expect(stateful.trait.version).toBe('2.3.0');
+    expect(stateful.trait.description).toContain('The product enforces that order');
+    expect(stateful.trait.description).toContain('A generated StatusSelector offers every state');
     for (const sample of samples) expect(sample, String(sample.name)).not.toHaveProperty('allowed_transitions');
   });
 });
@@ -305,6 +307,7 @@ describe('the worked example obeys its own rule: what was shown is what the yes 
     expect(rule.levelDefinitions.approval!.shown).toBe('The amount, the method, the invoice it is for, and anything this resend must do differently');
     expect(rule.levelDefinitions.approval!.lapses).toBe('Once it is used (the resend is sent and recorded, not when the bank answers), or when the amount changes');
     for (const [level, definition] of Object.entries(rule.levelDefinitions)) for (const [key, value] of Object.entries(definition)) expect(value.length, `${level}.${key}`).toBeLessThanOrEqual(160);
-    expect(loadObject('Transaction').object.version).toBe('1.2.1');
+    // s247-m02: 1.2.2, the resend names the task it was made under.
+    expect(loadObject('Transaction').object.version).toBe('1.2.2');
   });
 });

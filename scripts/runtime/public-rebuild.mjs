@@ -96,8 +96,9 @@ try {
   const actual = await inspect(root, 'source-runtime');
   assert(Buffer.byteLength(JSON.stringify(expected.list)) <= 85_000, 'The frozen tool list must fit its 85,000-byte budget');
   assert.equal(JSON.stringify(actual.list), JSON.stringify(expected.list), 'Adapter tools/list must match published npm exactly');
-  // Sprint 244 m02 adds Agent, the twelfth public object (#2829); Sprint 245 m02 Approval, the thirteenth.
-  assert.equal(actual.health.registry.objects, 18);
+  // Sprint 244 m02 adds Agent, the twelfth public object (#2829); Sprint 245 m02 Approval, the thirteenth; Sprint 247
+  // m02 Task, the fourteenth.
+  assert.equal(actual.health.registry.objects, 19);
   const retainedLedgerHashes = {};
   for (const name of ['runtime-cells.v1.json', 'release-cells.v1.json', 'tool-capability-ledger.v1.json', 'html-cells.v1.json', 'visual-proofs.v1.json']) {
     const source = fs.readFileSync(path.join(root, 'packages/mcp-server/registry', name));

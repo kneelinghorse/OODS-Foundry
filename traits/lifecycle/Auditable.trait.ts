@@ -3,7 +3,7 @@ import type { TraitDefinition } from '../../src/core/trait-definition.ts';
 const AuditableTrait = {
   trait: {
     name: 'Auditable',
-    version: '1.2.0',
+    version: '1.3.0',
     description:
       'Compliance-grade audit trail trait that captures state transitions with actor, ' +
       'reason, and timestamp metadata. Auditable observes Stateful transitions and ' +

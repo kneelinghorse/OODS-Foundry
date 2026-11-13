@@ -108,6 +108,39 @@ export function statusTimelineCondition(node: UiElement, fields?: Record<string,
   return typeof field === 'string' && ownFieldSchemaEntry(fields, field) ? `(${snakeToCamel(field)}?.length ?? 0) > 0` : 'false';
 }
 
+/**
+ * s247-m01: the opt-in that leaves a place undrawn where the record holds no value for it. A trait's view asks for it with
+ * `data-oods-omit-empty` in its props (the record trait's "Waiting on", on a task that waits on nothing), and the composer
+ * carries it onto the labelled row a detail page or a form wraps the field in. No view in 0.13.1 carries it, so no
+ * existing screen moves. These are the record fields the place shows; it is drawn when any of them holds a value. A
+ * reference counts its kept name too, because the place shows the name wherever the reference is set.
+ */
+export const OMIT_EMPTY_PROP = 'data-oods-omit-empty';
+export function omitEmptyFields(node: UiElement, fields?: Record<string, FieldSchemaEntry>): string[] | undefined {
+  if (!node.props?.[OMIT_EMPTY_PROP]) return undefined;
+  const shown = new Set<string>();
+  const visit = (child: UiElement): void => {
+    for (const [key, value] of Object.entries(child.props ?? {})) {
+      if ((key !== 'field' && !key.endsWith('Field')) || typeof value !== 'string' || !ownFieldSchemaEntry(fields, value)) continue;
+      shown.add(value);
+      const name = ownFieldSchemaEntry(fields, value)?.displayLabelField;
+      if (typeof name === 'string' && ownFieldSchemaEntry(fields, name)) shown.add(name);
+    }
+    child.children?.forEach(visit);
+  };
+  visit(node);
+  return shown.size ? [...shown] : undefined;
+}
+
+/** Whether a record holds a value for a place: present, and not blank. */
+export const holdsValue = (value: unknown): boolean => value !== undefined && value !== null && String(value).trim() !== '';
+
+/** The React and Vue expression that draws an opted-in place only where the record holds a value for it. */
+export function omitEmptyCondition(node: UiElement, fields?: Record<string, FieldSchemaEntry>): string | undefined {
+  const shown = omitEmptyFields(node, fields);
+  return shown?.map(field => `String(${snakeToCamel(field)} ?? '').trim() !== ''`).join(' || ');
+}
+
 /** Naming displays preserve their authored fallback, while a raw UUID is available only in inspection. */
 function namingFieldExpression(field: string, fields: Record<string, FieldSchemaEntry> | undefined): string {
   const expression = displayFieldExpression(field, fields);

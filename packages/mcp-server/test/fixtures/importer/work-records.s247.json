@@ -1,0 +1,360 @@
+{
+ "about": "s247-m03 fixtures: records of work, and records that are not, as sources the importer drafts. 'before' holds each draft's proposals as the 0.13.1 importer drafted them (id, trait, grade, validity and evidence pointers), captured on 2026-11-13 from a build of the importer before the record-of-work rule.",
+ "sources": {
+  "sql-work": {
+   "format": "sql",
+   "name": "work.sql",
+   "content": "create table users (id text primary key, name text not null);\ncreate table tickets (id text primary key, title text not null);\ncreate table jobs (\n  id text primary key,\n  title text not null,\n  assignee_id text references users(id),\n  created_by text references users(id),\n  owner_id text references users(id),\n  parent_id text references jobs(id),\n  ticket_id text references tickets(id),\n  status text not null check (status in ('queued', 'in_progress', 'needs_input', 'completed', 'failed')),\n  due_at timestamptz,\n  result text,\n  attempts integer\n);\n"
+  },
+  "sql-not-work": {
+   "format": "sql",
+   "name": "work.sql",
+   "content": "create table users (id text primary key, name text not null);\ncreate table tickets (id text primary key, title text not null);\ncreate table jobs (\n  id text primary key,\n  title text not null,\n  assignee_id text references users(id),\n  created_by text references users(id),\n  owner_id text references users(id),\n  parent_id text references jobs(id),\n  ticket_id text references tickets(id),\n  status text not null check (status in ('queued', 'in_progress', 'blocked', 'completed', 'failed')),\n  due_at timestamptz,\n  result text,\n  attempts integer\n);\n"
+  },
+  "prisma-work": {
+   "format": "prisma",
+   "name": "work.prisma",
+   "content": "model User {\n  id   String @id @default(cuid())\n  name String\n}\n\nmodel Job {\n  id         String    @id @default(cuid())\n  title      String\n  status     JobStatus\n  assigneeId String?\n  assignee   User?     @relation(\"assigned\", fields: [assigneeId], references: [id])\n  parentId   String?\n  parent     Job?      @relation(\"tree\", fields: [parentId], references: [id])\n  children   Job[]     @relation(\"tree\")\n}\n\nenum JobStatus {\n  queued\n  in_progress\n  needs_input\n  completed\n}\n"
+  },
+  "prisma-not-work": {
+   "format": "prisma",
+   "name": "work.prisma",
+   "content": "model User {\n  id   String @id @default(cuid())\n  name String\n}\n\nmodel Job {\n  id         String    @id @default(cuid())\n  title      String\n  status     JobStatus\n  assigneeId String?\n  assignee   User?     @relation(\"assigned\", fields: [assigneeId], references: [id])\n  parentId   String?\n  parent     Job?      @relation(\"tree\", fields: [parentId], references: [id])\n  children   Job[]     @relation(\"tree\")\n}\n\nenum JobStatus {\n  queued\n  in_progress\n  completed\n}\n"
+  },
+  "openapi-work": {
+   "format": "openapi",
+   "name": "work.openapi.json",
+   "content": "{\n \"openapi\": \"3.0.1\",\n \"info\": {\n  \"title\": \"Work\",\n  \"version\": \"1\"\n },\n \"paths\": {},\n \"components\": {\n  \"schemas\": {\n   \"User\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"name\": {\n      \"type\": \"string\"\n     }\n    }\n   },\n   \"Agent\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"name\": {\n      \"type\": \"string\"\n     }\n    }\n   },\n   \"Order\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"number\": {\n      \"type\": \"string\"\n     }\n    }\n   },\n   \"AgentJob\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"id\",\n     \"state\"\n    ],\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"agent\": {\n      \"$ref\": \"#/components/schemas/Agent\"\n     },\n     \"requested_by\": {\n      \"$ref\": \"#/components/schemas/User\"\n     },\n     \"order\": {\n      \"$ref\": \"#/components/schemas/Order\"\n     },\n     \"parent\": {\n      \"$ref\": \"#/components/schemas/AgentJob\"\n     },\n     \"kind\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"lookup\",\n       \"refund\",\n       \"reply\"\n      ]\n     },\n     \"state\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"pending\",\n       \"running\",\n       \"awaiting_input\",\n       \"done\",\n       \"failed\"\n      ]\n     },\n     \"prompt\": {\n      \"type\": \"string\"\n     },\n     \"outcome\": {\n      \"type\": \"string\"\n     },\n     \"run_count\": {\n      \"type\": \"integer\"\n     },\n     \"deadline\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\"\n     },\n     \"created_at\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\",\n      \"readOnly\": true\n     }\n    }\n   },\n   \"Chore\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"title\": {\n      \"type\": \"string\"\n     },\n     \"assignee\": {\n      \"$ref\": \"#/components/schemas/User\"\n     },\n     \"status\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"todo\",\n       \"working\",\n       \"waiting_for_user\",\n       \"done\"\n      ]\n     },\n     \"result\": {\n      \"type\": \"boolean\"\n     },\n     \"tries\": {\n      \"type\": \"string\"\n     },\n     \"instruction\": {\n      \"type\": \"integer\"\n     },\n     \"due_at\": {\n      \"type\": \"string\"\n     },\n     \"subject_id\": {\n      \"type\": \"integer\"\n     }\n    }\n   },\n   \"Note\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"assignee\": {\n      \"$ref\": \"#/components/schemas/User\"\n     },\n     \"body\": {\n      \"type\": \"string\"\n     }\n    }\n   },\n   \"Job\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"status\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"queued\",\n       \"in_progress\",\n       \"input_required\",\n       \"completed\"\n      ]\n     }\n    }\n   },\n   \"Errand\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"assignee\": {\n      \"type\": \"string\"\n     },\n     \"state\": {\n      \"type\": \"string\"\n     },\n     \"status\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"working\",\n       \"needs_input\",\n       \"done\"\n      ]\n     }\n    }\n   },\n   \"Shipment\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"assignee\": {\n      \"$ref\": \"#/components/schemas/User\"\n     },\n     \"status\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"pending\",\n       \"processing\",\n       \"shipped\",\n       \"delivered\"\n      ]\n     }\n    }\n   },\n   \"Story\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"title\": {\n      \"type\": \"string\"\n     },\n     \"assignee\": {\n      \"$ref\": \"#/components/schemas/User\"\n     },\n     \"parent\": {\n      \"$ref\": \"#/components/schemas/Story\"\n     },\n     \"status\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"todo\",\n       \"in_progress\",\n       \"blocked\",\n       \"done\"\n      ]\n     }\n    }\n   }\n  }\n }\n}"
+  },
+  "linear-mini": {
+   "format": "graphql",
+   "name": "linear.graphql",
+   "content": "type User { id: ID! name: String! }\ntype WorkflowState { id: ID! name: String! type: String! }\ntype Comment { id: ID! body: String! }\ntype Issue { id: ID! title: String! assignee: User delegate: User creator: User parent: Issue state: WorkflowState! }\nenum AgentSessionStatus { active awaitingInput complete error pending stale stopping }\ntype AgentSession { id: ID! appUser: User! creator: User dismissedBy: User issue: Issue comment: Comment sourceComment: Comment status: AgentSessionStatus! summary: String }\n"
+  },
+  "a2a-mini": {
+   "format": "json-schema",
+   "name": "a2a.json",
+   "content": "{\n \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n \"$defs\": {\n  \"TaskStatus\": {\n   \"type\": \"object\",\n   \"properties\": {\n    \"state\": {\n     \"anyOf\": [\n      {\n       \"type\": \"string\",\n       \"pattern\": \"^TASK_STATE_UNSPECIFIED$\"\n      },\n      {\n       \"type\": \"string\",\n       \"enum\": [\n        \"TASK_STATE_SUBMITTED\",\n        \"TASK_STATE_WORKING\",\n        \"TASK_STATE_COMPLETED\",\n        \"TASK_STATE_FAILED\",\n        \"TASK_STATE_CANCELED\",\n        \"TASK_STATE_INPUT_REQUIRED\",\n        \"TASK_STATE_REJECTED\",\n        \"TASK_STATE_AUTH_REQUIRED\"\n       ]\n      },\n      {\n       \"type\": \"integer\",\n       \"minimum\": -2147483648,\n       \"maximum\": 2147483647\n      }\n     ],\n     \"default\": 0\n    }\n   }\n  },\n  \"Task\": {\n   \"type\": \"object\",\n   \"properties\": {\n    \"id\": {\n     \"type\": \"string\"\n    },\n    \"contextId\": {\n     \"type\": \"string\"\n    },\n    \"status\": {\n     \"$ref\": \"#/$defs/TaskStatus\"\n    }\n   }\n  },\n  \"Message\": {\n   \"type\": \"object\",\n   \"properties\": {\n    \"messageId\": {\n     \"type\": \"string\"\n    },\n    \"role\": {\n     \"anyOf\": [\n      {\n       \"type\": \"string\",\n       \"pattern\": \"^ROLE_UNSPECIFIED$\"\n      },\n      {\n       \"type\": \"string\",\n       \"enum\": [\n        \"ROLE_USER\",\n        \"ROLE_AGENT\"\n       ]\n      },\n      {\n       \"type\": \"integer\"\n      }\n     ]\n    }\n   }\n  }\n }\n}"
+  },
+  "github-mini": {
+   "format": "openapi",
+   "name": "github.json",
+   "content": "{\n \"openapi\": \"3.0.1\",\n \"info\": {\n  \"title\": \"Work\",\n  \"version\": \"1\"\n },\n \"paths\": {\n  \"/agents/repos/{owner}/{repo}/tasks/{task_id}\": {\n   \"get\": {\n    \"responses\": {\n     \"200\": {\n      \"description\": \"A task\",\n      \"content\": {\n       \"application/json\": {\n        \"schema\": {\n         \"allOf\": [\n          {\n           \"type\": \"object\",\n           \"required\": [\n            \"id\",\n            \"state\"\n           ],\n           \"properties\": {\n            \"id\": {\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"creator\": {\n             \"oneOf\": [\n              {\n               \"type\": \"object\",\n               \"properties\": {\n                \"id\": {\n                 \"type\": \"integer\",\n                 \"format\": \"int64\"\n                }\n               }\n              }\n             ]\n            },\n            \"creator_type\": {\n             \"type\": \"string\",\n             \"enum\": [\n              \"user\",\n              \"organization\"\n             ]\n            },\n            \"state\": {\n             \"type\": \"string\",\n             \"enum\": [\n              \"queued\",\n              \"in_progress\",\n              \"completed\",\n              \"failed\",\n              \"idle\",\n              \"waiting_for_user\",\n              \"timed_out\",\n              \"cancelled\"\n             ]\n            },\n            \"session_count\": {\n             \"type\": \"integer\",\n             \"format\": \"int32\"\n            }\n           }\n          }\n         ]\n        }\n       }\n      }\n     }\n    }\n   }\n  }\n },\n \"components\": {\n  \"schemas\": {\n   \"simple-user\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"integer\"\n     },\n     \"login\": {\n      \"type\": \"string\"\n     }\n    }\n   }\n  }\n }\n}"
+  }
+ },
+ "before": {
+  "sql-work": {
+   "Tickets": [],
+   "Users": [],
+   "Jobs": [
+    {
+     "id": "192e1221edab0662",
+     "trait": "Classifiable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/2/columns/5"
+     ]
+    },
+    {
+     "id": "1f6d3d841d62b6ed",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/2/columns/8"
+     ]
+    },
+    {
+     "id": "3b91d5c6b5dc0c9f",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/2/columns/7/enum"
+     ]
+    },
+    {
+     "id": "6a9a22faafc80eec",
+     "trait": "Ownerable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/2/columns/2",
+      "/statements/2/columns/3",
+      "/statements/2/columns/4"
+     ]
+    }
+   ]
+  },
+  "sql-not-work": {
+   "Tickets": [],
+   "Users": [],
+   "Jobs": [
+    {
+     "id": "005d83fb9cc39898",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/2/columns/7/enum"
+     ]
+    },
+    {
+     "id": "192e1221edab0662",
+     "trait": "Classifiable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/2/columns/5"
+     ]
+    },
+    {
+     "id": "1f6d3d841d62b6ed",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/2/columns/8"
+     ]
+    },
+    {
+     "id": "6a9a22faafc80eec",
+     "trait": "Ownerable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/2/columns/2",
+      "/statements/2/columns/3",
+      "/statements/2/columns/4"
+     ]
+    }
+   ]
+  },
+  "prisma-work": {
+   "User": [],
+   "Job": [
+    {
+     "id": "0294c28af6f07a6f",
+     "trait": "Classifiable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/declarations/1/members/5"
+     ]
+    },
+    {
+     "id": "8be96d6f80dfbb23",
+     "trait": "Ownerable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/declarations/1/members/3"
+     ]
+    },
+    {
+     "id": "f0ef1ae1cfbef40a",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/declarations/1/members/2/enum"
+     ]
+    }
+   ]
+  },
+  "prisma-not-work": {
+   "User": [],
+   "Job": [
+    {
+     "id": "0294c28af6f07a6f",
+     "trait": "Classifiable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/declarations/1/members/5"
+     ]
+    },
+    {
+     "id": "112937ee62413ee4",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/declarations/1/members/2/enum"
+     ]
+    },
+    {
+     "id": "8be96d6f80dfbb23",
+     "trait": "Ownerable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/declarations/1/members/3"
+     ]
+    }
+   ]
+  },
+  "openapi-work": {
+   "Agent": [],
+   "Order": [],
+   "User": [],
+   "AgentJob": [
+    {
+     "id": "2e129b779e34c353",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/AgentJob/properties/kind/enum",
+      "/components/schemas/AgentJob/properties/state/enum"
+     ]
+    },
+    {
+     "id": "651d85abbaecd09f",
+     "trait": "Timestampable",
+     "grade": "strong",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/AgentJob/properties/created_at",
+      "/components/schemas/AgentJob/properties/deadline"
+     ]
+    }
+   ],
+   "Chore": [
+    {
+     "id": "998488c1152f6f05",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/Chore/properties/status/enum"
+     ]
+    }
+   ],
+   "Errand": [
+    {
+     "id": "1b810abc20edbb23",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/Errand/properties/state",
+      "/components/schemas/Errand/properties/status/enum"
+     ]
+    }
+   ],
+   "Job": [
+    {
+     "id": "3420ccc29689b7ad",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/Job/properties/status/enum"
+     ]
+    }
+   ],
+   "Note": [],
+   "Shipment": [
+    {
+     "id": "91f03ceab747736e",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/Shipment/properties/status/enum"
+     ]
+    }
+   ],
+   "Story": [
+    {
+     "id": "02224f352054000c",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/Story/properties/status/enum"
+     ]
+    }
+   ]
+  },
+  "linear-mini": {
+   "Comment": [],
+   "User": [],
+   "WorkflowState": [],
+   "Issue": [
+    {
+     "id": "a694d8c01fd99042",
+     "trait": "Stateful",
+     "grade": "weak",
+     "valid": true,
+     "evidence": [
+      "/definitions/3/fields/6"
+     ]
+    }
+   ],
+   "AgentSession": [
+    {
+     "id": "6bb0df732c4db588",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/definitions/5/fields/7/enum"
+     ]
+    }
+   ]
+  },
+  "a2a-mini": {
+   "Message": [
+    {
+     "id": "577d903869e59ee4",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/$defs/Message/properties/role/anyOf/1/enum"
+     ]
+    }
+   ],
+   "Task": [
+    {
+     "id": "e654cca2e1a22a1d",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/$defs/TaskStatus/properties/state/anyOf/1/enum"
+     ]
+    }
+   ],
+   "TaskStatus": [
+    {
+     "id": "352b94954cc77282",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/$defs/TaskStatus/properties/state/anyOf/1/enum"
+     ]
+    }
+   ]
+  },
+  "github-mini": {
+   "Operationa4666d97c4": [
+    {
+     "id": "ac6552b554ff0557",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/paths/~1agents~1repos~1{owner}~1{repo}~1tasks~1{task_id}/get/responses/200/content/application~1json/schema/allOf/0/properties/creator_type/enum",
+      "/paths/~1agents~1repos~1{owner}~1{repo}~1tasks~1{task_id}/get/responses/200/content/application~1json/schema/allOf/0/properties/state/enum"
+     ]
+    }
+   ],
+   "SimpleUser": []
+  }
+ }
+}

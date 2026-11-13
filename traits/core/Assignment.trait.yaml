@@ -1,0 +1,597 @@
+trait:
+  name: Assignment
+  version: 1.0.0
+  description: |
+    The record of one ask to one person or agent to do one piece of work, and what became of it: who asked, and for
+    whom; who is doing it; exactly what was asked; what the work is about; what it waits on; where it came from; and
+    how it ended. A task is an ask, not a ticket: the thing the work is about (an invoice, a payment, an issue) stays
+    the product's own record, and the task points at it. The Task object composes this trait, and the importer
+    proposes it for another system's record of work, so every field lives here and a proposal can bind what the
+    source has.
+
+    The state of the work is not a field of this trait. It is the record's own lifecycle, through Stateful: for a
+    Task, not started, working, needs input, waiting, paused, outcome unknown, and its five endings. A changed ask is
+    a new task. Handing the whole of the work on ends this one and starts another that names it as the one it came
+    from; asking for help with a part starts another while this one waits.
+
+    A reference to a person, an agent, a task or a thing is an id and a kept name. The name is kept on the record, so
+    it still reads after the person leaves or the thing is deleted, and the record's rows show it in place of the id;
+    the closed Reference details block lists the ids themselves. The kinds are the Actor trait's words: who asked can
+    be a person, an agent or a system (an automation); the one doing the work is a person or an agent. No field says
+    what the one doing the work may do: their authority lives on their own record, a person's account and roles, an
+    agent's rules and any grant it holds from the one the work is for.
+
+    OODS Foundry keeps and shows this record. It does not run, retry, pause, cancel or time out the work, check who may
+    do it, or keep the try count, what a task waits on or the first ask true.
+  category: core
+  # Compound tags: a trait's tags are inherited by the components it places (Text, Input), and an intent's words never
+  # match a compound tag, so these describe the trait without changing how any screen picks its components.
+  tags:
+    - task-record
+    - work-record
+    - actor-reference
+    - kept-ask
+
+# No parameter: the states are the record's own lifecycle, declared through Stateful.
+parameters: []
+
+# Every field but three is written by the product, when the work is asked for and as it goes, so a form never edits it
+# (readOnly). The result line, the due date and what the work waits on are written by whoever is doing it, a person
+# doing their own task among them, so the form offers them. The ask's facts are still read on the form (below).
+schema:
+  instruction:
+    type: string
+    required: true
+    readOnly: true
+    description: |
+      Exactly what was asked, in one line ("Count the flour and butter in stock before Monday's supplier order"). It
+      is written once: a changed ask is a new task.
+    validation:
+      maxLength: 240
+  requested_by_id:
+    type: string
+    required: false
+    readOnly: true
+    description: Who asked for the work, by the id the product knows them by. An agent may ask, and may ask itself.
+  requested_by_name:
+    type: string
+    required: false
+    readOnly: true
+    description: Who asked, as shown ("Billing Agent"). Kept on the record.
+  requested_by_kind:
+    type: string
+    required: false
+    readOnly: true
+    description: What kind of actor asked (person, agent or system), as the Actor trait names them.
+    validation:
+      enum:
+        - person
+        - agent
+        - system
+  requested_for_id:
+    type: string
+    required: false
+    readOnly: true
+    description: Who the work is for, the person or organization it serves.
+  requested_for_name:
+    type: string
+    required: false
+    readOnly: true
+    description: Who the work is for, as shown ("Tidewater Co-op"). Kept on the record.
+  asked_of_id:
+    type: string
+    required: false
+    readOnly: true
+    description: |
+      Who is doing the work, by the id the product knows them by. One record is one ask to one actor, and after the work
+      ends this still names the one who was asked to do it.
+  asked_of_name:
+    type: string
+    required: false
+    readOnly: true
+    description: Who is doing the work, or did it, as shown ("Billing Agent"). Kept on the record.
+  asked_of_kind:
+    type: string
+    required: false
+    readOnly: true
+    description: What kind of actor is doing the work, a person or an agent, as the Actor trait names them.
+    validation:
+      enum:
+        - person
+        - agent
+  subject_type:
+    type: string
+    required: false
+    readOnly: true
+    description: What kind of thing the work is about ("Transaction", "Invoice"). A task can be about nothing on record.
+  subject_id:
+    type: string
+    required: false
+    readOnly: true
+    description: The thing the work is about, by the id the product calls it by (a payment's reference).
+  subject_name:
+    type: string
+    required: false
+    readOnly: true
+    description: The thing the work is about, as shown. Kept on the record, so it still reads after the thing is deleted.
+  due_at:
+    type: datetime
+    required: false
+    description: When the work is due, when someone sets a date.
+    validation:
+      format: date-time
+  waiting_on_type:
+    type: string
+    required: false
+    readOnly: true
+    description: |
+      What kind of thing the work waits on, which says what kind of wait it is: an Approval, a person, another task,
+      or something outside, such as a payment at the bank. Set only while the work needs input or waits.
+  waiting_on_id:
+    type: string
+    required: false
+    readOnly: true
+    description: What the work waits on, by the id the product knows it by.
+  waiting_on_name:
+    type: string
+    required: false
+    description: What the work waits on, in a few words ("PAY-2026-0429 at the bank"). Set it only while the work needs input or waits.
+  parent_id:
+    type: string
+    required: false
+    readOnly: true
+    description: The task this one came from, when another task handed it on or asked for it.
+  parent_name:
+    type: string
+    required: false
+    readOnly: true
+    description: The task this one came from, as shown. Kept on the record.
+  origin_id:
+    type: string
+    required: false
+    readOnly: true
+    description: The first ask in a chain of tasks, kept on every task in the chain so a search by its name finds them all.
+  origin_name:
+    type: string
+    required: false
+    readOnly: true
+    description: The first ask in the chain, as shown. Kept on the record.
+  result:
+    type: string
+    required: false
+    description: What came of the work, in one line, in the words of whoever did it. Finished is their word, not someone else's acceptance.
+    validation:
+      maxLength: 240
+  tries:
+    type: integer
+    required: false
+    readOnly: true
+    description: |
+      How many times the work itself has been tried: a send, a payment, a count. Getting ready to do it is not a try. A
+      try is not a change of state, so it is counted here.
+    validation:
+      minimum: 0
+  last_try:
+    type: string
+    required: false
+    readOnly: true
+    description: 'When the last try was and how it ended, in one kept line ("29 Sep, 09:15: sent again; no answer yet").'
+    validation:
+      maxLength: 240
+
+semantics:
+  instruction:
+    semantic_type: assignment.instruction
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: What was asked
+  requested_by_id:
+    semantic_type: assignment.requested_by.id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked by
+      displayLabelField: requested_by_name
+  requested_by_name:
+    semantic_type: assignment.requested_by.name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked by
+  requested_by_kind:
+    semantic_type: assignment.requested_by.kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of asker
+  requested_for_id:
+    semantic_type: assignment.requested_for.id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked for
+      displayLabelField: requested_for_name
+  requested_for_name:
+    semantic_type: assignment.requested_for.name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked for
+  asked_of_id:
+    semantic_type: assignment.asked_of.id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Doing it
+      displayLabelField: asked_of_name
+  asked_of_name:
+    semantic_type: assignment.asked_of.name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Doing it
+  asked_of_kind:
+    semantic_type: assignment.asked_of.kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of doer
+  subject_type:
+    semantic_type: assignment.subject.type
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of thing
+  subject_id:
+    semantic_type: assignment.subject.id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: About
+      displayLabelField: subject_name
+  subject_name:
+    semantic_type: assignment.subject.name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: About
+  due_at:
+    semantic_type: assignment.due_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      label: Due
+  waiting_on_type:
+    semantic_type: assignment.waiting_on.type
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of thing waited on
+  waiting_on_id:
+    semantic_type: assignment.waiting_on.id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Waiting on
+      displayLabelField: waiting_on_name
+  waiting_on_name:
+    semantic_type: assignment.waiting_on.name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Waiting on
+  parent_id:
+    semantic_type: assignment.parent.id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Came from
+      displayLabelField: parent_name
+  parent_name:
+    semantic_type: assignment.parent.name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Came from
+  origin_id:
+    semantic_type: assignment.origin.id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: First ask
+      displayLabelField: origin_name
+  origin_name:
+    semantic_type: assignment.origin.name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: First ask
+  result:
+    semantic_type: assignment.result
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Result
+  tries:
+    semantic_type: assignment.tries
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Tries
+  last_try:
+    semantic_type: assignment.last_try
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Last try
+
+view_extensions:
+  # The record travels with its facts on every surface it is read on, each as labelled text. A reference is placed by
+  # its id, which shows its kept name; the row for the kept name alone is placed too, and the detail drops it wherever
+  # the id already shows the name, so a source that keeps only a name still shows it and one that keeps only an id
+  # shows the id. `data-oods-omit-empty` is the opt-in that leaves a place undrawn where the record holds no value for
+  # it, so a task that waits on nothing has no "Waiting on" line; no view in 0.13.1 carries it.
+  # On a list row and a card a Text's label is not shown, so the one doing the work and what it waits on are each a
+  # value over its caption ("Billing Agent", "Doing it"): a row also carries the chip of the one who answers for the work
+  # (Ownerable on Task), and two bare names side by side do not say which is which (s247-m01 screens, round 1).
+  list:
+    - component: LabelCell
+      position: after
+      props:
+        field: asked_of_id
+        description: Doing it
+        data-oods-omit-empty: true
+    - component: LabelCell
+      position: after
+      props:
+        field: waiting_on_id
+        description: Waiting on
+        data-oods-omit-empty: true
+  card:
+    - component: LabelCell
+      position: after
+      props:
+        field: asked_of_id
+        description: Doing it
+        data-oods-omit-empty: true
+    - component: LabelCell
+      position: after
+      props:
+        field: waiting_on_id
+        description: Waiting on
+        data-oods-omit-empty: true
+  detail:
+    - component: Text
+      position: main
+      priority: 80
+      props:
+        field: instruction
+    - component: Text
+      position: main
+      priority: 79
+      props:
+        field: subject_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 78
+      props:
+        field: subject_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 77
+      props:
+        field: subject_type
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 76
+      props:
+        field: requested_by_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 75
+      props:
+        field: requested_by_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 74
+      props:
+        field: requested_by_kind
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 73
+      props:
+        field: requested_for_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 72
+      props:
+        field: requested_for_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 71
+      props:
+        field: asked_of_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 70
+      props:
+        field: asked_of_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 69
+      props:
+        field: asked_of_kind
+        data-oods-omit-empty: true
+    # The times are labelled rows too, read as dates beside the other facts.
+    - component: Text
+      position: main
+      priority: 68
+      props:
+        field: due_at
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 67
+      props:
+        field: waiting_on_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 66
+      props:
+        field: waiting_on_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 65
+      props:
+        field: waiting_on_type
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 64
+      props:
+        field: result
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 63
+      props:
+        field: tries
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 62
+      props:
+        field: last_try
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 61
+      props:
+        field: parent_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 60
+      props:
+        field: parent_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 59
+      props:
+        field: origin_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 58
+      props:
+        field: origin_name
+        data-oods-omit-empty: true
+
+  # On the form, the screen where the work's state is changed, the ask's facts are read beside the status and are not
+  # edited there: what was asked, who asked and for whom, and who is doing it (`fact: true`, as Decision's are). Each
+  # party is placed by its id and its kept name: an import binds a party by its id alone, and where both are kept the
+  # form reads the name and leaves the id's row out. The three fields a person doing the work writes are given their own
+  # controls here, because a form has ten field slots and a task has more candidates than that.
+  form:
+    - component: Text
+      position: top
+      priority: 80
+      fact: true
+      props:
+        field: instruction
+    - component: Text
+      position: top
+      priority: 79
+      fact: true
+      props:
+        field: requested_by_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 78
+      fact: true
+      props:
+        field: requested_by_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 77
+      fact: true
+      props:
+        field: requested_for_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 76
+      fact: true
+      props:
+        field: requested_for_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 75
+      fact: true
+      props:
+        field: asked_of_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 74
+      fact: true
+      props:
+        field: asked_of_name
+        data-oods-omit-empty: true
+    - component: Input
+      position: main
+      priority: 60
+      props:
+        field: result
+    - component: Input
+      position: main
+      priority: 59
+      props:
+        field: due_at
+    - component: Input
+      position: main
+      priority: 58
+      props:
+        field: waiting_on_name
+
+# The state of the work is the record's lifecycle, so the record composes Stateful beside this trait.
+dependencies:
+  - Stateful
+
+metadata:
+  created: "2026-11-13"
+  owners:
+    - Core team
+  maturity: alpha
+  accessibility:
+    keyboard: The record's facts add no interactive control; the three fields the doer writes are labelled form inputs.
+    screenreader: Each fact is read with its visible label, label first on the detail page and the form ("Doing it, Billing Agent") and value first on a list row or a card ("Billing Agent, Doing it").
+  regionsUsed:
+    - list
+    - card
+    - detail
+    - form
+  examples:
+    - Task
+  references:
+    - "HL7 FHIR R5 Task: requester (the creator of the task), owner (responsible for managing its execution), performer and for (who benefits)"
+    - "A2A v1.0.1: a Task is server-generated in response to a message, and a task in a terminal state cannot restart; a follow-up is a new task"
+    - "Linear AgentSession: tracks the lifecycle of an agent run; its creator is the human user responsible for the session"
+    - "OASIS WS-HumanTask 1.1: sub-tasks identify their parent task (parentTaskId)"

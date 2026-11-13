@@ -29,6 +29,8 @@ import {
   isReferenceField,
   referenceFieldExpression,
   statusTimelineCondition,
+  omitEmptyCondition,
+  OMIT_EMPTY_PROP,
   isDateFieldEntry,
   slotDateHelperSource,
   SLOT_DATE_HELPER,
@@ -326,7 +328,7 @@ function reactScreenActionSurface(
     (occurrence): occurrence is DomainBindingOccurrence => (
       occurrence.kind === 'domain' && occurrence.scope === 'screen' && !wiredCollectionAction(node, occurrence.event)
       && !(occurrence.event === 'onSubmit' && hasSubmitControl(node))
-      && !screenActionGate(occurrence.event, objectSchema, workflow)?.never
+      && !screenActionGate(occurrence.event, objectSchema, workflow, objectName)?.never
     ),
   );
   if (occurrences.length === 0) return '';
@@ -339,7 +341,7 @@ function reactScreenActionSurface(
       ? 'disabled title="This action needs input from your application."'
       : `onClick={() => ${occurrence.handlerName}()}`;
     const button = `<Button intent="${screenActionIntent(occurrence.event)}" data-oods-action="${escapeDoubleQuotedAttr(occurrence.handlerName)}" ${activation}>${childValueToJsx(label)}</Button>`;
-    const gate = screenActionGate(occurrence.event, objectSchema, workflow);
+    const gate = screenActionGate(occurrence.event, objectSchema, workflow, objectName);
     return gate ? `{${screenActionCondition(gate)} && (\n${indent(button, 1)}\n)}` : button;
   });
   return [
@@ -467,13 +469,17 @@ function emitNode(
   let propsObject = node.props && typeof node.props === 'object'
     ? { ...(node.props as Record<string, unknown>) }
     : null;
+  // s247-m01: the opt-in to leave an empty place undrawn is a condition around the node (below), never an attribute.
+  if (propsObject) delete propsObject[OMIT_EMPTY_PROP];
   const tailwindVariant = tailwindVariants.get(tag);
   const localBinding = localBindingForNode(bindingAnalysis, node.id);
   const readonlyField = bindingAnalysis.readonlyFieldSubscriptions.find((subscription) => subscription.nodeId === node.id);
   const controlledProp = localBinding ? reactControlledProp(localBinding) : null;
   const recipeProps = resolveFrameworkRecipeProps(node, objectSchema, options.workflowCollections);
   const anchor = screenActionAnchor(node);
-  const timelineCondition = statusTimelineCondition(node, objectSchema);
+  // s247-m01: a place that opts in is drawn only where the record holds a value for it.
+  const emptyCondition = omitEmptyCondition(node, objectSchema);
+  const timelineCondition = [statusTimelineCondition(node, objectSchema), emptyCondition && `(${emptyCondition})`].filter(Boolean).join(' && ') || undefined;
   const finish = (code: string): string => wrapReactStateNode(
     wrapReactScreenActionSurface(timelineCondition ? `{${timelineCondition} ? (${code}) : null}` : anchor ? `${code}\n${REACT_ACTION_ANCHORS[anchor]}` : code, node, bindingAnalysis, options.objectName, objectSchema, Boolean(options.workflowCollections)),
     node.state,

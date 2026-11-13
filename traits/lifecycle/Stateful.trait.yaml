@@ -1,6 +1,6 @@
 trait:
   name: Stateful
-  version: 2.2.1
+  version: 2.3.0
   description: |
     Normalizes lifecycle state transitions, exposes canonical status semantics, and provides
     optional transition governance for production workflows. Many objects compose Stateful
@@ -8,12 +8,15 @@ trait:
     Colorized visual trait.
 
     At its simplest, Stateful defines an ordered list of valid states and tracks the current
-    status. When governance is enabled via transitionRules, it additionally enforces which
-    transitions are allowed, records the actor and reason for each transition, and materializes
-    the set of valid next states — making it suitable for auditable workflows where arbitrary
-    state jumps are not permitted. The product does that enforcing: OODS Foundry keeps the order as
-    data and moves no record, the product checks each change against it and writes
-    allowed_transitions, and a generated StatusSelector offers every state.
+    status. With transitionRules, a product also declares which moves between states are allowed,
+    for auditable workflows where arbitrary state jumps are not permitted.
+    The product enforces that order: it checks each change against it and writes allowed_transitions.
+    OODS Foundry keeps the order as data, refuses an order that names a state the lifecycle lacks,
+    holds its own shipped samples to it and moves no record. In a generated React or Vue app it
+    reads the order in one place: Cancel is offered, and the generated store accepts it, only from a
+    state the order lets move to where cancelling goes.
+    A generated StatusSelector offers every state. Every recorded change, with an order or without
+    one, can name who made it and why.
   category: lifecycle
   tags:
     - lifecycle
@@ -52,9 +55,11 @@ parameters:
     required: false
     description: |
       Allowed state transition map. Keys are source states; values are arrays of permitted
-      target states. When provided, the system enforces that only declared transitions are
-      valid — any other transition is rejected. When omitted, all transitions between any
-      two states in the states parameter are allowed (open model).
+      target states, and an empty array marks a final state. Every key and target must be one of
+      the states: an order that names a state the lifecycle lacks is refused. The product enforces
+      the order and rejects any other move; OODS Foundry keeps it as data, and in a generated React
+      or Vue app reads it only for Cancel, which is offered and accepted only where the order
+      allows. When omitted, a move between any two states is allowed (open model).
 
       Example for a subscription lifecycle:
         draft: [active, archived]
@@ -114,16 +119,22 @@ schema:
         - approval_id: string (the Approval record the yes is kept in)
         - approval_level: string (the level of yes, one of the levels the product declares: "approval")
       StatusTimeline then reads "Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval)".
+
+      A change made as part of a task can also say which task it was. Both optional; the id stays in the record's
+      data, a pointer and not a link, and an entry without them renders as it always has:
+        - task_id: string (the Task record the change was made under)
+        - task_name: string (the task, as shown: "Get INV-2026-0155 paid")
+      StatusTimeline then reads "… · approved by Ruth Adeyemi (level: Approval) · task: Get INV-2026-0155 paid".
     default: []
 
   allowed_transitions:
     type: string[]
     required: false
     description: |
-      Materialized list of valid next states from the current status, computed from the
-      transitionRules parameter. When transitionRules is null (open model), this contains
-      all states except the current one. Used by StatusSelector to disable invalid options
-      and by StatusBadge to indicate available paths.
+      Materialized list of the next states the product allows from the current status, written
+      by the product from the transitionRules parameter. When transitionRules is null (open model),
+      this contains all states except the current one. The detail page's StatusTimeline lists it
+      when the record holds it; a generated StatusSelector offers every state whatever it holds.
     default: []
 
 semantics:
@@ -144,7 +155,7 @@ semantics:
     token_mapping: computed
     ui_hints:
       component: StatusSelector
-      description: Drives the set of enabled options in the state transition UI.
+      description: The next states the product allows, as the product writes them; listed on the detail page, never used to disable an option.
 
 view_extensions:
   list:
@@ -193,7 +204,7 @@ dependencies: []
 
 metadata:
   created: "2025-10-12"
-  updated: "2026-11-12"
+  updated: "2026-11-13"
   owners:
     - Design team
     - Engineering team
@@ -209,12 +220,11 @@ metadata:
       - Article
   accessibility:
     keyboard: |
-      StatusSelector is keyboard-navigable (arrow keys to cycle states, Enter to confirm).
-      Disabled states (not in allowed_transitions) are skipped during keyboard navigation.
+      StatusSelector is a labelled native select: arrow keys move through the states. It offers
+      every state and disables none.
     screenreader: |
-      StatusBadge announces the current state and, when allowed_transitions is populated,
-      the number of available next states (e.g., "Status: Active. 2 transitions available.").
-      StateTransitionEvent entries announce from-state, to-state, actor, and reason.
+      StatusBadge announces the current state ("Status: Active"). StateTransitionEvent entries
+      announce from-state, to-state, actor, and reason.
   regionsUsed:
     - list
     - detail

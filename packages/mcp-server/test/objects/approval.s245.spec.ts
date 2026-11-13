@@ -75,7 +75,7 @@ describe('Approval is the thirteenth public object', () => {
     expect(listTraits()).toEqual(expect.arrayContaining(['Decision', 'Approvable']));
   });
 
-  it('health_check counts 18 runtime objects and 52 traits, as the registry does, where the runtime ships without the repository folder', async () => {
+  it('health_check counts 19 runtime objects and 53 traits, as the registry does, where the runtime ships without the repository folder', async () => {
     const { handle: health } = await import('../../src/tools/health.js');
     const folders = await import('../../src/objects/definition-folders.js');
     const repository = path.resolve(import.meta.dirname, '../../../../repository-objects');
@@ -84,15 +84,19 @@ describe('Approval is the thirteenth public object', () => {
     try {
       clearObjectCache();
       const result = await health({}) as { registry: { objects: number; traits: number } };
-      expect(result.registry).toMatchObject({ objects: 18, traits: 52 });
+      // s247-m01: core/Assignment, the record of one ask to do one piece of work, is the 53rd trait. s247-m02: Task is the
+      // 19th runtime object.
+      expect(result.registry).toMatchObject({ objects: 19, traits: 53 });
       expect(listObjects()).toHaveLength(result.registry.objects);
       expect(listTraits()).toHaveLength(result.registry.traits);
     } finally { spy.mockRestore(); clearObjectCache(); }
   });
 
-  it('marks a form view a fact only where Decision says so: no other shipped form view carries the mark', () => {
+  // s247-m01: core/Assignment's form reads the ask's facts beside the status: what was asked, who asked and for whom, and who
+  // is doing it. No other shipped form view carries the mark.
+  it('marks a form view a fact only where Decision and Assignment say so: no other shipped form view carries the mark', () => {
     const marked = listTraits().flatMap(name => (loadTrait(name).view_extensions.form ?? []).filter(view => view.fact !== undefined).map(view => `${name}:${String(view.props?.field)}`));
-    expect(marked).toEqual(['Decision:subject_id', 'Decision:subject_name', 'Decision:shown', 'Decision:level', 'Decision:meaning', 'Decision:requested_by_id', 'Decision:requested_by_name', 'Decision:requested_for_id', 'Decision:requested_for_name']);
+    expect(marked).toEqual(['Assignment:instruction', 'Assignment:requested_by_id', 'Assignment:requested_by_name', 'Assignment:requested_for_id', 'Assignment:requested_for_name', 'Assignment:asked_of_id', 'Assignment:asked_of_name', 'Decision:subject_id', 'Decision:subject_name', 'Decision:shown', 'Decision:level', 'Decision:meaning', 'Decision:requested_by_id', 'Decision:requested_by_name', 'Decision:requested_for_id', 'Decision:requested_for_name']);
     for (const name of listObjects()) expect(JSON.stringify(loadObject(name)), name).not.toContain('"fact":');
   });
 
@@ -180,7 +184,8 @@ describe('the eight Approval samples tell true stories about the Transaction and
     const approval = approvals.find(sample => sample.subject_id === 'PAY-2026-0429')!;
     expect(resend).toMatchObject({ approval_id: approval.approval_id, approval_level: 'approval', approved_by_name: 'Ruth Adeyemi' });
     expect(approval.status).toBe('used');
-    expect(historyAttribution(resend)?.text).toBe('Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval)');
+    // s247-m02: the resend was made under the Billing Agent's task, and its line now names it.
+    expect(historyAttribution(resend)?.text).toBe('Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval) · task: Get INV-2026-0155 paid');
   });
 
   it('keeps the out-of-date approval true: the article changed after the yes', () => {

@@ -42,13 +42,13 @@ An agent is an actor, not a user: in OODS it is an object of its own that compos
 
 A per-record bot or app flag says some records are agents; OODS keeps agents in an object of their own, so separate people from agents before accepting `Actor` as an agent. A boolean named `owner` is a role flag, not an owner reference.
 
-Work states arrive through `Stateful`. A proto3 JSON enum (its string values beside an `*_UNSPECIFIED` sentinel pattern and the int32 wire form, as in A2A's `TaskStatus.state`) is read as its string values, without the sentinel. A `status` or `state` field that references a record holding one state enum is flattened to those states, so A2A's `Task` is proposed `Stateful` with its eight task states, and `TaskStatus` stays its own object.
+Work states arrive through `Stateful`. A proto3 JSON enum (its string values beside an `*_UNSPECIFIED` sentinel pattern and the int32 wire form, as in A2A's `TaskStatus.state`) is read as its string values, without the sentinel. A `status` or `state` field that references a record holding one state enum is flattened to those states, so A2A's `Task`, in the file A2A publishes at `/latest/`, is proposed `Stateful` with its eight task states, and `TaskStatus` stays its own object. The file A2A publishes for v1.0.1 points those references at other files by name (`lf.a2a.v1.TaskStatus.jsonschema.json`); imported alone, the references are reported and skipped, so its `Task` drafts its two ids and `TaskStatus` keeps the eight states.
 
 A person or other principal is a record whose name is user, account, organization, team, group, directory object, person, member or principal. The name is read with one technical suffix off (DTO, VO, Model, Entity, Bean, Resource, Response, Schema, Representation) and with a plural s, so Jira's `UserDTO` and a `users` table count; a name with another word beside it, such as `UserLinkDTO` or `CommitUser`, does not. The same match feeds every rule on this page.
 
 ### Approval records
 
-An approval is a decision, not a status: one person's answer about one thing, kept as a record of its own (see [Approvals as decisions](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.13.0/docs/concepts/approvals-as-decisions.md)). Where another system keeps a table of approvals, one answer per row, the importer proposes `Decision` for it, graded on structure:
+An approval is a decision, not a status: one person's answer about one thing, kept as a record of its own (see [Approvals as decisions](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.14.0/docs/concepts/approvals-as-decisions.md)). Where another system keeps a table of approvals, one answer per row, the importer proposes `Decision` for it, graded on structure:
 
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|
@@ -65,6 +65,54 @@ Accepting `Decision` never fails for a fact the source lacks. The screen where a
 Measured on three published schemas: Jira Service Management's `ApproverDTO` is proposed `Decision` with its approver and answer, keeping neither the thing, what was shown, the level, the meaning nor who asked; Gitea's `PullReview` with its reviewer, answer, submission time, body and commit; Bitbucket Cloud's `participant` with its user, answer and time of taking part. Jira's `ApprovalDTO`, the ask that holds its approvers and their final decision, has no person beside its outcome, so it gets no `Decision`; its two dates are links to `DateDTO`, a record of three text renderings and a number, not date fields.
 
 The importer does not propose `Approvable`: an approval outcome kept as a field on the thing, such as GitHub's `reviewDecision`, is not read. A person referenced through a numeric key, such as an integer foreign key, is not bound, because `Decision` keeps ids as text, so that table gets no proposal.
+
+### Records of work
+
+A task is an ask, not a ticket: one ask to one person or agent to do one piece of work, and what became of it (see [Tasks as asks](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.14.0/docs/concepts/tasks-as-asks.md)). Where another system keeps a record of work, the importer proposes `Assignment` for it, graded on structure:
+
+| Evidence in the schema | Proposal | Grade |
+|---|---|---|
+| A state enum holding a working value, a finished value and a value that means a person is needed, beside a single reference to the one doing the work: a reference to an agent's or an app's own record, or a reference to a person or other principal named for the one doing it | `Assignment`, with the one doing it as `asked_of_id`, and `Stateful` on those states | medium |
+| The same, with who asked, the thing, a reference to its own kind, a due date, what was asked, the result or a count of tries | the same, with those bound too | medium |
+| Those states with no reference to the one doing the work, such a reference with no such states, a field named like the one doing it that references nothing, or states that never say a person is needed | nothing | |
+
+**The states.** The working values are working, in progress, running, active, processing, started, executing and ongoing. The finished values are finished, completed, complete, done, succeeded, success and successful. A person is needed where a value reads input required, needs input, awaiting input, waiting for input, input needed, requires input, user input required, requires user input, awaiting user input, waiting for user input, waiting for user, awaiting user, waiting on user, needs user, needs human, awaiting human, waiting for human or human input required. Values are read in any case, with their words joined by capitals, underscores, hyphens or spaces (`awaitingInput`, `INPUT_REQUIRED`, `in-progress`), and with a prefix every value shares taken off, so A2A's `TASK_STATE_INPUT_REQUIRED` reads input required. A value written as one run of letters, such as `inprogress`, is not read. Blocked, waiting and pending do not say a person is needed, because they wait on anything: a tracker's blocked issue is the ticket, not a task.
+
+**The one doing the work.** A reference to an agent's or an app's own record (one named agent, assistant, bot, app, application, integration, installation or service principal) is the one doing the work, unless it is named for who asked. Otherwise it is a reference to a person or other principal whose name says so: assignee, assigned to, asked of, agent, app user, app, bot, worker, performer, executor, doer, delegate, delegated to, runner or handler. A reference to a person named for nothing else, such as `user`, is not read as the one doing the work: in an agent's product it is often the person who asked.
+
+**What else is bound.** Who asked: a reference to a person or agent named requested by, requester, creator, created by, submitter, initiator, started by, asked by, triggered by, reporter or author (`requested_by_id`). The thing: the one other record it references or, where it references several, the one named subject, issue, ticket, case, item, work item, target, pull request, merge request, document or record (`subject_id`). The task it came from: a reference to its own kind (`parent_id`). A date-time named due or deadline (`due_at`), free text named prompt, instruction or ask (`instruction`), free text named result or outcome (`result`), and a whole number named tries, attempts, run count or session count (`tries`). Each is bound only where its type matches the trait's field: a same-named field of another type, such as a boolean named `result`, is left unbound, and the proposal stays valid. Every other `Assignment` field stays unbound: who the work is for, what it waits on, the first ask, the kept names and the kinds.
+
+**Two guesses stop where it fires.** A reference to the record's own kind is the task it came from, so it is not also proposed as a category tree (`Classifiable`). The one doing the work and who asked are bound to their seats, so they are not also proposed as an owner with nothing bound (`Ownerable`). A reference to an owner still proposes `Ownerable`: on a task, the owner is the one who answers for the work. Where the rule does not fire, the importer proposes exactly what it did before this rule existed. The record's lifecycle is its work's states, even where another enum sorts first; the other enum is reported as an alternative.
+
+Measured on five published schemas:
+
+- Linear's `AgentSession` is proposed `Assignment` with its app user as the one doing the work, its creator as who asked and its issue as the thing, and its status as its lifecycle. Linear says that when an automation hands an issue to an agent, the creator is the issue's assignee, on whose behalf the agent works: check who asked before accepting.
+- A2A's `Task` and MCP's `Task` hold such states but name no one: no field references a person or an agent, so they gain nothing, and an agent's work keeps the states its protocol gives it.
+- GitHub's agent task holds them too (`in_progress`, `completed`, `waiting_for_user`), but nothing in it references the one doing the work: its custom agent is an object written inside the task, not a reference to a record, and so is its creator, who would be who asked. It gains nothing.
+- Devin's session references no person's or agent's record, and writes a person needed as `blocked`, which the importer does not read as one.
+- A tracker's issue gets nothing new: Linear's `Issue` references its assignee and its parent, but its state is a record a team defines, not an enum.
+
+A reference held as a number or in a UUID column is not read as the one doing the work, because `Assignment` keeps ids as text, so that table gets no proposal. Who answers for the work is never guessed from the one doing it: accept `Ownerable` where the record names an owner.
+
+#### How other systems' states read against a task's
+
+The importer keeps each system's own states and renames none. This is how they read against `Task`'s eleven, for a person mapping one to the other; "none" means the system has no such state.
+
+| Task | A2A v1.0.1 | MCP 2025-11-25 | Linear agent session | GitHub agent task | Devin session |
+|---|---|---|---|---|---|
+| Not started | `TASK_STATE_SUBMITTED` | none | `pending` | `queued` | none |
+| Working | `TASK_STATE_WORKING` | `working` | `active` | `in_progress` | `working`, `resumed` |
+| Needs input | `TASK_STATE_INPUT_REQUIRED`, `TASK_STATE_AUTH_REQUIRED` | `input_required` | `awaitingInput` | `waiting_for_user` | `blocked`, which Devin describes as waiting for user input |
+| Waiting | none | none | none | none | none |
+| Paused | none | none | none | none | none |
+| Outcome unknown | none arrives: `TASK_STATE_UNSPECIFIED`, which A2A describes as an unknown or indeterminate state, is read as a placeholder and not imported | none | none | none | none |
+| Finished | `TASK_STATE_COMPLETED` | `completed` | `complete` | `completed` | `finished` |
+| Failed | `TASK_STATE_FAILED` | `failed` | `error` | `failed` | none |
+| Declined | `TASK_STATE_REJECTED` | none | none | none | none |
+| Cancelled | `TASK_STATE_CANCELED` | `cancelled` | none | `cancelled` | none |
+| Handed over | none | none | none | none | none |
+
+Not placed, because their schemas say too little: Linear's `stale` and `stopping`; GitHub's `idle`, and its `timed_out`, which could be a failure or an outcome nobody knows yet; and Devin's `expired` and its requests to suspend and resume.
 
 ```json
 {"action":"apply","importId":"<from draft>","objects":[{"name":"YourObject","proposals":["<accepted proposal id>"]}]}

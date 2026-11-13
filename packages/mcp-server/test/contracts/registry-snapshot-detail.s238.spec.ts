@@ -23,6 +23,11 @@ describe('registry_snapshot sizes its reply for the client', () => {
       expect(trait.description.length).toBeLessThanOrEqual(240);
     }
     expect(summary.objects.Subscription?.fields?.length).toBeGreaterThan(0);
+    // s247-m01: a description is cut to its first sentence, which says what the trait is; the rest is one argument away.
+    const full = await handle({ detail: 'full', names: ['Stateful', 'Assignment'] });
+    expect(summary.traits.Stateful!.description).toBe('Normalizes lifecycle state transitions, exposes canonical status semantics, and provides optional transition governance for production workflows.');
+    expect(full.traits.Stateful!.description.replace(/\s+/g, ' ').startsWith(summary.traits.Stateful!.description)).toBe(true);
+    expect(summary.traits.Assignment!.description).toMatch(/^The record of one ask to one person or agent to do one piece of work, and what became of it: .*\.$/);
   });
 
   it('returns complete definitions with detail full, and only the named ones when names are given', async () => {

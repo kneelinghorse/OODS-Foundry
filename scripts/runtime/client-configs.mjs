@@ -425,7 +425,7 @@ export function renderPackageReadme(facts) {
     "",
     "## Your own objects and traits",
     "",
-    `${facts.product} ships 13 business objects, plus 5 internal capture objects (18 in the runtime).`,
+    `${facts.product} ships 14 business objects, plus 5 internal capture objects (19 in the runtime).`,
     "",
     `${facts.product} composes from the objects and traits it ships and from yours. Put a \`*.object.yaml\` file in \`~/.oods-foundry/objects\` and a \`*.trait.yaml\` file in \`~/.oods-foundry/traits\`, or ask your assistant to use the \`object_registry\` tool: \`validate\` checks a definition without writing it, \`object_register\` with \`register\` writes it into your folder once it validates and composes in every context it declares, and \`reload\` reads the folders again without a restart. An object of yours with a shipped object's name is used in its place; a trait of yours cannot reuse a shipped trait's name. \`object_registry\` \`list\` and \`health_check\` name every file that is not in use and why. Your folders are outside the unpacked runtime, so they survive upgrades. A trait of yours can place only the components ${facts.product} ships (\`catalog_list\` names them); mapped implementations can come from your own components by substitution. The authoring guide is [OBJECTS-AND-TRAITS.md](${guide("OBJECTS-AND-TRAITS.md")}).`,
     "",

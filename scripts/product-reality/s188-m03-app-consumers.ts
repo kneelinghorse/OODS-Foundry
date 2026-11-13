@@ -325,8 +325,11 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
         await page.locator('[data-oods-action="handleCancel"]').click();
         await page.locator('[data-oods-component="CancellationForm"] textarea[name="reason"]').fill('Budget changed for next year');
         const code = page.locator('[data-oods-component="CancellationForm"] [name="reasonCode"]');
-        if (await code.evaluate(element => element.tagName) === 'SELECT') await code.selectOption('customer_request');
-        else await code.fill('customer_request');
+        // s247-m04: a reason the object offers; customer_request where it is one (every object before Task), else the first.
+        if (await code.evaluate(element => element.tagName) === 'SELECT') {
+          const offered = await code.locator('option').evaluateAll(options => options.map(option => (option as HTMLOptionElement).value).filter(Boolean));
+          await code.selectOption(offered.includes('customer_request') ? 'customer_request' : offered[0]!);
+        } else await code.fill('customer_request');
         const periodEnd = page.locator('input[name="cancel_at_period_end"]');
         if (editProbe?.immediateCancellation) assert.equal(await periodEnd.count(), 0, 'Immediate cancellation must not expose a billing-period control');
         else await periodEnd.check();

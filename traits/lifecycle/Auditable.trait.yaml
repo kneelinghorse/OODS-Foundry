@@ -1,6 +1,6 @@
 trait:
   name: Auditable
-  version: 1.2.0
+  version: 1.3.0
   description: |
     Compliance-grade audit trail trait that captures state transitions with actor,
     reason, and timestamp metadata. Auditable observes Stateful transitions and
@@ -20,6 +20,8 @@ trait:
       acted, who it acted for and who approved it (actor_name, on_behalf_of_name, approved_by_name)
     - Approval Trace: an optional pointer to the approval a change rests on and its level of yes
       (approval_id, approval_level)
+    - Task Trace: an optional pointer to the task a change was made under and the task's name
+      (task_id, task_name)
     - Reason Enforcement: optional requirement for transition justification
   category: lifecycle
   tags:
@@ -127,6 +129,16 @@ schema:
           type: string
           required: false
           description: The level of yes, one of the levels the product declares ("approval").
+        # s247-m01: a change made as part of a task can say which task it was. Both optional; the id stays in the record's
+        # data, a pointer and not a link.
+        task_id:
+          type: string
+          required: false
+          description: Identifier of the Task record the change was made under.
+        task_name:
+          type: string
+          required: false
+          description: The task the change was made under, as shown ("Get INV-2026-0155 paid").
         reason:
           type: string
           required: false

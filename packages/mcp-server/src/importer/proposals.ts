@@ -33,8 +33,12 @@ const PERSON = /^(user|account|person|member|principal)s?$/i;
 const boolean = (schema: MapValue) => schema.type === 'boolean' || Array.isArray(schema.type) && schema.type.includes('boolean') && schema.type.every((type: string) => type === 'boolean' || type === 'null');
 /** An app or installation record beside a bot flag says the flagged records are an app's (an agent's). */
 const APP = /^(app|application|installation|integration|oauthapp|oauthapplication|bot|botprofile|serviceprincipal)$/i;
-/** A structural match suggests a capability for review, not an assertion of domain meaning. */
-export function suggestTraits(shape: MapValue, fields: Record<string, MapValue>, originOf: (field: string) => Origin, propose: Propose, note: (field: string, reason: string) => void): void {
+/**
+ * A structural match suggests a capability for review, not an assertion of domain meaning. s247-m03: a declared reference
+ * the record-of-work rule has bound (`claimed`: the one doing the work, who asked, the task it came from) is not guessed a
+ * second time as an owner or a category tree; with nothing claimed, every guess is as before.
+ */
+export function suggestTraits(shape: MapValue, fields: Record<string, MapValue>, originOf: (field: string) => Origin, propose: Propose, note: (field: string, reason: string) => void, claimed: ReadonlySet<string> = new Set()): void {
   const entries = Object.entries(fields);
   const evidence = (field: string, reason: string, kind: 'structure' | 'declaration' = 'structure') => [{ ...originOf(field), kind, reason }];
   const number = (schema: MapValue) => ['integer', 'number'].includes(schema.type);
@@ -80,6 +84,7 @@ export function suggestTraits(shape: MapValue, fields: Record<string, MapValue>,
   if (annotation.history) propose({ name: 'Supersedable', parameters: {} }, 'strong', evidence(annotation.history.field ?? '', 'Declared record history; review whether revisions replace one another before accepting Supersedable.', 'declaration'));
   for (const relationship of annotation.relationships ?? []) {
     const field = relationship.via;
+    if (claimed.has(field)) continue;
     if (relationship.target === shape.title && !annotation.history) propose({ name: 'Classifiable', parameters: { classification_mode: 'taxonomy', hierarchy_storage_model: 'adjacency_list' } }, 'medium', evidence(field, 'A declared self-referencing key can represent an adjacency hierarchy; confirm taxonomy meaning.'));
     // s244-m03 (#2837): group and directory-object targets name principals too (Microsoft Graph's owners and sponsors).
     if (principal(relationship.target)) propose({ name: 'Ownerable', parameters: {} }, 'medium', evidence(field, 'Declared foreign key to a principal record; confirm ownership rather than another association.'));
@@ -209,4 +214,101 @@ export function approvalRecord(fields: Record<string, FieldDefinition>, relation
   const shown = names.find(name => text(name) && SHOWN.test(word(name)));
   if (shown) named(shown, 'shown', `${shown} names the version the answer is about, which is what the person was shown (shown).`);
   return { trait: { name: 'Decision', parameters: {}, fieldBindings: bindings }, evidence, answer };
+}
+
+/** s247-m03: the values a record of work holds, read with a prefix every value shares taken off (A2A's TASK_STATE_). */
+const WORKING = new Set(['working', 'in_progress', 'running', 'active', 'processing', 'started', 'executing', 'ongoing']);
+const FINISHED = new Set(['finished', 'completed', 'complete', 'done', 'succeeded', 'success', 'successful']);
+/** A person is needed: an answer or input from a user or a human. Blocked, waiting and pending are not: they wait on anything. */
+const NEEDS_PERSON = new Set(['input_required', 'needs_input', 'awaiting_input', 'waiting_for_input', 'input_needed', 'requires_input', 'user_input_required', 'requires_user_input', 'awaiting_user_input', 'waiting_for_user_input', 'waiting_for_user', 'awaiting_user', 'waiting_on_user', 'needs_user', 'needs_human', 'awaiting_human', 'waiting_for_human', 'human_input_required']);
+
+/** A record of work's states: a working value, a finished value and a value that means a person is needed, as the source spells them. */
+export function workValues(values: unknown[]): { working: string; finished: string; needsPerson: string } | undefined {
+  if (values.length < 3 || !values.every((value): value is string => typeof value === 'string')) return undefined;
+  const parts = values.map(value => word(value).split('_'));
+  let shared = 0;
+  while (parts.every(part => part.length > shared + 1 && part[shared] === parts[0][shared])) shared++;
+  const read = parts.map(part => part.slice(shared).join('_'));
+  const find = (set: Set<string>) => values[read.findIndex(value => set.has(value))];
+  const working = find(WORKING), finished = find(FINISHED), needsPerson = find(NEEDS_PERSON);
+  return working && finished && needsPerson ? { working, finished, needsPerson } : undefined;
+}
+
+/** An agent's or an app's own record: the one doing the work can be one (Agent, Bot, App, Application, Integration). */
+const ACTOR_RECORD = /^(agent|assistant|bot|botprofile|app|application|integration|installation|serviceprincipal|oauthapp|oauthapplication)s?$/i;
+const actorRecord = (target: string) => { const last = (target.split('.').pop() ?? target).replace(/[^A-Za-z0-9]/g, ''); return [last, last.replace(TECHNICAL, '')].some(candidate => ACTOR_RECORD.test(candidate)); };
+/** A reference named for the one doing the work. */
+const DOER = /^(assignee|assigned(_(to|team|user|group|agent))?|asked_of|agent|app_user|app|bot|worker|performer|executor|doer|delegate|delegated_to|runner|handler)(_id)?$/;
+/** A reference named for who asked for the work. */
+const REQUESTER = /^(requested_by|requester|requestor|creator|created_by|submitter|submitted_by|initiator|initiated_by|started_by|asked_by|triggered_by|triggering_actor|reporter|author)(_id)?$/;
+/** A reference named for the thing the work is about, when the record points at more than one other record. */
+const THING = /^(subject|issue|ticket|case|item|work_item|target|pull_request|merge_request|document|record)(_id)?$/;
+const WORK_FIELDS: Array<[string, RegExp, string, string]> = [
+  ['due_at', /^(due|deadline)(_(at|on|by|date|time))?$/, 'datetime', 'a date-time named for when the work is due'],
+  ['instruction', /^(instructions?|prompt|ask)$/, 'string', 'free text named for what was asked'],
+  ['result', /^(result|outcome|result_summary|outcome_summary|result_text)$/, 'string', 'free text named for what came of the work'],
+  ['tries', /^(tries|try_count|attempts|attempt_count|attempts_count|run_count|runs_count|session_count|sessions_count)$/, 'integer', 'a whole number named for how many tries, runs or sessions the work has taken'],
+];
+
+/**
+ * s247-m03: another system's record of work, one ask to one actor, recognised on structure (#2651). Two facts together earn
+ * medium: a state enum that holds a working value, a finished value and a value that means a person is needed (workValues),
+ * and a single reference to the one doing the work: a reference to an agent's or an app's record, or a reference to a
+ * person or other principal named for the one doing it (assignee, agent, worker...). Neither alone proposes anything:
+ * references to people are everywhere, and orders and documents never need input. What else the record has is bound
+ * where its structure or name says what it is: who asked, the thing, a reference to its own kind (the task it came from),
+ * the due date, what was asked, the result and the count of tries. Every other Assignment field stays unbound, and so
+ * does a same-named field of another type, so the proposal stays valid. The doer, who asked and the task it came from
+ * are returned as claimed: suggestTraits does not guess them again as an owner or a category tree. Strong stays for a
+ * declaration.
+ */
+export function workRecord(self: string, fields: Record<string, FieldDefinition>, relationships: Edge[], originOf: (field: string) => Origin, stateOrigin: (field: string) => Origin, traitTypes: Record<string, string>): { trait: TraitReference; evidence: Proposal['evidence']; state: string; claimed: string[] } | undefined {
+  const names = Object.keys(fields);
+  const state = names.find(field => Array.isArray(fields[field].validation?.enum) && workValues(fields[field].validation!.enum as unknown[]));
+  if (!state) return undefined;
+  const { working, finished, needsPerson } = workValues(fields[state].validation!.enum as unknown[])!;
+  const single = relationships.filter(edge => edge.cardinality === 'many-to-one' && fields[edge.via] && typeOf(fields[edge.via]) === 'string');
+  const actors = single.filter(edge => edge.target !== self && (principal(edge.target) || actorRecord(edge.target)));
+  const role = (edge: Edge) => word(edge.via).replace(/_user_id$/, '_id');
+  const doer = actors.find(edge => actorRecord(edge.target) && !REQUESTER.test(role(edge))) ?? actors.find(edge => DOER.test(role(edge)));
+  if (!doer) return undefined;
+  const bindings: Record<string, string | null> = { asked_of_id: doer.via };
+  const evidence: Evidence[] = [
+    { ...originOf(doer.via), kind: 'structure', reason: actorRecord(doer.target)
+      ? `${doer.via} references ${doer.target}, an agent's or an app's own record: the one doing the work (asked_of_id).`
+      : `${doer.via}, a field named for the one doing the work, references ${doer.target}, a person or other principal: the one doing it (asked_of_id).` },
+    { ...stateOrigin(state), kind: 'structure', reason: `${state} holds a working value (${working}), a finished value (${finished}) and a value that means a person is needed (${needsPerson}): the states of a record of work, proposed as its lifecycle (Stateful) unless the source declares another.` },
+  ];
+  const claimed = [doer.via];
+  const asker = actors.find(edge => edge.via !== doer.via && REQUESTER.test(role(edge)));
+  if (asker) {
+    bindings.requested_by_id = asker.via; claimed.push(asker.via);
+    evidence.push({ ...originOf(asker.via), kind: 'name', reason: `${asker.via} references ${asker.target} and is named for who asked (requested_by_id).` });
+  }
+  const own = single.filter(edge => edge.target === self);
+  const parent = own.length === 1 ? own[0] : own.find(edge => /^parent/.test(role(edge)));
+  if (parent) {
+    bindings.parent_id = parent.via; claimed.push(parent.via);
+    evidence.push({ ...originOf(parent.via), kind: own.length === 1 ? 'structure' : 'name', reason: `${parent.via} references ${self}, this record's own kind: read as the task this one came from (parent_id), not a category tree; confirm before accepting.` });
+  }
+  const others = single.filter(edge => edge.target !== self && !principal(edge.target) && !actorRecord(edge.target));
+  const thing = others.length === 1 ? others[0] : others.find(edge => THING.test(role(edge)));
+  if (thing) {
+    bindings.subject_id = thing.via;
+    evidence.push(others.length === 1
+      ? { ...originOf(thing.via), kind: 'structure', reason: `${thing.via} references ${thing.target}, the one other record it points at by a single text reference, besides people, agents and its own kind: the thing the work is about (subject_id).` }
+      : { ...originOf(thing.via), kind: 'name', reason: `${thing.via} references ${thing.target} and is named for the thing the work is about (subject_id).` });
+  }
+  const unbound = (name: string) => !Object.values(bindings).includes(name) && name !== state;
+  for (const [role, pattern, type, meaning] of WORK_FIELDS) {
+    const field = names.find(name => unbound(name) && typeOf(fields[name]) === type && !fields[name].validation?.enum && pattern.test(word(name)));
+    if (field) { bindings[role] = field; evidence.push({ ...originOf(field), kind: 'name', reason: `${field} is ${meaning} (${role}).` }); }
+  }
+  // Bindings are filled by name after this: a same-named field of another type, or one already bound to another of the
+  // trait's fields, is left unbound here, so the proposal composes.
+  for (const [field, type] of Object.entries(traitTypes)) {
+    if (Object.hasOwn(bindings, field) || !fields[field]) continue;
+    if (typeOf(fields[field]) !== type.replace(/\?$/, '') || Object.values(bindings).includes(field)) bindings[field] = null;
+  }
+  return { trait: { name: 'Assignment', parameters: {}, fieldBindings: bindings }, evidence, state, claimed };
 }

@@ -16,7 +16,8 @@ describe('Auditable trait', () => {
 
     expect(def.trait.name).toBe('Auditable');
     // s245-m01: 1.2.0 declares the optional approval pointer and level on audit_log entries.
-    expect(def.trait.version).toBe('1.2.0');
+    // s247-m01: 1.3.0 declares the optional task pointer and name (task_id, task_name) beside them.
+    expect(def.trait.version).toBe('1.3.0');
     expect(def.schema.audit_log.type).toBe('AuditEntry[]');
     expect(def.semantics?.audit_log?.token_mapping).toBe('tokenMap(audit.timeline.*)');
     expect(def.view_extensions?.timeline?.[0]?.component).toBe('AuditTimeline');

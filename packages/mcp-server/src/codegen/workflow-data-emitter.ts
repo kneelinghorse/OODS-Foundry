@@ -6,7 +6,8 @@ import { displayFieldExpression, mapFieldType, snakeToCamel } from './binding-ut
 import { fieldLabel } from '../compose/label-generator.js';
 import { recordTitleField } from '../compose/record-label.js';
 import { recordDisplayValue } from '../compose/record-display.js';
-import { cancellationMode } from '../objects/cancellation-mode.js';
+import { cancellableStates, cancellationMode } from '../objects/cancellation-mode.js';
+import { declaredCancelOrder } from '../objects/declared-order.js';
 
 /** The chart-assets.ts export holding one render prop's SVG per record: svg -> chartSvgByRecord (as chart-assets.ts writes it). */
 const chartAssetMap = (prop: string): string => `chart${prop[0]!.toUpperCase()}${prop.slice(1)}ByRecord`;
@@ -133,6 +134,10 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
   // s220-m01 (#2458): a cancellation is the record's last event when its vocabulary names one (Subscription's
   // cancellation_requested); an edited, cancelled Subscription read "Last event: Payment received" a month earlier.
   const cancelEvent = fields.last_event && !fields.last_event.unavailable ? eventNames.find(event => /cancel/.test(event)) : undefined;
+  // s247-m01: an object that composes Cancellable and declares the order of its states is cancelled only from a state the
+  // order lets move to where cancelling goes, as its detail's action bar offers it (cancellableStates, declared-order.ts).
+  const cancelOrder = declaredCancelOrder(workflow.object);
+  const cancelFrom = cancelOrder ? cancellableStates(workflow.data.lifecycleStates, cancelOrder) : undefined;
   const timeline = schema.screens.find(node => node.id === workflow.screens.find(screen => screen.context === 'timeline')?.id);
   const timelineNodes = nodes(timeline ? [timeline] : []);
   const eventCollection = timelineNodes.find(node => node.collection?.source === 'events')?.collection;
@@ -276,7 +281,8 @@ export function createStore(options: StoreOptions = {}) {
       if (mode === 'none') throw new Error('This record has no cancelled state to move to');
       const immediate = mode === 'immediate';
       const target = immediate ? 'cancelled' : 'pending_cancellation';
-      if (values.is_archived || values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} === 'terminated' || values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} === 'pending_cancellation' || (immediate && ['completed', 'cancelled', 'final'].includes(String(values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`})))) throw new Error('This record cannot be cancelled in its current state');
+      ${cancelFrom ? `// The object's declared order decides the states a record may be cancelled from.
+      if (values.is_archived || !(${JSON.stringify(cancelFrom)} as readonly string[]).includes(String(values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`}))) throw new Error('This record cannot be cancelled in its current state');` : `if (values.is_archived || values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} === 'terminated' || values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} === 'pending_cancellation' || (immediate && ['completed', 'cancelled', 'final'].includes(String(values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`})))) throw new Error('This record cannot be cancelled in its current state');`}
       ${workflow.data.cancellationRequiresReason ? `if (!reason.trim()) throw new Error('Enter a cancellation reason');
       if (!code || (${JSON.stringify(workflow.data.cancellationReasonCodes ?? [])}.length > 0 && !(${JSON.stringify(workflow.data.cancellationReasonCodes ?? [])} as readonly string[]).includes(code))) throw new Error('Choose an allowed cancellation reason code');` : ''}
       const at = now();

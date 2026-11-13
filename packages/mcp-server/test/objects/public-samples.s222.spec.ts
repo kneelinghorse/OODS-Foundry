@@ -16,7 +16,8 @@ import type { FieldSchemaEntry, UiSchema } from '../../src/schemas/generated.js'
 import { SUBSCRIPTION_TRANSITIONS } from '../../../../src/domain/billing/states.js';
 
 type Sample = Record<string, unknown>;
-const PUBLIC = ['User', 'Organization', 'Product', 'Subscription', 'Transaction', 'Relationship', 'Article', 'Media', 'Invoice', 'Plan', 'Usage', 'Agent'];
+// s247-m02: Approval joins the list (its eight samples pass as authored) and so does Task, the fourteenth public object.
+const PUBLIC = ['User', 'Organization', 'Product', 'Subscription', 'Transaction', 'Relationship', 'Article', 'Media', 'Invoice', 'Plan', 'Usage', 'Agent', 'Approval', 'Task'];
 
 function prepared(name: string) {
   const definition = loadObject(name);

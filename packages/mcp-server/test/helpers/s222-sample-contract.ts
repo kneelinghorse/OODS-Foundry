@@ -91,6 +91,26 @@ export function s245Field<T extends Record<string, unknown>>(object: string, nam
 }
 
 /**
+ * s247-m01: Stateful's state_history also documents the optional task pointer and name a recorded change can carry
+ * (task_id, task_name), after Sprint 245's approval paragraph; and allowed_transitions says what reads it (the detail page's
+ * StatusTimeline) and that a generated StatusSelector offers every state, where it said a selector disabled options and a
+ * badge showed paths, which none does (next steps 1863 and 1866). Every other key is held to the baseline exactly.
+ */
+export const S247_STATE_HISTORY_TASK = '\nA change made as part of a task can also say which task it was. Both optional; the id stays in the record\'s\ndata, a pointer and not a link, and an entry without them renders as it always has:\n  - task_id: string (the Task record the change was made under)\n  - task_name: string (the task, as shown: "Get INV-2026-0155 paid")\nStatusTimeline then reads "\u2026 \u00b7 approved by Ruth Adeyemi (level: Approval) \u00b7 task: Get INV-2026-0155 paid".\n';
+const S247_ALLOWED_TRANSITIONS = {
+  before: 'Materialized list of valid next states from the current status, computed from the\ntransitionRules parameter. When transitionRules is null (open model), this contains\nall states except the current one. Used by StatusSelector to disable invalid options\nand by StatusBadge to indicate available paths.\n',
+  after: 'Materialized list of the next states the product allows from the current status, written\nby the product from the transitionRules parameter. When transitionRules is null (open model),\nthis contains all states except the current one. The detail page\'s StatusTimeline lists it\nwhen the record holds it; a generated StatusSelector offers every state whatever it holds.\n',
+};
+
+/** A baseline field as Sprint 247 declares it: Sprint 245's, with the task paragraph and allowed_transitions' corrected description. */
+export function s247Field<T extends Record<string, unknown>>(object: string, name: string, field: T): T {
+  const declared = s245Field(object, name, field);
+  if (name === 'state_history' && typeof declared.description === 'string') return { ...declared, description: declared.description + S247_STATE_HISTORY_TASK };
+  if (name === 'allowed_transitions' && declared.description === S247_ALLOWED_TRANSITIONS.before) return { ...declared, description: S247_ALLOWED_TRANSITIONS.after };
+  return declared;
+}
+
+/**
  * s245-m02: Transaction and Article compose Approvable, whose two outcome fields join the composed schema after the
  * traits' fields and before the object's own. Both are read-only, so a form leaves them out. Every other key of every
  * baseline field is held to the baseline exactly.

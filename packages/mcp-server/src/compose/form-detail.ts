@@ -9,6 +9,7 @@ import { VIZ_CONTROL_IDS, componentContracts } from '@oods/component-contracts';
 import { resolveTraitRecipeProps } from './trait-recipes.js';
 import { isLevelOneHeading, RECORD_SUMMARY_INTENT } from '../codegen/screen-shell.js';
 import { isLongTextField } from './long-text.js';
+import { OMIT_EMPTY_PROP } from '../codegen/binding-utils.js';
 
 /** s213-m03: marks a trait component the status-timeline pattern group kept beside its own fields (design.compose). */
 export const KEPT_BESIDE_PATTERN = 'kept-beside-pattern';
@@ -55,6 +56,13 @@ export const FORM_FACT = 'form-fact';
 export function formFactFields(composed: ComposedObject | undefined): Set<string> {
   return new Set((composed?.viewExtensions?.form ?? []).filter(extension => extension.fact === true).flatMap(extension => boundFields(extension.props)));
 }
+
+/**
+ * s247-m01: a field a view places can opt in to being left undrawn where the record holds no value for it
+ * (`data-oods-omit-empty`). The opt-in moves with the field onto the labelled row a detail page or a form wraps it in, so
+ * the label goes with the value; the emitters and the HTML binder read it there.
+ */
+const keepOmitEmpty = (row: UiElement, placed: UiElement): UiElement => placed.props?.[OMIT_EMPTY_PROP] ? { ...row, props: { ...row.props, [OMIT_EMPTY_PROP]: true } } : row;
 
 /** The record fields a node binds through `field` and its `*Field` props. */
 const boundFields = (props: Record<string, unknown> | undefined): string[] => Object.entries(props ?? {}).flatMap(([key, value]) => (key === 'field' || key.endsWith('Field')) && typeof value === 'string' ? [value] : []);
@@ -127,10 +135,10 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         if (typeof keptName === 'string' && facts.has(keptName) && fields[keptName]) return [];
         const label = fields[field]?.displayLabel ?? composed.semantics[field]?.ui_hints?.label;
         // A label over its value, styled as the detail page's read rows are (the `-read-field` suffix).
-        return [{ id: `${node.id}-read-field`, component: 'Stack', meta: { intent: FORM_FACT }, children: [
+        return [keepOmitEmpty({ id: `${node.id}-read-field`, component: 'Stack', meta: { intent: FORM_FACT }, children: [
           { id: `${node.id}-label`, component: 'Text', props: { as: 'strong', content: typeof label === 'string' ? label : fieldLabel(field) } },
           { id: node.id, meta: { intent: 'read-only-field' }, component: 'Text', props: { field } },
-        ] }];
+        ] }, node)];
       });
     });
     // The slot budget limits optional suggestions, never the data needed to save a record.
@@ -344,7 +352,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       if (['Text', 'StatusBadge'].includes(node.component) && typeof field === 'string' && fields[field]) {
         if (covered.has(field) || isUnavailableField(field, fields)) return undefined;
         covered.add(field);
-        return fieldRow(field, node.id);
+        return keepOmitEmpty(fieldRow(field, node.id), node);
       }
       node.children = node.children?.map(prune).filter((child): child is UiElement => Boolean(child));
       if (['Stack', 'Card', 'Tabs'].includes(node.component) && !node.children?.length) return undefined;

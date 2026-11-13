@@ -38,7 +38,7 @@ The thing approved composes `Approvable`. Its parameters are the rule: the level
 
 In the reference objects, `Transaction` and `Article` compose `Approvable`: a resend of a payment needs an approval, and so does publishing a guide or an announcement.
 
-![A payment's page: its own status beside its approval outcome, and the history line naming the level of yes](approvals-as-decisions/payment-detail-light.png)
+![A payment's page: its own status at the top, its approval outcome further down, and the history line naming the level of yes and the task](approvals-as-decisions/payment-detail-light.png)
 
 ## Levels, and the meaning kept on each record
 
@@ -62,7 +62,7 @@ A change someone approved can say which approval it belongs to and what level of
 | `approval_id` | the Approval the yes is kept in |
 | `approval_level` | the level of yes |
 
-Every history in OODS Foundry prints the level in its line: **Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval)**. The approval's id stays in the record's data. It is a pointer, not a link: a generated app holds one object's records, so the line cannot open the approval. An entry without the two fields prints exactly as before.
+Every history in OODS Foundry prints the level in its line, and the task the change was made under after it: **Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval) · task: Get INV-2026-0155 paid**. The approval's id stays in the record's data. It is a pointer, not a link: a generated app holds one object's records, so the line cannot open the approval. An entry without the two fields prints exactly as before.
 
 ## Where it meets the Agent
 
@@ -76,7 +76,7 @@ Every history in OODS Foundry prints the level in its line: **Billing Agent for 
 
 - **The bank rejects the resend.** That is the payment's own line, pending to failed. The approval stays used, and another resend is another change the payment's rule names, so it needs a new yes.
 - **The outcome is unknown**, as after a timeout. The payment stays pending and the approval stays used. Finding out what happened, or repeating the same instruction so it cannot be paid twice, finishes the one action.
-- **Attempts have no record.** An attempt is not a change of state, so it has no line, and the model keeps no record of attempts.
+- **An attempt is not a change of state**, so it has no line. The count is kept on the task the work belongs to, with one line saying how the last try ended (see [Tasks as asks](tasks-as-asks.md)).
 
 **What was shown is the approved action.** Whatever the action must do differently this time belongs in the shown line, written by the asker before asking: "Resend $12,000.00 by bank transfer for INV-2026-0155, with the invoice number in the reference". A comment is a remark: Ruth Adeyemi's "Go ahead, with the invoice number in the reference" repeats the line and changes nothing. If an answer adds a term the shown line lacks, the product asks again with the line corrected. Which later change needs a new yes is the thing's declared rule (for the payment, the amount), and your product enforces it: before acting, it compares the action with what the rule names and marks the yes out of date if one differs. OODS Foundry shows out of date; it never works it out.
 

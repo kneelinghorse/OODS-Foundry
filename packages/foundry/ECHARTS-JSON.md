@@ -10,7 +10,7 @@ import { restoreEChartsFormats } from '@oods/foundry/echarts.js';
 chart.setOption(restoreEChartsFormats(result.echartsSpec));
 ```
 
-The helper is a standalone browser module in the npm package. It does not import ECharts or Node and does not evaluate code from the response. A browser without a bundler can import the same file from `https://cdn.jsdelivr.net/npm/@oods/foundry@0.13.1/echarts.js`.
+The helper is a standalone browser module in the npm package. It does not import ECharts or Node and does not evaluate code from the response. A browser without a bundler can import the same file from `https://cdn.jsdelivr.net/npm/@oods/foundry@0.14.0/echarts.js`.
 
 For example, `encodings.y: {field: "amount", currency: "EUR", format: "$,.2f"}` displays −1,234.5 as **−€1,234.50** in both the value axis and tooltip after transport. Currency formatting retains OODS Foundry's existing en-US separators and currency symbol convention. The descriptor carries that locale explicitly, so a client's local defaults cannot change it. Temporal formats use UTC. Unformatted charts need no special handling.
 

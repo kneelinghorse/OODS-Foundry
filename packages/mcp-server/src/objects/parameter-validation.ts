@@ -44,7 +44,7 @@ export function parameterProblems(name: string, supplied: Record<string, unknown
   const problems = validate!(parameters) ? [] : (validate!.errors ?? []).map(error => ({
     path: error.instancePath || '/', message: `${definition.trait.name}${error.instancePath}: ${error.message} (${JSON.stringify(error.params)})`,
   }));
-  return traitEntry(name)?.source === 'shipped' ? [...problems, ...levelProblems(definition.trait.name, parameters)] : problems;
+  return traitEntry(name)?.source === 'shipped' ? [...problems, ...levelProblems(definition.trait.name, parameters), ...orderProblems(definition.trait.name, parameters)] : problems;
 }
 
 /**
@@ -75,4 +75,25 @@ function levelProblems(trait: string, parameters: Record<string, unknown>): Arra
       message: `${trait}/${parameter}/${key}: ${names} the level "${level}", which levels does not declare (${[...declared].join(', ')}).`,
     }));
   });
+}
+
+/**
+ * s247-m01 (next step 1860): a declared order may name only the states its lifecycle declares. The parameter schema holds
+ * transitionRules to a map of lists of names, and cannot hold those names to the states parameter, so each key and target
+ * is checked here, the problem naming the state that is not declared and where it is named. A team object whose order has
+ * a typo is refused where its definition is validated, registered or imported; it was accepted before 0.14.0.
+ */
+function orderProblems(trait: string, parameters: Record<string, unknown>): Array<{ path: string; message: string }> {
+  const states = parameters.states;
+  const rules = parameters.transitionRules;
+  if (trait !== 'Stateful' || !Array.isArray(states) || !states.every(state => typeof state === 'string')) return [];
+  if (!rules || typeof rules !== 'object' || Array.isArray(rules)) return [];
+  const declared = new Set(states as string[]);
+  const list = [...declared].join(', ');
+  return Object.entries(rules as Record<string, unknown>).flatMap(([from, targets]) => [
+    ...(declared.has(from) ? [] : [{ path: `/transitionRules/${from}`, message: `${trait}/transitionRules/${from}: "${from}" is not one of the lifecycle's states (${list}).` }]),
+    ...(Array.isArray(targets) ? targets : []).flatMap((target, index) => typeof target === 'string' && !declared.has(target)
+      ? [{ path: `/transitionRules/${from}/${index}`, message: `${trait}/transitionRules/${from}/${index}: "${target}" is not one of the lifecycle's states (${list}).` }]
+      : []),
+  ]);
 }

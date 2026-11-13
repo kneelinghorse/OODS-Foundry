@@ -1,0 +1,367 @@
+object:
+  name: Task
+  version: 1.0.0
+  domain: core.work
+  description: One ask to one person or agent to do one piece of work, and what became of it.
+  tags:
+    - universal
+    - work
+    - core
+    - task
+
+# A task is an ask, not a ticket. One record is one ask to one actor to do one piece of work: who asked, and for whom; who
+# is doing it; exactly what was asked; what the work is about and what it waits on; and what became of it (the
+# Assignment trait's fields). The thing the work is about (an invoice, a payment, an issue) stays its own record, and the
+# task points at it. The state of the work is the record's lifecycle; a changed ask is a new task, handing the whole of
+# the work on ends this one and starts another that names it, and asking for help with a part starts another while this
+# one waits. The one who answers for the work is the owner, a person or a team, never an agent: a person doing the work
+# answers for it; when an agent is doing it and a person asked, the person who asked; otherwise the doing agent's sponsor.
+# OODS Foundry keeps and shows the record; it does not run, retry, pause, cancel or time out the work, or check who may
+# do it. The one change it refuses is a generated app's Cancel from a state the order does not let move to cancelled.
+traits:
+  - name: core/Assignment
+  - name: lifecycle/Stateful
+    alias: TaskState
+    parameters:
+      states:
+        - not_started
+        - working
+        - needs_input
+        - waiting
+        - paused
+        - outcome_unknown
+        - finished
+        - failed
+        - declined
+        - cancelled
+        - handed_over
+      initialState: not_started
+      # The order the product enforces. A task is started, may need a person, wait on something else, be paused by a
+      # person or not know whether its last step took, and ends one of five ways; the endings are final (empty lists),
+      # so a second ask is a second record. OODS Foundry keeps the order, holds its own samples to it, and in a generated
+      # React or Vue app reads it only for Cancel, which it offers and accepts only where the order allows.
+      transitionRules:
+        not_started: [working, paused, declined, cancelled, handed_over]
+        working: [needs_input, waiting, paused, outcome_unknown, finished, failed, declined, cancelled, handed_over]
+        needs_input: [working, paused, failed, cancelled, handed_over]
+        waiting: [working, paused, outcome_unknown, finished, failed, cancelled, handed_over]
+        paused: [working, needs_input, waiting, cancelled, handed_over]
+        outcome_unknown: [working, waiting, paused, finished, failed, cancelled, handed_over]
+        finished: []
+        failed: []
+        declined: []
+        cancelled: []
+        handed_over: []
+  - name: lifecycle/Timestampable
+    alias: TaskTimes
+    parameters:
+      recordedEvents:
+        - created
+        - started
+        - asked_for_input
+        - paused
+        - ended
+        - updated
+      timezone: UTC
+  # The one who answers for the work: a person or a team, never an agent.
+  - name: structural/Ownerable
+    alias: TaskAnswers
+    parameters:
+      ownerTypes:
+        - user
+        - team
+      primaryOwnerType: user
+      allowTransfer: true
+  # A person stops a task with a reason; the record is cancelled whatever the work had already done.
+  - name: lifecycle/Cancellable
+    alias: TaskCancellation
+    parameters:
+      allowCancellationAfterStart: true
+      requireReason: true
+      allowedReasons:
+        - no_longer_needed
+        - asked_in_error
+        - done_another_way
+
+schema:
+  task_id:
+    type: uuid
+    required: true
+    description: Primary identifier for the task, the id a history entry's task_id points at.
+  name:
+    type: string
+    required: true
+    description: What the task is called, in a few words ("Get INV-2026-0155 paid").
+    validation:
+      minLength: 1
+      maxLength: 120
+  owner_name:
+    type: string
+    required: false
+    description: Who answers for the work, a person or a team, as shown.
+
+semantics:
+  task_id:
+    semantic_type: work.task.id
+    token_mapping: tokenMap(identity.id.primary)
+  name:
+    semantic_type: text.label
+    token_mapping: tokenMap(identity.name.primary)
+  # The one-line summary under the task's name in lists: exactly what was asked.
+  instruction:
+    semantic_type: text.summary
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: What was asked
+  # structural/Ownerable's owner reference: the one who answers for the work, named by owner_name.
+  owner_id:
+    semantic_type: ownership.owner.id
+    token_mapping: tokenMap(ownership.owner.id)
+    ui_hints:
+      component: OwnerReference
+      ownerTypeField: owner_type
+      displayLabelField: owner_name
+
+tokens:
+  identity.id.primary: "var(--text-strong)"
+  identity.name.primary: "var(--text-strong)"
+
+metadata:
+  owners:
+    - Core team
+    - Platform team
+  steward: Design team
+  maturity: alpha
+  changelog:
+    - version: 1.0.0
+      date: "2026-11-13"
+      description: Initial Task object, the fourteenth public reference object; a task is an ask, not a ticket.
+
+# Eight authored sample tasks. Each names its asker and the one doing it as shipped User and Agent samples, and the one
+# who answers for it as a shipped User or the team an Agent sample names as its sponsor; each is for a shipped
+# Organization. The first carries on the Tidewater story: the Billing Agent's own task to get INV-2026-0155 paid, which
+# needed Ruth Adeyemi's yes and now waits on the bank. No agent does anything its own record never allows, or anything it
+# must ask first for without the yes; each acts within the dates of its own history, and for a party only where its own
+# grants name that party. Every task is created not started (the lifecycle's initial state), and each history follows
+# the declared order to the task's status. Times are UTC, as the records keep them.
+samples:
+  - task_id: 5c2e8a1d-3f4b-4c6d-9e0a-1b2c3d4e5f01
+    name: Get INV-2026-0155 paid
+    instruction: Get Tidewater Co-op's invoice INV-2026-0155 paid, now that the bank has returned its transfer
+    requested_by_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01
+    requested_by_name: Billing Agent
+    requested_by_kind: agent
+    requested_for_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05
+    requested_for_name: Tidewater Co-op
+    asked_of_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01
+    asked_of_name: Billing Agent
+    asked_of_kind: agent
+    subject_type: Transaction
+    subject_id: PAY-2026-0429
+    subject_name: PAY-2026-0429
+    waiting_on_type: Transaction
+    waiting_on_id: PAY-2026-0429
+    waiting_on_name: PAY-2026-0429 at the bank
+    tries: 1
+    last_try: "28 Sep, 21:00: sent again with the invoice number; the bank has not answered"
+    owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02
+    owner_type: user
+    owner_name: Ruth Adeyemi
+    ownership_role: Answers for it
+    status: waiting
+    state_history:
+      - { title: Started, from: not_started, to: working, at: '2026-09-28T20:30:00Z', reason: Found INV-2026-0155 still unpaid after the weekend, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01, actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05, on_behalf_of_name: Tidewater Co-op }
+      - { title: Asked for a yes, from: working, to: needs_input, at: '2026-09-28T20:41:00Z', reason: Asked Ruth Adeyemi before resending, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01, actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05, on_behalf_of_name: Tidewater Co-op }
+      - { title: Went on, from: needs_input, to: working, at: '2026-09-28T20:55:00Z', reason: Ruth Adeyemi said yes to the resend, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01, actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05, on_behalf_of_name: Tidewater Co-op }
+      - { title: Waiting for the bank, from: working, to: waiting, at: '2026-09-28T21:00:00Z', reason: Sent again with the invoice number; waiting for the bank, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01, actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05, on_behalf_of_name: Tidewater Co-op }
+    created_at: '2026-09-28T20:30:00Z'
+    updated_at: '2026-09-28T21:00:00Z'
+    last_event: updated
+    last_event_at: '2026-09-28T21:00:00Z'
+  - task_id: 5c2e8a1d-3f4b-4c6d-9e0a-1b2c3d4e5f02
+    name: Reply about order NW-2207
+    instruction: Draft a reply to the customer asking where order NW-2207 is
+    requested_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01
+    requested_by_name: Dana Whitfield
+    requested_by_kind: person
+    requested_for_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01
+    requested_for_name: Northwind Traders
+    asked_of_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a02
+    asked_of_name: Support Agent
+    asked_of_kind: agent
+    due_at: '2026-10-07T17:00:00Z'
+    waiting_on_type: User
+    waiting_on_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01
+    waiting_on_name: Dana Whitfield
+    tries: 0
+    owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01
+    owner_type: user
+    owner_name: Dana Whitfield
+    ownership_role: Answers for it
+    status: needs_input
+    state_history:
+      - { title: Started, from: not_started, to: working, at: '2026-10-06T14:00:00Z', reason: 'Tracked order NW-2207: it shipped as two parcels', actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a02, actor_name: Support Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01, on_behalf_of_name: Northwind Traders }
+      - { title: Asked a question, from: working, to: needs_input, at: '2026-10-06T14:12:00Z', reason: Asked Dana Whitfield which delivery date to promise, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a02, actor_name: Support Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01, on_behalf_of_name: Northwind Traders }
+    created_at: '2026-10-06T13:55:00Z'
+    updated_at: '2026-10-06T14:12:00Z'
+    last_event: asked_for_input
+    last_event_at: '2026-10-06T14:12:00Z'
+  - task_id: 5c2e8a1d-3f4b-4c6d-9e0a-1b2c3d4e5f03
+    name: Hold 40 trail tents for the autumn sale
+    instruction: Reserve 40 trail tents for Summit Outfitters' autumn sale, 24 hours at a time
+    requested_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08
+    requested_by_name: Arjun Mehta
+    requested_by_kind: person
+    requested_for_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a07
+    requested_for_name: Summit Outfitters
+    asked_of_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a03
+    asked_of_name: Order Agent
+    asked_of_kind: agent
+    due_at: '2026-10-09T12:00:00Z'
+    tries: 0
+    owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08
+    owner_type: user
+    owner_name: Arjun Mehta
+    ownership_role: Answers for it
+    status: paused
+    state_history:
+      - { title: Started, from: not_started, to: working, at: '2026-10-08T15:00:00Z', reason: 'Checked stock in both warehouses: 52 trail tents', actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a03, actor_name: Order Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a07, on_behalf_of_name: Summit Outfitters }
+      - { title: Paused, from: working, to: paused, at: '2026-10-08T15:30:00Z', reason: Paused while the warehouse recounts the tents, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08, actor_name: Arjun Mehta, actor_kind: person }
+    created_at: '2026-10-08T14:55:00Z'
+    updated_at: '2026-10-08T15:30:00Z'
+    last_event: paused
+    last_event_at: '2026-10-08T15:30:00Z'
+  - task_id: 5c2e8a1d-3f4b-4c6d-9e0a-1b2c3d4e5f04
+    name: Send Sunday's session reminders
+    instruction: Send reminders for Sunday's sessions to everyone booked at Blue Harbor Studio
+    requested_by_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a04
+    requested_by_name: Booking Agent
+    requested_by_kind: agent
+    requested_for_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a02
+    requested_for_name: Blue Harbor Studio
+    asked_of_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a04
+    asked_of_name: Booking Agent
+    asked_of_kind: agent
+    tries: 1
+    last_try: "19 Sep, 18:05: handed to the text-message service; no delivery report came back"
+    owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d03
+    owner_type: user
+    owner_name: Priya Raman
+    ownership_role: Answers for it
+    status: outcome_unknown
+    state_history:
+      - { title: Started, from: not_started, to: working, at: '2026-09-19T18:00:00Z', reason: Started the reminders for Sunday's sessions, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a04, actor_name: Booking Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a02, on_behalf_of_name: Blue Harbor Studio }
+      - { title: Outcome unknown, from: working, to: outcome_unknown, at: '2026-09-19T18:20:00Z', reason: No delivery report came back; nothing was sent again, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a04, actor_name: Booking Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a02, on_behalf_of_name: Blue Harbor Studio }
+    created_at: '2026-09-19T18:00:00Z'
+    updated_at: '2026-09-19T18:20:00Z'
+    last_event: updated
+    last_event_at: '2026-09-19T18:20:00Z'
+  - task_id: 5c2e8a1d-3f4b-4c6d-9e0a-1b2c3d4e5f05
+    name: Add a late fee to overdue invoices
+    instruction: Add the late fee to Kestrel Print Co.'s invoices more than 30 days overdue
+    requested_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d05
+    requested_by_name: Grace Okafor
+    requested_by_kind: person
+    requested_for_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a04
+    requested_for_name: Kestrel Print Co.
+    asked_of_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a06
+    asked_of_name: Collections Agent
+    asked_of_kind: agent
+    result: Declined, because adding a late fee is something this agent never does
+    tries: 0
+    owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d05
+    owner_type: user
+    owner_name: Grace Okafor
+    ownership_role: Answers for it
+    status: declined
+    state_history:
+      - { title: Asked, from: null, to: not_started, at: '2026-09-15T10:00:00Z', reason: Asked by Grace Okafor, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d05, actor_name: Grace Okafor, actor_kind: person }
+      - { title: Declined, from: not_started, to: declined, at: '2026-09-15T10:01:00Z', reason: Adding a late fee is never allowed for this agent, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a06, actor_name: Collections Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a04, on_behalf_of_name: Kestrel Print Co. }
+    created_at: '2026-09-15T10:00:00Z'
+    updated_at: '2026-09-15T10:01:00Z'
+    last_event: ended
+    last_event_at: '2026-09-15T10:01:00Z'
+  - task_id: 5c2e8a1d-3f4b-4c6d-9e0a-1b2c3d4e5f06
+    name: Count flour and butter for Monday's order
+    instruction: Count the flour and butter in stock before Monday's supplier order
+    requested_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04
+    requested_by_name: Tomas Lindqvist
+    requested_by_kind: person
+    requested_for_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a03
+    requested_for_name: Lindqvist Bakery
+    asked_of_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a05
+    asked_of_name: Inventory Agent
+    asked_of_kind: agent
+    result: Flour counted at 14 sacks; the butter was not counted
+    tries: 1
+    last_try: "19 Oct, 07:00: stopped with the flour counted from the delivery sheets and the butter not counted"
+    owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04
+    owner_type: user
+    owner_name: Tomas Lindqvist
+    ownership_role: Answers for it
+    status: handed_over
+    state_history:
+      - { title: Started, from: not_started, to: working, at: '2026-10-16T07:00:00Z', reason: Started counting from the delivery sheets, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a05, actor_name: Inventory Agent, actor_kind: agent }
+      - { title: Handed over, from: working, to: handed_over, at: '2026-10-19T07:00:00Z', reason: 'Handed over to Tomas Lindqvist: the agent went back to draft while its counting rules are rewritten', actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04, actor_name: Tomas Lindqvist, actor_kind: person }
+    created_at: '2026-10-16T06:55:00Z'
+    updated_at: '2026-10-19T07:00:00Z'
+    last_event: ended
+    last_event_at: '2026-10-19T07:00:00Z'
+  - task_id: 5c2e8a1d-3f4b-4c6d-9e0a-1b2c3d4e5f07
+    name: Count flour and butter by hand
+    instruction: Count the flour and butter in stock by hand before Monday's supplier order
+    requested_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04
+    requested_by_name: Tomas Lindqvist
+    requested_by_kind: person
+    requested_for_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a03
+    requested_for_name: Lindqvist Bakery
+    asked_of_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04
+    asked_of_name: Tomas Lindqvist
+    asked_of_kind: person
+    parent_id: 5c2e8a1d-3f4b-4c6d-9e0a-1b2c3d4e5f06
+    parent_name: Count flour and butter for Monday's order
+    origin_id: 5c2e8a1d-3f4b-4c6d-9e0a-1b2c3d4e5f06
+    origin_name: Count flour and butter for Monday's order
+    result: 14 sacks of flour and 32 kg of butter
+    tries: 1
+    last_try: "19 Oct, 08:40: counted by hand and written on the order sheet"
+    owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04
+    owner_type: user
+    owner_name: Tomas Lindqvist
+    ownership_role: Answers for it
+    status: finished
+    state_history:
+      - { title: Started, from: not_started, to: working, at: '2026-10-19T07:05:00Z', reason: Started counting by hand, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04, actor_name: Tomas Lindqvist, actor_kind: person }
+      - { title: Finished, from: working, to: finished, at: '2026-10-19T08:40:00Z', reason: Counted and written on the order sheet, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04, actor_name: Tomas Lindqvist, actor_kind: person }
+    created_at: '2026-10-19T07:00:00Z'
+    updated_at: '2026-10-19T08:40:00Z'
+    last_event: ended
+    last_event_at: '2026-10-19T08:40:00Z'
+  - task_id: 5c2e8a1d-3f4b-4c6d-9e0a-1b2c3d4e5f08
+    name: Send September's payment reminders
+    instruction: Send September's payment reminders for Kestrel Print Co.'s overdue invoices
+    requested_by_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a06
+    requested_by_name: Collections Agent
+    requested_by_kind: agent
+    requested_for_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a04
+    requested_for_name: Kestrel Print Co.
+    asked_of_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a06
+    asked_of_name: Collections Agent
+    asked_of_kind: agent
+    tries: 0
+    owner_id: team_kestrel_accounts
+    owner_type: team
+    owner_name: Accounts team
+    ownership_role: Answers for it
+    cancellation_reason: This month's reminders go out from the billing system instead
+    cancellation_reason_code: no_longer_needed
+    cancellation_requested_at: '2026-09-23T15:50:00Z'
+    status: cancelled
+    state_history:
+      - { title: Started, from: not_started, to: working, at: '2026-09-22T09:00:00Z', reason: Started drafting the reminders, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a06, actor_name: Collections Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a04, on_behalf_of_name: Kestrel Print Co. }
+      - { title: Cancelled, from: working, to: cancelled, at: '2026-09-23T15:50:00Z', reason: Stopped before the agent asked for a yes to send a reminder, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d05, actor_name: Grace Okafor, actor_kind: person }
+    created_at: '2026-09-22T09:00:00Z'
+    updated_at: '2026-09-23T15:50:00Z'
+    last_event: ended
+    last_event_at: '2026-09-23T15:50:00Z'

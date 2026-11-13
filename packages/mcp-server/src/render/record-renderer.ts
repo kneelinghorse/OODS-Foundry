@@ -1,7 +1,7 @@
 import { addressCollectionSummary, formatDateTime, formatReadOnlyValue, formatRecordLabel, formatReferenceLabel } from '@oods/component-contracts';
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenOptions } from '../codegen/types.js';
-import { isReferenceField, resolveFieldProps, resolveFrameworkChildContent, resolveFrameworkRecipeProps, snakeToCamel } from '../codegen/binding-utils.js';
+import { holdsValue, isReferenceField, OMIT_EMPTY_PROP, omitEmptyFields, resolveFieldProps, resolveFrameworkChildContent, resolveFrameworkRecipeProps, snakeToCamel } from '../codegen/binding-utils.js';
 import { recordDisplayValue } from '../compose/record-display.js';
 import { fieldLabel } from '../compose/label-generator.js';
 import { collectionSources } from '../codegen/collection-emitter.js';
@@ -33,11 +33,15 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
   };
   const walk = (source: UiElement, row: Record<string, unknown>, suffix = ''): UiElement[] => {
     if (source.state && source.state !== (row.uiState ?? 'success') && !(source.state === 'success' && row.uiState === 'empty' && collectionSources([source]).has('rows'))) return [];
+    // s247-m01: a place that opts in is not drawn where the record holds no value for it, as React and Vue leave it out.
+    const shown = omitEmptyFields(source, fields);
+    if (shown && !shown.some(field => holdsValue(raw(field, row)))) return [];
     const node = structuredClone(source);
     node.id += suffix;
     const authored = source.props ?? {};
     node.props = { ...resolveFieldProps(source, fields), ...authored };
     const props = node.props;
+    delete props[OMIT_EMPTY_PROP];
     if (source.children?.some(child => child.collectionControl === 'search')) props['data-oods-collection-toolbar'] = true;
     const recipe = resolveFrameworkRecipeProps(source, fields);
     for (const key of recipe.consumedProps) delete props[key];

@@ -75,15 +75,17 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   // The 11 public objects (including three in domains) and five capture objects remain.
   // Sprint 244 m02 adds Agent, the twelfth public object (#2829).
   // Sprint 245 m02 adds Approval, the thirteenth.
-  objects: 17,
+  // Sprint 247 m02 adds Task, the fourteenth public object.
+  objects: 18,
   // Sprint 199 adds the mark-graph parameter schema beside its trait pair; Sprint 203 adds
   // supersedable's, beside the lifecycle/Supersedable trait the delivery objects compose. Sprint 205 adds the
   // parameter schemas and definitions of core/Assessable and core/Provenanced.
   // Sprint 212 defines the two token export/map schemas at their existing public identifiers.
   // Sprint 244 m01 adds core/Actor's definition and parameter schema (#2829).
   // Sprint 245 m01 adds the definitions and parameter schemas of core/Decision and core/Approvable.
-  schemas: 66, // Object import hub contract.
-  traits: 84,
+  // Sprint 247 m01 adds core/Assignment's definition and parameter schema.
+  schemas: 67, // Object import hub contract.
+  traits: 85,
   // Sprint 187 retains the existing 19 files plus the approved component/token refresh pair.
   // Sprint 188 retains three named component/token snapshot pairs (six files).
   // Sprint 193 retains the dated public/runtime-projected component/token refresh pairs.
@@ -104,7 +106,8 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   // Sprint 244 m04 retains its Agent/Actor refresh pair (#2829), the 2026-11-08 exports; only the manifest closure ships.
   // Sprint 245 m04 retains its Approval/Decision/Approvable refresh pair (#2848), the 2026-11-11 exports; likewise.
   // Sprint 246 m04 retains its 0.13.1 refresh pair (#2878), the 2026-11-12 exports; likewise.
-  "artifacts/structured-data": 71,
+  // Sprint 247 m04 retains its 0.14.0 refresh pair (#2893), the 2026-11-13 exports; likewise.
+  "artifacts/structured-data": 73,
 });
 
 export const ABSOLUTE_PATH_EXEMPTIONS = new Set([

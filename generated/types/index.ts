@@ -9,6 +9,7 @@ export * from './traits/addressable.parameters';
 export * from './traits/approvable.parameters';
 export * from './traits/archivable.parameters';
 export * from './traits/assessable.parameters';
+export * from './traits/assignment.parameters';
 export * from './traits/auditable.parameters';
 export * from './traits/authable.parameters';
 export * from './traits/billable.parameters';
