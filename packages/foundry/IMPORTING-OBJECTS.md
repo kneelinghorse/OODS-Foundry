@@ -28,6 +28,8 @@ Call `object_import_read`:
 
 A name alone is weak evidence and never raises a proposal's grade. Types, enums, formats and read-only declarations provide structural evidence. Trait parameter schemas validate every proposal; an invalid proposal is shown with errors and cannot be accepted. Proposals add a trait's canonical fields and views, so check that its fields express your model. Nothing is silently applied.
 
+**Which enum is the lifecycle, and which time is the creation time.** A record with several string enums is proposed `Stateful` on one of them. Where a rule on this page recognises the record (an answer, a work's states, a grant's states), it is that state. Otherwise it is the enum named `status` or `state`, or failing that one whose name ends so (`consentStatus`, `grant_state`), ahead of one whose name sorts first, as FDX's `durationType` does before its `status`; failing that, the one whose name sorts first. The others stay in the report as alternatives. `Timestampable`'s creation time is a field named `created_at`, or else another of the record's date-times, never `updated_at` and never one named for an end (expires, expiry, expiration, expired, valid until, valid to, end or ends).
+
 ### Agent records and work states
 
 An agent is an actor, not a user: in OODS it is an object of its own that composes `Actor` (kind agent). Where a schema carries the evidence, the importer proposes the agent traits, graded on structure:
@@ -35,7 +37,7 @@ An agent is an actor, not a user: in OODS it is an object of its own that compos
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|
 | `owners` or `sponsors` referencing a user, group, organization, team or directory record | `Ownerable` (sponsors as a user or team) | medium |
-| A run-as, on-behalf-of, acting-for or identity-parent field referencing a user or other principal | `Actor` (kind agent); model the grant as a `Relationship` of type `delegation` | medium |
+| A run-as, on-behalf-of, acting-for or identity-parent field referencing a user or other principal | `Actor` (kind agent); keep the grant it acts under as a `Grant` record (the importer drafts none from this field) | medium |
 | An `is_bot`, `app` or `is_agent` flag beside a reference to an app or installation record, or a type field declared `"agent"` | `Actor` (kind agent) | medium |
 | An `active` or `enabled` flag | `Stateful` with two states; the flag binds no status until you map it to one | weak |
 | Any of these field names with no reference or declaration behind it | the same trait | weak |
@@ -82,13 +84,13 @@ A task is an ask, not a ticket: one ask to one person or agent to do one piece o
 
 **What else is bound.** Who asked: a reference to a person or agent named requested by, requester, creator, created by, submitter, initiator, started by, asked by, triggered by, reporter or author (`requested_by_id`). The thing: the one other record it references or, where it references several, the one named subject, issue, ticket, case, item, work item, target, pull request, merge request, document or record (`subject_id`). The task it came from: a reference to its own kind (`parent_id`). A date-time named due or deadline (`due_at`), free text named prompt, instruction or ask (`instruction`), free text named result or outcome (`result`), and a whole number named tries, attempts, run count or session count (`tries`). Each is bound only where its type matches the trait's field: a same-named field of another type, such as a boolean named `result`, is left unbound, and the proposal stays valid. Every other `Assignment` field stays unbound: who the work is for, what it waits on, the first ask, the kept names and the kinds.
 
-**Two guesses stop where it fires.** A reference to the record's own kind is the task it came from, so it is not also proposed as a category tree (`Classifiable`). The one doing the work and who asked are bound to their seats, so they are not also proposed as an owner with nothing bound (`Ownerable`). A reference to an owner still proposes `Ownerable`: on a task, the owner is the one who answers for the work. Where the rule does not fire, the importer proposes exactly what it did before this rule existed. The record's lifecycle is its work's states, even where another enum sorts first; the other enum is reported as an alternative.
+**Two guesses stop where it fires.** A reference to the record's own kind is the task it came from, so it is not also proposed as a category tree (`Classifiable`). The one doing the work and who asked are bound to their seats, so they are not also proposed as an owner with nothing bound (`Ownerable`). A reference to an owner still proposes `Ownerable`: on a task, the owner is the one who answers for the work. Where the rule does not fire, it adds nothing: the record gets what the importer drafts without it, including how the lifecycle and the creation time are chosen. The record's lifecycle is its work's states, even where another enum sorts first; the other enum is reported as an alternative.
 
 Measured on five published schemas:
 
 - Linear's `AgentSession` is proposed `Assignment` with its app user as the one doing the work, its creator as who asked and its issue as the thing, and its status as its lifecycle. Linear says that when an automation hands an issue to an agent, the creator is the issue's assignee, on whose behalf the agent works: check who asked before accepting.
 - A2A's `Task` and MCP's `Task` hold such states but name no one: no field references a person or an agent, so they gain nothing, and an agent's work keeps the states its protocol gives it.
-- GitHub's agent task holds them too (`in_progress`, `completed`, `waiting_for_user`), but nothing in it references the one doing the work: its custom agent is an object written inside the task, not a reference to a record, and so is its creator, who would be who asked. It gains nothing.
+- GitHub's agent task holds them too (`in_progress`, `completed`, `waiting_for_user`), but nothing in it references the one doing the work: its custom agent is an object written inside the task, not a reference to a record, and so is its creator, who would be who asked. It gains no `Assignment`. Its lifecycle is its `state`, not `creator_type` (user or organization), the enum that sorts first.
 - Devin's session references no person's or agent's record, and writes a person needed as `blocked`, which the importer does not read as one.
 - A tracker's issue gets nothing new: Linear's `Issue` references its assignee and its parent, but its state is a record a team defines, not an enum.
 
@@ -113,6 +115,34 @@ The importer keeps each system's own states and renames none. This is how they r
 | Handed over | none | none | none | none | none |
 
 Not placed, because their schemas say too little: Linear's `stale` and `stopping`; GitHub's `idle`, and its `timed_out`, which could be a failure or an outcome nobody knows yet; and Devin's `expired` and its requests to suspend and resume.
+
+### Records of a grant
+
+A grant is a standing yes, not a setting: one set of terms on which one actor may act for one person or organization, until it ends (see [Grants as standing yeses](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.15.0/docs/concepts/grants-as-standing-yeses.md)). Where another system keeps a record of a grant, a consent or a connection, the importer proposes `Mandate` for it, graded on structure:
+
+| Evidence in the schema | Proposal | Grade |
+|---|---|---|
+| All three together: a state enum holding a value in force beside a value that says it was revoked or ended; a date-time named for an end; and a single text reference to an agent's or an app's own record, not named for who asked | `Mandate`, with the agent or app as who holds it (`granted_to_id`) and the end as `ends_at`, and `Stateful` on those states | medium |
+| The same, with references for who gave it, who asked for it, who ended it and who it is for, or a date-time named for its last use | the same, with those bound too | medium |
+| Any one or two of the three | nothing | |
+
+**The states.** In force: active, granted, authorised, authorized, in force and valid. Revoked or ended: revoked, expired, ended, terminated, withdrawn and deactivated. They are read in any case and spelling, with a prefix every value shares taken off, as a record of work's are. Approved is an answer, not a state in force, and cancelled ends a subscription as often as a grant, so neither is read. A grant record's state is its lifecycle, even where another enum sorts first.
+
+**The end.** A date-time named expires, expiry, expiration, expired, valid until, valid to, end or ends, in any spelling (`expirationTime`, `consentExpiry`, `token_expires_at`, `valid_until`, `ends_at`).
+
+**Who holds it, and the other seats.** Who holds it is a reference to an agent's or an app's own record (one named agent, assistant, bot, app, application, integration, installation or service principal), unless it is named for who asked; where the record references several, the one named granted to, grantee, holder, held by, agent, app, application, client, delegate, delegated to, bot, integration or installation. Among its references to people and organizations, the importer then binds who gave it (named granted by, grantor, giver, given by, authorised by, consented by or issued by: `granted_by_id`), who asked for it (the names that say who asked for a record of work: `requested_by_id`) and who ended it (revoked by, ended by, terminated by, withdrawn by or deactivated by: `ended_by_id`). Who it is for (`granted_for_id`) is the one left once those, and any owner or sponsor, are taken; where several are left, it is the one named granted for, on behalf of, for, principal, customer, account, organization, org, tenant, user, subject or resource owner. A date-time named last used or last accessed is its last use (`last_used_at`). Every other `Mandate` field binds only to a field of its own name and type: the scope, the three lines, the limits, why it ended, the time zone and the end's words. A same-named field of another type, such as a `scope` kept as a list, stays unbound, and the proposal stays valid.
+
+**What it stops.** The references it binds are not also proposed as an owner with nothing bound (`Ownerable`) or as the record acting for someone (`Actor`). A reference to an owner or a sponsor still proposes `Ownerable`: the one who answers for a grant. Where all three facts hold, the grant wins over an answer enum's reading as an approval: a consent record that keeps a person's answer (approved, rejected) beside its state (active, revoked) and an end gets `Mandate`, not `Decision`; without the end it gets `Decision`, as before.
+
+Measured on four published grant schemas and a team's table, downloaded on 14 November 2026:
+
+- FDX 6.6's Consent Grant has the state (`ACTIVE`, `EXPIRED`, `REVOKED`) and the end (`expirationTime`), but its parties are a list of objects written inside the grant, not a reference to the app's record, so it gets no `Mandate`. Its lifecycle is its `status`, not `durationType`, which sorts first.
+- Stripe's shared payment issued token, a preview API, has a state (`active`, `deactivated`, `requires_action`), but its end is inside its usage limits, and its times are Unix seconds, not date-times, so it gets no `Mandate`. Its lifecycle is its `status`, not `deactivated_reason`, which sorts first.
+- ReBIT's Account Aggregator 2.1.0 splits its consent in two. The consent artefact has the state (`ACTIVE`, `PAUSED`, `REVOKED`, `EXPIRED`) and no end; the signed consent detail has the end (`consentExpiry`) and no state, and writes its data consumer inside itself. Neither gets `Mandate`. The signed detail's creation time is its `consentStart`, never its `consentExpiry`.
+- GitHub's organization programmatic access grant has no state (only a `token_expired` flag), writes its end as text with no date-time format, and its one reference is the token's user. It gets no `Mandate`, and its lifecycle guess is still `repository_selection`, its only enum.
+- A team's flat grant table in Prisma, with text ids, is the full case: `Mandate` with its agent as who holds it, its organization as who it is for, who gave it, asked for it and ended it, its end, its last use, its scope and its time zone, and its status as its lifecycle. The same table in SQL with uuid ids gets none, because `Mandate` keeps ids as text and a trait field binds only a field of its own type.
+
+**Where the evidence stops.** The published grant schemas nest their terms: FDX's resources, Stripe's usage limits, UK Open Banking's control parameters. An import fills in the state, the end, the seats held as single references and the times; it never fills the scope or the limits written inside the record. A holder held as a number or a UUID proposes no `Mandate`, and any other reference held so binds no seat. Bind the rest by hand when you accept, or keep them as the record's own fields.
 
 ```json
 {"action":"apply","importId":"<from draft>","objects":[{"name":"YourObject","proposals":["<accepted proposal id>"]}]}

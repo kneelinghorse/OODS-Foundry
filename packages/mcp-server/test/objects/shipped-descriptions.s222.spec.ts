@@ -61,7 +61,8 @@ describe('shipped object and trait descriptions (s222-m03)', () => {
   it('reads every definition file', () => {
     // The twelve repository-only integration objects do not ship. s245-m02: Approval is the eighteenth shipped object file.
     // s247-m02: Task is the nineteenth.
-    expect(definitions.filter(file => file.endsWith('.object.yaml'))).toHaveLength(19);
+    // s248-m02: + Grant's definition.
+    expect(definitions.filter(file => file.endsWith('.object.yaml'))).toHaveLength(20);
     expect(definitions.filter(file => file.endsWith('.ts')).length).toBeGreaterThan(30);
   });
 

@@ -111,6 +111,29 @@ export function s247Field<T extends Record<string, unknown>>(object: string, nam
 }
 
 /**
+ * s248-m01: Stateful's state_history also documents the optional grant pointer and name a recorded change can carry
+ * (grant_id, grant_name), after Sprint 247's task paragraph. Every other key is held to the baseline exactly.
+ */
+export const S248_STATE_HISTORY_GRANT = '\nA change made under a grant, the standing yes an actor acts under for a person or organization, can also say\nwhich grant it was. Both optional; the id stays in the record\'s data, a pointer and not a link, and an entry\nwithout them renders as it always has:\n  - grant_id: string (the Grant record the change was made under)\n  - grant_name: string (the grant, as shown: "Resend returned transfers")\nStatusTimeline names the grant after any approval and before the task: "Billing Agent for Tidewater Co-op \u00b7\ngrant: Resend returned transfers".\n';
+
+/** s248-m02: Relationship's delegation type is the link alone; a grant with its terms is a Grant record. */
+const S248_RELATIONSHIP_TYPE = {
+  before: S244_RELATIONSHIP_TYPE.after,
+  after: 'Semantic type describing the edge between the source and target; a delegation is the link alone, from the person or organization acted for (the source) to the actor acting for them (the target), and a grant with its terms is a Grant record.',
+};
+
+/**
+ * A baseline field as Sprint 248 declares it: Sprint 247's, with state_history's description gaining the grant paragraph
+ * (m01) and Relationship's delegation type describing the link alone (m02).
+ */
+export function s248Field<T extends Record<string, unknown>>(object: string, name: string, field: T): T {
+  const declared = s247Field(object, name, field);
+  if (name === 'state_history' && typeof declared.description === 'string') return { ...declared, description: declared.description + S248_STATE_HISTORY_GRANT };
+  if (object === 'Relationship' && name === 'relationship_type' && declared.description === S248_RELATIONSHIP_TYPE.before) return { ...declared, description: S248_RELATIONSHIP_TYPE.after };
+  return declared;
+}
+
+/**
  * s245-m02: Transaction and Article compose Approvable, whose two outcome fields join the composed schema after the
  * traits' fields and before the object's own. Both are read-only, so a form leaves them out. Every other key of every
  * baseline field is held to the baseline exactly.

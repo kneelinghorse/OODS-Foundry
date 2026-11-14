@@ -17,7 +17,8 @@ import { SUBSCRIPTION_TRANSITIONS } from '../../../../src/domain/billing/states.
 
 type Sample = Record<string, unknown>;
 // s247-m02: Approval joins the list (its eight samples pass as authored) and so does Task, the fourteenth public object.
-const PUBLIC = ['User', 'Organization', 'Product', 'Subscription', 'Transaction', 'Relationship', 'Article', 'Media', 'Invoice', 'Plan', 'Usage', 'Agent', 'Approval', 'Task'];
+// s248-m02: and Grant, the fifteenth.
+const PUBLIC = ['User', 'Organization', 'Product', 'Subscription', 'Transaction', 'Relationship', 'Article', 'Media', 'Invoice', 'Plan', 'Usage', 'Agent', 'Approval', 'Task', 'Grant'];
 
 function prepared(name: string) {
   const definition = loadObject(name);

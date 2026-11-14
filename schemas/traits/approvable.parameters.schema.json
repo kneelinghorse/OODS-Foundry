@@ -29,7 +29,7 @@
   "properties": {
     "levels": {
       "type": "array",
-      "description": "The levels of yes the product declares, in order, each named for the kind of yes asked for.",
+      "description": "The levels of yes the product declares, least deliberate first, each named for the kind of yes asked for.",
       "minItems": 1,
       "uniqueItems": true,
       "items": { "$ref": "#/definitions/levelName" }
@@ -68,6 +68,12 @@
       "description": "Whether a yes stops standing when the thing changes after it was given.",
       "default": true
     },
+    "inAdvance": {
+      "type": "array",
+      "description": "The changes a standing yes, given in advance under a grant, may allow without a person being asked at the time. Each is a change requiredLevels names and, where two or more levels are declared, none needs the last; both are checked when the object is validated.",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$" }
+    },
     "outcomes": {
       "type": "array",
       "description": "The outcomes approval_state can hold, as the product works them out.",
@@ -88,6 +94,12 @@
       "levels": ["acknowledgement", "review", "approval", "sign_off"],
       "requiredLevels": { "resend": "approval" },
       "outcomes": ["not_required", "waiting", "approved", "declined", "out_of_date"]
+    },
+    {
+      "levels": ["approval", "sign_off"],
+      "requiredLevels": { "resend": "approval" },
+      "inAdvance": ["resend"],
+      "outcomes": ["not_required", "waiting", "approved", "allowed_in_advance", "declined", "out_of_date"]
     },
     {
       "levels": ["review", "sign_off"],

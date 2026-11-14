@@ -63,7 +63,8 @@ const nameOf = (type: string, sample: Sample) => String(type === 'Transaction' ?
 describe('Approval is the thirteenth public object', () => {
   it('composes Decision, Stateful and Timestampable, with a lifecycle that starts before anyone is asked', () => {
     const approval = loadObject('Approval');
-    expect(approval.object).toMatchObject({ name: 'Approval', version: '1.1.0' });
+    // s248-m02: 1.1.1, the resend approval's first line says why it was created, and its agent lines name the grant.
+    expect(approval.object).toMatchObject({ name: 'Approval', version: '1.1.1' });
     expect(approval.object).not.toHaveProperty('visibility');
     expect(approval.traits.map(trait => trait.name)).toEqual(['core/Decision', 'lifecycle/Stateful', 'lifecycle/Timestampable']);
     const lifecycle = approval.traits[1]!.parameters!;
@@ -75,7 +76,7 @@ describe('Approval is the thirteenth public object', () => {
     expect(listTraits()).toEqual(expect.arrayContaining(['Decision', 'Approvable']));
   });
 
-  it('health_check counts 19 runtime objects and 53 traits, as the registry does, where the runtime ships without the repository folder', async () => {
+  it('health_check counts 20 runtime objects and 54 traits, as the registry does, where the runtime ships without the repository folder', async () => {
     const { handle: health } = await import('../../src/tools/health.js');
     const folders = await import('../../src/objects/definition-folders.js');
     const repository = path.resolve(import.meta.dirname, '../../../../repository-objects');
@@ -85,18 +86,20 @@ describe('Approval is the thirteenth public object', () => {
       clearObjectCache();
       const result = await health({}) as { registry: { objects: number; traits: number } };
       // s247-m01: core/Assignment, the record of one ask to do one piece of work, is the 53rd trait. s247-m02: Task is the
-      // 19th runtime object.
-      expect(result.registry).toMatchObject({ objects: 19, traits: 53 });
+      // 19th runtime object. s248-m01: core/Mandate, the record of a grant, is the 54th trait;
+      // m02: Grant is the 20th runtime object.
+      expect(result.registry).toMatchObject({ objects: 20, traits: 54 });
       expect(listObjects()).toHaveLength(result.registry.objects);
       expect(listTraits()).toHaveLength(result.registry.traits);
     } finally { spy.mockRestore(); clearObjectCache(); }
   });
 
   // s247-m01: core/Assignment's form reads the ask's facts beside the status: what was asked, who asked and for whom, and who
-  // is doing it. No other shipped form view carries the mark.
-  it('marks a form view a fact only where Decision and Assignment say so: no other shipped form view carries the mark', () => {
+  // is doing it. s248-m01: core/Mandate's form reads a grant's terms and seats beside the status. No other shipped form view
+  // carries the mark.
+  it('marks a form view a fact only where Decision, Assignment and Mandate say so: no other shipped form view carries the mark', () => {
     const marked = listTraits().flatMap(name => (loadTrait(name).view_extensions.form ?? []).filter(view => view.fact !== undefined).map(view => `${name}:${String(view.props?.field)}`));
-    expect(marked).toEqual(['Assignment:instruction', 'Assignment:requested_by_id', 'Assignment:requested_by_name', 'Assignment:requested_for_id', 'Assignment:requested_for_name', 'Assignment:asked_of_id', 'Assignment:asked_of_name', 'Decision:subject_id', 'Decision:subject_name', 'Decision:shown', 'Decision:level', 'Decision:meaning', 'Decision:requested_by_id', 'Decision:requested_by_name', 'Decision:requested_for_id', 'Decision:requested_for_name']);
+    expect(marked).toEqual(['Assignment:instruction', 'Assignment:requested_by_id', 'Assignment:requested_by_name', 'Assignment:requested_for_id', 'Assignment:requested_for_name', 'Assignment:asked_of_id', 'Assignment:asked_of_name', 'Decision:subject_id', 'Decision:subject_name', 'Decision:shown', 'Decision:level', 'Decision:meaning', 'Decision:requested_by_id', 'Decision:requested_by_name', 'Decision:requested_for_id', 'Decision:requested_for_name', 'Mandate:scope', 'Mandate:granted_for_id', 'Mandate:granted_for_name', 'Mandate:granted_to_id', 'Mandate:granted_to_name', 'Mandate:granted_by_id', 'Mandate:granted_by_name', 'Mandate:granted_as', 'Mandate:requested_by_id', 'Mandate:requested_by_name', 'Mandate:allowed_actions', 'Mandate:asks_first_for', 'Mandate:never_allowed', 'Mandate:amount_limit_minor', 'Mandate:period_limit_minor', 'Mandate:limit_period', 'Mandate:uses_per_period', 'Mandate:conditions', 'Mandate:ends_note', 'Mandate:ends_at', 'Mandate:within_id', 'Mandate:within_name']);
     for (const name of listObjects()) expect(JSON.stringify(loadObject(name)), name).not.toContain('"fact":');
   });
 
@@ -184,8 +187,9 @@ describe('the eight Approval samples tell true stories about the Transaction and
     const approval = approvals.find(sample => sample.subject_id === 'PAY-2026-0429')!;
     expect(resend).toMatchObject({ approval_id: approval.approval_id, approval_level: 'approval', approved_by_name: 'Ruth Adeyemi' });
     expect(approval.status).toBe('used');
-    // s247-m02: the resend was made under the Billing Agent's task, and its line now names it.
-    expect(historyAttribution(resend)?.text).toBe('Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval) · task: Get INV-2026-0155 paid');
+    // s247-m02: the resend was made under the Billing Agent's task, and its line now names it. s248-m02: and the grant the
+    // agent acted under, after the approval and before the task.
+    expect(historyAttribution(resend)?.text).toBe('Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval) · grant: Tidewater invoices and payments · task: Get INV-2026-0155 paid');
   });
 
   it('keeps the out-of-date approval true: the article changed after the yes', () => {

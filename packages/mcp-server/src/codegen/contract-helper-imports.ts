@@ -10,7 +10,7 @@
 export const CONTRACT_HELPER_IMPORTS = '/* @oods-contract-helper-imports */';
 
 const HELPER_GROUPS: ReadonlyArray<readonly string[]> = [
-  ['formatReferenceLabel', 'formatRecordLabel'],
+  ['formatReferenceLabel', 'formatRecordLabel', 'selectOptionsWithValue'],
   ['formatReadOnlyValue'],
   // s223-m02: a single screen's address panel summary (#2527 ruling 13i).
   ['addressCollectionSummary'],

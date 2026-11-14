@@ -183,7 +183,8 @@ export const Textarea = defineComponent({
   name: 'OodsTextarea',
   props: {
     ...textFieldProps,
-    rows: { type: Number, default: 3 },
+    // s248-m01 (next step 1862): four rows, as React's Textarea and every HTML text area.
+    rows: { type: Number, default: 4 },
   },
   emits: {
     'update:modelValue': (_value: string) => true,

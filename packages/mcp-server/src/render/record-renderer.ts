@@ -1,7 +1,7 @@
-import { addressCollectionSummary, formatDateTime, formatReadOnlyValue, formatRecordLabel, formatReferenceLabel } from '@oods/component-contracts';
+import { addressCollectionSummary, formatDateTime, formatReadOnlyValue, formatRecordLabel, formatReferenceLabel, selectOptionsWithValue } from '@oods/component-contracts';
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenOptions } from '../codegen/types.js';
-import { holdsValue, isReferenceField, OMIT_EMPTY_PROP, omitEmptyFields, resolveFieldProps, resolveFrameworkChildContent, resolveFrameworkRecipeProps, snakeToCamel } from '../codegen/binding-utils.js';
+import { holdsValue, isReferenceField, OMIT_EMPTY_PROP, omitEmptyFields, resolveFieldProps, resolveFrameworkChildContent, resolveFrameworkRecipeProps, snakeToCamel, valueSelect } from '../codegen/binding-utils.js';
 import { recordDisplayValue } from '../compose/record-display.js';
 import { fieldLabel } from '../compose/label-generator.js';
 import { collectionSources } from '../codegen/collection-emitter.js';
@@ -76,6 +76,9 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
       }
       if (node.component === 'StatusTimeline') props.status = raw(field, row);
     }
+    // s248-m01 (next step 1861): a reference select names the record's own value when it does not list it, as React and Vue do.
+    const valueOptions = valueSelect(source, fields);
+    if (valueOptions) props.options = selectOptionsWithValue(valueOptions.options, raw(valueOptions.field, row), valueOptions.keptName ? raw(valueOptions.keptName, row) : undefined, valueOptions.subject);
     // s223-m02 (#2527 rulings 12 and 13a): a Switch carries its field's form value too, in the hidden input its script
     // keeps; a SegmentedControl's radios and a Combobox's hidden input take the field's name as Select does.
     if (typeof field === 'string' && ['Input', 'Checkbox', 'Switch', 'Select', 'SegmentedControl', 'Combobox', 'Textarea', 'DatePicker'].includes(node.component) && !source.collectionControl) props.name ??= field;

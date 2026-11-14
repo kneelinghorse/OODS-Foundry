@@ -1,6 +1,6 @@
 # Approvals as decisions
 
-When someone approves something in your product, what gets saved? In OODS Foundry an approval is **a decision, not a status**: one person's (or agent's) answer about one version of one thing, at a level of yes the product names. It is an object of its own, `Approval`. The thing approved carries a trait, `Approvable`, that holds its rule and its outcome. A standing yes, such as "always allow", is a change to a grant. The line in the thing's history is the trace.
+When someone approves something in your product, what gets saved? In OODS Foundry an approval is **a decision, not a status**: one person's (or agent's) answer about one version of one thing, at a level of yes the product names. It is an object of its own, `Approval`. The thing approved carries a trait, `Approvable`, that holds its rule and its outcome. A standing yes, such as "always allow", is a grant inside a grant (see [Grants as standing yeses](grants-as-standing-yeses.md)). The line in the thing's history is the trace.
 
 ![The Approval list: each approval with its answer, its level and who was asked](approvals-as-decisions/approval-list-light.png)
 
@@ -16,7 +16,7 @@ Whether a new thing is an object, a trait, a relationship or an entry is decided
 
 An approval passes both. People say "three approvals waiting", and an ask can wait, be answered, withdrawn or expire while the thing stays as it was: that is the object. The thing still needs its half, the rule and the outcome: that is the trait. The Agent was the same shape: `Agent` the object, `Actor` the trait.
 
-## The object and its two traits
+## The object and its traits
 
 `Approval` composes three traits:
 
@@ -34,11 +34,11 @@ An approval passes both. People say "three approvals waiting", and an ask can wa
 
 ![One approval's page: the Billing Agent's resend, asked of Ruth Adeyemi at the Approval level, approved and used](approvals-as-decisions/approval-detail-light.png)
 
-The thing approved composes `Approvable`. Its parameters are the rule: the levels it declares, what each level is, which change needs which level (a state it moves to, such as published, or a named action, such as resend), how many yeses a level needs, whether the asker may answer, which levels an agent's yes may satisfy, and whether a yes lapses when the thing changes. Its two fields are the outcome: `approval_state` (not required, waiting, approved, declined, out of date) and `approval_summary`, one line it rests on. Both are read-only: your product works the outcome out from the approvals that still stand and writes it; OODS Foundry shows it on the thing's page and keeps it off the thing's form.
+The thing approved composes `Approvable`. Its parameters are the rule: the levels it declares, what each level is, which change needs which level (a state it moves to, such as published, or a named action, such as resend), how many yeses a level needs, whether the asker may answer, which levels an agent's yes may satisfy, whether a yes lapses when the thing changes, and which changes a standing yes may allow in advance (`inAdvance`, empty by default). Its two fields are the outcome: `approval_state` (not required, waiting, approved, declined, out of date, and allowed in advance where a rule opens a change to a yes given in advance) and `approval_summary`, one line it rests on. Both are read-only: your product works the outcome out from the approvals that still stand and writes it; OODS Foundry shows it on the thing's page and keeps it off the thing's form.
 
-In the reference objects, `Transaction` and `Article` compose `Approvable`: a resend of a payment needs an approval, and so does publishing a guide or an announcement.
+In the reference objects, `Transaction` and `Article` compose `Approvable`: a resend of a payment needs a yes, asked each time unless a standing yes under the payer's grant allows it in advance, and publishing a guide or an announcement needs an approval.
 
-![A payment's page: its own status at the top, its approval outcome further down, and the history line naming the level of yes and the task](approvals-as-decisions/payment-detail-light.png)
+![A payment's page: its own status at the top, its approval outcome further down, and the history line naming the level of yes, the grant and the task](approvals-as-decisions/payment-detail-light.png)
 
 ## Levels, and the meaning kept on each record
 
@@ -62,19 +62,19 @@ A change someone approved can say which approval it belongs to and what level of
 | `approval_id` | the Approval the yes is kept in |
 | `approval_level` | the level of yes |
 
-Every history in OODS Foundry prints the level in its line, and the task the change was made under after it: **Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval) · task: Get INV-2026-0155 paid**. The approval's id stays in the record's data. It is a pointer, not a link: a generated app holds one object's records, so the line cannot open the approval. An entry without the two fields prints exactly as before.
+Every history in OODS Foundry prints the level in its line, then the grant and the task the change was made under: **Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval) · grant: Tidewater invoices and payments · task: Get INV-2026-0155 paid**. The approval's id stays in the record's data. It is a pointer, not a link: a generated app holds one object's records, so the line cannot open the approval. An entry without the two fields prints exactly as before.
 
 ## Where it meets the Agent
 
 - **A one-time yes is an Approval.** When the Billing Agent asks Ruth Adeyemi before resending a payment, the approval records who asked and for whom, who answered, exactly what was shown ("Resend $12,000.00 by bank transfer for INV-2026-0155, with the invoice number in the reference"), the level, and that the yes was used by the resend. If the agent changed the amount, the yes would be out of date.
-- **A standing yes is a grant.** "Always allow" is a change to the agent's rules or its delegation, recorded on the agent, not an approval of one action. See [Agents as actors](agents-as-actors.md).
+- **A standing yes is a grant inside the agent's grant.** "Always allow" is a new `Grant` inside the one it narrows, given by someone who may give for the party, with its own bounds and end; it is not an approval of one action. Where the thing's rule opens the change to a yes given in advance, as `Transaction` opens resends, a use that meets the five conditions in [Grants as standing yeses](grants-as-standing-yeses.md#a-yes-given-in-advance) needs no new approval, and the thing's outcome reads allowed in advance. See [Grants as standing yeses](grants-as-standing-yeses.md).
 - **A yes that waits for no one and needs no evidence is a history line.** A card issuer's authorization is one: it stays a line in the payment's history.
 
 ## When a yes is used, and what it covers
 
 **The yes, the change it permitted and the outcome are three things, kept in three places.** The yes is the approval, which ends as used. The change it permitted is the one line in the thing's history that names the approval. The outcome is the thing's own status and its later lines. A one-time yes is used when your product lets the action go ahead and records that line; the bank's answer is the payment's outcome, not the approval's.
 
-- **The bank rejects the resend.** That is the payment's own line, pending to failed. The approval stays used, and another resend is another change the payment's rule names, so it needs a new yes.
+- **The bank rejects the resend.** That is the payment's own line, pending to failed. The approval stays used, and another resend is another change the payment's rule names, so it needs a new yes: asked again, or given in advance by a standing yes the payment's rule lets count.
 - **The outcome is unknown**, as after a timeout. The payment stays pending and the approval stays used. Finding out what happened, or repeating the same instruction so it cannot be paid twice, finishes the one action.
 - **An attempt is not a change of state**, so it has no line. The count is kept on the task the work belongs to, with one line saying how the last try ended (see [Tasks as asks](tasks-as-asks.md)).
 

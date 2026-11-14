@@ -1744,13 +1744,21 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   // or place read-only fields in editable forms. The stored definition retains the complete source contract.
   // s245-m02: a field a form view shows as a fact (Decision's five facts) stays in the form's record even when it is
   // read-only, so the fact can be read beside the answer; it is never a field slot's candidate, so it gets no control.
-  const formFacts = layoutType === 'form' ? formFactFields(composed) : new Set<string>();
+  // s248-m01: a fact that reads as money keeps its currency field in the form's record too, so the amount reads in its
+  // currency ("$12,000.00") beside the status, not as the stored number; like the fact, the currency gets no control.
+  const formFacts = layoutType === 'form' ? withMoneyCurrencies(formFactFields(composed), composed) : new Set<string>();
+  // s248-m01 (next step 1861): a reference's kept name joins the form's record once its slots are chosen (below), so the
+  // form's select can name the record's own reference where it does not list it ("Elena Park", not the first option). It
+  // takes no slot and no control, and the slots are chosen as before.
+  const referenceNames = layoutType === 'form' ? referenceKeptNames(composed) : [];
+  const recordSamples = composed?.samples;
   // The record's whole contract, before a screen hides its read-only or write-only fields (the approval-facts rule asks
   // what the record keeps, not what this screen shows).
   const recordSchema = composed?.schema;
   if (composed) {
     const visible = Object.fromEntries(Object.entries(composed.schema).filter(([name, field]) => layoutType === 'form' ? !field.readOnly || formFacts.has(name) : !field.writeOnly));
-    const hidden = new Set(Object.keys(composed.schema).filter(field => !Object.hasOwn(visible, field)));
+    // s248-m01 (next step 1861): a reference keeps the hint to its kept name, which joins the form's record below.
+    const hidden = new Set(Object.keys(composed.schema).filter(field => !Object.hasOwn(visible, field) && !referenceNames.includes(field)));
     const semantics = Object.fromEntries(Object.entries(composed.semantics).map(([field, semantic]) => {
       const ui_hints = { ...semantic.ui_hints };
       for (const key of ['displayLabelField', 'displayFallbackField']) if (typeof ui_hints[key] === 'string' && hidden.has(ui_hints[key] as string)) delete ui_hints[key];
@@ -2170,7 +2178,10 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
 
   // 3b. Populate object schema, field→component wiring, and bindings for codegen
   if (composed) {
-    populateObjectSchema(schema, composed.schema, composed.semantics, composed.traits, composed.samples);
+    const kept = referenceNames.filter(name => !Object.hasOwn(composed!.schema, name) && recordSchema?.[name]);
+    const objectFields = kept.length ? { ...composed.schema, ...Object.fromEntries(kept.map(name => [name, recordSchema![name]!])) } : composed.schema;
+    const objectSamples = kept.length ? composed.samples?.map((sample, index) => ({ ...sample, ...Object.fromEntries(kept.filter(name => Object.hasOwn(recordSamples?.[index] ?? {}, name)).map(name => [name, recordSamples![index]![name]])) })) : composed.samples;
+    populateObjectSchema(schema, objectFields, composed.semantics, composed.traits, objectSamples);
     populateRecordDisplay(schema, composed);
     if (layoutType === 'form' && formFieldGroups) {
       applyFormFieldBindingsFromGroups(
@@ -2606,4 +2617,25 @@ export function annotateWithActionInstances(
   }
 
   return resolved;
+}
+
+/** s248-m01: the form facts with the currency field of each fact that declares money (ui_hints CurrencyAmount). */
+function withMoneyCurrencies(facts: Set<string>, composed: ComposedObject | undefined): Set<string> {
+  const kept = new Set(facts);
+  for (const field of facts) {
+    const hints = composed?.semantics?.[field]?.ui_hints;
+    if (hints?.component === 'CurrencyAmount' && typeof hints.currencyField === 'string' && composed?.schema[hints.currencyField]) kept.add(hints.currencyField);
+  }
+  return kept;
+}
+
+/** s248-m01 (next step 1861): the kept name of each reference the object declares a relationship for (Article's author_name). */
+function referenceKeptNames(composed: ComposedObject | undefined): string[] {
+  if (!composed) return [];
+  let relationships: NonNullable<ReturnType<typeof loadObject>['relationships']> = [];
+  try { relationships = loadObject(composed.object.name).relationships ?? []; } catch { /* Inline composition has no registry entry. */ }
+  return relationships.flatMap(relationship => {
+    const kept = composed.semantics[relationship.via]?.ui_hints?.displayLabelField;
+    return typeof kept === 'string' && composed.schema[relationship.via] && !composed.schema[relationship.via]!.type.endsWith('[]') && composed.schema[kept] ? [kept] : [];
+  });
 }

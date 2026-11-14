@@ -28,6 +28,8 @@ describe('registry_snapshot sizes its reply for the client', () => {
     expect(summary.traits.Stateful!.description).toBe('Normalizes lifecycle state transitions, exposes canonical status semantics, and provides optional transition governance for production workflows.');
     expect(full.traits.Stateful!.description.replace(/\s+/g, ' ').startsWith(summary.traits.Stateful!.description)).toBe(true);
     expect(summary.traits.Assignment!.description).toMatch(/^The record of one ask to one person or agent to do one piece of work, and what became of it: .*\.$/);
+    // s248-m01: the record of a grant, the 54th trait, says what it is in its first sentence too.
+    expect(summary.traits.Mandate!.description).toBe('The record of a grant: a standing yes that one actor may act for a person or organization, on stated terms, until it ends.');
   });
 
   it('returns complete definitions with detail full, and only the named ones when names are given', async () => {

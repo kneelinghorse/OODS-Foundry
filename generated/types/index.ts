@@ -31,6 +31,7 @@ export * from './traits/labelled.parameters';
 export * from './traits/layout-concat.parameters';
 export * from './traits/layout-facet.parameters';
 export * from './traits/layout-layer.parameters';
+export * from './traits/mandate.parameters';
 export * from './traits/mark-area.parameters';
 export * from './traits/mark-bar.parameters';
 export * from './traits/mark-graph.parameters';

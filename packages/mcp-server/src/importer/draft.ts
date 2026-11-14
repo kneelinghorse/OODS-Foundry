@@ -1,6 +1,6 @@
 import { identifierField, recordKeyField } from '../objects/record-identity.js';
 import { sampleValue } from './samples.js';
-import { approvalRecord, initialStateOf, suggestTraits, workRecord } from './proposals.js';
+import { approvalRecord, grantRecord, initialStateOf, namedForEnd, namedForState, suggestTraits, workRecord } from './proposals.js';
 import { dump } from 'js-yaml';
 import { validateDefinition } from '../tools/object.validate.js';
 import { normalizeObjectDocument } from '../objects/object-loader.js';
@@ -285,7 +285,8 @@ export function draftSource(input: SourceInput): ImportResult {
     }
     const timestamps = Object.entries(sampleSchemas).filter(([, schema]) => schema.format === 'date-time');
     if (timestamps.length) {
-      const created = timestamps.find(([field]) => /^created_?at$/i.test(field)) ?? timestamps.find(([field]) => !/^updated_?at$/i.test(field));
+      // s248-m03: a date-time named for an end (expires_at, expirationTime, valid_until) is never when the record was created.
+      const created = timestamps.find(([field]) => /^created_?at$/i.test(field)) ?? timestamps.find(([field]) => !/^updated_?at$/i.test(field) && !namedForEnd(field));
       const updated = timestamps.find(([field]) => /^updated_?at$/i.test(field));
       const fieldBindings = Object.fromEntries(Object.keys(loadTrait('Timestampable').schema).map(field => [field, fields[field] ? field : null]));
       fieldBindings.created_at = created?.[0] ?? null;
@@ -306,7 +307,10 @@ export function draftSource(input: SourceInput): ImportResult {
     // s247-m03: a record of work, one ask to one actor, proposes Assignment on structure (workRecord). Where it fires, the
     // references it binds are not guessed again as an owner or a category tree.
     const work = workRecord(name, fields, edges, originOf, stateOrigin, Object.fromEntries(Object.entries(loadTrait('Assignment').schema).map(([field, definition]) => [field, definition.type])));
-    suggestTraits({ ...shape, title: name }, shape.properties, originOf, propose, (field, reason) => report.push({ ...originOf(field), object: name, kind: 'keyword', outcome: 'unmapped', reason }), new Set(work?.claimed ?? []));
+    // s248-m03: a record of a grant (a state in force or ended, an end, the agent or app that holds it) proposes Mandate on
+    // structure (grantRecord). Where it fires, the references it binds are not guessed again either.
+    const grant = grantRecord(name, fields, edges, originOf, stateOrigin, Object.fromEntries(Object.entries(loadTrait('Mandate').schema).map(([field, definition]) => [field, definition.type])));
+    suggestTraits({ ...shape, title: name }, shape.properties, originOf, propose, (field, reason) => report.push({ ...originOf(field), object: name, kind: 'keyword', outcome: 'unmapped', reason }), new Set([...(work?.claimed ?? []), ...(grant?.claimed ?? [])]));
     /**
      * The record keeps one state of its own (an answer, or its work's), so that enum is its lifecycle, ahead of another
      * that sorts first (Bitbucket's participant: role, then state). A declared lifecycle is never replaced.
@@ -321,9 +325,18 @@ export function draftSource(input: SourceInput): ImportResult {
       lifecycle.id = hash(canonical({ name, trait: lifecycle.trait, evidence: lifecycle.evidence })).slice(0, 16);
     };
     if (work) { propose(work.trait, 'medium', work.evidence); preferLifecycle(work.state, 'the record keeps the state of its work'); }
+    if (grant) { propose(grant.trait, 'medium', grant.evidence); preferLifecycle(grant.state, 'the record keeps the state of its grant'); }
     // s245-m03 (c): a table of approvals, one person's answer per row, proposes Decision on structure (approvalRecord).
-    const approval = approvalRecord(fields, edges, originOf, stateOrigin);
+    // s248-m03: where all three of a grant's facts hold, the grant rule wins over an answer enum's approval reading.
+    const approval = grant ? undefined : approvalRecord(fields, edges, originOf, stateOrigin);
     if (approval) { propose(approval.trait, 'medium', approval.evidence); preferLifecycle(approval.answer, 'the record keeps one answer'); }
+    // s248-m03 (1868): where no record rule chose the state the record keeps, the string enum named status or state is its
+    // lifecycle, or failing that one whose name ends so (consentStatus, grant_state), ahead of one that sorts first
+    // (GitHub's agent task's creator_type, FDX's durationType). A record's own status wins over a prefixed one: Stripe's
+    // Checkout Session keeps status, not payment_status.
+    const stateEnums = work || grant || approval ? [] : [...lifecycles.keys()].filter(field => namedForState(field));
+    const stateNamed = stateEnums.find(field => /^(status|state)$/i.test(field)) ?? stateEnums[0];
+    if (stateNamed) preferLifecycle(stateNamed, `${stateNamed} is named for the record's state`);
     // Acceptance cannot invent facts the source does not supply. View-state traits are deliberately not record data.
     for (const proposal of proposals) if (hasTrait(proposal.trait.name)) {
       const trait = loadTrait(proposal.trait.name);

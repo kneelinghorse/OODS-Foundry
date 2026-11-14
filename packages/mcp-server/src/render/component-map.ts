@@ -680,7 +680,8 @@ function renderSelect(node: UiElement, childrenHtml = ''): string {
 function renderTextarea(node: UiElement, childrenHtml = ''): string {
   const props = node.props ?? {};
   const id = asString(props.id) ?? node.id;
-  const attrs = buildAttributes(node, { allowedHtmlAttrs: TEXTAREA_HTML_ATTRS, consumedProps: new Set(['value', 'text', 'label', 'help']) });
+  // s248-m01 (next step 1862): four rows unless the node says otherwise, as React's and Vue's Textarea draw.
+  const attrs = buildAttributes(props.rows === undefined ? { ...node, props: { ...props, rows: 4 } } : node, { allowedHtmlAttrs: TEXTAREA_HTML_ATTRS, consumedProps: new Set(['value', 'text', 'label', 'help']) });
   const content = hasChildrenHtml(childrenHtml) ? childrenHtml : escapeHtml(asString(props.value) ?? asString(props.text) ?? '');
   return `<div class="oods-field">${props.label ? `<label class="oods-field-label" for="${escapeHtml(id)}">${escapeHtml(String(props.label))}</label>` : ''}<textarea${attrs}>${content}</textarea>${props.help ? `<small class="oods-field-help">${escapeHtml(String(props.help))}</small>` : ''}</div>`;
 }
@@ -1244,8 +1245,9 @@ function renderInputControl(
   )}"${valueAttr}${placeholderAttr} /></label>`;
 }
 
+// s248-m01 (next step 1862): four rows, as React's and Vue's text areas draw (CancellationForm's reason, the preference editor).
 function renderTextareaControl(label: string, name: string, value?: string): string {
-  return `<label class="oods-field" data-form-control="textarea"><span class="oods-field-label">${escapeHtml(label)}</span><textarea class="oods-field-control" name="${escapeHtml(name)}">${
+  return `<label class="oods-field" data-form-control="textarea"><span class="oods-field-label">${escapeHtml(label)}</span><textarea class="oods-field-control" name="${escapeHtml(name)}" rows="4">${
     value ? escapeHtml(value) : ''
   }</textarea></label>`;
 }

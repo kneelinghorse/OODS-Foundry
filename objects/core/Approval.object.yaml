@@ -1,6 +1,6 @@
 object:
   name: Approval
-  version: 1.1.0
+  version: 1.1.1
   domain: core.governance
   description: One ask to one person or agent for a yes, about one version of one thing, and the answer it became.
   tags:
@@ -103,6 +103,9 @@ metadata:
   steward: Design team
   maturity: alpha
   changelog:
+    - version: 1.1.1
+      date: "2026-11-14"
+      description: The resend approval's first line says why it was created, to ask for a yes before resending, and the Billing Agent's lines name the grant it acted under.
     - version: 1.1.0
       date: "2026-11-12"
       description: Declares the order of its states, with the endings final; the resend's shown line carries the correction it approves, so the comment is a remark.
@@ -138,10 +141,10 @@ samples:
     comment: Go ahead, with the invoice number in the reference
     status: used
     state_history:
-      - { title: Created, from: null, to: not_yet_asked, at: '2026-09-28T20:40:00Z', reason: Created when the bank returned the transfer, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01, actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05, on_behalf_of_name: Tidewater Co-op }
-      - { title: Asked, from: not_yet_asked, to: waiting, at: '2026-09-28T20:41:00Z', reason: Asked Ruth Adeyemi before resending, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01, actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05, on_behalf_of_name: Tidewater Co-op }
+      - { title: Created, from: null, to: not_yet_asked, at: '2026-09-28T20:40:00Z', reason: Created to ask for a yes before resending PAY-2026-0429, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01, actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05, on_behalf_of_name: Tidewater Co-op, grant_id: 4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01, grant_name: Tidewater invoices and payments }
+      - { title: Asked, from: not_yet_asked, to: waiting, at: '2026-09-28T20:41:00Z', reason: Asked Ruth Adeyemi before resending, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01, actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05, on_behalf_of_name: Tidewater Co-op, grant_id: 4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01, grant_name: Tidewater invoices and payments }
       - { title: Approved, from: waiting, to: approved, at: '2026-09-28T20:55:00Z', reason: Approved for one resend with the invoice number, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02, actor_name: Ruth Adeyemi, actor_kind: person }
-      - { title: Used, from: approved, to: used, at: '2026-09-28T21:00:00Z', reason: Used by the resend of PAY-2026-0429, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01, actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05, on_behalf_of_name: Tidewater Co-op }
+      - { title: Used, from: approved, to: used, at: '2026-09-28T21:00:00Z', reason: Used by the resend of PAY-2026-0429, actor_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01, actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05, on_behalf_of_name: Tidewater Co-op, grant_id: 4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01, grant_name: Tidewater invoices and payments }
     created_at: '2026-09-28T20:40:00Z'
     updated_at: '2026-09-28T21:00:00Z'
     last_event: ended

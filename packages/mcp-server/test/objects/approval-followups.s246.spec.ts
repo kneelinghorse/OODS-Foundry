@@ -284,7 +284,8 @@ describe('Approval declares the order of its states, and the product enforces it
   // of it, and adds the one place OODS Foundry reads it at run time (Cancel in generated React and Vue screens).
   it('says who enforces it: Stateful 2.3.0 names the product, and the samples leave allowed_transitions to it', () => {
     const stateful = loadTrait('lifecycle/Stateful');
-    expect(stateful.trait.version).toBe('2.3.0');
+    // s248-m01: 2.4.0 adds the optional grant pointer and name to state_history; these lines are unchanged.
+    expect(stateful.trait.version).toBe('2.4.0');
     expect(stateful.trait.description).toContain('The product enforces that order');
     expect(stateful.trait.description).toContain('A generated StatusSelector offers every state');
     for (const sample of samples) expect(sample, String(sample.name)).not.toHaveProperty('allowed_transitions');
@@ -307,7 +308,8 @@ describe('the worked example obeys its own rule: what was shown is what the yes 
     expect(rule.levelDefinitions.approval!.shown).toBe('The amount, the method, the invoice it is for, and anything this resend must do differently');
     expect(rule.levelDefinitions.approval!.lapses).toBe('Once it is used (the resend is sent and recorded, not when the bank answers), or when the amount changes');
     for (const [level, definition] of Object.entries(rule.levelDefinitions)) for (const [key, value] of Object.entries(definition)) expect(value.length, `${level}.${key}`).toBeLessThanOrEqual(160);
-    // s247-m02: 1.2.2, the resend names the task it was made under.
-    expect(loadObject('Transaction').object.version).toBe('1.2.2');
+    // s247-m02: 1.2.2, the resend names the task it was made under. s248-m02: 1.3.0, resends open to a yes given in
+    // advance, and the resend names its grant; the level definitions above do not change.
+    expect(loadObject('Transaction').object.version).toBe('1.3.0');
   });
 });

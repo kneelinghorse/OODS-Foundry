@@ -7,7 +7,7 @@ export type LevelName = string;
  */
 export interface ApprovableTraitParameters {
   /**
-   * The levels of yes the product declares, in order, each named for the kind of yes asked for.
+   * The levels of yes the product declares, least deliberate first, each named for the kind of yes asked for.
    *
    * @minItems 1
    */
@@ -42,6 +42,10 @@ export interface ApprovableTraitParameters {
    * Whether a yes stops standing when the thing changes after it was given.
    */
   lapsesOnChange?: boolean;
+  /**
+   * The changes a standing yes, given in advance under a grant, may allow without a person being asked at the time. Each is a change requiredLevels names and, where two or more levels are declared, none needs the last; both are checked when the object is validated.
+   */
+  inAdvance?: string[];
   /**
    * The outcomes approval_state can hold, as the product works them out.
    *

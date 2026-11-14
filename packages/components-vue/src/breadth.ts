@@ -774,7 +774,7 @@ export const PreferenceEditor = defineComponent({
         formHeader(title, subtitle),
         h('div', { 'data-form-content': 'true' }, content.length ? content : [
           h('label', { 'data-form-control': 'select' }, [h('span', 'Namespace'), h('select', { name: 'namespace', value: selected }, selectOptionNodes(choices, selected))]),
-          h('label', { 'data-form-control': 'textarea' }, [h('span', 'Preference Document'), h('textarea', { name: 'preferenceDocument', value: firstScalar(props.document, props.json, props.value) ?? '' })]),
+          h('label', { 'data-form-control': 'textarea' }, [h('span', 'Preference Document'), h('textarea', { name: 'preferenceDocument', rows: 4, value: firstScalar(props.document, props.json, props.value) ?? '' })]),
         ]),
       ]);
     };
@@ -1111,7 +1111,7 @@ export const CancellationForm = defineComponent({
         h('div', { 'data-form-content': 'true' }, content.length ? content : [
           h('label', { 'data-form-control': 'select' }, [h('span', 'Reason Code'), props.allowedReasons?.length === 0 ? h('input', { name: 'reasonCode', value: props.reasonCode ?? '' }) : h('select', { name: 'reasonCode', value: props.reasonCode }, selectOptionNodes(choices, props.reasonCode))]),
           props.codeHelp ? h('p', { class: 'oods-field-help' }, props.codeHelp) : null,
-          h('label', { 'data-form-control': 'textarea' }, [h('span', 'Reason'), h('textarea', { name: 'reason', value: firstText(props.reason, props.cancellationReason) ?? '' })]),
+          h('label', { 'data-form-control': 'textarea' }, [h('span', 'Reason'), h('textarea', { name: 'reason', rows: 4, value: firstText(props.reason, props.cancellationReason) ?? '' })]),
           props.reasonHelp ? h('p', { class: 'oods-field-help' }, props.reasonHelp) : null,
         ]),
       ]);

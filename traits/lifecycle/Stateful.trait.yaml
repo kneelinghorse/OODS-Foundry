@@ -1,6 +1,6 @@
 trait:
   name: Stateful
-  version: 2.3.0
+  version: 2.4.0
   description: |
     Normalizes lifecycle state transitions, exposes canonical status semantics, and provides
     optional transition governance for production workflows. Many objects compose Stateful
@@ -125,6 +125,14 @@ schema:
         - task_id: string (the Task record the change was made under)
         - task_name: string (the task, as shown: "Get INV-2026-0155 paid")
       StatusTimeline then reads "… · approved by Ruth Adeyemi (level: Approval) · task: Get INV-2026-0155 paid".
+
+      A change made under a grant, the standing yes an actor acts under for a person or organization, can also say
+      which grant it was. Both optional; the id stays in the record's data, a pointer and not a link, and an entry
+      without them renders as it always has:
+        - grant_id: string (the Grant record the change was made under)
+        - grant_name: string (the grant, as shown: "Resend returned transfers")
+      StatusTimeline names the grant after any approval and before the task: "Billing Agent for Tidewater Co-op ·
+      grant: Resend returned transfers".
     default: []
 
   allowed_transitions:
@@ -204,7 +212,7 @@ dependencies: []
 
 metadata:
   created: "2025-10-12"
-  updated: "2026-11-13"
+  updated: "2026-11-14"
   owners:
     - Design team
     - Engineering team

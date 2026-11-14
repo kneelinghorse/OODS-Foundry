@@ -1,0 +1,522 @@
+{
+ "about": "s248-m03 fixtures: records of a grant, and records that are not, as sources the importer drafts; the measured schemas in miniature (FDX 6.6's Consent Grant, Stripe's shared payment issued token, ReBIT AA 2.1.0's consent artefact and signed detail, GitHub's organization programmatic access grant). 'before' holds each draft's proposals as the 0.14.0 importer drafted them (id, trait, grade, validity and evidence pointers), captured on 2026-11-14 from the importer's source at the m02 head, before the grant rule and the two general fixes.",
+ "sources": {
+  "sql-grant": {
+   "format": "sql",
+   "name": "grants.sql",
+   "content": "create table users (id text primary key, name text not null);\ncreate table organizations (id text primary key, name text not null);\ncreate table agents (id text primary key, name text not null);\ncreate table agent_grants (\n  id text primary key,\n  name text not null,\n  agent_id text not null references agents(id),\n  organization_id text not null references organizations(id),\n  granted_by text references users(id),\n  requested_by text references users(id),\n  revoked_by text references users(id),\n  owner_id text references users(id),\n  status text not null check (status in ('requested', 'active', 'paused', 'revoked', 'expired', 'replaced', 'declined', 'withdrawn')),\n  scope text,\n  expires_at timestamptz,\n  timezone text,\n  revoked_reason text,\n  last_used_at timestamptz,\n  uses integer,\n  created_at timestamptz not null,\n  updated_at timestamptz not null\n);\n"
+  },
+  "sql-no-end": {
+   "format": "sql",
+   "name": "grants.sql",
+   "content": "create table users (id text primary key, name text not null);\ncreate table organizations (id text primary key, name text not null);\ncreate table agents (id text primary key, name text not null);\ncreate table agent_grants (\n  id text primary key,\n  name text not null,\n  agent_id text not null references agents(id),\n  organization_id text not null references organizations(id),\n  granted_by text references users(id),\n  requested_by text references users(id),\n  revoked_by text references users(id),\n  owner_id text references users(id),\n  status text not null check (status in ('requested', 'active', 'paused', 'revoked', 'expired', 'replaced', 'declined', 'withdrawn')),\n  scope text,\n  timezone text,\n  revoked_reason text,\n  last_used_at timestamptz,\n  uses integer,\n  created_at timestamptz not null,\n  updated_at timestamptz not null\n);\n"
+  },
+  "sql-person-holder": {
+   "format": "sql",
+   "name": "grants.sql",
+   "content": "create table users (id text primary key, name text not null);\ncreate table organizations (id text primary key, name text not null);\ncreate table agents (id text primary key, name text not null);\ncreate table agent_grants (\n  id text primary key,\n  name text not null,\n  agent_id text not null references users(id),\n  organization_id text not null references organizations(id),\n  granted_by text references users(id),\n  requested_by text references users(id),\n  revoked_by text references users(id),\n  owner_id text references users(id),\n  status text not null check (status in ('requested', 'active', 'paused', 'revoked', 'expired', 'replaced', 'declined', 'withdrawn')),\n  scope text,\n  expires_at timestamptz,\n  timezone text,\n  revoked_reason text,\n  last_used_at timestamptz,\n  uses integer,\n  created_at timestamptz not null,\n  updated_at timestamptz not null\n);\n"
+  },
+  "sql-state-alone": {
+   "format": "sql",
+   "name": "memberships.sql",
+   "content": "create table users (id text primary key, name text not null);\ncreate table organizations (id text primary key, name text not null);\ncreate table agents (id text primary key, name text not null);\ncreate table memberships (\n  id text primary key,\n  organization_id text not null references organizations(id),\n  status text not null check (status in ('active', 'revoked', 'expired'))\n);\n"
+  },
+  "sql-end-alone": {
+   "format": "sql",
+   "name": "invites.sql",
+   "content": "create table users (id text primary key, name text not null);\ncreate table organizations (id text primary key, name text not null);\ncreate table agents (id text primary key, name text not null);\ncreate table invites (\n  id text primary key,\n  email text not null,\n  organization_id text not null references organizations(id),\n  expires_at timestamptz\n);\n"
+  },
+  "sql-holder-alone": {
+   "format": "sql",
+   "name": "runs.sql",
+   "content": "create table users (id text primary key, name text not null);\ncreate table organizations (id text primary key, name text not null);\ncreate table agents (id text primary key, name text not null);\ncreate table agent_runs (\n  id text primary key,\n  agent_id text not null references agents(id),\n  summary text\n);\n"
+  },
+  "prisma-grant": {
+   "format": "prisma",
+   "name": "grants.prisma",
+   "content": "model User {\n  id   String @id @default(cuid())\n  name String\n}\n\nmodel Agent {\n  id   String @id @default(cuid())\n  name String\n}\n\nmodel AgentGrant {\n  id          String      @id @default(cuid())\n  name        String\n  status      GrantStatus\n  agentId     String\n  agent       Agent       @relation(fields: [agentId], references: [id])\n  userId      String\n  user        User        @relation(\"for\", fields: [userId], references: [id])\n  grantedById String?\n  grantedBy   User?       @relation(\"granted\", fields: [grantedById], references: [id])\n  expiresAt   DateTime?\n  createdAt   DateTime    @default(now())\n}\n\nenum GrantStatus {\n  active\n  paused\n  revoked\n  expired\n}\n"
+  },
+  "openapi-grant": {
+   "format": "openapi",
+   "name": "grants.openapi.json",
+   "content": "{\n \"openapi\": \"3.0.1\",\n \"info\": {\n  \"title\": \"Grants\",\n  \"version\": \"1\"\n },\n \"paths\": {},\n \"components\": {\n  \"schemas\": {\n   \"Application\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"name\": {\n      \"type\": \"string\"\n     }\n    }\n   },\n   \"User\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"name\": {\n      \"type\": \"string\"\n     }\n    }\n   },\n   \"Grant\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"id\",\n     \"state\"\n    ],\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"durationType\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"one_time\",\n       \"persistent\"\n      ]\n     },\n     \"state\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"active\",\n       \"revoked\",\n       \"expired\"\n      ]\n     },\n     \"client\": {\n      \"$ref\": \"#/components/schemas/Application\"\n     },\n     \"user\": {\n      \"$ref\": \"#/components/schemas/User\"\n     },\n     \"scope\": {\n      \"type\": \"array\",\n      \"items\": {\n       \"type\": \"string\"\n      }\n     },\n     \"uses\": {\n      \"type\": \"string\"\n     },\n     \"valid_until\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\"\n     },\n     \"created\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\"\n     },\n     \"last_used\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\"\n     }\n    }\n   }\n  }\n }\n}"
+  },
+  "openapi-consent": {
+   "format": "openapi",
+   "name": "consents.openapi.json",
+   "content": "{\n \"openapi\": \"3.0.1\",\n \"info\": {\n  \"title\": \"Grants\",\n  \"version\": \"1\"\n },\n \"paths\": {},\n \"components\": {\n  \"schemas\": {\n   \"Application\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"name\": {\n      \"type\": \"string\"\n     }\n    }\n   },\n   \"User\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"name\": {\n      \"type\": \"string\"\n     }\n    }\n   },\n   \"ConsentWithEnd\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"decision\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"pending\",\n       \"approved\",\n       \"rejected\"\n      ]\n     },\n     \"status\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"active\",\n       \"revoked\",\n       \"expired\"\n      ]\n     },\n     \"app\": {\n      \"$ref\": \"#/components/schemas/Application\"\n     },\n     \"user\": {\n      \"$ref\": \"#/components/schemas/User\"\n     },\n     \"decided_at\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\"\n     },\n     \"expires_at\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\"\n     }\n    }\n   },\n   \"ConsentNoEnd\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"decision\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"pending\",\n       \"approved\",\n       \"rejected\"\n      ]\n     },\n     \"status\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"active\",\n       \"revoked\",\n       \"expired\"\n      ]\n     },\n     \"app\": {\n      \"$ref\": \"#/components/schemas/Application\"\n     },\n     \"user\": {\n      \"$ref\": \"#/components/schemas/User\"\n     },\n     \"decided_at\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\"\n     }\n    }\n   }\n  }\n }\n}"
+  },
+  "openapi-end-first": {
+   "format": "openapi",
+   "name": "invites.openapi.json",
+   "content": "{\n \"openapi\": \"3.0.1\",\n \"info\": {\n  \"title\": \"Grants\",\n  \"version\": \"1\"\n },\n \"paths\": {},\n \"components\": {\n  \"schemas\": {\n   \"Invite\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"email\": {\n      \"type\": \"string\"\n     },\n     \"expires_at\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\"\n     },\n     \"sent_at\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\"\n     }\n    }\n   },\n   \"Link\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"url\": {\n      \"type\": \"string\"\n     },\n     \"valid_until\": {\n      \"type\": \"string\",\n      \"format\": \"date-time\"\n     }\n    }\n   }\n  }\n }\n}"
+  },
+  "fdx-mini": {
+   "format": "json-schema",
+   "name": "fdx-consent.json",
+   "content": "{\n \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n \"$defs\": {\n  \"ConsentGrant\": {\n   \"type\": \"object\",\n   \"properties\": {\n    \"customerId\": {\n     \"type\": \"string\",\n     \"maxLength\": 256\n    },\n    \"parties\": {\n     \"type\": \"array\",\n     \"items\": {\n      \"type\": \"object\",\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"type\": \"string\",\n        \"enum\": [\n         \"DATA_ACCESS_PLATFORM\",\n         \"DATA_PROVIDER\",\n         \"DATA_RECIPIENT\",\n         \"INDIVIDUAL\",\n         \"MERCHANT\",\n         \"TOKEN_ISSUER\",\n         \"VENDOR\"\n        ]\n       },\n       \"homeUri\": {\n        \"type\": \"string\",\n        \"format\": \"uri\"\n       },\n       \"registeredEntityName\": {\n        \"type\": \"string\"\n       },\n       \"registeredEntityId\": {\n        \"type\": \"string\"\n       }\n      }\n     }\n    },\n    \"durationType\": {\n     \"type\": \"string\",\n     \"enum\": [\n      \"ONE_TIME\",\n      \"PERSISTENT\",\n      \"TIME_BOUND\"\n     ]\n    },\n    \"durationPeriod\": {\n     \"type\": \"integer\"\n    },\n    \"lookbackPeriod\": {\n     \"type\": \"integer\"\n    },\n    \"resources\": {\n     \"type\": \"array\",\n     \"items\": {\n      \"type\": \"object\",\n      \"properties\": {\n       \"resourceType\": {\n        \"type\": \"string\",\n        \"enum\": [\n         \"ACCOUNT\",\n         \"CUSTOMER\",\n         \"DOCUMENT\"\n        ]\n       },\n       \"resourceId\": {\n        \"type\": \"string\"\n       }\n      }\n     }\n    },\n    \"id\": {\n     \"type\": \"string\"\n    },\n    \"status\": {\n     \"type\": \"string\",\n     \"enum\": [\n      \"ACTIVE\",\n      \"EXPIRED\",\n      \"REVOKED\"\n     ]\n    },\n    \"createdTime\": {\n     \"type\": \"string\",\n     \"format\": \"date-time\"\n    },\n    \"expirationTime\": {\n     \"type\": \"string\",\n     \"format\": \"date-time\"\n    },\n    \"updatedTime\": {\n     \"type\": \"string\",\n     \"format\": \"date-time\"\n    }\n   }\n  }\n }\n}"
+  },
+  "stripe-mini": {
+   "format": "openapi",
+   "name": "stripe.json",
+   "content": "{\n \"openapi\": \"3.0.1\",\n \"info\": {\n  \"title\": \"Grants\",\n  \"version\": \"1\"\n },\n \"paths\": {},\n \"components\": {\n  \"schemas\": {\n   \"shared_payment.issued_token\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"id\",\n     \"status\"\n    ],\n    \"properties\": {\n     \"created\": {\n      \"type\": \"integer\",\n      \"format\": \"unix-time\"\n     },\n     \"deactivated_at\": {\n      \"type\": \"integer\",\n      \"format\": \"unix-time\",\n      \"nullable\": true\n     },\n     \"deactivated_reason\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"consumed\",\n       \"expired\",\n       \"resolved\",\n       \"revoked\"\n      ],\n      \"nullable\": true\n     },\n     \"id\": {\n      \"type\": \"string\"\n     },\n     \"livemode\": {\n      \"type\": \"boolean\"\n     },\n     \"payment_method\": {\n      \"type\": \"string\"\n     },\n     \"status\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"active\",\n       \"deactivated\",\n       \"requires_action\"\n      ]\n     },\n     \"usage_limits\": {\n      \"anyOf\": [\n       {\n        \"$ref\": \"#/components/schemas/shared_payment_tokens_usage_limits\"\n       }\n      ],\n      \"nullable\": true\n     }\n    }\n   },\n   \"shared_payment_tokens_usage_limits\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"currency\": {\n      \"type\": \"string\"\n     },\n     \"expires_at\": {\n      \"type\": \"integer\",\n      \"format\": \"unix-time\"\n     },\n     \"max_amount\": {\n      \"type\": \"integer\"\n     }\n    }\n   }\n  }\n }\n}"
+  },
+  "aa-mini": {
+   "format": "json-schema",
+   "name": "aa.json",
+   "content": "{\n \"$schema\": \"https://json-schema.org/draft/2020-12/schema\",\n \"$defs\": {\n  \"ConsentArtefact\": {\n   \"type\": \"object\",\n   \"properties\": {\n    \"ver\": {\n     \"type\": \"string\"\n    },\n    \"txnid\": {\n     \"type\": \"string\"\n    },\n    \"consentId\": {\n     \"type\": \"string\"\n    },\n    \"status\": {\n     \"type\": \"string\",\n     \"enum\": [\n      \"ACTIVE\",\n      \"PAUSED\",\n      \"REVOKED\",\n      \"EXPIRED\"\n     ]\n    },\n    \"createTimestamp\": {\n     \"type\": \"string\",\n     \"format\": \"date-time\"\n    },\n    \"signedConsent\": {\n     \"type\": \"string\"\n    }\n   }\n  },\n  \"SignedConsentDetail\": {\n   \"type\": \"object\",\n   \"properties\": {\n    \"consentStart\": {\n     \"type\": \"string\",\n     \"format\": \"date-time\"\n    },\n    \"consentExpiry\": {\n     \"type\": \"string\",\n     \"format\": \"date-time\"\n    },\n    \"consentMode\": {\n     \"type\": \"string\",\n     \"enum\": [\n      \"VIEW\",\n      \"STORE\",\n      \"QUERY\",\n      \"STREAM\"\n     ]\n    },\n    \"fetchType\": {\n     \"type\": \"string\",\n     \"enum\": [\n      \"ONETIME\",\n      \"PERIODIC\"\n     ]\n    },\n    \"DataConsumer\": {\n     \"type\": \"object\",\n     \"properties\": {\n      \"id\": {\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"type\": \"string\",\n       \"enum\": [\n        \"AA\",\n        \"FIU\"\n       ]\n      }\n     }\n    },\n    \"Customer\": {\n     \"type\": \"object\",\n     \"properties\": {\n      \"id\": {\n       \"type\": \"string\"\n      }\n     }\n    }\n   }\n  }\n }\n}"
+  },
+  "github-pat-mini": {
+   "format": "openapi",
+   "name": "github.json",
+   "content": "{\n \"openapi\": \"3.0.1\",\n \"info\": {\n  \"title\": \"Grants\",\n  \"version\": \"1\"\n },\n \"paths\": {},\n \"components\": {\n  \"schemas\": {\n   \"simple-user\": {\n    \"type\": \"object\",\n    \"properties\": {\n     \"id\": {\n      \"type\": \"integer\"\n     },\n     \"login\": {\n      \"type\": \"string\"\n     }\n    }\n   },\n   \"organization-programmatic-access-grant\": {\n    \"type\": \"object\",\n    \"required\": [\n     \"id\",\n     \"owner\",\n     \"repository_selection\",\n     \"access_granted_at\",\n     \"token_id\",\n     \"token_expired\"\n    ],\n    \"properties\": {\n     \"id\": {\n      \"type\": \"integer\"\n     },\n     \"owner\": {\n      \"$ref\": \"#/components/schemas/simple-user\"\n     },\n     \"repository_selection\": {\n      \"type\": \"string\",\n      \"enum\": [\n       \"none\",\n       \"all\",\n       \"subset\"\n      ]\n     },\n     \"repositories_url\": {\n      \"type\": \"string\"\n     },\n     \"permissions\": {\n      \"type\": \"object\",\n      \"properties\": {\n       \"organization\": {\n        \"type\": \"object\"\n       },\n       \"repository\": {\n        \"type\": \"object\"\n       }\n      }\n     },\n     \"access_granted_at\": {\n      \"type\": \"string\"\n     },\n     \"token_id\": {\n      \"type\": \"integer\"\n     },\n     \"token_name\": {\n      \"type\": \"string\"\n     },\n     \"token_expired\": {\n      \"type\": \"boolean\"\n     },\n     \"token_expires_at\": {\n      \"type\": \"string\",\n      \"nullable\": true\n     },\n     \"token_last_used_at\": {\n      \"type\": \"string\",\n      \"nullable\": true\n     }\n    }\n   }\n  }\n }\n}"
+  }
+ },
+ "before": {
+  "sql-grant": {
+   "Agents": [],
+   "Organizations": [],
+   "Users": [],
+   "AgentGrants": [
+    {
+     "id": "5a6f8ceef3b99cdd",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/3/columns/15",
+      "/statements/3/columns/10",
+      "/statements/3/columns/13",
+      "/statements/3/columns/16"
+     ]
+    },
+    {
+     "id": "9dbcc011b2cef61f",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/3/columns/8/enum"
+     ]
+    },
+    {
+     "id": "cb6a01bbc198d732",
+     "trait": "Ownerable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/3/columns/3",
+      "/statements/3/columns/4",
+      "/statements/3/columns/5",
+      "/statements/3/columns/6",
+      "/statements/3/columns/7"
+     ]
+    }
+   ]
+  },
+  "sql-no-end": {
+   "Agents": [],
+   "Organizations": [],
+   "Users": [],
+   "AgentGrants": [
+    {
+     "id": "56518235bf003e68",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/3/columns/14",
+      "/statements/3/columns/12",
+      "/statements/3/columns/15"
+     ]
+    },
+    {
+     "id": "9dbcc011b2cef61f",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/3/columns/8/enum"
+     ]
+    },
+    {
+     "id": "cb6a01bbc198d732",
+     "trait": "Ownerable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/3/columns/3",
+      "/statements/3/columns/4",
+      "/statements/3/columns/5",
+      "/statements/3/columns/6",
+      "/statements/3/columns/7"
+     ]
+    }
+   ]
+  },
+  "sql-person-holder": {
+   "Organizations": [],
+   "Users": [],
+   "AgentGrants": [
+    {
+     "id": "5a6f8ceef3b99cdd",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/3/columns/15",
+      "/statements/3/columns/10",
+      "/statements/3/columns/13",
+      "/statements/3/columns/16"
+     ]
+    },
+    {
+     "id": "9dbcc011b2cef61f",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/3/columns/8/enum"
+     ]
+    },
+    {
+     "id": "cbeb689c560687f9",
+     "trait": "Ownerable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/3/columns/2",
+      "/statements/3/columns/3",
+      "/statements/3/columns/4",
+      "/statements/3/columns/5",
+      "/statements/3/columns/6",
+      "/statements/3/columns/7"
+     ]
+    }
+   ],
+   "Agents": []
+  },
+  "sql-state-alone": {
+   "Agents": [],
+   "Organizations": [],
+   "Memberships": [
+    {
+     "id": "8c8b12f0078b27f4",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/3/columns/2/enum"
+     ]
+    },
+    {
+     "id": "e2a87fb71ec7d651",
+     "trait": "Ownerable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/3/columns/1"
+     ]
+    }
+   ],
+   "Users": []
+  },
+  "sql-end-alone": {
+   "Agents": [],
+   "Organizations": [],
+   "Invites": [
+    {
+     "id": "5aee2438c61fc7ef",
+     "trait": "Ownerable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/3/columns/2"
+     ]
+    },
+    {
+     "id": "756d38f1ae30836f",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/statements/3/columns/3"
+     ]
+    }
+   ],
+   "Users": []
+  },
+  "sql-holder-alone": {
+   "Agents": [],
+   "AgentRuns": [],
+   "Organizations": [],
+   "Users": []
+  },
+  "prisma-grant": {
+   "Agent": [],
+   "User": [],
+   "AgentGrant": [
+    {
+     "id": "1e26f60f5482c096",
+     "trait": "Ownerable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/declarations/2/members/5",
+      "/declarations/2/members/7"
+     ]
+    },
+    {
+     "id": "2894d50db068ea9f",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/declarations/2/members/2/enum"
+     ]
+    },
+    {
+     "id": "f11beab169a36ea8",
+     "trait": "Timestampable",
+     "grade": "strong",
+     "valid": true,
+     "evidence": [
+      "/declarations/2/members/10",
+      "/declarations/2/members/9"
+     ]
+    }
+   ]
+  },
+  "openapi-grant": {
+   "Application": [],
+   "User": [],
+   "Grant": [
+    {
+     "id": "0dc35931bee4ca24",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/Grant/properties/durationType/enum",
+      "/components/schemas/Grant/properties/state/enum"
+     ]
+    },
+    {
+     "id": "61fdc813c05ccf69",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/Grant/properties/created",
+      "/components/schemas/Grant/properties/last_used",
+      "/components/schemas/Grant/properties/valid_until"
+     ]
+    }
+   ]
+  },
+  "openapi-consent": {
+   "Application": [],
+   "User": [],
+   "ConsentNoEnd": [
+    {
+     "id": "0eb44dab07d4a3e6",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/ConsentNoEnd/properties/decided_at"
+     ]
+    },
+    {
+     "id": "7e227e8038279a2b",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/ConsentNoEnd/properties/decision/enum",
+      "/components/schemas/ConsentNoEnd/properties/status/enum"
+     ]
+    },
+    {
+     "id": "8e9adc981cc6b21b",
+     "trait": "Decision",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/ConsentNoEnd/properties/user",
+      "/components/schemas/ConsentNoEnd/properties/decision/enum",
+      "/components/schemas/ConsentNoEnd/properties/app",
+      "/components/schemas/ConsentNoEnd/properties/decided_at"
+     ]
+    }
+   ],
+   "ConsentWithEnd": [
+    {
+     "id": "1165cf2d6861e0d7",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/ConsentWithEnd/properties/decided_at",
+      "/components/schemas/ConsentWithEnd/properties/expires_at"
+     ]
+    },
+    {
+     "id": "8bcf8fbbcb747646",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/ConsentWithEnd/properties/decision/enum",
+      "/components/schemas/ConsentWithEnd/properties/status/enum"
+     ]
+    },
+    {
+     "id": "f24600d044165634",
+     "trait": "Decision",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/ConsentWithEnd/properties/user",
+      "/components/schemas/ConsentWithEnd/properties/decision/enum",
+      "/components/schemas/ConsentWithEnd/properties/app",
+      "/components/schemas/ConsentWithEnd/properties/decided_at",
+      "/components/schemas/ConsentWithEnd/properties/expires_at"
+     ]
+    }
+   ]
+  },
+  "openapi-end-first": {
+   "Invite": [
+    {
+     "id": "710f709e88c0add0",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/Invite/properties/expires_at",
+      "/components/schemas/Invite/properties/sent_at"
+     ]
+    }
+   ],
+   "Link": [
+    {
+     "id": "ba694fe72561b702",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/Link/properties/valid_until"
+     ]
+    }
+   ]
+  },
+  "fdx-mini": {
+   "ConsentGrant": [
+    {
+     "id": "002b1ad149308ea1",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/$defs/ConsentGrant/properties/durationType/enum",
+      "/$defs/ConsentGrant/properties/status/enum"
+     ]
+    },
+    {
+     "id": "7b8bb1eae2e77e67",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/$defs/ConsentGrant/properties/createdTime",
+      "/$defs/ConsentGrant/properties/expirationTime",
+      "/$defs/ConsentGrant/properties/updatedTime"
+     ]
+    }
+   ]
+  },
+  "stripe-mini": {
+   "SharedPaymentIssuedToken": [
+    {
+     "id": "dc6ec855148ee02b",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/shared_payment.issued_token/properties/deactivated_reason/enum",
+      "/components/schemas/shared_payment.issued_token/properties/status/enum"
+     ]
+    }
+   ],
+   "SharedPaymentTokensUsageLimits": []
+  },
+  "aa-mini": {
+   "ConsentArtefact": [
+    {
+     "id": "7d40ebf1474b7501",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/$defs/ConsentArtefact/properties/status/enum"
+     ]
+    },
+    {
+     "id": "aea7a9bd2bfd5cd0",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/$defs/ConsentArtefact/properties/createTimestamp"
+     ]
+    }
+   ],
+   "SignedConsentDetail": [
+    {
+     "id": "0e952b5a100cf446",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/$defs/SignedConsentDetail/properties/consentMode/enum",
+      "/$defs/SignedConsentDetail/properties/fetchType/enum"
+     ]
+    },
+    {
+     "id": "ee18cc53c4d54e5c",
+     "trait": "Timestampable",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/$defs/SignedConsentDetail/properties/consentExpiry",
+      "/$defs/SignedConsentDetail/properties/consentStart"
+     ]
+    }
+   ]
+  },
+  "github-pat-mini": {
+   "SimpleUser": [],
+   "OrganizationProgrammaticAccessGrant": [
+    {
+     "id": "a2271a9a72eadafc",
+     "trait": "Stateful",
+     "grade": "medium",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/organization-programmatic-access-grant/properties/repository_selection/enum"
+     ]
+    },
+    {
+     "id": "b8d1a017ccfdcbb9",
+     "trait": "Ownerable",
+     "grade": "weak",
+     "valid": true,
+     "evidence": [
+      "/components/schemas/organization-programmatic-access-grant/properties/owner"
+     ]
+    }
+   ]
+  }
+ }
+}

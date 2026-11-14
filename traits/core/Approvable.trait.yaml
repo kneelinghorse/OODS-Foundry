@@ -1,17 +1,18 @@
 trait:
   name: Approvable
-  version: 1.0.0
+  version: 1.1.0
   description: |
     The ability to be approved: the thing's own rule for which change needs which level of yes, from how many and from
     whom, and its outcome, worked out from the approvals that still stand. The approvals themselves are records of
     their own (the Approval object, through the Decision trait): one ask to one actor that becomes their answer.
 
-    The rule is the parameters. `levels` names the levels of yes the product declares, in order, as Decision does on
+    The rule is the parameters. `levels` names the levels of yes the product declares, least deliberate first, as Decision does on
     the Approval; `levelDefinitions` says what each one is, in six short texts; `requiredLevels` says which change (a
     state the thing moves to, or a named action) needs which level; `approvalsNeeded`, `askerMayAnswer`,
     `agentLevels` and `lapsesOnChange` say how many, whether the asker may answer, which levels an agent's yes may
-    satisfy, and whether a yes lapses when the thing changes. The definitions are kept with the rule; no screen
-    changes by level.
+    satisfy, and whether a yes lapses when the thing changes. `inAdvance` names the changes a grant's standing yes may
+    allow in advance, where the product lets a yes given earlier stand for one asked now; it is empty by default, so
+    every change the rule names is asked each time. The definitions are kept with the rule; no screen changes by level.
 
     The outcome is two read-only fields: `approval_state`, under a name of its own so it never collides with the
     lifecycle's `status`, and `approval_summary`, one kept line ("Approved by Ruth Adeyemi · version 3 · 2 Nov").
@@ -33,7 +34,8 @@ parameters:
     type: string[]
     required: true
     description: |
-      The levels of yes the product declares, in order, each named for the kind of yes asked for. Every level the rule
+      The levels of yes the product declares, least deliberate first, each named for the kind of yes asked for. Every
+      level the rule
       names is one of these, and the approvals of this thing are asked at these levels (Decision's `levels`).
     default:
       - acknowledgement
@@ -84,12 +86,23 @@ parameters:
     description: Whether a yes stops standing when the thing changes after it was given (it becomes out of date).
     default: true
 
+  - name: inAdvance
+    type: string[]
+    required: false
+    description: |
+      The changes a standing yes, given in advance under a grant, may allow without a person being asked at the time.
+      Each is a change `requiredLevels` names; where the rule declares two or more levels, none needs the last, most
+      deliberate one, which is always asked. Empty by default, so every change the rule names is asked each time. The product checks a standing yes
+      against its grant's terms; OODS Foundry keeps the setting and shows the outcome.
+    default: []
+
   - name: outcomes
     type: string[]
     required: true
     description: |
       The outcomes `approval_state` can hold, as the product works them out: not required, waiting, approved,
-      declined, out of date by default.
+      declined, out of date by default. A rule that opens changes in advance may add allowed in advance
+      (`allowed_in_advance`): the change needed a yes, and a grant's standing yes gave it, with no one asked this time.
     default:
       - not_required
       - waiting
@@ -154,6 +167,7 @@ dependencies: []
 
 metadata:
   created: "2026-11-11"
+  updated: "2026-11-14"
   owners:
     - Core team
   maturity: alpha

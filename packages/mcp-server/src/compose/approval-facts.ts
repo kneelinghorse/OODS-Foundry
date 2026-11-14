@@ -70,8 +70,11 @@ export function enforceApprovalFacts(schema: UiSchema, composed: ComposedObject 
   if (!status) return [];
   const placed: Placed[] = [];
   const walk = (node: UiElement, at: Omit<Placed, 'node'>): void => {
-    placed.push({ node, ...at });
     const kind = hiding(node);
+    // s248-m01 (next step 1871): what a Dialog binds through its own props shows only inside it, and what a multi-panel Tabs
+    // binds through its own shows in no one panel, so a fact bound there is hidden as its children's are: inside the dialog,
+    // or in a panel no answer is in. A node that hides nothing is placed where it sits.
+    placed.push({ node, ...(kind === 'dialog' ? { ...at, dialogs: [...at.dialogs, node] } : kind === 'tab' ? { ...at, panels: [...at.panels, [node, -1] as const] } : at) });
     node.children?.forEach((child, index) => walk(child, kind === 'tab' ? { ...at, panels: [...at.panels, [node, index]] } : kind === 'dialog' ? { ...at, dialogs: [...at.dialogs, node] } : at));
   };
   schema.screens.forEach((screen, index) => walk(screen, { screen: index, panels: [], dialogs: [] }));

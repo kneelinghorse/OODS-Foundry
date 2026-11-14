@@ -1,6 +1,6 @@
 object:
   name: Agent
-  version: 1.0.0
+  version: 1.1.0
   domain: core.identity
   description: An AI agent that acts inside a product, for the people and organizations it is granted to act for.
   tags:
@@ -11,8 +11,9 @@ object:
 
 # s244-m02 (#2829): an agent is an actor, not a user. It is an object of its own and shares one trait with User, Actor: the
 # ability to act. It answers to a sponsor (a person or team), holds roles, has a lifecycle of its own, and acts for others
-# only under a delegation (a Relationship of type delegation from the person or organization to the agent). Approval is a
-# rule per action (allowed, ask first, never), never a property of the agent's identity. Every field is one line of text:
+# only under a grant (a Grant record from the person or organization to the agent, s248). Approval is a rule per action
+# (allowed, ask first, never), never a property of the agent's identity; a grant can narrow it for one party, and a
+# standing yes inside a grant can give an asks-first action's yes in advance. Every field is one line of text:
 # a list is written as one string with its items separated by "; ", and "None" when it is empty.
 traits:
   - name: core/Actor
@@ -79,19 +80,19 @@ schema:
   acts_for:
     type: string
     required: true
-    description: Who the agent acts for, one phrase per grant (organization · scope · until), grants separated by "; ".
+    description: Who the agent acts for, one phrase per party restating the grant it holds for that party (organization · scope · until), separated by "; ". A standing yes inside a grant is covered by the grant it sits in and is not restated.
   allowed_actions:
     type: string
     required: true
-    description: Actions the agent takes without asking, separated by "; "; None when there are none.
+    description: Actions the agent may take with no one's yes, under any grant that allows them, separated by "; "; None when there are none.
   asks_first_for:
     type: string
     required: true
-    description: Actions the agent asks a person to approve before taking, separated by "; "; None when there are none.
+    description: Actions that need a person's yes before the agent takes them, asked each time or given in advance by a standing yes under a grant, separated by "; "; None when there are none.
   never_allowed:
     type: string
     required: true
-    description: Actions the agent never takes, separated by "; "; None when there are none.
+    description: Actions nothing permits the agent to take, separated by "; "; None when there are none.
   owner_name:
     type: string
     required: false
@@ -147,12 +148,18 @@ metadata:
   steward: Design team
   maturity: alpha
   changelog:
+    - version: 1.1.0
+      date: "2026-11-14"
+      description: The four rule fields say what they mean beside a grant; acts_for restates the grant held for each party, and asks first means a yes, asked each time or given in advance.
     - version: 1.0.0
       date: "2026-11-07"
       description: Initial Agent object, the twelfth public reference object; an agent is an actor, not a user.
 
-# Seven authored sample agents, one at each of seven sample organizations, each sponsored by a person or team there and
-# granted to act for it (the Relationship samples hold two of the grants as delegations). An agent is created as a draft
+# Seven authored sample agents, one at each of seven sample organizations, each sponsored by a person or team there. Six
+# hold a grant to act for it, and each acts_for restates the grants its agent holds, one phrase per party. The Grant
+# samples hold all but one of them: the Order Agent's reseller grant for Harbor Channel Partners, which owns Summit's
+# account and is not a sample organization. The Inventory Agent holds none: its one task is its sponsor's own, and its
+# lines name no party. An agent is created as a draft
 # (the lifecycle's initial state); each history ends in the agent's status, names who made each change, and its last
 # event is the latest recorded change. A list is one line with its items separated by "; ", and None when it is empty.
 samples:

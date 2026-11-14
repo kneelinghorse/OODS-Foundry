@@ -1,6 +1,6 @@
 trait:
   name: Actor
-  version: 1.0.0
+  version: 1.0.1
   description: |
     The ability to act: an object that composes Actor can be assigned work, hold a role, own a record and appear in
     a record's history as the one who made a change. User composes it as a person; Agent composes it as an agent.
@@ -12,7 +12,7 @@ trait:
 
       a history entry   actor_id and actor_kind name who acted (Stateful's state_history, Auditable's audit_log)
       a membership      actor_id with actor_kind holds a role in an organization (Authable's membership_records)
-      a delegation      a Relationship of type delegation, from the person or organization acted for, to the actor
+      a grant           a Grant's seats (the Mandate trait): who asked for it, gave it, holds it and ended it
       an owner          Ownerable's owner_id with owner_type
 
     The kind is a parameter, never a record field: every record of an object is the same kind of actor, so a User's
@@ -49,6 +49,7 @@ dependencies: []
 
 metadata:
   created: "2026-11-07"
+  updated: "2026-11-14"
   owners:
     - Core team
     - Identity team

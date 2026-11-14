@@ -500,7 +500,7 @@ function declaredMoney(
  * state a fact its author did not (a churned organization "in good standing"). A sample that names a field the object
  * does not have or never supplies, or an enum value the field does not allow, is an authoring error.
  */
-function applySamples(objectSchema: Record<string, FieldSchemaEntry>, samples: unknown): void {
+function applySamples(objectSchema: Record<string, FieldSchemaEntry>, samples: unknown, productNumbers: ReadonlySet<string> = new Set()): void {
   if (samples === undefined) return;
   if (!Array.isArray(samples) || samples.some(sample => !sample || typeof sample !== 'object' || Array.isArray(sample))) {
     throw new Error('Invalid samples: samples must be a list of records, each naming field values.');
@@ -513,7 +513,10 @@ function applySamples(objectSchema: Record<string, FieldSchemaEntry>, samples: u
     if (entry.unavailable) throw new Error(`Invalid samples: sample ${naming} names "${field}", a field this object never supplies.`);
     const own = entry.examples ?? [];
     entry.examples = records.map((sample, index) => {
-      if (!Object.hasOwn(sample, field)) return structuredClone(index < own.length ? own[index] : neutralFieldValue(entry) ?? null);
+      // s248-m01: a number the product writes (read-only, optional) that a sample leaves out was not written: a grant with no
+      // limit per use has none, never a limit of 0 ("$0.00"), as an optional enum a record leaves out is not recorded
+      // (s245-m02). No 0.14.0 sample leaves out such a number; an editable number still reads 0.
+      if (!Object.hasOwn(sample, field)) return structuredClone(index < own.length ? own[index] : productNumbers.has(field) ? null : neutralFieldValue(entry) ?? null);
       const value = sample[field];
       if (entry.enum?.length && value != null && !entry.enum.includes(value as string)) {
         throw new Error(`Invalid samples: sample ${index + 1} gives ${field} "${String(value)}", which is not one of ${entry.enum.join(', ')}.`);
@@ -607,7 +610,7 @@ export function populateObjectSchema(
 
     objectSchema[fieldName] = entry;
   }
-  applySamples(objectSchema, samples);
+  applySamples(objectSchema, samples, new Set(Object.entries(fieldSchema).filter(([, field]) => field.readOnly && !field.required && ['integer', 'number'].includes(field.type)).map(([name]) => name)));
 
   if (Object.keys(objectSchema).length > 0) {
     schema.objectSchema = objectSchema;

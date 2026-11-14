@@ -30,6 +30,7 @@ import {
   referenceFieldExpression,
   statusTimelineCondition,
   omitEmptyCondition,
+  valueSelect,
   OMIT_EMPTY_PROP,
   isDateFieldEntry,
   slotDateHelperSource,
@@ -554,11 +555,15 @@ function emitNode(
       delete propsObject[prop];
     }
   }
+  // s248-m01 (next step 1861): a reference select names the record's own value when it does not list it.
+  const valueOptions = valueSelect(node, objectSchema);
+  if (valueOptions && propsObject) delete propsObject.options;
   // Spread user props (except style and children)
   if (propsObject) {
     const propsStr = propsToJsxAttrs(propsObject, options.styling === 'tailwind');
     if (propsStr) attrParts.push(propsStr);
   }
+  if (valueOptions) attrParts.push(`options={selectOptionsWithValue(${JSON.stringify(valueOptions.options)}, ${snakeToCamel(valueOptions.field)}, ${valueOptions.keptName ? snakeToCamel(valueOptions.keptName) : 'undefined'}, ${javascriptSingleQuotedString(valueOptions.subject)})}`);
 
   attrParts.push(...recipeProps.bindings.map(({ targetProp, expression }) => (
     `${targetProp}={${expression}}`

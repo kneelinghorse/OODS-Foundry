@@ -135,7 +135,8 @@ const sampleIn = (samples: Sample[], status: string) => samples.find(sample => s
 describe('Task is the fourteenth public object', () => {
   it('composes the record trait, its lifecycle, its times, the one who answers and Cancel', () => {
     const task = loadObject('Task');
-    expect(task.object).toMatchObject({ name: 'Task', version: '1.0.0' });
+    // s248-m02: 1.0.1, every line an agent writes for a party names its grant.
+    expect(task.object).toMatchObject({ name: 'Task', version: '1.0.1' });
     expect(task.object).not.toHaveProperty('visibility');
     expect(task.traits.map(trait => trait.name)).toEqual(['core/Assignment', 'lifecycle/Stateful', 'lifecycle/Timestampable', 'structural/Ownerable', 'lifecycle/Cancellable']);
     const lifecycle = task.traits[1]!.parameters!;
@@ -238,25 +239,36 @@ describe('the eight Task samples tell true stories about the shipped samples the
     expect(approval.subject_id).toBe('PAY-2026-0429');
     expect(Date.parse(history[0]!.at)).toBeLessThan(Date.parse(approval.state_history[0].at));
     expect(history.some(entry => entry.approval_id !== undefined || entry.approved_by_name !== undefined)).toBe(false);
-    expect(historyAttribution(history[2])?.text).toBe('Billing Agent for Tidewater Co-op');
+    // s248-m02: every line the agent writes for Tidewater Co-op names the grant it acted under.
+    expect(historyAttribution(history[2])?.text).toBe('Billing Agent for Tidewater Co-op · grant: Tidewater invoices and payments');
   });
 
   it("names the task on the payment's resend line, and prints the payment's other lines as 0.13.1 did", () => {
     const payment = (loadObject('Transaction').samples as Sample[]).find(sample => sample.payment_reference === 'PAY-2026-0429')!;
     const lines = (payment.state_history as Sample[]).map(entry => historyAttribution(entry)?.text);
-    expect(lines).toEqual([undefined, undefined, 'Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval) · task: Get INV-2026-0155 paid']);
+    // s248-m02: and the grant, after the approval and before the task.
+    expect(lines).toEqual([undefined, undefined, 'Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval) · grant: Tidewater invoices and payments · task: Get INV-2026-0155 paid']);
     const resend = (payment.state_history as Sample[])[2]!;
     expect(resend).toMatchObject({ task_id: tasks[0]!.task_id, task_name: tasks[0]!.name });
   });
 
-  it('adds and rewords no shipped sample of another object, the resend\'s task aside', () => {
-    const strip = (name: string, samples: Sample[]) => name !== 'Transaction' ? samples : samples.map(sample => ({ ...sample,
-      state_history: (sample.state_history ?? []).map((entry: Sample) => { const { task_id: _id, task_name: _name, ...rest } = entry; return rest; }) }));
+  it('adds and rewords no shipped sample of another object, the resend\'s task and the grant on agent lines aside', () => {
+    // s248-m02: every line an agent writes for a party also names its grant (Approval's and Transaction's), which is
+    // stripped too; what else moved is named below.
+    const strip = (name: string, samples: Sample[]) => samples.map(sample => sample.state_history === undefined ? sample : ({ ...sample,
+      state_history: (sample.state_history as Sample[]).map((entry: Sample) => {
+        const { grant_id: _grant, grant_name: _grantName, ...rest } = entry;
+        if (name !== 'Transaction') return rest;
+        const { task_id: _id, task_name: _name, ...more } = rest;
+        return more;
+      }) }));
     // The digests of each object's samples as 0.13.1 shipped them (planning head 80b903a6d6).
     const SHIPPED: Record<string, string> = {
       User: 'c46b7b8b2503dff1', Organization: '9f9ee86cf12d29fc', Product: 'b9743dd806f97cf8', Subscription: '3ea11bcf91188e07', Transaction: '8613e5416546e7e0',
-      Relationship: 'ebfe1de18c636fee', Article: '9194b50293de1fae', Media: 'b659b30bae5d5093', Invoice: '5b755a0663efb6f5', Plan: '421f7fd719870b01',
-      Usage: 'c54a4d96226e4e98', Agent: 'f54bc01fdd86743e', Approval: '0eaf67ca99658d7f',
+      // s248-m02: Relationship's two delegation samples are Grant samples now (0.14.0: ebfe1de18c636fee).
+      Relationship: '8ddf3066c141d66e', Article: '9194b50293de1fae', Media: 'b659b30bae5d5093', Invoice: '5b755a0663efb6f5', Plan: '421f7fd719870b01',
+      // s248-m02 (next step 1870): the resend approval's first line says why it was created (0.14.0: 0eaf67ca99658d7f).
+      Usage: 'c54a4d96226e4e98', Agent: 'f54bc01fdd86743e', Approval: 'f94c44459cde9683',
     };
     for (const [name, digest] of Object.entries(SHIPPED)) {
       expect(crypto.createHash('sha256').update(JSON.stringify(strip(name, loadObject(name).samples as Sample[] ?? []))).digest('hex').slice(0, 16), name).toBe(digest);

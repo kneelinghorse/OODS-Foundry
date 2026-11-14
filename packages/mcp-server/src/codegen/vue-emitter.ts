@@ -29,6 +29,7 @@ import {
   referenceFieldExpression,
   statusTimelineCondition,
   omitEmptyCondition,
+  valueSelect,
   OMIT_EMPTY_PROP,
   hasSlotBoundDates,
   isDateFieldEntry,
@@ -564,10 +565,14 @@ function emitTemplateNodeBody(
       delete propsObject[prop];
     }
   }
+  // s248-m01 (next step 1861): a reference select names the record's own value when it does not list it.
+  const valueOptions = valueSelect(node, objectSchema);
+  if (valueOptions && propsObject) delete propsObject.options;
   if (propsObject) {
     const propsStr = propsToVueAttrs(propsObject, options.styling === 'tailwind');
     if (propsStr) attrParts.push(propsStr);
   }
+  if (valueOptions) attrParts.push(`:options="selectOptionsWithValue(${serializeVueBinding(valueOptions.options)}, ${snakeToCamel(valueOptions.field)}, ${valueOptions.keptName ? snakeToCamel(valueOptions.keptName) : 'undefined'}, ${javascriptSingleQuotedString(valueOptions.subject)})"`);
 
   attrParts.push(...recipeProps.bindings.map(({ targetProp, expression }) => (
     `:${targetProp}="${expression}"`
@@ -908,6 +913,27 @@ function fieldRefDefault(entry: FieldSchemaEntry): string {
   }
 }
 
+/**
+ * s248-m01: the number fields a form reads only inside its facts (form-detail's FORM_FACT rows), where nothing edits them.
+ * s248-m02: and every other field whose starting value would read as a fact the record does not hold: a choice's first
+ * option ("Period: Day" on a grant with no period) or a yes/no's false. A text field starts empty, which reads as nothing.
+ */
+function formFactValues(screens: readonly UiElement[], objectSchema: Record<string, FieldSchemaEntry>): Set<string> {
+  const read = new Set<string>();
+  const edited = new Set<string>();
+  const visit = (node: UiElement, inFact: boolean): void => {
+    const fact = inFact || node.meta?.intent === 'form-fact';
+    for (const [key, value] of Object.entries(node.props ?? {})) {
+      if ((key === 'field' || key.endsWith('Field')) && typeof value === 'string') (fact ? read : edited).add(value);
+    }
+    node.children?.forEach(child => visit(child, fact));
+  };
+  screens.forEach(screen => visit(screen, false));
+  const startsAsValue = (entry: FieldSchemaEntry | undefined): boolean => Boolean(entry && !entry.type.endsWith('?')
+    && (/^(?:integer|number|boolean)$/.test(entry.type) || (entry.enum?.length ?? 0) > 0));
+  return new Set([...read].filter(field => !edited.has(field) && startsAsValue(objectSchema[field])));
+}
+
 function nodesById(screens: readonly UiElement[]): Map<string, UiElement> {
   const nodes = new Map<string, UiElement>();
   const stack = [...screens].reverse();
@@ -1244,10 +1270,15 @@ function buildScriptSetup(
       : 'const actions = /** @type {GeneratedUIActions} */ (generatedProps.actions);');
     if (hasStateBranches) lines.push(options.typescript ? 'const uiState = generatedProps.uiState;'
       : 'const uiState = /** @type {GeneratedUIState} */ (generatedProps.uiState);');
+    // s248-m01: a number a form only reads as a fact starts with no value, never 0: a grant with no limit per use shows no
+    // "Most per use" row, where an editable number's input still starts at 0. No 0.14.0 form reads a number as a fact.
+    // s248-m02: so does a choice or a yes/no read only as a fact: a grant with no period shows no "Period" row, never "Day".
+    const readOnlyFacts = formFactValues(screens, objectSchema!);
     for (const [fieldName, entry] of sortedFields) {
       const camelName = snakeToCamel(fieldName);
-      const defaultValue = fieldRefDefault(entry);
-      const tsType = options.typescript ? mapFieldType(entry) : null;
+      const readOnlyFact = readOnlyFacts.has(fieldName);
+      const defaultValue = readOnlyFact ? 'undefined' : fieldRefDefault(entry);
+      const tsType = options.typescript ? `${mapFieldType(entry)}${readOnlyFact ? ' | undefined' : ''}` : null;
 
       if (entry.description) {
         lines.push(`/** ${escapeVueScriptComment(entry.description)} */`);

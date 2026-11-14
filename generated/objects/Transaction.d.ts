@@ -22,6 +22,8 @@ export interface StateTransition {
   readonly approval_level?: string;
   readonly task_id?: string;
   readonly task_name?: string;
+  readonly grant_id?: string;
+  readonly grant_name?: string;
 }
 
 export interface Transaction {

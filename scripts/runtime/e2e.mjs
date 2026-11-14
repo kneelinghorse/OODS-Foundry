@@ -984,7 +984,8 @@ async function main() {
       // Sprint 244 m01 adds core/Actor and m02 the Agent object (#2829).
       // Sprint 245 m01 adds core/Decision and core/Approvable, and m02 the Approval object.
       // Sprint 247 m01 adds core/Assignment, and m02 the Task object.
-      { components: 114, traits: 53, objects: 19 },
+      // Sprint 248 m01 adds core/Mandate, and m02 the Grant object.
+      { components: 114, traits: 54, objects: 20 },
     );
     assert.deepEqual(health.warnings ?? [], []);
     const builtScopes = await loadJson(path.join(runtimeRoot, 'packages/tokens/dist/css-variables-by-scope.json'));

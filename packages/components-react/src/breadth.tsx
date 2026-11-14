@@ -795,7 +795,7 @@ export const PreferenceEditor = React.forwardRef<HTMLFormElement, PreferenceEdit
             </label>
             <label data-form-control="textarea">
               <span>Preference Document</span>
-              <textarea name="preferenceDocument" defaultValue={firstScalar(document, json, value) ?? ''} />
+              <textarea name="preferenceDocument" rows={4} defaultValue={firstScalar(document, json, value) ?? ''} />
             </label>
           </>}
         </div>
@@ -1145,7 +1145,7 @@ export const CancellationForm = React.forwardRef<HTMLFormElement | HTMLFieldSetE
       <div data-form-content="true">{content.authored || content.scalar !== undefined ? children : <>
         <label data-form-control="select"><span>Reason Code</span>{allowedReasons?.length === 0 ? <input name="reasonCode" defaultValue={reasonCode ?? ''} /> : <select name="reasonCode" defaultValue={reasonCode}>{selectOptionsMarkup(choices)}</select>}</label>
         {codeHelp && <p className="oods-field-help">{codeHelp}</p>}
-        <label data-form-control="textarea"><span>Reason</span><textarea name="reason" defaultValue={firstText(reason, cancellationReason) ?? ''} /></label>
+        <label data-form-control="textarea"><span>Reason</span><textarea name="reason" rows={4} defaultValue={firstText(reason, cancellationReason) ?? ''} /></label>
         {reasonHelp && <p className="oods-field-help">{reasonHelp}</p>}
       </>}</div>
     </>);

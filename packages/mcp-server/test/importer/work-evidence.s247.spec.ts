@@ -6,7 +6,8 @@
  * - It binds only what the source has, and only where the type fits: a same-named field of another type stays unbound.
  * - Where it fires, the references it binds are not guessed again: a reference to the record's own kind is the task it came
  *   from, not a category tree, and the one doing the work (and who asked) is not an owner with nothing bound. Where it does
- *   not fire, every proposal is the one the 0.13.1 importer drafted (the fixture's "before", by id).
+ *   not fire, every proposal is the one the 0.13.1 importer drafted (the fixture's "before", by id), except GitHub's agent
+ *   task's lifecycle, which s248-m03's general fix moves to its state (1868).
  * - The record's lifecycle is its work's states, ahead of another enum that sorts first.
  * - Accepting the proposal with fields unbound never rolls back, and the accepted records' screens compose.
  */
@@ -33,6 +34,15 @@ const proposal = (key: string, object: string, trait: string): Proposal | undefi
 const bound = (item: Proposal | undefined) => Object.fromEntries(Object.entries(item?.trait.fieldBindings ?? {}).filter(([, target]) => target));
 const ids = (proposals: Array<{ id: string }>) => proposals.map(item => item.id).sort();
 const before = (key: string, object: string) => FIXTURES.before[key][object];
+/**
+ * s248-m03 (1868): the one 0.13.1 proposal a general fix moves on these fixtures. GitHub's agent task's lifecycle was its
+ * first string enum, creator_type (user, organization); among several enums the one named for the record's state is now
+ * its lifecycle, so it binds state. Every other proposal is still 0.13.1's by id.
+ */
+const MOVED: Array<[string, string, string]> = [['github-mini', 'Operationa4666d97c4', 'Stateful']];
+const moved = (key: string, object: string, trait: string) => MOVED.some(([k, o, t]) => k === key && o === object && t === trait);
+const keptIds = (key: string, object: string, proposals: Proposal[]) => ids(proposals.filter(item => !moved(key, object, item.trait.name)));
+const keptBefore = (key: string, object: string) => ids(before(key, object).filter(item => !moved(key, object, item.trait)));
 /** The records of work in the fixtures, and nothing else, get Assignment. */
 const FIRES: Array<[string, string]> = [['sql-work', 'Jobs'], ['prisma-work', 'Job'], ['openapi-work', 'AgentJob'], ['openapi-work', 'Chore'], ['linear-mini', 'AgentSession']];
 
@@ -149,8 +159,14 @@ describe('the two wrong guesses, stopped only where the rule fires', () => {
   it('keeps every proposal as 0.13.1 drafted it where the rule does not fire', () => {
     for (const key of Object.keys(FIXTURES.sources)) for (const item of draft(key).drafts) {
       if (FIRES.some(([k, object]) => k === key && object === item.name)) continue;
-      expect(ids(item.proposals), `${key}/${item.name}`).toEqual(ids(before(key, item.name)));
+      expect(keptIds(key, item.name, item.proposals), `${key}/${item.name}`).toEqual(keptBefore(key, item.name));
     }
+    // s248-m03 (1868): GitHub's agent task's lifecycle is its state, not who created it.
+    const lifecycle = proposal('github-mini', 'Operationa4666d97c4', 'Stateful')!;
+    expect(before('github-mini', 'Operationa4666d97c4').find(item => item.trait === 'Stateful')!.id).toBe('ac6552b554ff0557');
+    expect(lifecycle.trait.fieldBindings?.status).toBe('state');
+    expect(lifecycle.trait.parameters?.states).toEqual(['queued', 'in_progress', 'completed', 'failed', 'idle', 'waiting_for_user', 'timed_out', 'cancelled']);
+    expect(draft('github-mini').report.some(entry => entry.reason === 'Alternative Stateful configuration (creator_type) retained as evidence; state is named for the record\'s state, so its lifecycle is state.')).toBe(true);
     // The same tables without a value that means a person is needed keep both guesses, the assignee's among the owner's evidence.
     for (const [key, object, parent, assignee] of [['sql-not-work', 'Jobs', '/statements/2/columns/5', '/statements/2/columns/2'], ['prisma-not-work', 'Job', '/declarations/1/members/5', '/declarations/1/members/3']]) {
       expect(proposal(key, object, 'Classifiable')!.evidence.map(item => item.pointer), object).toEqual([parent]);
@@ -181,7 +197,7 @@ describe('the measured records, in miniature', () => {
   it("gives Linear's issue, A2A's task and GitHub's agent task nothing: a ticket, and two records of work that name no one", () => {
     for (const [key, object] of [['linear-mini', 'Issue'], ['a2a-mini', 'Task'], ['a2a-mini', 'TaskStatus'], ['github-mini', 'Operationa4666d97c4']]) {
       expect(proposal(key, object, 'Assignment'), object).toBeUndefined();
-      expect(ids(draftOf(key, object).proposals), object).toEqual(ids(before(key, object)));
+      expect(keptIds(key, object, draftOf(key, object).proposals), object).toEqual(keptBefore(key, object));
     }
     // A2A's states arrive on its task, all eight; the task holds no reference to anyone, so the rule has no doer.
     expect(proposal('a2a-mini', 'Task', 'Stateful')!.trait.parameters?.states).toHaveLength(8);

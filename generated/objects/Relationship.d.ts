@@ -22,6 +22,8 @@ export interface StateTransition {
   readonly approval_level?: string;
   readonly task_id?: string;
   readonly task_name?: string;
+  readonly grant_id?: string;
+  readonly grant_name?: string;
 }
 
 export interface Relationship {
@@ -151,7 +153,7 @@ export interface Relationship {
   relationship_id: string;
 
   /**
-   * Semantic type describing the edge between the source and target; a delegation is a grant from the person or organization acted for (the source) to the actor acting for them (the target).
+   * Semantic type describing the edge between the source and target; a delegation is the link alone, from the person or organization acted for (the source) to the actor acting for them (the target), and a grant with its terms is a Grant record.
    *
    * Source: Relationship (object override)
    */

@@ -113,7 +113,9 @@ export function statusTimelineCondition(node: UiElement, fields?: Record<string,
  * `data-oods-omit-empty` in its props (the record trait's "Waiting on", on a task that waits on nothing), and the composer
  * carries it onto the labelled row a detail page or a form wraps the field in. No view in 0.13.1 carries it, so no
  * existing screen moves. These are the record fields the place shows; it is drawn when any of them holds a value. A
- * reference counts its kept name too, because the place shows the name wherever the reference is set.
+ * reference counts its kept name too, because the place shows the name wherever the reference is set. s248-m01: an
+ * amount's currency is not counted: it qualifies the amount and shows nothing alone, so a grant that keeps a currency
+ * and no limit per use draws no "Most per use" row.
  */
 export const OMIT_EMPTY_PROP = 'data-oods-omit-empty';
 export function omitEmptyFields(node: UiElement, fields?: Record<string, FieldSchemaEntry>): string[] | undefined {
@@ -121,7 +123,7 @@ export function omitEmptyFields(node: UiElement, fields?: Record<string, FieldSc
   const shown = new Set<string>();
   const visit = (child: UiElement): void => {
     for (const [key, value] of Object.entries(child.props ?? {})) {
-      if ((key !== 'field' && !key.endsWith('Field')) || typeof value !== 'string' || !ownFieldSchemaEntry(fields, value)) continue;
+      if ((key !== 'field' && !key.endsWith('Field')) || key === 'currencyField' || typeof value !== 'string' || !ownFieldSchemaEntry(fields, value)) continue;
       shown.add(value);
       const name = ownFieldSchemaEntry(fields, value)?.displayLabelField;
       if (typeof name === 'string' && ownFieldSchemaEntry(fields, name)) shown.add(name);
@@ -130,6 +132,24 @@ export function omitEmptyFields(node: UiElement, fields?: Record<string, FieldSc
   };
   visit(node);
   return shown.size ? [...shown] : undefined;
+}
+
+/**
+ * s248-m01 (next step 1861): a form's select for a field that has no list of its own values, a reference to another record,
+ * takes its options through selectOptionsWithValue, so where the select does not list the record's own value it names that
+ * value by the record's kept name instead of showing another option. A select listing an enum's values, and a list's own
+ * sort and filter controls, keep their options as they are.
+ */
+export function valueSelect(node: UiElement, objectSchema?: Record<string, FieldSchemaEntry>): { field: string; keptName?: string; subject: string; options: Array<{ value: string; label: string }> } | undefined {
+  if (node.component !== 'Select' || node.collectionControl) return undefined;
+  const field = node.props?.field;
+  const options = node.props?.options;
+  if (typeof field !== 'string' || !Array.isArray(options)) return undefined;
+  const entry = ownFieldSchemaEntry(objectSchema, field);
+  if (!entry || entry.enum?.length) return undefined;
+  const kept = typeof entry.displayLabelField === 'string' && ownFieldSchemaEntry(objectSchema, entry.displayLabelField) ? entry.displayLabelField : undefined;
+  const label = node.props?.label;
+  return { field, keptName: kept, subject: typeof label === 'string' && label ? label : entry.displayLabel ?? fieldLabel(field.replace(/_ids?$/, '')), options: options as Array<{ value: string; label: string }> };
 }
 
 /** Whether a record holds a value for a place: present, and not blank. */

@@ -36,7 +36,9 @@ const APP = /^(app|application|installation|integration|oauthapp|oauthapplicatio
 /**
  * A structural match suggests a capability for review, not an assertion of domain meaning. s247-m03: a declared reference
  * the record-of-work rule has bound (`claimed`: the one doing the work, who asked, the task it came from) is not guessed a
- * second time as an owner or a category tree; with nothing claimed, every guess is as before.
+ * second time as an owner or a category tree; with nothing claimed, every guess is as before. s248-m03: the grant rule's
+ * references (the holder, the party, who gave, asked for and ended it) are claimed the same way, and are not guessed again
+ * as the record acting for someone either.
  */
 export function suggestTraits(shape: MapValue, fields: Record<string, MapValue>, originOf: (field: string) => Origin, propose: Propose, note: (field: string, reason: string) => void, claimed: ReadonlySet<string> = new Set()): void {
   const entries = Object.entries(fields);
@@ -105,9 +107,10 @@ export function suggestTraits(shape: MapValue, fields: Record<string, MapValue>,
       if (toPrincipal) propose(trait, 'medium', evidence(field, `${sponsor ? 'Sponsors' : 'Owners'} reference ${toPrincipal} records: the people or groups ${sponsor ? 'who answer for this record' : 'who own this record'}; confirm ownership before accepting.`));
       else propose(trait, 'weak', named(field, `Name alone suggests ${sponsor ? 'sponsors' : 'owners'}; the field references no person, group or directory record.`));
     }
-    if (/^(run_?as(_?user)?|runs_?as|on_?behalf_?of(_?(user|id))?|acting_?(as|for)|identity_?parent(_?id)?)$/i.test(field)) {
-      if (toPrincipal) propose({ name: 'Actor', parameters: { kind: 'agent' } }, 'medium', evidence(field, `This record acts as or for a ${toPrincipal} record: an agent acting under a delegation. Model the grant as a Relationship of type delegation from that ${toPrincipal} to this record.`));
-      else propose({ name: 'Actor', parameters: { kind: 'agent' } }, 'weak', named(field, 'Name alone suggests this record acts as or for someone else (a delegation); the field references no person or principal record.'));
+    // s248-m03: a reference a record rule has bound (a grant's party) is not guessed again as the record acting for it.
+    if (!claimed.has(field) && /^(run_?as(_?user)?|runs_?as|on_?behalf_?of(_?(user|id))?|acting_?(as|for)|identity_?parent(_?id)?)$/i.test(field)) {
+      if (toPrincipal) propose({ name: 'Actor', parameters: { kind: 'agent' } }, 'medium', evidence(field, `This record acts as or for a ${toPrincipal} record: an agent acting under a grant. Keep the grant as a record of its own, a Grant (the Mandate trait), from that ${toPrincipal} to this record.`));
+      else propose({ name: 'Actor', parameters: { kind: 'agent' } }, 'weak', named(field, 'Name alone suggests this record acts as or for someone else (under a grant); the field references no person or principal record.'));
     }
     if (boolean(schema) && /^(is_?bot|bot|is_?app(_?user)?|app|is_?agent|agent)$/i.test(field)) {
       const app = entries.find(([other, value]) => other !== field && APP.test((referenceOf(value)?.target ?? '').split('.').pop() ?? ''));
@@ -311,4 +314,104 @@ export function workRecord(self: string, fields: Record<string, FieldDefinition>
     if (typeOf(fields[field]) !== type.replace(/\?$/, '') || Object.values(bindings).includes(field)) bindings[field] = null;
   }
   return { trait: { name: 'Assignment', parameters: {}, fieldBindings: bindings }, evidence, state, claimed };
+}
+
+/**
+ * s248-m03 (1868): a field named for the record's status or state (status, state, consentStatus, grant_state). Among
+ * several string enums, it is the record's lifecycle, ahead of one that sorts first (FDX's durationType before its status).
+ */
+export const STATE_NAMED = /(?:^|_)(?:status|state)$/;
+/**
+ * s248-m03: a date-time named for an end, when a grant, a consent or a token stops: expires, expiry, expiration, expired,
+ * valid until, valid to, end or ends (expirationTime, consentExpiry, token_expires_at, valid_until, ends_at). It is never
+ * the record's created_at, and it is a grant's end.
+ */
+export const END_NAMED = /(?:^|_)(?:expires?|expiry|expiration|expired|valid_(?:until|to|thru|through)|ends?)(?:_|$)/;
+/** A field's name, in any spelling, is named for the record's state, or for an end. */
+export const namedForState = (field: string) => STATE_NAMED.test(word(field));
+export const namedForEnd = (field: string) => END_NAMED.test(word(field));
+/** s248-m03: the values a grant's state holds: one in force, and one that says it was revoked or ended. */
+const IN_FORCE = new Set(['active', 'granted', 'authorised', 'authorized', 'in_force', 'valid']);
+const ENDED = new Set(['revoked', 'expired', 'ended', 'terminated', 'withdrawn', 'deactivated']);
+
+/** A grant's states: a value in force and a value that says it was revoked or ended, read as workValues reads a work's. */
+export function grantValues(values: unknown[]): { inForce: string; ended: string } | undefined {
+  if (values.length < 2 || !values.every((value): value is string => typeof value === 'string')) return undefined;
+  const parts = values.map(value => word(value).split('_'));
+  let shared = 0;
+  while (parts.every(part => part.length > shared + 1 && part[shared] === parts[0][shared])) shared++;
+  const read = parts.map(part => part.slice(shared).join('_'));
+  const find = (set: Set<string>) => values[read.findIndex(value => set.has(value))];
+  const inForce = find(IN_FORCE), ended = find(ENDED);
+  return inForce && ended ? { inForce, ended } : undefined;
+}
+
+/** A reference named for the agent or app that holds the grant, when the record points at more than one. */
+const HOLDER = /^(granted_to|grantee|holder|held_by|agent|app|application|client|delegate|delegated_to|bot|integration|installation)(_id)?$/;
+/** References named for who gave the grant, and for who ended it. */
+const GIVER = /^(granted_by|grantor|giver|given_by|authori[sz]ed_by|consented_by|issued_by)(_id)?$/;
+const ENDER = /^(revoked_by|ended_by|terminated_by|withdrawn_by|deactivated_by)(_id)?$/;
+/** A reference named for whom the grant is for, when more than one person or organization is left. */
+const PARTY = /^(granted_for|on_behalf_of|for|principal|customer|account|organi[sz]ation|org|tenant|user|subject|resource_owner)(_id)?$/;
+const LAST_USED = /^last_(?:used|use|accessed|access)(?:_(?:at|on|time|date))?$/;
+
+/**
+ * s248-m03: another system's record of a grant, recognised on structure (#2651), from three facts together: a state enum
+ * holding a value in force beside a value that says it was revoked or ended (grantValues), a date-time named for an end
+ * (END_NAMED), and a single reference to an agent's or an app's own record that is not named for who asked (the holder).
+ * Any one or two of them alone propose nothing: an account is active or deactivated, a token expires, and an agent is
+ * referenced everywhere. Together they earn medium; strong stays for a declaration. The record trait binds the holder, the
+ * end and, where the source has them, the other seats by their references (who gave it, who asked, who ended it, and the
+ * person or organization it is for: the one left, or the one named for it) and when it was last used. Every other Mandate
+ * field binds afterwards only to a source field of its own name and type (one of another type is left unbound, so the
+ * proposal stays valid); a scope or limits written inside the record (FDX's resources, Stripe's usage_limits) are not
+ * read. The references it binds are returned as
+ * claimed, so suggestTraits does not guess them again as an owner, a category tree or the record acting for someone.
+ */
+export function grantRecord(self: string, fields: Record<string, FieldDefinition>, relationships: Edge[], originOf: (field: string) => Origin, stateOrigin: (field: string) => Origin, traitTypes: Record<string, string>): { trait: TraitReference; evidence: Proposal['evidence']; state: string; claimed: string[] } | undefined {
+  const names = Object.keys(fields);
+  const state = names.find(field => Array.isArray(fields[field].validation?.enum) && grantValues(fields[field].validation!.enum as unknown[]));
+  const end = names.find(field => typeOf(fields[field]) === 'datetime' && namedForEnd(field));
+  if (!state || !end) return undefined;
+  const { inForce, ended } = grantValues(fields[state].validation!.enum as unknown[])!;
+  const single = relationships.filter(edge => edge.cardinality === 'many-to-one' && fields[edge.via] && typeOf(fields[edge.via]) === 'string');
+  const role = (edge: Edge) => word(edge.via).replace(/_user_id$/, '_id');
+  const actors = single.filter(edge => edge.target !== self && actorRecord(edge.target) && !REQUESTER.test(role(edge)));
+  const holder = actors.length === 1 ? actors[0] : actors.find(edge => HOLDER.test(role(edge)));
+  if (!holder) return undefined;
+  const bindings: Record<string, string | null> = { granted_to_id: holder.via, ends_at: end };
+  const evidence: Evidence[] = [
+    { ...originOf(holder.via), kind: actors.length === 1 ? 'structure' : 'name', reason: actors.length === 1
+      ? `${holder.via} references ${holder.target}, an agent's or an app's own record: the one that holds the grant (granted_to_id).`
+      : `${holder.via} references ${holder.target}, an agent's or an app's own record, and is named for the one that holds the grant (granted_to_id).` },
+    { ...stateOrigin(state), kind: 'structure', reason: `${state} holds a value in force (${inForce}) beside a value that says it was revoked or ended (${ended}): the states of a grant, proposed as its lifecycle (Stateful) unless the source declares another.` },
+    { ...originOf(end), kind: 'structure', reason: `${end} is a date-time named for an end: when the grant ends (ends_at). Keep the zone and the words a person reads it in where the source has them.` },
+  ];
+  const claimed = [holder.via];
+  const principals = single.filter(edge => edge.target !== self && principal(edge.target));
+  for (const [field, pattern, words] of [['granted_by_id', GIVER, 'who gave the grant'], ['requested_by_id', REQUESTER, 'who asked for it'], ['ended_by_id', ENDER, 'who ended it']] as const) {
+    const edge = principals.find(item => !claimed.includes(item.via) && pattern.test(role(item)));
+    if (!edge) continue;
+    bindings[field] = edge.via; claimed.push(edge.via);
+    evidence.push({ ...originOf(edge.via), kind: 'name', reason: `${edge.via} references ${edge.target} and is named for ${words} (${field}).` });
+  }
+  // An owner or a sponsor answers for the grant (Ownerable); it is never the one the grant is for.
+  const rest = principals.filter(edge => !claimed.includes(edge.via) && !/^(owners?|sponsors?)(_id)?$/.test(role(edge)));
+  const party = rest.length === 1 ? rest[0] : rest.find(edge => PARTY.test(role(edge)));
+  if (party) {
+    bindings.granted_for_id = party.via; claimed.push(party.via);
+    evidence.push(rest.length === 1
+      ? { ...originOf(party.via), kind: 'structure', reason: `${party.via} references ${party.target}, the one person or organization left that the record points at: who the grant is for (granted_for_id); confirm before accepting.` }
+      : { ...originOf(party.via), kind: 'name', reason: `${party.via} references ${party.target} and is named for whom the grant is for (granted_for_id).` });
+  }
+  const unbound = (name: string) => !Object.values(bindings).includes(name) && name !== state;
+  const used = names.find(name => unbound(name) && typeOf(fields[name]) === 'datetime' && LAST_USED.test(word(name)));
+  if (used) { bindings.last_used_at = used; evidence.push({ ...originOf(used), kind: 'name', reason: `${used} is a date-time named for when the grant was last used (last_used_at).` }); }
+  // Bindings are filled by name after this: a same-named field of another type, or one already bound to another of the
+  // trait's fields, is left unbound here, so the proposal composes.
+  for (const [field, type] of Object.entries(traitTypes)) {
+    if (Object.hasOwn(bindings, field) || !fields[field]) continue;
+    if (typeOf(fields[field]) !== type.replace(/\?$/, '') || Object.values(bindings).includes(field)) bindings[field] = null;
+  }
+  return { trait: { name: 'Mandate', parameters: {}, fieldBindings: bindings }, evidence, state, claimed };
 }

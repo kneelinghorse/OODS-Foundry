@@ -8,7 +8,7 @@ import { recordTitleField } from './record-label.js';
 import { VIZ_CONTROL_IDS, componentContracts } from '@oods/component-contracts';
 import { resolveTraitRecipeProps } from './trait-recipes.js';
 import { isLevelOneHeading, RECORD_SUMMARY_INTENT } from '../codegen/screen-shell.js';
-import { isLongTextField } from './long-text.js';
+import { isLongTextField, keepsTextArea } from './long-text.js';
 import { OMIT_EMPTY_PROP } from '../codegen/binding-utils.js';
 
 /** s213-m03: marks a trait component the status-timeline pattern group kept beside its own fields (design.compose). */
@@ -64,6 +64,19 @@ export function formFactFields(composed: ComposedObject | undefined): Set<string
  */
 const keepOmitEmpty = (row: UiElement, placed: UiElement): UiElement => placed.props?.[OMIT_EMPTY_PROP] ? { ...row, props: { ...row.props, [OMIT_EMPTY_PROP]: true } } : row;
 
+/**
+ * The read-only value of one record field on a detail page or among a form's facts. s213-m03 (finding 7): an amount is
+ * money, and in minor units, only as its semantics declare (populateObjectSchema); a declared major-unit amount shows
+ * through PriceBadge, which formats major units, never divided by 100. s248-m01: a form's fact reads money the same way,
+ * so a grant's limit reads "$12,000.00" beside its status, not the stored 1200000; no 0.14.0 form has a money fact.
+ */
+function readValueNode(fields: NonNullable<UiSchema['objectSchema']>, name: string, id: string): UiElement {
+  const money = fields[name]?.money?.currencyField && /^(?:integer|number)\??$/.test(fields[name]?.type ?? '') ? fields[name]!.money! : undefined;
+  return !money ? { id, meta: { intent: 'read-only-field' }, component: 'Text', props: { field: name } }
+    : money.minorUnits ? { id, meta: { intent: 'read-only-field' }, component: 'BillingSummaryBadge', props: { amountField: name, currencyField: money.currencyField, minorUnits: money.minorUnits, showInterval: false } }
+      : { id, meta: { intent: 'read-only-field' }, component: 'PriceBadge', props: { amountField: name, currencyField: money.currencyField } };
+}
+
 /** The record fields a node binds through `field` and its `*Field` props. */
 const boundFields = (props: Record<string, unknown> | undefined): string[] => Object.entries(props ?? {}).flatMap(([key, value]) => (key === 'field' || key.endsWith('Field')) && typeof value === 'string' ? [value] : []);
 
@@ -106,8 +119,10 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         delete classification.props!.field;
         delete classification.props!.label;
         const type = entry.type.replace(/\?$/, '');
+        // s248-m01 (next step 1865): a text area for a field that holds long text (keepsTextArea), not for a name list.
+        const definition = composed.schema[field as string];
         node.component = entry.enum?.length ? 'Select' : type === 'boolean' ? 'Checkbox'
-          : type === 'string' && /description|reason|notes|body|content|instructions/.test(String(field)) ? 'Textarea' : 'Input';
+          : definition && keepsTextArea(field as string, { ...definition, type }, composed.semantics) ? 'Textarea' : 'Input';
         node.props = { field, ...(entry.enum?.length ? { options: entry.enum.map(value => ({ value, label: enumOptionLabel(value, entry.enumLabels) })) } : {}),
           ...(['number', 'integer'].includes(type) ? { type: 'number' } : ['email', 'url', 'date'].includes(type) ? { type } : {}) };
         node.bindings = { onChange: `handleChange_${field}` };
@@ -137,7 +152,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         // A label over its value, styled as the detail page's read rows are (the `-read-field` suffix).
         return [keepOmitEmpty({ id: `${node.id}-read-field`, component: 'Stack', meta: { intent: FORM_FACT }, children: [
           { id: `${node.id}-label`, component: 'Text', props: { as: 'strong', content: typeof label === 'string' ? label : fieldLabel(field) } },
-          { id: node.id, meta: { intent: 'read-only-field' }, component: 'Text', props: { field } },
+          readValueNode(fields, field, node.id),
         ] }, node)];
       });
     });
@@ -201,8 +216,17 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         const type = entry.type.replace(/\?$/, '');
         // Selector heuristics must not turn names/status codes into paragraphs,
         // or a timezone/period label into a native date input. s246-m02: a comment is written in a text area (Approval's,
-        // typed beside the answer, was cut off in a one-line input on a phone).
-        if (node.component === 'Textarea' && !/description|reason|notes|body|content|instructions|comment/.test(String(field))) node.component = 'Input';
+        // typed beside the answer, was cut off in a one-line input on a phone). s248-m01 (next step 1865): a text area is kept
+        // for any field that holds long text (keepsTextArea: a summary, a message, details, a multiline hint, a length
+        // above 240), where a list of names kept only seven; a record's name or title is never one.
+        // The form decides both ways for the controls it chose itself (a slot's, or a required field's it filled in), so a
+        // long-text field the slots gave a one-line input gets its text area; a trait's own Input or Textarea is kept as
+        // the trait placed it (Mandate's one-line ended_reason, Assignment's result).
+        const definition = composed.schema[field as string];
+        const formChose = Boolean(node.meta?.intent?.startsWith('slot:') || /-required-/.test(node.id));
+        const long = Boolean(definition && keepsTextArea(field as string, { ...definition, type }, composed.semantics));
+        if (node.component === 'Textarea' && !long) node.component = 'Input';
+        else if (node.component === 'Input' && long && formChose && !node.props?.type && type === 'string' && !entry.enum?.length) node.component = 'Textarea';
         if (node.component === 'DatePicker' && !['date', 'datetime'].includes(type)) node.component = 'Input';
         if (entry.enum?.length && ['Input', 'Textarea'].includes(node.component)) { node.component = 'Select'; node.props = { field }; }
         const requested = composed.semantics?.[field as string]?.ui_hints?.component;
@@ -277,12 +301,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
   const identifier = [`${composed.object?.name?.toLowerCase()}_id`, 'id'].find(name => fields[name]);
   const labelField: string | undefined = recordTitleField(composed.object?.name, fields, identifier ?? '') || undefined;
   const fieldRow = (name: string, id: string): UiElement => {
-    // s213-m03 (finding 7): an amount is money, and in minor units, only as its semantics declare (populateObjectSchema);
-    // a declared major-unit amount shows through PriceBadge, which formats major units, never divided by 100.
-    const money = fields[name]?.money?.currencyField && /^(?:integer|number)\??$/.test(fields[name]?.type ?? '') ? fields[name]!.money! : undefined;
-    const value: UiElement = !money ? { id: `${id}-value`, meta: { intent: 'read-only-field' }, component: 'Text', props: { field: name } }
-      : money.minorUnits ? { id: `${id}-value`, meta: { intent: 'read-only-field' }, component: 'BillingSummaryBadge', props: { amountField: name, currencyField: money.currencyField, minorUnits: money.minorUnits, showInterval: false } }
-        : { id: `${id}-value`, meta: { intent: 'read-only-field' }, component: 'PriceBadge', props: { amountField: name, currencyField: money.currencyField } };
+    const value = readValueNode(fields, name, `${id}-value`);
     return { id: `${id}-read-field`, component: 'Stack', children: [
       { id: `${id}-label`, component: 'Text', props: { as: 'strong', content: fields[name]?.displayLabel ?? composed.semantics[name]?.ui_hints?.label ?? fieldLabel(name.replace(/_minor$/, '').replace(/_id$/, '')) } },
       value,

@@ -44,7 +44,7 @@ export function parameterProblems(name: string, supplied: Record<string, unknown
   const problems = validate!(parameters) ? [] : (validate!.errors ?? []).map(error => ({
     path: error.instancePath || '/', message: `${definition.trait.name}${error.instancePath}: ${error.message} (${JSON.stringify(error.params)})`,
   }));
-  return traitEntry(name)?.source === 'shipped' ? [...problems, ...levelProblems(definition.trait.name, parameters), ...orderProblems(definition.trait.name, parameters)] : problems;
+  return traitEntry(name)?.source === 'shipped' ? [...problems, ...levelProblems(definition.trait.name, parameters), ...inAdvanceProblems(definition.trait.name, parameters), ...orderProblems(definition.trait.name, parameters)] : problems;
 }
 
 /**
@@ -74,6 +74,32 @@ function levelProblems(trait: string, parameters: Record<string, unknown>): Arra
       path: `/${parameter}/${key}`,
       message: `${trait}/${parameter}/${key}: ${names} the level "${level}", which levels does not declare (${[...declared].join(', ')}).`,
     }));
+  });
+}
+
+/**
+ * s248-m01: a thing's rule may open a change to a yes given in advance by a grant's standing yes (`inAdvance`). A change
+ * the rule does not name needs no yes, so there is nothing to give in advance: opening it is refused, naming it. A change
+ * whose level is the rule's last, most deliberate one (sign-off, in every shipped rule) is always asked, so opening it is
+ * refused too, where the rule declares two or more levels: a rule with one level has no more deliberate one to keep.
+ * `levels` is in order, least deliberate first. A change is named by the rule's own keys, never an inherited one. A parameter schema cannot hold one
+ * parameter's items to another's keys, so both are checked here.
+ */
+function inAdvanceProblems(trait: string, parameters: Record<string, unknown>): Array<{ path: string; message: string }> {
+  const opened = parameters.inAdvance;
+  if (trait !== 'Approvable' || !Array.isArray(opened)) return [];
+  const required = parameters.requiredLevels && typeof parameters.requiredLevels === 'object' && !Array.isArray(parameters.requiredLevels)
+    ? parameters.requiredLevels as Record<string, unknown> : {};
+  const levels = Array.isArray(parameters.levels) ? parameters.levels : [];
+  const last = levels.length > 1 ? levels[levels.length - 1] : undefined;
+  return opened.flatMap((change, index) => {
+    if (typeof change !== 'string') return [];
+    const level = Object.hasOwn(required, change) ? required[change] : undefined;
+    if (level === undefined) return [{ path: `/inAdvance/${index}`,
+      message: `${trait}/inAdvance/${index}: opens "${change}" to a yes given in advance, but requiredLevels does not name it, so it needs no yes; ${Object.keys(required).length ? `requiredLevels names ${Object.keys(required).join(', ')}` : 'requiredLevels names no change'}.` }];
+    if (last !== undefined && level === last) return [{ path: `/inAdvance/${index}`,
+      message: `${trait}/inAdvance/${index}: opens "${change}" to a yes given in advance, but it needs "${level}", the rule's last and most deliberate level, which is always asked.` }];
+    return [];
   });
 }
 

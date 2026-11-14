@@ -27,7 +27,7 @@ A to-do is a task whose asker, doer and the one who answers for it are one perso
 
 **One ask to one actor.** That is the grain of an approval, which is one ask to one actor for a yes; a task asks for work. What was asked is written once: a changed ask is a new task. Handing the whole of the work on ends the task and starts another; asking for help with a part starts another while the first waits (below). One object serves whether a person or an agent does the work: the doer's kind is a fact about the doer.
 
-**No field says what the doer may do.** A task holds no grant, scope or budget. The doer acts under its own authority, which lives on its own record: a person's account and roles, an agent's rules and any grant it holds from the one the work is for.
+**No field says what the doer may do.** A task holds no grant, scope or budget. The doer acts under its own authority, which lives on its own record: a person's account and roles, an agent's rules and the grant it holds from the one the work is for, a record of its own (see [Grants as standing yeses](grants-as-standing-yeses.md)).
 
 ## Four seats, and no assignee
 
@@ -85,7 +85,7 @@ There are two kinds of hand-off, and neither is a record of its own.
 
 Either way the new task is the record. It holds who asked (the first doer, or the person taking over), for whom (unchanged), who is doing it, exactly what was asked, the task it came from, and the first ask its chain began with. It holds nothing about authority: the helper acts under its own grant, or does not act.
 
-**The trace back.** Each change in any record's history can name the task it was made under; each task names the one it came from and the first ask. The first ask's name is kept on every task in a chain, so a search by it gathers the chain on the Task list. When an agent started the work itself, there is no first ask on record: the chain begins at the agent's grant, the delegation from the one the work is for, whose own history names who gave it. The task keeps no pointer to the grant.
+**The trace back.** Each change in any record's history can name the task it was made under, and the grant its actor acted under; each task names the one it came from and the first ask. The first ask's name is kept on every task in a chain, so a search by it gathers the chain on the Task list. When an agent started the work itself, there is no first ask on record: its first line names its grant, the `Grant` from the one the work is for, which keeps who gave it. The task still holds no field for the grant, because a task gives no authority: in OODS Foundry's samples, each line its doer writes for the party names the grant it acted under.
 
 ## The history line names its task
 
@@ -96,9 +96,9 @@ A change made as part of a task can say which task it was, through two optional 
 | `task_id` | the Task the change was made under |
 | `task_name` | the task, as shown |
 
-Every history in OODS Foundry prints the task after who acted and who approved: **Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval) · task: Get INV-2026-0155 paid**. The task's id stays in the record's data. It is a pointer, not a link: a generated app holds one object's records, so the line cannot open the task. An entry without the two fields prints exactly as before.
+Every history in OODS Foundry prints the task last, after who acted, who approved and the grant: **Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi (level: Approval) · grant: Tidewater invoices and payments · task: Get INV-2026-0155 paid**. The task's id stays in the record's data. It is a pointer, not a link: a generated app holds one object's records, so the line cannot open the task. An entry without the two fields prints exactly as before.
 
-![A payment's timeline: the transfer was returned, then sent again by the Billing Agent for Tidewater Co-op, approved by Ruth Adeyemi, as part of the task Get INV-2026-0155 paid](tasks-as-asks/payment-timeline-light.png)
+![A payment's timeline: the transfer was returned, then sent again by the Billing Agent for Tidewater Co-op, approved by Ruth Adeyemi, under the Tidewater grant, as part of the task Get INV-2026-0155 paid](tasks-as-asks/payment-timeline-light.png)
 
 ## The example
 
@@ -106,9 +106,9 @@ The Billing Agent's task was to get INV-2026-0155 paid after the bank returned T
 
 Times here are UTC, as the records keep them; Tidewater Co-op is in Tauranga, New Zealand. The bank returned the transfer early on Friday 25 September. The task starts on 28 September at 20:30, Tuesday morning in Tauranga, shortly before the agent asked Ruth Adeyemi for a yes: nothing in the records says anyone was on the returned transfer in between, and a task record is what makes that gap visible. When it asked her, the task needed input. When she said yes it went on. Her yes is used once, by the resend, so the task's line says only that she said yes, and the payment's line names her approval, its level and the task. After the resend it waits on the bank, with one try made. It is not finished, because pressing send is not the work.
 
-Three records say three things, and none is wrong: the approval is used, the payment is pending, and the task is waiting. If the bank settles, the task is finished. If the bank returns it again, the task is working again, and a second resend needs a second yes. If nobody can tell whether the resend went out, the outcome is unknown, and nothing is sent again until someone finds out.
+Three records say three things, and none is wrong: the approval is used, the payment is pending, and the task is waiting. If the bank settles, the task is finished. If the bank returns it again, the task is working again, and a second resend needs a second yes: asked again, or given in advance by the standing yes Ruth gave after this resend, "Resend returned transfers", which the payment's rule lets count (see [Grants as standing yeses](grants-as-standing-yeses.md)). If nobody can tell whether the resend went out, the outcome is unknown, and nothing is sent again until someone finds out.
 
-![The Billing Agent's task: waiting on PAY-2026-0429 at the bank, its four history lines, Ruth Adeyemi answering for it](tasks-as-asks/task-detail-light.png)
+![The Billing Agent's task: waiting on PAY-2026-0429 at the bank, its four history lines, each naming the Tidewater grant, Ruth Adeyemi answering for it](tasks-as-asks/task-detail-light.png)
 
 ## What a person can do to a running task
 
@@ -121,7 +121,7 @@ None of these undoes a change already made.
 
 ## Where limits live
 
-What the doer may touch is on its grant and its own rules (see [Agents as actors](agents-as-actors.md)). A task narrows that by naming one thing; it never widens it. A deadline belongs on the task, as its due date. A budget is not modelled anywhere yet.
+What the doer may touch is on its grant and its own rules (see [Agents as actors](agents-as-actors.md)). A task narrows that by naming one thing; it never widens it. A deadline belongs on the task, as its due date. A budget on a grant is the money the grant may move, a limit per use and per period; the cost of the work itself is not modelled anywhere yet.
 
 ## Bringing your own records of work
 

@@ -1,0 +1,1014 @@
+trait:
+  name: Mandate
+  version: 1.0.0
+  description: |
+    The record of a grant: a standing yes that one actor may act for a person or organization, on stated terms,
+    until it ends. It keeps who asked for it, who gave it and in what capacity, who holds it and who it is for; what it
+    covers in words, its three lines for that party, its limits and its end; its use as the product counts it; the
+    grant it sits inside or replaced; and who ended it and why. The Grant object composes this trait, and the importer
+    can propose it for another system's grant or consent record that keeps a state, an end and the agent or app that
+    holds it, so every field lives here and a proposal can bind what the source has.
+
+    The state of the grant is not a field of this trait. It is the record's own lifecycle, through Stateful: for a
+    Grant, requested, then active (or paused), declined or withdrawn, and a grant once given ends revoked, expired or
+    replaced. Its terms are not
+    edited in place. A change of terms is a new grant that names the one it replaces, and a standing yes for one
+    action is a new grant inside the first, with its own bounds and end.
+
+    A reference to a person, an agent, an organization or another grant is an id and a kept name, so it still reads
+    after the person leaves or the grant ends. The kinds are the Actor trait's three words: person, agent or system.
+    The three lines follow the Agent's own: items separated by "; ", and "None" when there are none. The money limits
+    are whole numbers in the currency's minor units at two decimal places, so a currency with other decimals reads
+    wrong. The end is kept three ways: the exact instant a product checks, the party's time zone, and one line in the
+    party's own words and zone, which is what people read.
+
+    OODS Foundry keeps and shows this record. It does not check a grant against what an actor does, count its uses or
+    spend, expire, pause, revoke or renew one, stop a token or decide whether an action was allowed.
+  category: core
+  # Compound tags: a trait's tags are inherited by the components it places (Text, LabelCell, Input), and an intent's
+  # words never match a compound tag, so these describe the trait without changing how any screen picks its components.
+  tags:
+    - grant-record
+    - standing-yes
+    - actor-reference
+    - kept-terms
+
+# No parameter: the states are the record's own lifecycle, declared through Stateful. The minor-units factor of the money
+# limits is fixed at 100.
+parameters: []
+
+# Every field but one is written by the product, when the grant is asked for, given, used and ended, so a form never
+# edits it (readOnly). Why a grant ended is written where it is ended, on the grant's form, so the form offers it. The
+# terms and the seats are still read on the form (below).
+schema:
+  requested_by_id:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who asked for the grant, by the id the product knows them by: a person, or the agent itself.'
+  requested_by_name:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who asked for the grant, as shown ("Billing Agent"). Kept on the record.'
+  requested_by_kind:
+    type: string
+    required: false
+    readOnly: true
+    description: What kind of actor asked for it (person, agent or system), as the Actor trait names them.
+    validation:
+      enum:
+        - person
+        - agent
+        - system
+  granted_by_id:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who gave the grant, by the id the product knows them by: usually a person who may give it for the party.'
+  granted_by_name:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who gave the grant, as shown ("Ruth Adeyemi"). Kept on the record, so it still reads after they leave.'
+  granted_by_kind:
+    type: string
+    required: false
+    readOnly: true
+    description: What kind of actor gave it (person, agent or system), as the Actor trait names them.
+    validation:
+      enum:
+        - person
+        - agent
+        - system
+  granted_as:
+    type: string
+    required: false
+    readOnly: true
+    description: 'The capacity the giver gave it in, in one line ("Finance manager, Tidewater Co-op").'
+    validation:
+      maxLength: 120
+  granted_to_id:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who holds the grant and acts under it, by the id the product knows them by: an agent, or a person standing in for someone.'
+  granted_to_name:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who holds the grant, as shown ("Billing Agent"). Kept on the record.'
+  granted_to_kind:
+    type: string
+    required: false
+    readOnly: true
+    description: What kind of actor holds it (person, agent or system), as the Actor trait names them.
+    validation:
+      enum:
+        - person
+        - agent
+        - system
+  granted_for_id:
+    type: string
+    required: false
+    readOnly: true
+    description: Who the grant is for, the person or organization the holder acts for, by the id the product knows them by. Never an agent.
+  granted_for_name:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who the grant is for, as shown ("Tidewater Co-op"). Kept on the record.'
+  scope:
+    type: string
+    required: false
+    readOnly: true
+    description: 'What the grant covers, in a few words ("Invoices and payments").'
+    validation:
+      maxLength: 160
+  allowed_actions:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Actions the holder may take for this party with no one asked, separated by "; "; None when there are none.'
+  asks_first_for:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Actions that need a person''s yes before the holder takes them for this party, separated by "; "; None when there are none.'
+  never_allowed:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Actions the holder never takes for this party, separated by "; "; None when there are none. An action for the party that no line names is never allowed; asking the person who gave it for a yes or an answer is not one.'
+  amount_limit_minor:
+    type: integer
+    required: false
+    readOnly: true
+    description: The most the holder may move in one use, in the currency's minor units (1200000 is $12,000.00).
+    validation:
+      minimum: 0
+  period_limit_minor:
+    type: integer
+    required: false
+    readOnly: true
+    description: The most the holder may move in each period, in the currency's minor units.
+    validation:
+      minimum: 0
+  limit_currency:
+    type: string
+    required: false
+    readOnly: true
+    description: 'The currency of the money limits, as an ISO 4217 code ("USD").'
+    validation:
+      pattern: '^[A-Z]{3}$'
+  limit_period:
+    type: string
+    required: false
+    readOnly: true
+    description: The period the limits per period count over.
+    validation:
+      enum:
+        - day
+        - week
+        - month
+        - year
+  uses_per_period:
+    type: integer
+    required: false
+    readOnly: true
+    description: The most times the grant may be used in each period.
+    validation:
+      minimum: 0
+  conditions:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Conditions on each use, in words, shown and not checked ("Only a payment the bank returned, to the same payee for the same amount").'
+    validation:
+      maxLength: 240
+  ends_at:
+    type: datetime
+    required: false
+    readOnly: true
+    description: The exact instant the grant ends, the one a product checks.
+    validation:
+      format: date-time
+  timezone:
+    type: string
+    required: false
+    readOnly: true
+    description: 'The party''s time zone, as an IANA name ("Pacific/Auckland"), the zone its end is read in.'
+    validation:
+      maxLength: 64
+  ends_note:
+    type: string
+    required: false
+    readOnly: true
+    description: 'The end as people read it, in the party''s own words and time zone ("At the end of 31 Dec 2026, Tauranga time"), written by the product; a grant with no end says so here ("No end: it stands until someone ends it").'
+    validation:
+      maxLength: 160
+  uses:
+    type: integer
+    required: false
+    readOnly: true
+    description: How many times the grant has been used, as the product counts it.
+    validation:
+      minimum: 0
+  last_used_at:
+    type: datetime
+    required: false
+    readOnly: true
+    description: When the grant was last used.
+    validation:
+      format: date-time
+  last_use:
+    type: string
+    required: false
+    readOnly: true
+    description: 'The last use, in one kept line ("28 Sep: PAY-2026-0429 sent again").'
+    validation:
+      maxLength: 240
+  spent_minor:
+    type: integer
+    required: false
+    readOnly: true
+    description: The money moved under the grant in the current period, as the product counts it, in the currency's minor units.
+    validation:
+      minimum: 0
+  within_id:
+    type: string
+    required: false
+    readOnly: true
+    description: 'The grant this one sits inside, for a standing yes given for one action: same holder, same party, ending no later.'
+  within_name:
+    type: string
+    required: false
+    readOnly: true
+    description: The grant this one sits inside, as shown. Kept on the record.
+  replaces_id:
+    type: string
+    required: false
+    readOnly: true
+    description: The grant this one replaced when the terms changed; that grant is kept whole, ended as replaced.
+  replaces_name:
+    type: string
+    required: false
+    readOnly: true
+    description: The grant this one replaced, as shown. Kept on the record.
+  first_grant_id:
+    type: string
+    required: false
+    readOnly: true
+    description: The first grant in a line of replacements, kept on every later grant in the line so a search by its name finds them all.
+  first_grant_name:
+    type: string
+    required: false
+    readOnly: true
+    description: The first grant in the line, as shown. Kept on the record.
+  ended_by_id:
+    type: string
+    required: false
+    readOnly: true
+    description: Who ended the grant, by the id the product knows them by, when someone did.
+  ended_by_name:
+    type: string
+    required: false
+    readOnly: true
+    description: Who ended the grant, as shown. Kept on the record.
+  ended_by_kind:
+    type: string
+    required: false
+    readOnly: true
+    description: What kind of actor ended it (person, agent or system), as the Actor trait names them.
+    validation:
+      enum:
+        - person
+        - agent
+        - system
+  ended_reason:
+    type: string
+    required: false
+    description: 'Why the grant ended, in one line, written where it is ended ("The studio closed").'
+    validation:
+      maxLength: 240
+
+semantics:
+  requested_by_id:
+    semantic_type: mandate.requested_by_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked for by
+      displayLabelField: requested_by_name
+  requested_by_name:
+    semantic_type: mandate.requested_by_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked for by
+  requested_by_kind:
+    semantic_type: mandate.requested_by_kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of asker
+  granted_by_id:
+    semantic_type: mandate.granted_by_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Given by
+      displayLabelField: granted_by_name
+  granted_by_name:
+    semantic_type: mandate.granted_by_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Given by
+  granted_by_kind:
+    semantic_type: mandate.granted_by_kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of giver
+  granted_as:
+    semantic_type: mandate.granted_as
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Given as
+  granted_to_id:
+    semantic_type: mandate.granted_to_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Held by
+      displayLabelField: granted_to_name
+  granted_to_name:
+    semantic_type: mandate.granted_to_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Held by
+  granted_to_kind:
+    semantic_type: mandate.granted_to_kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of holder
+  granted_for_id:
+    semantic_type: mandate.granted_for_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: For
+      displayLabelField: granted_for_name
+  granted_for_name:
+    semantic_type: mandate.granted_for_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: For
+  scope:
+    semantic_type: mandate.scope
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Covers
+  allowed_actions:
+    semantic_type: mandate.allowed_actions
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Allowed actions
+  asks_first_for:
+    semantic_type: mandate.asks_first_for
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asks first for
+  never_allowed:
+    semantic_type: mandate.never_allowed
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Never allowed
+  amount_limit_minor:
+    semantic_type: mandate.amount_limit_minor
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: limit_currency
+      minorUnits: 100
+      label: Most per use
+  period_limit_minor:
+    semantic_type: mandate.period_limit_minor
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: limit_currency
+      minorUnits: 100
+      label: Most per period
+  limit_currency:
+    semantic_type: mandate.limit_currency
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Currency
+  limit_period:
+    semantic_type: mandate.limit_period
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Period
+  uses_per_period:
+    semantic_type: mandate.uses_per_period
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Uses per period
+  conditions:
+    semantic_type: mandate.conditions
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Conditions
+  ends_at:
+    semantic_type: mandate.ends_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      label: Ends (UTC)
+  timezone:
+    semantic_type: mandate.timezone
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Time zone
+  ends_note:
+    semantic_type: mandate.ends_note
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Ends
+  uses:
+    semantic_type: mandate.uses
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Uses
+  last_used_at:
+    semantic_type: mandate.last_used_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      label: Last used (UTC)
+  last_use:
+    semantic_type: mandate.last_use
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Last use
+  spent_minor:
+    semantic_type: mandate.spent_minor
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: CurrencyAmount
+      currencyField: limit_currency
+      minorUnits: 100
+      label: Spent this period
+  within_id:
+    semantic_type: mandate.within_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Inside
+      displayLabelField: within_name
+  within_name:
+    semantic_type: mandate.within_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Inside
+  replaces_id:
+    semantic_type: mandate.replaces_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Replaces
+      displayLabelField: replaces_name
+  replaces_name:
+    semantic_type: mandate.replaces_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Replaces
+  first_grant_id:
+    semantic_type: mandate.first_grant_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: First grant
+      displayLabelField: first_grant_name
+  first_grant_name:
+    semantic_type: mandate.first_grant_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: First grant
+  ended_by_id:
+    semantic_type: mandate.ended_by_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Ended by
+      displayLabelField: ended_by_name
+  ended_by_name:
+    semantic_type: mandate.ended_by_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Ended by
+  ended_by_kind:
+    semantic_type: mandate.ended_by_kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of ender
+  ended_reason:
+    semantic_type: mandate.ended_reason
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Why it ended
+      multiline: false
+
+view_extensions:
+  # The record travels with its facts on every surface it is read on, each as labelled text. A reference is placed by
+  # its id, which shows its kept name. On the detail page and the form the kept name's row is placed too, and where both
+  # are placed the name's row is read and the id's row is dropped, so there a source that keeps only a name still shows
+  # it and one that keeps only an id shows the id. A list row and a card place the id alone. Every place is left undrawn where the record holds no value for it (`data-oods-omit-empty`). A grant
+  # with no end says so in its end line, which the product writes ("No end: it stands until someone ends it"), so an
+  # empty end is never drawn as "Not recorded" and never reads as if the grant ends.
+  # On a list row and a card a Text's label is not shown, so the holder, the party and the end are each a value over
+  # its caption ("Billing Agent", "Held by"); the object's summary line is its scope.
+  list:
+    - component: LabelCell
+      position: after
+      props:
+        field: granted_to_id
+        description: Held by
+        data-oods-omit-empty: true
+    - component: LabelCell
+      position: after
+      props:
+        field: granted_for_id
+        description: For
+        data-oods-omit-empty: true
+    - component: LabelCell
+      position: after
+      props:
+        field: ends_note
+        description: Ends
+        data-oods-omit-empty: true
+  card:
+    - component: LabelCell
+      position: after
+      props:
+        field: granted_to_id
+        description: Held by
+        data-oods-omit-empty: true
+    - component: LabelCell
+      position: after
+      props:
+        field: granted_for_id
+        description: For
+        data-oods-omit-empty: true
+    - component: LabelCell
+      position: after
+      props:
+        field: ends_note
+        description: Ends
+        data-oods-omit-empty: true
+  detail:
+    # The currency is read in the amounts it qualifies ("$12,000.00"), so it has no row of its own. The end reads in the
+    # party's words first, then as the instant in UTC, labelled so, with the party's zone beside it.
+    - component: Text
+      position: main
+      priority: 90
+      props:
+        field: scope
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 89
+      props:
+        field: granted_for_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 88
+      props:
+        field: granted_for_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 87
+      props:
+        field: granted_to_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 86
+      props:
+        field: granted_to_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 85
+      props:
+        field: granted_to_kind
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 84
+      props:
+        field: granted_by_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 83
+      props:
+        field: granted_by_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 82
+      props:
+        field: granted_by_kind
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 81
+      props:
+        field: granted_as
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 80
+      props:
+        field: requested_by_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 79
+      props:
+        field: requested_by_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 78
+      props:
+        field: requested_by_kind
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 77
+      props:
+        field: allowed_actions
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 76
+      props:
+        field: asks_first_for
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 75
+      props:
+        field: never_allowed
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 74
+      props:
+        field: amount_limit_minor
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 73
+      props:
+        field: period_limit_minor
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 72
+      props:
+        field: limit_period
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 71
+      props:
+        field: uses_per_period
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 70
+      props:
+        field: conditions
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 69
+      props:
+        field: ends_note
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 68
+      props:
+        field: ends_at
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 67
+      props:
+        field: timezone
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 66
+      props:
+        field: uses
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 65
+      props:
+        field: last_used_at
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 64
+      props:
+        field: last_use
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 63
+      props:
+        field: spent_minor
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 62
+      props:
+        field: within_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 61
+      props:
+        field: within_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 60
+      props:
+        field: replaces_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 59
+      props:
+        field: replaces_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 58
+      props:
+        field: first_grant_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 57
+      props:
+        field: first_grant_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 56
+      props:
+        field: ended_by_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 55
+      props:
+        field: ended_by_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 54
+      props:
+        field: ended_by_kind
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 53
+      props:
+        field: ended_reason
+        data-oods-omit-empty: true
+
+  # On the form, the screen where the grant's state is changed, its terms and seats are read beside the status and are
+  # not edited there (`fact: true`, as Decision's are): a change of terms is a new grant, made by the product. Each party
+  # is placed by its id and its kept name: an import binds a party by its id alone, and where both are kept the form reads
+  # the name and leaves the id's row out. Why the grant ended has its own control, because taking a grant back is a change
+  # of its status on this form with the reason typed beside it.
+  form:
+    - component: Text
+      position: top
+      priority: 90
+      fact: true
+      props:
+        field: scope
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 89
+      fact: true
+      props:
+        field: granted_for_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 88
+      fact: true
+      props:
+        field: granted_for_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 87
+      fact: true
+      props:
+        field: granted_to_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 86
+      fact: true
+      props:
+        field: granted_to_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 85
+      fact: true
+      props:
+        field: granted_by_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 84
+      fact: true
+      props:
+        field: granted_by_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 83
+      fact: true
+      props:
+        field: granted_as
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 82
+      fact: true
+      props:
+        field: requested_by_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 81
+      fact: true
+      props:
+        field: requested_by_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 80
+      fact: true
+      props:
+        field: allowed_actions
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 79
+      fact: true
+      props:
+        field: asks_first_for
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 78
+      fact: true
+      props:
+        field: never_allowed
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 77
+      fact: true
+      props:
+        field: amount_limit_minor
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 76
+      fact: true
+      props:
+        field: period_limit_minor
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 75
+      fact: true
+      props:
+        field: limit_period
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 74
+      fact: true
+      props:
+        field: uses_per_period
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 73
+      fact: true
+      props:
+        field: conditions
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 72
+      fact: true
+      props:
+        field: ends_note
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 71
+      fact: true
+      props:
+        field: ends_at
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 70
+      fact: true
+      props:
+        field: within_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 69
+      fact: true
+      props:
+        field: within_name
+        data-oods-omit-empty: true
+    - component: Input
+      position: main
+      priority: 60
+      props:
+        field: ended_reason
+
+# The state of the grant is the record's lifecycle, so the record composes Stateful beside this trait.
+dependencies:
+  - Stateful
+
+metadata:
+  created: "2026-11-14"
+  owners:
+    - Core team
+  maturity: alpha
+  accessibility:
+    keyboard: The record's facts add no interactive control; why it ended is a labelled form input.
+    screenreader: Each fact is read with its visible label, label first on the detail page and the form ("Held by, Billing Agent") and value first on a list row or a card ("Billing Agent, Held by").
+  regionsUsed:
+    - list
+    - card
+    - detail
+    - form
+  examples:
+    - Grant
+  references:
+    - "OAuth 2.0 Rich Authorization Requests (RFC 9396): each item has a type that sets its allowed contents, and names the actions to be taken at the resource"
+    - "UK Open Banking VRP consents (v4.0.1): a maximum per payment instruction and per period, and values supplied in the consent must not change"
+    - "FDX 6.6 consent grant: a status of ACTIVE, EXPIRED or REVOKED, with the reason for a revocation and the party that started it"
+    - "GDPR Article 7(3): It shall be as easy to withdraw as to give consent"

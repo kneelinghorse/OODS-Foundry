@@ -142,6 +142,21 @@ export function formatReferenceLabel(identifier: unknown, label?: unknown, subje
   return `${subject} reference not resolved`;
 }
 
+/**
+ * s248-m01 (next step 1861): a select's options with the record's own value first when the select does not list it, so a
+ * select never shows another record's name for the one the record holds: a native select shows its first option for a
+ * value it does not list (React, HTML) or nothing at all (Vue), and Article's form read "Dana Whitfield" for an article
+ * Elena Park wrote. The value is named by the record's kept name, authoritative only beside its own reference (as
+ * formatReferenceLabel holds); a UUID with no kept name reads "<subject> reference not resolved", and any other value, a
+ * readable id included, reads as itself. A select that lists the value, or a record with no value, keeps its options as they are.
+ */
+export function selectOptionsWithValue(options: ReadonlyArray<{ value: string; label: string }>, value: unknown, keptName?: unknown, subject = 'Reference'): Array<{ value: string; label: string }> {
+  if (value == null || value === '' || options.some(option => option.value === String(value))) return [...options];
+  const named = typeof keptName === 'string' && keptName.trim() && !UUID_REFERENCE.test(keptName.trim()) ? keptName.trim() : undefined;
+  const label = named ?? (UUID_REFERENCE.test(String(value)) ? `${subject} reference not resolved` : String(value));
+  return [{ value: String(value), label }, ...options];
+}
+
 /** The two fallbacks formatReferenceLabel writes when a reference has no name to show. */
 const UNRESOLVED_REFERENCE_LABEL = / (?:unavailable|reference not resolved)$/;
 
