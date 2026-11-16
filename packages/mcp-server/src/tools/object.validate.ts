@@ -11,6 +11,9 @@ import { parseProblem } from '../objects/definition-folders.js';
 import { listObjects, normalizeObjectDocument, objectEntry, objectRefusal, userObjectsFolder } from '../objects/object-loader.js';
 import { hasTrait, listTraits, loadTrait, traitEntry, traitRefusal, userTraitsFolder } from '../objects/trait-loader.js';
 import { relationshipProblems, type RelationshipProblem } from '../objects/relationships.js';
+import { relatedListProblems } from '../objects/related-lists.js';
+import { stateActionProblems } from '../objects/state-actions.js';
+import { relatedShape, shapeOfDefinition } from '../compose/related-records.js';
 import { parameterProblems } from '../objects/parameter-validation.js';
 import { composeObject } from '../objects/trait-composer.js';
 import { supportsContext } from '../objects/supported-contexts.js';
@@ -214,6 +217,13 @@ function checkObject(document: Record<string, unknown>, result: Checked, availab
   if (columns !== undefined && (!Array.isArray(columns) || columns.some(column => !isMap(column) || typeof column.field !== 'string' || !Object.hasOwn(composed.schema, column.field) || (column.label !== undefined && typeof column.label !== 'string')))) {
     errors.push({ kind: 'malformed', path: 'metadata.listColumns', message: 'listColumns must name existing composed fields with optional text labels.' });
   }
+  // s249-m01: lists declared on the page that shows them name registered sources, their composed fields, the six history
+  // keys and their lifecycles' states; a list may read this object's own records before it is registered.
+  for (const problem of relatedListProblems(definition.metadata.relatedLists, shapeOfDefinition(definition, composed), relatedShape)) {
+    errors.push({ kind: 'malformed', path: problem.path, message: problem.message });
+  }
+  // s249-m03: a lifecycle's declared actions name fields of the composed object and an event Timestampable records.
+  for (const problem of stateActionProblems(definition, composed.schema)) errors.push({ kind: 'invalid-parameter', path: problem.path, message: problem.message });
   errors.push(...relationshipProblems(document.relationships, name!, composed.schema, available));
   // s213-m03 (finding 7): money and its units come only from declared semantics, so say where a declaration is missing.
   const fields = shape.objectSchema ?? {};

@@ -28,7 +28,7 @@ Agent's own fields are one line of text each, so they show on its page and edit 
 
 - `provider`: who built or runs it;
 - `skills`: what it can do, such as "Look up invoices; Match payments to invoices; Resend payments";
-- `acts_for`: who it acts for, one phrase per party restating the grant it holds for that party, such as "Tidewater Co-op · invoices and payments · until 31 Dec 2026". A standing yes inside a grant is covered by the grant it sits in. It restates them because OODS Foundry cannot list the records that point at a record;
+- `acts_for`: who it acts for, one phrase per party restating the grant it holds for that party, such as "Tidewater Co-op · invoices and payments · until 31 Dec 2026". A standing yes inside a grant is covered by the grant it sits in. These are your product's words beside the record: the agent's page also lists who it acts for from the grants themselves;
 - `allowed_actions`, `asks_first_for` and `never_allowed`: its rules, what it may do with no one's yes, what needs a person's yes first (asked each time, or given in advance under a grant), and what nothing permits.
 
 A list is written as one line with its items separated by "; ", and "None" when it is empty.
@@ -64,7 +64,7 @@ A history written before these fields, with no names, shows exactly as it always
 "On behalf of" is a grant, not a property of the agent. A `Grant` is a standing yes from the person or organization acted for to the agent:
 
 - it keeps who gave it and in what capacity, who it is for, who holds it, what it covers, its three lines for that party, its limits and its end, and who answers for it;
-- its lifecycle is its own: requested, then active (or paused), declined or withdrawn, and once given it ends revoked, expired or replaced;
+- its lifecycle is its own: requested, then given (active), declined, withdrawn or expired unanswered; once given it may be paused and resumed, and it ends revoked, expired or replaced;
 - in OODS Foundry's samples, every line the agent writes for the party names it (your product writes those two optional fields), and the agent's `acts_for` restates it on its own page.
 
 See [Grants as standing yeses](grants-as-standing-yeses.md). A `Relationship` of type `delegation` is the link alone, for teams that keep one.

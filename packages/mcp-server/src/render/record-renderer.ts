@@ -1,7 +1,7 @@
-import { addressCollectionSummary, formatDateTime, formatReadOnlyValue, formatRecordLabel, formatReferenceLabel, selectOptionsWithValue } from '@oods/component-contracts';
+import { addressCollectionSummary, formatDateTime, formatReadOnlyValue, formatRecordLabel, formatReferenceLabel, selectOptionsWithValue, statusOptionsInOrder } from '@oods/component-contracts';
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenOptions } from '../codegen/types.js';
-import { holdsValue, isReferenceField, OMIT_EMPTY_PROP, omitEmptyFields, resolveFieldProps, resolveFrameworkChildContent, resolveFrameworkRecipeProps, snakeToCamel, valueSelect } from '../codegen/binding-utils.js';
+import { holdsValue, isReferenceField, OMIT_EMPTY_PROP, omitEmptyFields, OPENED_STATUSES_PROP, orderedStatusSelect, RECORD_STATE_PROPS, resolveFieldProps, resolveFrameworkChildContent, resolveFrameworkRecipeProps, snakeToCamel, STATUSES_PROP, valueSelect, WHEN_UNSET_PROP } from '../codegen/binding-utils.js';
 import { recordDisplayValue } from '../compose/record-display.js';
 import { fieldLabel } from '../compose/label-generator.js';
 import { collectionSources } from '../codegen/collection-emitter.js';
@@ -22,8 +22,9 @@ import { renderTree } from './tree-renderer.js';
 // record's title. Binding is synchronous, so the collection sets it around its own rows only.
 let rowLabelField: string | undefined;
 
-export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown>): UiSchema {
+export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown>, objectName = compositionObject(schema)): UiSchema {
   const fields = schema.objectSchema ?? {};
+  const statusField = Object.keys(fields).find(name => fields[name]?.semanticType === 'status.state') ?? 'status';
   const raw = (field: unknown, row: Record<string, unknown>): unknown => typeof field === 'string' ? row[snakeToCamel(field)] ?? row[field] : undefined;
   const display = (field: string, row: Record<string, unknown>): unknown => {
     const entry = fields[field];
@@ -36,12 +37,23 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
     // s247-m01: a place that opts in is not drawn where the record holds no value for it, as React and Vue leave it out.
     const shown = omitEmptyFields(source, fields);
     if (shown && !shown.some(field => holdsValue(raw(field, row)))) return [];
+    // s249-m03: a declared action's button is drawn only for a record whose state it moves from (html-interactions.ts),
+    // as React and Vue gate it.
+    // s249-m03: so is a place drawn only for some states, or only where a field is unset (compose/ending-fields.ts); the
+    // state a form opened with is the shown record's own here.
+    for (const prop of [STATUSES_PROP, OPENED_STATUSES_PROP]) {
+      const statuses = source.props?.[prop];
+      if (typeof statuses === 'string' && !statuses.split(' ').includes(String(raw(statusField, row) ?? ''))) return [];
+    }
+    const unset = source.props?.[WHEN_UNSET_PROP];
+    if (typeof unset === 'string' && holdsValue(raw(unset, row))) return [];
     const node = structuredClone(source);
     node.id += suffix;
     const authored = source.props ?? {};
     node.props = { ...resolveFieldProps(source, fields), ...authored };
     const props = node.props;
     delete props[OMIT_EMPTY_PROP];
+    for (const prop of RECORD_STATE_PROPS) delete props[prop];
     if (source.children?.some(child => child.collectionControl === 'search')) props['data-oods-collection-toolbar'] = true;
     const recipe = resolveFrameworkRecipeProps(source, fields);
     for (const key of recipe.consumedProps) delete props[key];
@@ -79,6 +91,9 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
     // s248-m01 (next step 1861): a reference select names the record's own value when it does not list it, as React and Vue do.
     const valueOptions = valueSelect(source, fields);
     if (valueOptions) props.options = selectOptionsWithValue(valueOptions.options, raw(valueOptions.field, row), valueOptions.keptName ? raw(valueOptions.keptName, row) : undefined, valueOptions.subject);
+    // s249-m03: a status select of an object that declares its order offers the record's state and its moves, as React and Vue do.
+    const orderedOptions = orderedStatusSelect(source, fields, objectName, props.options);
+    if (orderedOptions) props.options = statusOptionsInOrder(orderedOptions.options, raw(orderedOptions.field, row), orderedOptions.order);
     // s223-m02 (#2527 rulings 12 and 13a): a Switch carries its field's form value too, in the hidden input its script
     // keeps; a SegmentedControl's radios and a Combobox's hidden input take the field's name as Select does.
     if (typeof field === 'string' && ['Input', 'Checkbox', 'Switch', 'Select', 'SegmentedControl', 'Combobox', 'Textarea', 'DatePicker'].includes(node.component) && !source.collectionControl) props.name ??= field;
@@ -99,6 +114,16 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
     if (source.collectionControl === 'page' && row.collectionQuery && typeof row.collectionQuery === 'object') {
       const query = row.collectionQuery as Record<string, unknown>;
       Object.assign(props, { page: query.page, pageSize: query.pageSize, totalItems: query.total });
+    }
+    // s249-m02: a record's related lists draw the resolved lists its screen is given (row.related), as React and Vue do;
+    // with none, nothing is drawn (component-map.ts renderRelatedArea writes the markup).
+    if (source.collection?.source === 'related') {
+      const lists = Array.isArray(row.related) ? row.related as Array<Record<string, unknown>> : [];
+      if (!lists.some(list => list.applies !== false)) return [];
+      node.props = { 'data-oods-related': lists };
+      node.children = [];
+      delete node.collection;
+      return [node];
     }
     if (source.collection) {
       const values = row[source.collection.source];
@@ -147,7 +172,7 @@ export function renderRecordBody(schema: UiSchema, options: CodegenOptions): str
     for (const state of states) {
       const archivedRows = (options.sampleRecords ?? []).filter(record => record.is_archived).map(record => Object.fromEntries(Object.entries(record).map(([key, value]) => [snakeToCamel(key), value])));
       const model = { ...base, archivedRows, uiState: state, ...(state === 'empty' ? { rows: [], events: [], archivedRows: [] } : {}) };
-      const bound = bindRecordSchema(single, model);
+      const bound = bindRecordSchema(single, model, options.objectName ?? compositionObject(expanded));
       if (hasStates) {
         const suffix = (node: UiElement): void => { node.id += `-${state}`; node.children?.forEach(suffix); };
         bound.screens.forEach(suffix);

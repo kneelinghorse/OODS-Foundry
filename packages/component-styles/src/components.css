@@ -1791,6 +1791,30 @@
 [data-oods-collection="events"] time { display: block; margin-top: var(--cmp-spacing-stack-xs, 0.5rem); font-size: var(--sys-text-size-sm, 0.875rem); }
 .oods-pagination-bar__pages { display: flex; gap: var(--sys-control-gap-tight, 0.375rem); list-style: none; margin: 0; padding: 0; }
 @media (max-width: 600px) { .oods-collection-row { flex-direction: column; align-items: flex-start; } .oods-collection-row > :first-child { flex-basis: auto; width: 100%; } }
+/* s249-m02: a related list on a detail page: a labelled region with its heading and count, read-only rows that are never
+   links, the grants inside a grant under it, and history lines and collapsed lists that open in place. */
+.oods-related-area { margin: var(--cmp-spacing-stack-lg, 1.5rem) 0 0; min-width: 0; }
+.oods-related-area > .oods-related-note { margin-top: var(--cmp-spacing-stack-md, 1rem); }
+.oods-related { margin: var(--cmp-spacing-stack-md, 1rem) 0 0; min-width: 0; color: var(--sys-text-primary, CanvasText); }
+.oods-related-heading { margin: 0 0 var(--cmp-spacing-stack-xs, 0.5rem); font-size: var(--sys-text-scale-heading-sm-font-size, 16px); font-weight: var(--sys-text-scale-heading-sm-font-weight, 600); line-height: var(--sys-text-scale-heading-sm-line-height, 24px); }
+.oods-related-fold > summary { cursor: pointer; }
+.oods-related-fold > summary > .oods-related-heading { display: inline; }
+.oods-related-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--cmp-spacing-stack-xs, 0.5rem); }
+.oods-related-row { min-width: 0; padding: var(--cmp-spacing-inset-default, 1rem); border: 1px solid var(--sys-border-subtle, CanvasText); border-radius: var(--cmp-card-radius, 12px); background: var(--sys-surface-raised, Canvas); }
+.oods-related-row p { margin: 0; overflow-wrap: anywhere; }
+.oods-related-row .oods-related-title { display: flex; flex-wrap: wrap; align-items: center; gap: var(--cmp-spacing-inline-sm, 0.75rem); }
+.oods-related-row .oods-badge { width: fit-content; flex: 0 0 auto; text-transform: none; letter-spacing: normal; }
+.oods-related-row .oods-related-line,
+.oods-related-row .oods-related-time,
+.oods-related-row .oods-related-at-end,
+.oods-related-row .oods-related-kept { margin-top: var(--cmp-spacing-stack-xs, 0.5rem); font-size: var(--sys-text-scale-body-sm-font-size, 14px); line-height: var(--sys-text-scale-body-sm-line-height, 20px); color: var(--sys-text-muted, GrayText); }
+.oods-related-inner { margin-top: var(--cmp-spacing-stack-xs, 0.5rem); padding-inline-start: var(--cmp-spacing-inline-sm, 0.75rem); border-inline-start: 1px solid var(--sys-border-subtle, CanvasText); }
+.oods-related-inner > .oods-related-rows { margin-top: var(--cmp-spacing-stack-xs, 0.5rem); }
+.oods-related-lines { margin-top: var(--cmp-spacing-stack-xs, 0.5rem); }
+.oods-related-lines > summary { cursor: pointer; font-size: var(--sys-text-scale-body-sm-font-size, 14px); }
+.oods-related-lines ol { margin: var(--cmp-spacing-stack-xs, 0.5rem) 0 0; padding-inline-start: var(--cmp-spacing-inline-sm, 0.75rem); display: grid; gap: var(--cmp-spacing-stack-xs, 0.5rem); font-size: var(--sys-text-scale-body-sm-font-size, 14px); }
+.oods-related-beside, .oods-related-empty, .oods-related-more, .oods-related-note { margin: var(--cmp-spacing-stack-xs, 0.5rem) 0 0; overflow-wrap: anywhere; }
+.oods-related-note { font-size: var(--sys-text-scale-body-sm-font-size, 14px); line-height: var(--sys-text-scale-body-sm-line-height, 20px); color: var(--sys-text-muted, GrayText); }
 
 :where(.oods-audit-summary, [data-oods-component='AuditSummaryCard']) { padding: var(--sys-card-padding); border: 1px solid var(--cmp-border-default); border-radius: var(--cmp-card-radius); background: var(--cmp-surface-panel); color: var(--cmp-text-body); }
 .oods-audit-summary h2 { margin-top: 0; font-size: var(--sys-text-scale-heading-md-font-size); font-weight: var(--sys-text-scale-heading-md-font-weight); line-height: var(--sys-text-scale-heading-md-line-height); }
@@ -2006,9 +2030,12 @@ div.oods-field[data-oods-component='Checkbox'] { display: grid; grid-template-co
   font-weight: var(--sys-text-scale-label-font-weight, 500);
 }
 [data-oods-collection='rows'] > .oods-collection .oods-collection-row > :first-child > * { margin: 0; font-size: inherit; line-height: inherit; }
-/* Money in a row reads as text beside the status, as the time does, not as a tag. */
+/* Money in a row reads as text beside the status, as the time does, not as a tag. s249-m04 (next step 1877): so in high
+ * contrast and forced colours it takes no pill outline, which with no padding crossed its first and last characters. */
 [data-oods-collection='rows'] > .oods-collection .oods-collection-row > :is([data-oods-component='PriceBadge'], [data-oods-component='BillingSummaryBadge']) {
   padding: 0;
+  border: 0;
+  box-shadow: none;
   background: transparent;
   color: var(--sys-text-primary, CanvasText);
   font-size: var(--sys-text-scale-body-sm-font-size, 14px);
@@ -2035,6 +2062,13 @@ div.oods-field[data-oods-component='Checkbox'] { display: grid; grid-template-co
 /* Vue's mapped Card wraps the team's surface. Match React's inset only for event entries. */
 [data-oods-collection='events'] > .oods-collection > li > [data-oods-adapter='Card'] > [data-oods-card-surface] {
   padding-inline: var(--sys-inset-md, 1rem);
+}
+/* s249-m04 (next step 1837): a team's mapped card in a timeline takes no fill of its own, as the event cards OODS draws
+ * take none, so React's mapped surface (the card itself) and Vue's (the card inside the adapter) read alike in every theme;
+ * in dark they sat on the team's navy and grey. Their padding and borders stay the team's. */
+[data-oods-collection='events'] > .oods-collection > li > [data-oods-adapter='Card']:not(:has(> [data-oods-card-surface])),
+[data-oods-collection='events'] > .oods-collection > li > [data-oods-adapter='Card'] > [data-oods-card-surface] {
+  background: transparent;
 }
 [data-oods-collection='events'] > .oods-collection > li > :is(.oods-card, [data-oods-component='Card']) {
   gap: var(--sys-control-gap-compact, 0.25rem);

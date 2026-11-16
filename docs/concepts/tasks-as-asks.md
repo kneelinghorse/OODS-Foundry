@@ -57,10 +57,10 @@ The one who answers is the task's owner, through `Ownerable`, with the role "Ans
 | Finished | The doer says it is finished. |
 | Failed | The doer could not do it. |
 | Declined | The doer would not do it, or may not. |
-| Cancelled | A person stopped it. |
+| Cancelled | Someone asked for it to stop. What already happened stays done. |
 | Handed over | It ended here, and goes on as a new task with another doer. |
 
-The last five are endings. `Task` declares the order of its states, with the endings final (empty lists): by the order, a finished or cancelled task never moves again, and a second ask is a second task. Your product enforces this order. OODS Foundry keeps it as data and moves no task. It holds its own sample tasks to the order and, in generated React and Vue screens, offers Cancel, and the generated store accepts it, only from a state the order lets move to cancelled. Any other change goes through, including one made with the status select.
+The last five are endings. `Task` declares the order of its states, with the endings final (empty lists): by the order, a finished or cancelled task never moves again, and a second ask is a second task. Your product enforces this order on its own records. OODS Foundry keeps it as data and holds its own sample tasks to it, and a generated app keeps it in its own store: the status select offers the task's state and the moves the order allows from it, the store refuses any other move and any move out of an ending, and in generated React and Vue screens Cancel is offered, and accepted, only from a state the order lets move to cancelled.
 
 **A wait is the task's own state, with a pointer.** "Needs input" and "Waiting" are two states because a person scanning a list needs to know first whether a person is needed. Each names what it waits on: a person, an approval, another task, or something outside such as a payment at the bank. The task's state is its own: an approval can be answered while the task still says it needs input, and that disagreement is worth seeing.
 
@@ -129,12 +129,12 @@ What the doer may touch is on its grant and its own rules (see [Agents as actors
 
 ## What OODS Foundry does not do
 
-It models and renders. It does not run, retry, pause or expire work, and its Cancel action records that a person asked to stop: it stops nothing. No ending is enforced outside Cancel: a task's status select offers every state, and a generated app saves whatever a person picks there. Beyond that:
+It models and renders. It does not run, retry, pause or expire work, and its Cancel action records that a person asked to stop: it stops nothing. A generated app keeps the declared order in its own store, and your product enforces it on its records. Beyond that:
 
-- Cancel follows the declared order in generated React and Vue screens only. An HTML screen offers it whatever the state.
-- A task's form also offers fields a person would not edit there: the task's own id, the owner's id, type, name and role, the last event and when it was created.
-- On a task's, a thing's or an agent's own page it cannot list the tasks that belong to it: a task's helpers, a thing's tasks, an agent's tasks. The Task list's search finds them by name. It cannot show a signed-in person "waiting for you".
+- Cancel follows the declared order in generated React and Vue screens only. Cancel is not a declared action, so an HTML screen offers it whatever the state, where it offers a grant's Revoke only from the states Revoke moves from.
+- A task's form also offers fields a person would not edit there: the owner's id, type, name and role. It does not offer the task's own id, when it was created or last changed, or its last event.
+- On a task's or a thing's own page it cannot list the tasks that belong to it: a task's helpers, a thing's tasks. The Task list's search finds them by name. A person's page lists the tasks waiting for their answer, and an agent's page the records whose lines name it as the one who acted; there is no signed-in person, so no page says "waiting for you".
 - The try count, what a task waits on, the first ask's name and who answers are kept by your product and checked by nothing.
 - Accepting a result through an approval that names its task is the model, and is not wired.
-- A line a generated app writes when a person changes a task names no one.
+- A line a generated app writes when a person changes a task names who acted only when your product passes who is acting (`createWorkflow({ actor })`).
 - A team's own object named Task replaces the shipped one, and importing A2A's schema drafts an object named Task.

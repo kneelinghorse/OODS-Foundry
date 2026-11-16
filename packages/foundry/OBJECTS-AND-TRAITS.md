@@ -160,7 +160,7 @@ view_extensions:             # what the trait places on each screen: list, card,
       props: { field: units_on_hand }
 ```
 
-A trait of yours can place only the components OODS Foundry ships; `catalog_list` names them. Your own components can replace those ids through substitution; see [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.15.0/COMPONENTS.md).
+A trait of yours can place only the components OODS Foundry ships; `catalog_list` names them. Your own components can replace those ids through substitution; see [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.16.0/COMPONENTS.md).
 
 ## Checking and registering
 
@@ -234,3 +234,57 @@ The via field must exist on the source object or one of its traits. The target m
 ```
 
 Alternatively pass `schemaRef` from composition or an inline `schema`, with exactly one source. Composed wireframes draw the component tree and regions using the selected brand and theme tokens, label field bindings, and stack at phone widths. Alternate states and tab panels appear together for inspection. `review` adds recorded node confidence; absent confidence says Not recorded. `branded-mockup` renders the static sample HTML. `boxes-arrows` with a composition draws a clearly labelled component-containment graph, not object associations. Legacy `manifest` input and the nine named registry fixtures remain available; legacy views retain their entity/slot projection and branded manifests use light tokens.
+
+### Related lists
+
+A declared association draws a picker on the source's form. To list, on a record's own page, the records that point at
+it, declare the list on the object whose page shows it:
+
+```yaml
+metadata:
+  relatedLists:
+    - id: shipments
+      label: "Shipments from {name}"        # {name} is the record's display name
+      empty: "No shipment names {name}."
+      sources:
+        - from: Shipment                     # an object, or a list of objects
+          via: warehouse_id                  # its field that holds this record's id
+          states: [packed, in_transit]
+          row: { line: [carrier, destination], time: shipped_at }
+```
+
+A list may also say `filtered` (`one`, and `other` with `{count}`: what it says when nothing is listed but records that
+point at it are in a state the list leaves out), `note` (said once under the list), `rowsNote` (said under the rows, only
+when there are some), `collapsed` (closed until opened), `finality` (rows whose state is `final`, `not_final` or
+`not_known` by the object's declared order), `afterEnd` (shown only once the record has ended) and `beside` (a sentence
+beside the heading, from one of its fields). A source may read a history key (`via: "state_history[].grant_id"`), look
+up the record one of this record's fields names (`key`, with `seat`, the words before its row, and `kept`, the fields
+that name a party who is no record here), and say `when` (field values a record must have), `exclude` (a field that
+must not hold this record's id), `inner` (records shown under a row) and `order`. Validation
+refuses a malformed list and names its path. The detail page draws the lists after the record's own panels, in React,
+Vue and HTML alike, and ends with one note on what they cannot see: they read ids, never names, and only the objects
+named. In a generated app, the other objects' records are copied from the samples when the app was made
+(`src/related-data.ts`); replace `relatedRows` in `src/store.ts` with your own query.
+
+### Lifecycle actions
+
+A lifecycle that declares its order (`lifecycle/Stateful`'s `transitionRules`) can name the moves a person makes in its
+`actions` parameter, each to one state of the order:
+
+```yaml
+  - name: lifecycle/Stateful
+    parameters:
+      states: [planned, active, paused, closed]
+      initialState: planned
+      transitionRules: { planned: [active], active: [paused, closed], paused: [active, closed], closed: [] }
+      actions:
+        - { id: close, to: closed, verb: Close, event: closed, reasonField: closed_reason, confirm: true }   # closed_reason: one of its fields
+        - { id: pause, to: paused, verb: Pause, event: paused }
+        - { id: resume, from: [paused], to: active, verb: Resume, event: resumed }
+```
+
+`from` defaults to every state whose declared targets include `to`. `event` must be one of `lifecycle/Timestampable`'s
+`recordedEvents`. An action may also name a seat whose `_id`, `_name` and `_kind` fields record who acted when the app
+is told (`bySeat`), and the records of the same object that make the same move with it (`alsoEnds: { via }`). Every
+renderer offers an action only from the states it moves from; a generated app writes it as one change to its own
+records and stops nothing; and an object with an action that ends its records offers no Delete.

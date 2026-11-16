@@ -3,6 +3,7 @@ import type { UiElement, UiSchema } from '../schemas/generated.js';
 import { snakeToCamel } from './binding-utils.js';
 import { recordEventsProjection, recordEventAliases } from './collection-emitter.js';
 import { recordTitleField } from '../compose/record-label.js';
+import { resolveRelatedLists } from '../compose/related-records.js';
 import { neutralFieldValue, shownSampleRecord, sortRecordsAsStated, statedListSortField, workflowSampleRecords } from './workflow-data-emitter.js';
 
 /** Every element of a UiSchema in document order. */
@@ -43,6 +44,8 @@ export function deriveConsumerModel(schema: UiSchema, established: Record<string
     const projection = recordEventsProjection(schema.screens, schema.objectSchema ?? {});
     model.events = projection ? recordCollectionEvents(Object.fromEntries([...projection.keys.map(name => [name, model[camel(name)]]), ...Object.entries(projection.aliases).map(([canonical, source]) => [canonical, model[camel(source)]])]), projection.options) : [];
   }
+  // s249-m02: a related list needs its object's records, which only a seeded preview knows (seedPreviewModel).
+  if (sources.has('related')) model.related = [];
   if (schemaNodes(schema).some(node => node.state)) model.uiState = 'success';
   return model;
 }
@@ -73,6 +76,8 @@ export function seedPreviewModel({ schema, context, object, workflowSchema, esta
     // Do not retain the consumer probe's invented values for omitted domain fields.
     for (const field of Object.keys(workflowSchema.objectSchema ?? {})) delete model[snakeToCamel(field)];
     Object.assign(model, shown ? camel(shown) : {}, established);
+    // s249-m02: the shown record's related lists, resolved from the registered objects' samples, as HTML draws them.
+    if (schemaNodes(schema).some(node => node.collection?.source === 'related') && !Object.hasOwn(established, 'related')) model.related = shown ? resolveRelatedLists(object, shown) : [];
     if (context === 'timeline' && !Object.hasOwn(established, 'events')) {
       const payment = schemaNodes(schema).find(node => node.component === 'PaymentEventTimeline');
       const payments = payment ? [{ field: payment.props?.lastPaymentField, title: 'Last payment' }, { field: payment.props?.nextPaymentField, title: 'Next payment' }].filter((entry): entry is { field: string; title: string } => typeof entry.field === 'string') : [];

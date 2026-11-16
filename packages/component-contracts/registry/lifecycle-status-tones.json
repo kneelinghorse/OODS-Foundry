@@ -2,7 +2,7 @@
   "$comment": "s222-m03 (#2502 ruling 13): the lifecycle status-to-tone table the StatusBadge contract names. A status badge whose own table (subscription, invoice) does not know a status, or whose field names no table, reads its tone, mark and description here. Icons are status icon names (icon.status.<alias>, packages/component-contracts/src/status-icons.ts).",
   "version": "1.0.0",
   "states": {
-    "active": { "tone": "success", "icon": "icon.status.success", "description": "Active." },
+    "active": { "tone": "info", "icon": "icon.status.active", "description": "Active." },
     "available": { "tone": "success", "icon": "icon.status.success", "description": "Available to use." },
     "published": { "tone": "success", "icon": "icon.status.success", "description": "Published and visible." },
     "settled": { "tone": "success", "icon": "icon.status.success", "description": "Settled in full." },
@@ -60,7 +60,7 @@
     "not_yet_asked": { "tone": "neutral", "icon": "icon.status.draft", "description": "Not yet asked: it is not this person’s turn yet." },
     "taken_back": { "tone": "neutral", "icon": "icon.status.refunded", "description": "Taken back: the yes no longer stands." },
     "expired": { "tone": "neutral", "icon": "icon.status.future", "description": "Expired: its time ran out." },
-    "withdrawn": { "tone": "neutral", "icon": "icon.status.canceled", "description": "Withdrawn by the one who asked." },
+    "withdrawn": { "tone": "neutral", "icon": "icon.status.canceled", "description": "Withdrawn: the ask was called off." },
     "not_needed": { "tone": "neutral", "icon": "icon.status.default", "description": "Not needed: it was never asked." },
     "not_started": { "tone": "neutral", "icon": "icon.status.default", "description": "Not started yet." },
     "working": { "tone": "info", "icon": "icon.status.processing", "description": "Being worked on." },
@@ -69,7 +69,7 @@
     "finished": { "tone": "neutral", "icon": "icon.status.success", "description": "Finished, by the account of whoever did the work." },
     "handed_over": { "tone": "neutral", "icon": "icon.status.refunded", "description": "Handed over to someone else to carry on." },
     "requested": { "tone": "info", "icon": "icon.status.pending", "description": "Requested and not yet answered." },
-    "revoked": { "tone": "neutral", "icon": "icon.status.canceled", "description": "Revoked: someone took it back." },
+    "revoked": { "tone": "neutral", "icon": "icon.status.canceled", "description": "Revoked: someone ended it." },
     "replaced": { "tone": "neutral", "icon": "icon.status.refunded", "description": "Replaced: a newer one took its place." },
     "allowed_in_advance": { "tone": "info", "icon": "icon.status.scheduled", "description": "Allowed in advance: a person set the terms earlier, and no one was asked this time." }
   }

@@ -1,0 +1,51 @@
+{
+  "Subscription": {
+    "react": [
+      "handleCancel: () => void;",
+      "if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleCancel') || typeof actions.handleCancel !== 'function') { throw new Error('GeneratedUI requires actions.handleCancel.'); }",
+      "/* @oods-domain-binding handleCancel */ const handleCancel = () => { actions.handleCancel(); };",
+      "{['future', 'trialing', 'active', 'paused', 'past_due', 'unpaid'].includes(String(status)) && !isArchived && (",
+      "<Button intent=\"secondary\" data-oods-action=\"handleCancel\" onClick={() => handleCancel()}>Cancel subscription</Button>"
+    ],
+    "chartAssets": "9a1b8d09eca4b64a44d212b1230926ee8fad6abf15917aa633c94b52ababa018",
+    "vue": [
+      "<Button intent=\"primary\" data-oods-action=\"handleEdit\" @activate=\"handleEdit()\">Edit</Button>",
+      "<Button intent=\"secondary\" data-oods-action=\"handleCancel\" v-if=\"['future', 'trialing', 'active', 'paused', 'past_due', 'unpaid'].includes(String(status)) &amp;&amp; !isArchived\" @activate=\"handleCancel()\">Cancel subscription</Button>",
+      "handleCancel: () => void;",
+      "if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleCancel') || typeof actions.handleCancel !== 'function') { throw new Error('GeneratedUI requires actions.handleCancel.'); }",
+      "/* @oods-domain-binding handleCancel */ const handleCancel = () => { actions.handleCancel(); };"
+    ]
+  },
+  "Transaction": {
+    "react": [
+      "handleCancel: () => void;",
+      "if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleCancel') || typeof actions.handleCancel !== 'function') { throw new Error('GeneratedUI requires actions.handleCancel.'); }",
+      "/* @oods-domain-binding handleCancel */ const handleCancel = () => { actions.handleCancel(); };",
+      "{['pending', 'authorized', 'settled', 'failed', 'refunded'].includes(String(status)) && !isArchived && (",
+      "<Button intent=\"secondary\" data-oods-action=\"handleCancel\" onClick={() => handleCancel()}>Cancel transaction</Button>"
+    ],
+    "vue": [
+      "<Button intent=\"primary\" data-oods-action=\"handleEdit\" @activate=\"handleEdit()\">Edit</Button>",
+      "<Button intent=\"secondary\" data-oods-action=\"handleCancel\" v-if=\"['pending', 'authorized', 'settled', 'failed', 'refunded'].includes(String(status)) &amp;&amp; !isArchived\" @activate=\"handleCancel()\">Cancel transaction</Button>",
+      "handleCancel: () => void;",
+      "if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleCancel') || typeof actions.handleCancel !== 'function') { throw new Error('GeneratedUI requires actions.handleCancel.'); }",
+      "/* @oods-domain-binding handleCancel */ const handleCancel = () => { actions.handleCancel(); };"
+    ]
+  },
+  "Task": {
+    "react": [
+      "handleCancel: () => void;",
+      "if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleCancel') || typeof actions.handleCancel !== 'function') { throw new Error('GeneratedUI requires actions.handleCancel.'); }",
+      "/* @oods-domain-binding handleCancel */ const handleCancel = () => { actions.handleCancel(); };",
+      "{['not_started', 'working', 'needs_input', 'waiting', 'paused', 'outcome_unknown'].includes(String(status)) && (",
+      "<Button intent=\"secondary\" data-oods-action=\"handleCancel\" onClick={() => handleCancel()}>Cancel task</Button>"
+    ],
+    "vue": [
+      "<Button intent=\"primary\" data-oods-action=\"handleEdit\" @activate=\"handleEdit()\">Edit</Button>",
+      "<Button intent=\"secondary\" data-oods-action=\"handleCancel\" v-if=\"['not_started', 'working', 'needs_input', 'waiting', 'paused', 'outcome_unknown'].includes(String(status))\" @activate=\"handleCancel()\">Cancel task</Button>",
+      "handleCancel: () => void;",
+      "if (!actions || !Object.prototype.hasOwnProperty.call(actions, 'handleCancel') || typeof actions.handleCancel !== 'function') { throw new Error('GeneratedUI requires actions.handleCancel.'); }",
+      "/* @oods-domain-binding handleCancel */ const handleCancel = () => { actions.handleCancel(); };"
+    ]
+  }
+}

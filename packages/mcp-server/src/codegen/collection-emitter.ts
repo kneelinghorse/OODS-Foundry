@@ -4,6 +4,7 @@ import { displayFieldExpression, mapFieldType, snakeToCamel } from './binding-ut
 import { escapeDoubleQuotedAttribute, javascriptSingleQuotedString } from './emission-safety.js';
 import type { CodegenIssue } from './types.js';
 import { readableCode, reads, templateExpressions } from './vue-unread-declarations.js';
+import { RELATED_SHOWN_ROWS } from '@oods/component-contracts';
 
 const literal = (value: unknown): string => {
   if (typeof value === 'string') return javascriptSingleQuotedString(value);
@@ -38,6 +39,8 @@ export function collectionProps(nodes: readonly UiElement[], fields: Record<stri
   return [
     ...(sources.has('rows') ? [`rows?: Array<{ ${row} }>;`, 'collectionQuery?: { search?: string; status?: string; descending?: boolean; archived?: boolean; page?: number; pageSize?: number; total?: number };'] : []),
     ...(sources.has('events') ? ['events?: CollectionEvent[];'] : []),
+    // s249-m02: the record's related lists, resolved for it (@oods/component-contracts resolveRelatedListRows).
+    ...(sources.has('related') ? ['related?: ResolvedRelatedList[];'] : []),
   ];
 }
 
@@ -82,7 +85,8 @@ export function recordEventsExpression(nodes: readonly UiElement[], fields: Reco
 export function collectionParameters(nodes: readonly UiElement[], fields: Record<string, FieldSchemaEntry> = {}, framework: 'react' | 'vue' = 'react'): string[] {
   const sources = collectionSources(nodes);
   const events = recordEventsExpression(nodes, fields);
-  return [...(sources.has('rows') ? ['rows = []', 'collectionQuery = {}'] : []), ...(sources.has('events') ? [framework === 'vue' ? 'events' : `events = ${events ?? '[]'}`] : [])];
+  return [...(sources.has('rows') ? ['rows = []', 'collectionQuery = {}'] : []), ...(sources.has('events') ? [framework === 'vue' ? 'events' : `events = ${events ?? '[]'}`] : []),
+    ...(sources.has('related') ? [framework === 'vue' ? 'related' : 'related = []'] : [])];
 }
 
 /** Vue's shown timeline events: the consumer's, else the record's own. */
@@ -117,6 +121,7 @@ export function emitCollectionNode(
   const id = `id="${escapeDoubleQuotedAttribute(node.id)}"`;
   const value = (expression: string) => react ? `{${expression}}` : `{{ ${expression} }}`;
   const children = () => (node.children ?? []).map(emit).join('\n');
+  if (node.collection?.source === 'related') return relatedRegion(node, react);
   if (node.collection) {
     const source = node.collection.source;
     const empty = node.children?.find(child => child.collectionControl === 'empty');
@@ -183,4 +188,42 @@ export function emitCollectionNode(
     case 'payment-event': return `<PaymentEventTimeline ${id} ${attr('event', 'collectionEvent')} />`;
     default: return undefined;
   }
+}
+
+/**
+ * s249-m02: a record's related lists (Interface 3), drawn from the resolved lists the screen is given (`related`): one
+ * labelled section per list with its heading and count, its first rows, "N more not shown", its empty and filtered
+ * sentences and its own note; then, once for the page, what no list here can see and, where a generated app copied other
+ * objects' records, that it did. A row is read-only and never a link; a history row's lines and a collapsed list open in
+ * place (details and summary, which work with no script in static HTML too). component-map.ts renderRelatedArea writes the
+ * same markup for HTML. A list that applies only once its record has ended is left out until then.
+ */
+function relatedRegion(node: UiElement, react: boolean): string {
+  // A list that applies only once its record has ended ("Recorded after it ended") is left out until then.
+  const lists = '(related ?? []).filter((relatedList) => relatedList.applies)';
+  if (react) {
+    // A row's badge reads its object's status table (the row's stateDomain), as that object's own record badge does.
+    // Its words are the row's stateLabel, in sentence case as the object's own list writes them, as HTML's are.
+    const badge = (row: string) => `{${row}.state ? (<StatusBadge status={${row}.state} domain={${row}.stateDomain ?? 'lifecycle'} content={${row}.stateLabel} aria-label={'Status: ' + ${row}.stateLabel} tone="lifecycle" />) : null}`;
+    const text = (row: string, field: string, className: string) => `{${row}.${field} ? (<p className="${className}">{${row}.${field}}</p>) : null}`;
+    const inner = `{relatedRow.inner ? (<div className="oods-related-inner"><p>{relatedRow.innerText}</p><ul className="oods-related-rows" aria-label={relatedRow.innerText}>{relatedRow.inner.map((innerRow, innerIndex) => (<li key={innerIndex} className="oods-related-row"><p className="oods-related-title"><strong>{innerRow.title}</strong>${badge('innerRow')}</p>${text('innerRow', 'lineText', 'oods-related-line')}${text('innerRow', 'timeText', 'oods-related-time')}</li>))}</ul></div>) : null}`;
+    const lines = `{relatedRow.lines ? (<details className="oods-related-lines"><summary>{relatedRow.linesText}</summary><ol>{relatedRow.lines.map((relatedLine, lineIndex) => (<li key={lineIndex}>{relatedLine.text}</li>))}</ol></details>) : null}`;
+    const row = `<li key={relatedIndex} className="oods-related-row"><p className="oods-related-title">{relatedRow.seat ? (<span className="oods-related-seat">{relatedRow.seat + ': '}</span>) : null}<strong>{relatedRow.title}</strong>${badge('relatedRow')}</p>${text('relatedRow', 'lineText', 'oods-related-line')}${text('relatedRow', 'timeText', 'oods-related-time')}${text('relatedRow', 'atEndText', 'oods-related-at-end')}${text('relatedRow', 'keptText', 'oods-related-kept')}${inner}${lines}</li>`;
+    const body = `${text('relatedList', 'beside', 'oods-related-beside')}{relatedList.rows.length === 0 ? (<p className="oods-related-empty">{relatedList.filtered ? relatedList.empty + ' ' + relatedList.filtered : relatedList.empty}</p>) : (<ul className="oods-related-rows" aria-label={relatedList.label}>{relatedList.rows.slice(0, ${RELATED_SHOWN_ROWS}).map((relatedRow, relatedIndex) => (${row}))}</ul>)}${text('relatedList', 'more', 'oods-related-more')}${text('relatedList', 'note', 'oods-related-note')}`;
+    const heading = `<h2 id={${literal(`${node.id}-`)} + relatedList.id + '-heading'} className="oods-related-heading">{relatedList.heading}</h2>`;
+    const section = `<section key={relatedList.id} id={${literal(`${node.id}-`)} + relatedList.id} data-oods-list={relatedList.id} className="oods-related" aria-labelledby={${literal(`${node.id}-`)} + relatedList.id + '-heading'}>{relatedList.collapsed ? (<details className="oods-related-fold"><summary>${heading}</summary>${body}</details>) : (<>${heading}${body}</>)}</section>`;
+    const notes = `{${lists}.some((relatedList) => relatedList.copied) ? (<p className="oods-related-note">{${lists}.find((relatedList) => relatedList.copied)?.copied}</p>) : null}<p className="oods-related-note">{${lists}[0]?.cannotSee}</p>`;
+    return `{${lists}.length ? (<div id="${escapeDoubleQuotedAttribute(node.id)}" data-oods-collection="related" className="oods-related-area">{${lists}.map((relatedList) => (${section}))}${notes}</div>) : null}`;
+  }
+  const badge = (row: string) => `<StatusBadge v-if="${row}.state" :status="${row}.state" :domain="${row}.stateDomain || 'lifecycle'" :content="${row}.stateLabel" :aria-label="'Status: ' + ${row}.stateLabel" tone="lifecycle" />`;
+  const text = (row: string, field: string, className: string) => `<p v-if="${row}.${field}" class="${className}">{{ ${row}.${field} }}</p>`;
+  const inner = `<div v-if="relatedRow.inner" class="oods-related-inner"><p>{{ relatedRow.innerText }}</p><ul class="oods-related-rows" :aria-label="relatedRow.innerText"><li v-for="(innerRow, innerIndex) in relatedRow.inner" :key="innerIndex" class="oods-related-row"><p class="oods-related-title"><strong>{{ innerRow.title }}</strong>${badge('innerRow')}</p>${text('innerRow', 'lineText', 'oods-related-line')}${text('innerRow', 'timeText', 'oods-related-time')}</li></ul></div>`;
+  const lines = `<details v-if="relatedRow.lines" class="oods-related-lines"><summary>{{ relatedRow.linesText }}</summary><ol><li v-for="(relatedLine, lineIndex) in relatedRow.lines" :key="lineIndex">{{ relatedLine.text }}</li></ol></details>`;
+  const row = `<li v-for="(relatedRow, relatedIndex) in relatedList.rows.slice(0, ${RELATED_SHOWN_ROWS})" :key="relatedIndex" class="oods-related-row"><p class="oods-related-title"><span v-if="relatedRow.seat" class="oods-related-seat">{{ relatedRow.seat + ': ' }}</span><strong>{{ relatedRow.title }}</strong>${badge('relatedRow')}</p>${text('relatedRow', 'lineText', 'oods-related-line')}${text('relatedRow', 'timeText', 'oods-related-time')}${text('relatedRow', 'atEndText', 'oods-related-at-end')}${text('relatedRow', 'keptText', 'oods-related-kept')}${inner}${lines}</li>`;
+  const body = `${text('relatedList', 'beside', 'oods-related-beside')}<p v-if="relatedList.rows.length === 0" class="oods-related-empty">{{ relatedList.filtered ? relatedList.empty + ' ' + relatedList.filtered : relatedList.empty }}</p><ul v-else class="oods-related-rows" :aria-label="relatedList.label">${row}</ul>${text('relatedList', 'more', 'oods-related-more')}${text('relatedList', 'note', 'oods-related-note')}`;
+  const prefix = escapeDoubleQuotedAttribute(literal(`${node.id}-`));
+  const heading = `<h2 :id="${prefix} + relatedList.id + '-heading'" class="oods-related-heading">{{ relatedList.heading }}</h2>`;
+  const section = `<section v-for="relatedList in ${lists}" :key="relatedList.id" :id="${prefix} + relatedList.id" :data-oods-list="relatedList.id" class="oods-related" :aria-labelledby="${prefix} + relatedList.id + '-heading'"><details v-if="relatedList.collapsed" class="oods-related-fold"><summary>${heading}</summary>${body}</details><template v-else>${heading}${body}</template></section>`;
+  const notes = `<p v-if="${lists}.some((relatedList) => relatedList.copied)" class="oods-related-note">{{ ${lists}.find((relatedList) => relatedList.copied)?.copied }}</p><p class="oods-related-note">{{ ${lists}[0]?.cannotSee }}</p>`;
+  return `<div v-if="${lists}.length" id="${escapeDoubleQuotedAttribute(node.id)}" data-oods-collection="related" class="oods-related-area">${section}${notes}</div>`;
 }

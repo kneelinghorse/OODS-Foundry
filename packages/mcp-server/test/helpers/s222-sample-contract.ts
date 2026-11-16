@@ -134,6 +134,35 @@ export function s248Field<T extends Record<string, unknown>>(object: string, nam
 }
 
 /**
+ * s249-m03 (Interface 18): allowed_transitions says a generated StatusSelector reads the declared order (the current
+ * state and the moves it allows), where it said the selector offered every state. Every other key is held exactly.
+ */
+const S249_ALLOWED_TRANSITIONS = {
+  before: S247_ALLOWED_TRANSITIONS.after,
+  after: 'Materialized list of the next states the product allows from the current status, written\nby the product from the transitionRules parameter. When transitionRules is null (open model),\nthis contains all states except the current one. The detail page\'s StatusTimeline lists it\nwhen the record holds it. A generated StatusSelector reads transitionRules instead: it offers the\ncurrent state and the moves the order allows (every state where no order is declared).\n',
+};
+
+/**
+ * s249-m04 (Interface 13): User's timezone no longer says screens render in it; they show UTC and say so. s249-m05 (the
+ * fresh read): and a date-time input does not say its zone yet.
+ */
+const S249_USER_TIMEZONE = {
+  before: 'Preferred timezone applied when rendering timestamps.',
+  after: "The person's preferred time zone, kept for your product. Screens show times in UTC, and a shown date-time says so; a date-time input does not yet.",
+};
+
+/**
+ * A baseline field as Sprint 249 declares it: Sprint 248's, with allowed_transitions' revised description (m03) and User's
+ * timezone description (m04).
+ */
+export function s249Field<T extends Record<string, unknown>>(object: string, name: string, field: T): T {
+  const declared = s248Field(object, name, field);
+  if (name === 'allowed_transitions' && declared.description === S249_ALLOWED_TRANSITIONS.before) return { ...declared, description: S249_ALLOWED_TRANSITIONS.after };
+  if (object === 'User' && name === 'timezone' && declared.description === S249_USER_TIMEZONE.before) return { ...declared, description: S249_USER_TIMEZONE.after };
+  return declared;
+}
+
+/**
  * s245-m02: Transaction and Article compose Approvable, whose two outcome fields join the composed schema after the
  * traits' fields and before the object's own. Both are read-only, so a form leaves them out. Every other key of every
  * baseline field is held to the baseline exactly.

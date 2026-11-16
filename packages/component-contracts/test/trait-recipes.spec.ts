@@ -13,7 +13,8 @@ describe('declared trait recipe values', () => {
     const rows = traitEventRows('transition', values);
     expect(rows.map(row => row.title)).toEqual(['Draft → Active', 'Archived']);
     expect(rows[0]).toMatchObject({ time: 'Time not recorded', at: undefined, actor: undefined, reason: undefined });
-    expect(rows[1]?.time).toBe('Sep 1, 2026, 12:00 PM');
+    // s249-m04 (Interface 13): a date-time names the zone it is shown in ("… UTC"); a date alone names none.
+    expect(rows[1]?.time).toBe('Sep 1, 2026, 12:00 PM UTC');
   });
   it('false auto-detection and named catalog records do not become truthy defaults or object placeholders', () => {
     expect(geoFieldMapping({ autoDetect: false, latitude: 'lat' })).toEqual({ autoDetect: false, latitude: 'lat', longitude: '', identifier: '' });

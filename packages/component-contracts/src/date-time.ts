@@ -2,13 +2,34 @@ import { historyAttribution } from './attribution.js';
 import { billingSummary, formatBillingAmount } from './billing.js';
 
 /** A stable display policy shared by generated screens, components, and SSR. */
+/**
+ * A record's date-time as every record screen shows it, labelled with the zone it is shown in: "Dec 31, 2026, 10:59 AM
+ * UTC". s249-m04 (Interface 13): a date-time names its zone, so a reader never takes UTC for their own time; a date alone
+ * ("Dec 31, 2026") names none. The zone's name comes from a formatter of its own, since combining timeZoneName with
+ * dateStyle or timeStyle throws.
+ */
 export function formatDateTime(value: string | number | Date | null | undefined, options: { locale?: string; timeZone?: string; dateOnly?: boolean } = {}): string {
   if (value == null || value === '') return '';
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) return '';
-  return new Intl.DateTimeFormat(options.locale ?? 'en-US', {
-    dateStyle: 'medium', ...(options.dateOnly ? {} : { timeStyle: 'short' as const }), timeZone: options.timeZone ?? 'UTC',
+  const locale = options.locale ?? 'en-US';
+  // A zone no formatter knows (a record's own text, "UTC+2") is shown in UTC, and labelled so, rather than throwing.
+  const timeZone = knownTimeZone(options.timeZone) ? options.timeZone! : 'UTC';
+  const text = new Intl.DateTimeFormat(locale, {
+    dateStyle: 'medium', ...(options.dateOnly ? {} : { timeStyle: 'short' as const }), timeZone,
   }).format(date);
+  return options.dateOnly ? text : `${text} ${timeZoneLabel(date, timeZone, locale)}`;
+}
+
+/** Whether Intl knows a zone; an unknown one makes every formatter for it throw. */
+function knownTimeZone(timeZone: string | undefined): boolean {
+  if (!timeZone) return false;
+  try { new Intl.DateTimeFormat('en-US', { timeZone }); return true; } catch { return false; }
+}
+
+/** The short name of the zone a date-time is shown in ("UTC"), or the zone's own id where the locale names none. */
+export function timeZoneLabel(date: Date, timeZone = 'UTC', locale = 'en-US'): string {
+  return new Intl.DateTimeFormat(locale, { timeZone, timeZoneName: 'short' }).formatToParts(date).find(part => part.type === 'timeZoneName')?.value ?? timeZone;
 }
 
 /** UTC datetime-local controls round-trip the same instant as deterministic displays. */

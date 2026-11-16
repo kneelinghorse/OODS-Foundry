@@ -2,7 +2,7 @@ import type { UiElement, UiSchema } from '../schemas/generated.js';
 import { analyzeBindings } from '../codegen/binding-utils.js';
 import { nativeSubmitHandler } from '../codegen/action-protocol.js';
 import { wiredCollectionAction } from '../codegen/collection-emitter.js';
-import { cancelActionLabel, compositionObject, orderScreenActions, screenActionAnchor, screenActionIntent } from '../codegen/screen-shell.js';
+import { cancelActionLabel, compositionObject, declaredScreenAction, orderScreenActions, screenActionAnchor, screenActionGate, screenActionIntent, screenActionLabel } from '../codegen/screen-shell.js';
 
 const LABELS: Record<string, string> = { onViewTimeline: 'View timeline', onChange: 'Change', onDelete: 'Delete', onEdit: 'Edit', onFilter: 'Filter', onPageChange: 'Change page', onRowClick: 'Open row', onSort: 'Sort', onSubmit: 'Submit' };
 
@@ -18,9 +18,16 @@ export function withHtmlActions(schema: UiSchema, objectName = compositionObject
       node.props[['onClick', 'onActivate', 'onSubmit'].includes(binding.event) ? 'data-oods-action' : 'data-oods-change-action'] = binding.handlerName;
     }
     const actions = orderScreenActions(analysis.occurrences.filter(item => item.nodeId === source.id && item.kind === 'domain' && item.scope === 'screen'
-      && !wiredCollectionAction(source, item.event) && !(item.event === 'onSubmit' && nodes([source]).some(child => child.component === 'Button' && child.props?.type === 'submit'))));
+      && !wiredCollectionAction(source, item.event) && !(item.event === 'onSubmit' && nodes([source]).some(child => child.component === 'Button' && child.props?.type === 'submit'))
+      && !(declaredScreenAction(item.event, objectName) && screenActionGate(item.event, schema.objectSchema, false, objectName)?.never)), objectName);
     if (actions.length) {
-      const bar: UiElement = { id: `${node.id}-actions`, component: 'Stack', layout: { type: 'inline' }, props: { role: 'group', 'aria-label': 'Screen actions', className: 'oods-action-bar' }, children: actions.map(action => ({ id: `${node.id}-${action.event}`, component: 'Button', props: { content: action.event === 'onCancel' ? cancelActionLabel(objectName) : LABELS[action.event] ?? action.event, 'data-intent': screenActionIntent(action.event), 'data-oods-action': action.handlerName } })) };
+      // s249-m03: a declared action (a grant's Revoke) says its verb, and is drawn only for a record whose state it moves
+      // from, as in React and Vue: the binder leaves out a button whose `data-oods-statuses` exclude the shown record's.
+      const gateOf = (event: string) => declaredScreenAction(event, objectName) ? screenActionGate(event, schema.objectSchema, false, objectName)?.statuses : undefined;
+      const bar: UiElement = { id: `${node.id}-actions`, component: 'Stack', layout: { type: 'inline' }, props: { role: 'group', 'aria-label': 'Screen actions', className: 'oods-action-bar' }, children: actions.map(action => ({ id: `${node.id}-${action.event}`, component: 'Button', props: {
+        content: action.event === 'onCancel' ? cancelActionLabel(objectName) : declaredScreenAction(action.event, objectName) ? screenActionLabel(action.event, objectName, false, LABELS) : LABELS[action.event] ?? action.event,
+        'data-intent': screenActionIntent(action.event, objectName), 'data-oods-action': action.handlerName,
+        ...(gateOf(action.event) ? { 'data-oods-statuses': gateOf(action.event)!.join(' ') } : {}) } })) };
       const anchor = nodes(node.children ?? []).find(child => screenActionAnchor(child) === 'summary') ?? nodes(node.children ?? []).find(child => screenActionAnchor(child) === 'title');
       const insert = (parent: UiElement): boolean => {
         const index = parent.children?.findIndex(child => child === anchor) ?? -1;
@@ -34,14 +41,22 @@ export function withHtmlActions(schema: UiSchema, objectName = compositionObject
   return { ...schema, screens: schema.screens.map(walk) as UiSchema['screens'] };
 }
 
-/** No eval, external requests or storage writes. Values stay in native controls; domain actions disclose their boundary. */
+/**
+ * No eval, external requests or storage writes. Values stay in native controls; domain actions disclose their boundary.
+ * s249-m04 (Interface 14): the notice a click shows names the button or control in a person's words, its label as it
+ * reads ("Revoke grant needs your application to act. Nothing was changed."), never a handler's name.
+ * s249-m04 (Interface 12): a list's search applies the one search rule @oods/component-contracts recordMatchesSearch
+ * states (any text or number at any depth of the row's record, its history included; never a key name), in the same
+ * steps, as `matches`.
+ */
 export const HTML_INTERACTIONS = `<script data-oods-runtime="document">(()=>{
 const root=document.currentScript.previousElementSibling;if(!root)return;
 const notice=root.querySelector('[data-oods-action-notice]');
-const announce=(name)=>{if(notice)notice.textContent=name+' needs your application’s data or navigation handler. No record was changed.';};
-root.addEventListener('click',(event)=>{const action=event.target.closest('[data-oods-action]');if(action){event.preventDefault();announce(action.dataset.oodsAction);}});
-root.addEventListener('change',(event)=>{const action=event.target.closest('[data-oods-change-action]');if(action)announce(action.dataset.oodsChangeAction);});
-root.addEventListener('submit',(event)=>{event.preventDefault();announce('Submit');});
+const words=(element)=>((element&&(element.getAttribute('aria-label')||(element.labels&&element.labels[0]&&element.labels[0].textContent)||(element.matches('button,a,[role="button"]')?element.textContent:'')))||'').replace(/\\s+/g,' ').trim()||'This';
+const announce=(element)=>{if(notice)notice.textContent=words(element)+' needs your application to act. Nothing was changed.';};
+root.addEventListener('click',(event)=>{const action=event.target.closest('[data-oods-action]');if(action){event.preventDefault();announce(action);}});
+root.addEventListener('change',(event)=>{const action=event.target.closest('[data-oods-change-action]');if(action)announce(action.matches('input,select,textarea')?action:action.querySelector('input,select,textarea')||action);});
+root.addEventListener('submit',(event)=>{event.preventDefault();announce(event.submitter||event.target.querySelector('button[type="submit"]'));});
 const camel=(field)=>field.replace(/_([a-z])/g,(_,letter)=>letter.toUpperCase());
 for(const collection of root.querySelectorAll('[data-oods-collection="rows"]')){
  const view=collection.closest('[data-oods-view-screen]')||root;
@@ -53,10 +68,11 @@ for(const collection of root.querySelectorAll('[data-oods-collection="rows"]')){
  const pageBar=view.querySelector('[data-oods-control="page"]');
  const empty=collection.querySelector(':scope > [data-oods-empty]');
  let page=1;const pageSize=10;
+ const matches=(value,needle,depth)=>typeof value==='string'||typeof value==='number'?String(value).toLowerCase().includes(needle):depth<8&&value!==null&&typeof value==='object'&&(Array.isArray(value)?value:Object.values(value)).some(item=>matches(item,needle,depth+1));
  const refresh=()=>{
-  const search=(input?.value||'').toLowerCase();
+  const search=(input?.value||'').trim().toLowerCase();
   const status=filter?.value||'';const field=camel(filter?.dataset.oodsFilterField||'status');
-  const sorted=items.filter(item=>(!search||JSON.stringify(item.record).toLowerCase().includes(search))&&(!status||String(item.record[field]??'')===status));
+  const sorted=items.filter(item=>(!search||matches(item.record,search,0))&&(!status||String(item.record[field]??'')===status));
   const sortField=camel(sort?.dataset.oodsSortField||'');const descending=sort?.value==='desc';
   if(sortField)sorted.sort((a,b)=>{const left=a.record[sortField],right=b.record[sortField];return (typeof left==='number'&&typeof right==='number'?left-right:String(left??'').localeCompare(String(right??'')))*(descending?-1:1);});
   page=Math.max(1,Math.min(page,Math.ceil(sorted.length/pageSize)));

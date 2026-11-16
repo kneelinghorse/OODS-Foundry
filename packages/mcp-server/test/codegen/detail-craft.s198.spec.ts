@@ -26,7 +26,12 @@ describe('s198 detail craft preserves readable, labelled record values', () => {
       if (value.component === 'StatusBadge') {
         expect(value.props?.statusField).toBeTruthy();
         expect(schema.objectSchema?.[String(value.props?.statusField)]).toBeDefined();
-      } else expect(value.props?.field ?? value.props?.amountField).toBeTruthy();
+      } else {
+        // s249-m03: an ended record's row that says its ender was not told (compose/ending-fields.ts) reads a fixed sentence,
+        // drawn only where the field it describes is empty; the label still names that real field.
+        const unset = row.props?.['data-oods-when-unset'];
+        expect(value.props?.field ?? value.props?.amountField ?? (typeof unset === 'string' && schema.objectSchema?.[unset] ? unset : undefined)).toBeTruthy();
+      }
     }
     for (const framework of ['react', 'vue'] as const) {
       const result = await generate({ schema, framework, profile: 'build' });
@@ -64,7 +69,8 @@ describe('s198 detail craft preserves readable, labelled record values', () => {
     expect(formatReadOnlyValue(false, 'boolean')).toBe('No');
     expect(formatReadOnlyValue(0, 'integer')).toBe('0');
     expect(formatReadOnlyValue(undefined, 'integer')).toBe('Not recorded');
-    expect(formatReadOnlyValue('2026-09-08T12:00:00Z', 'datetime')).toBe('Sep 8, 2026, 12:00 PM');
+    // s249-m04 (Interface 13): a date-time names the zone it is shown in ("… UTC"); a date alone names none.
+    expect(formatReadOnlyValue('2026-09-08T12:00:00Z', 'datetime')).toBe('Sep 8, 2026, 12:00 PM UTC');
     expect(formatReadOnlyValue('pending_cancellation', 'string', true)).toBe('Pending Cancellation');
     expect(formatReadOnlyValue('authored_title', 'string')).toBe('authored_title');
     expect(formatReadOnlyValue('bad-date', 'date')).toBe('Invalid date');
@@ -75,7 +81,7 @@ describe('s198 detail craft preserves readable, labelled record values', () => {
       { from_state: 'pending_cancellation', to_state: 'cancelled', transitioned_at: '2026-09-02T12:00:00Z', title: 'Customer closed account' },
     ] });
     expect(rows.map(row => row.title)).toEqual(['Trialing → Pending Cancellation', 'Customer closed account · Pending Cancellation → Cancelled']);
-    expect(rows.map(row => row.time)).toEqual(['Sep 1, 2026, 12:00 PM', 'Sep 2, 2026, 12:00 PM']);
+    expect(rows.map(row => row.time)).toEqual(['Sep 1, 2026, 12:00 PM UTC', 'Sep 2, 2026, 12:00 PM UTC']);
   });
   it('preserves HTML tab panel content and layout with honest integration controls', async () => {
     const schema = { version: '2026.02', screens: [{ id: 'tabs', component: 'Tabs', props: { ariaLabel: 'Record details' }, children: [
@@ -90,7 +96,10 @@ describe('s198 detail craft preserves readable, labelled record values', () => {
     const app = await compose({ object: 'Invoice', context: 'detail' });
     const rejected = await generate({ schema: app.schema, framework: 'html', profile: 'build' });
     expect(rejected.status).toBe('ok');
-    expect(rejected.code).toContain('No record was changed.');
+    // s249-m04 (Interface 14): HTML's notice names the button as it reads ("Save needs your app to act. Nothing was
+    // changed."), never a handler's name; it read "<handler> needs your application’s data or navigation handler. No record
+    // was changed."
+    expect(rejected.code).toContain(' needs your application to act. Nothing was changed.');
   });
   it.each(['react', 'vue'] as const)('%s workflow compiles the readonly detail expressions', async framework => {
     const { schema } = await compose({ object: 'Subscription', context: 'workflow' });

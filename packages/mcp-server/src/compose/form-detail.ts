@@ -11,6 +11,20 @@ import { isLevelOneHeading, RECORD_SUMMARY_INTENT } from '../codegen/screen-shel
 import { isLongTextField, keepsTextArea } from './long-text.js';
 import { OMIT_EMPTY_PROP } from '../codegen/binding-utils.js';
 
+/**
+ * s249-m04 (next step 1864 item 1): what a form never offers, because a person does not edit it there: the record's own id
+ * (`id`, or the object's name with `_id`, the id its workflow keys records by; never a reference to another record), when
+ * the record was created and last changed, and its last event and when (Timestampable's fields, under their own names or
+ * the names an object gives them).
+ */
+const RECORD_TIMES = new Set(['created_at', 'updated_at', 'last_event', 'last_event_at']);
+const RECORD_TIME_SEMANTICS = new Set(['audit.created_at', 'audit.updated_at', 'audit.event.type', 'audit.event.timestamp']);
+export function notEditedOnForm(name: string, fields: UiSchema['objectSchema'], objectName: string): boolean {
+  if (RECORD_TIMES.has(name) || RECORD_TIME_SEMANTICS.has(fields?.[name]?.semanticType ?? '')) return true;
+  const own = objectName.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase();
+  return name === 'id' || name === `${objectName.toLowerCase()}_id` || name === `${own}_id`;
+}
+
 /** s213-m03: marks a trait component the status-timeline pattern group kept beside its own fields (design.compose). */
 export const KEPT_BESIDE_PATTERN = 'kept-beside-pattern';
 
@@ -166,7 +180,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
     });
     const missing = Object.entries(fields).filter(([name, entry]) => entry.required && !edited.has(name) && !viewState.has(name)
       && /^(?:string|uuid|email|url|integer|number|boolean|date|datetime)\??$/.test(entry.type)
-      && !isInternalField(name, fields) && !isUnavailableField(name, fields));
+      && !isInternalField(name, fields) && !isUnavailableField(name, fields) && !notEditedOnForm(name, fields, composed.object.name));
     const fieldStack = schema.screens.map(screen => findNode(screen, node => /^form-fields-/.test(node.id))).find(Boolean);
     if (fieldStack) for (const [name, entry] of missing) {
       fieldEditors.add(name);
@@ -197,6 +211,8 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       node.children = node.children?.filter(child => !(controls.has(child.component) && !owners[child.component] && owned.has(String(child.props?.field))));
       // Internal fields (derived counts, version counters, hint copy) are not edited by hand.
       node.children = node.children?.filter(child => !(controls.has(child.component) && typeof child.props?.field === 'string' && (isInternalField(child.props.field, fields) || isUnavailableField(child.props.field, fields))));
+      // s249-m04 (1864 item 1): nor the record's own id, its creation and update instants, or its last event.
+      node.children = node.children?.filter(child => !(controls.has(child.component) && typeof child.props?.field === 'string' && notEditedOnForm(child.props.field, fields, composed.object.name)));
       // The object's own scalar role field is the role editor; a membership Role Assignment beside it is a duplicate Role field.
       node.children = node.children?.filter(child => !(child.component === 'RoleAssignmentForm' && fieldEditors.has('role')));
       // s244-m02: a Role Assignment placed in a field slot inherits that slot's record field (Agent's status), but it edits

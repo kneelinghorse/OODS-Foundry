@@ -30,7 +30,7 @@ An approval passes both. People say "three approvals waiting", and an ask can wa
 
 **Not yet asked** is the first state: the approval exists before it is this person's turn, as when people are asked in order.
 
-**The order of the answer.** `Approval` declares which state may follow which: not yet asked becomes waiting, withdrawn or not needed; waiting becomes approved, declined, expired, withdrawn or not needed; approved becomes used, out of date, taken back, expired, withdrawn or not needed. Every other state is final, written as an empty list, so a declined or used approval never moves again, and asking again is a new approval. Your product enforces this order. OODS Foundry keeps it as data, moves no approval and refuses no change; it checks only its own sample approvals against it.
+**The order of the answer.** `Approval` declares which state may follow which: not yet asked becomes waiting, withdrawn or not needed; waiting becomes approved, declined, expired, withdrawn or not needed; approved becomes used, out of date, taken back, expired, withdrawn or not needed. Every other state is final, written as an empty list, so a declined or used approval never moves again, and asking again is a new approval. Your product enforces this order on its own records. OODS Foundry keeps it as data, moves no approval on its own and checks its own sample approvals against it; a generated app keeps it in its own store, where the status select offers only the moves the order allows and the store refuses any other.
 
 ![One approval's page: the Billing Agent's resend, asked of Ruth Adeyemi at the Approval level, approved and used](approvals-as-decisions/approval-detail-light.png)
 
@@ -101,4 +101,4 @@ On an approval's form, the screen where the answer is chosen, five facts are rea
 
 ## What OODS Foundry does not do
 
-It models and renders. It does not ask anyone, check who may approve, count approvals, expire an ask, move an approval from one state to the next, sign anything, lock a record or stop a change; those belong to your product and your runtime. It cannot yet list a thing's approvals on the thing's own page, or show a signed-in person "waiting for your yes": the thing's outcome and summary are kept by your product, not worked out by OODS Foundry.
+It models and renders. It does not ask anyone, check who may approve, count approvals, expire an ask, move an approval from one state to the next on its own, sign anything, lock a record or stop a change outside a generated app's own store; those belong to your product and your runtime. A thing's own page lists its approvals only where the thing declares that list, and no shipped object does. No page shows a signed-in person "waiting for your yes"; a person's page lists the approvals waiting for their answer. The thing's outcome and summary are kept by your product, not worked out by OODS Foundry.

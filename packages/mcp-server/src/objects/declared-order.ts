@@ -1,14 +1,14 @@
 /**
- * s247-m01: the one place OODS Foundry reads a declared order at run time is the Cancel action in generated React and Vue
- * screens: the detail's action bar offers Cancel, and the generated store accepts it, only from a state whose declared
- * targets include the state cancelling moves to. This is that order, looked up by the object's name at generation time,
+ * s247-m01: Cancel follows a declared order in generated React and Vue screens: the detail's action bar offers Cancel, and
+ * the generated store accepts it, only from a state whose declared targets include the state cancelling moves to. This is that order, looked up by the object's name at generation time,
  * as the relationship diagram looks an object up, because the UI schema has no place for it.
  *
  * Only for an object that composes Cancellable. Approval declares an order and composes no Cancellable, so none of its
  * screens or stores move; Subscription and Transaction compose Cancellable and declare no order, so theirs do not either.
  * Undefined when the name is no registered object, the object declares no order, or it does not compose Cancellable;
- * Cancel then follows the lifecycle's state names, as it did in 0.13.1. Nothing else reads the order at run time: the
- * status select offers every state, and a generated app saves any move.
+ * Cancel then follows the lifecycle's state names, as it did in 0.13.1. s249-m03: the order is also read, for any object
+ * that declares one, by the status select (statusOptionsInOrder), the store's refusals and the declared actions
+ * (objects/state-actions.ts, codegen/workflow-data-emitter.ts).
  */
 import { loadObject } from './object-loader.js';
 

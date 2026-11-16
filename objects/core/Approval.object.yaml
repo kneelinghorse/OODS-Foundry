@@ -39,9 +39,10 @@ traits:
         - not_needed
         - used
       initialState: not_yet_asked
-      # s246-m01: the order the product enforces. An ask is made, then answered, and a yes ends once; the endings are final
-      # (empty lists), so a declined or used approval never moves again and a new ask is a new record. OODS Foundry does
-      # not move an approval or refuse a change: it keeps the order and checks only its own samples against it.
+      # s246-m01: the order your product enforces. An ask is made, then answered, and a yes ends once; the endings are final
+      # (empty lists), so a declined or used approval never moves again and a new ask is a new record. OODS Foundry moves
+      # no approval on its own and checks its own samples against the order; a generated app's status select offers only
+      # the moves it allows, and its store refuses any other.
       transitionRules:
         not_yet_asked: [waiting, withdrawn, not_needed]
         waiting: [approved, declined, expired, withdrawn, not_needed]

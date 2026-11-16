@@ -46,6 +46,7 @@ const users = (loadObject('User').samples ?? []) as Sample[];
 const agents = (loadObject('Agent').samples ?? []) as Sample[];
 const organizations = (loadObject('Organization').samples ?? []) as Sample[];
 const approvals = (loadObject('Approval').samples ?? []) as Sample[];
+const grantSamples = (loadObject('Grant').samples ?? []) as Sample[];
 const order = loadObject('Task').traits.find(trait => trait.name === 'lifecycle/Stateful')!.parameters!.transitionRules as Record<string, string[]>;
 const user = (id: unknown, name: unknown) => users.find(sample => sample.user_id === id && sample.name === name);
 const agent = (id: unknown, name: unknown) => agents.find(sample => sample.agent_id === id && sample.name === name);
@@ -119,11 +120,17 @@ function taskProblems(samples: Sample[]): string[] {
       const when = Date.parse(act.at);
       if (!activeSpans(actor).some(([from, to]) => when >= from && when < to)) problems.push(`${at}: ${String(act.name)} acts at ${String(act.at)}, when its record says it is not active`);
     }
-    // 10. An agent's line names a party it acts for only where the agent's own grants name that party.
+    // 10. An agent's line names a party it acts for only where the agent held a grant for that party that was active at
+    // the line's time. s249-m01: until 0.15.0 this read the agent's acts_for as it stands now, which a grant ended since
+    // makes false of every earlier line (the Support Agent's, once Northwind customer replies was revoked); it is now
+    // Grant's own check (grant.s248.spec.ts, rule 13), which keeps decision #2910's intent: an actor acts within its yes.
     for (const entry of task.state_history ?? []) {
       if (entry.actor_kind !== 'agent' || entry.on_behalf_of_name === undefined) continue;
-      const grants = String(agent(entry.actor_id, entry.actor_name)?.acts_for ?? 'None').split('; ').map(grant => grant.split(' · ')[0]);
-      if (!grants.includes(entry.on_behalf_of_name)) problems.push(`${at}: ${String(entry.actor_name)} acts for ${String(entry.on_behalf_of_name)}, which none of its grants names`);
+      const held = grantSamples.filter(grant => grant.granted_to_id === entry.actor_id && grant.granted_for_id === entry.on_behalf_of_id);
+      const when = Date.parse(entry.at);
+      if (!held.some(grant => activeSpans(grant).some(([from, to]) => when >= from && when < to))) {
+        problems.push(`${at}: ${String(entry.actor_name)} acts for ${String(entry.on_behalf_of_name)} at ${String(entry.at)}, when no grant of its for that party was active`);
+      }
     }
   }
   return problems;
@@ -215,7 +222,10 @@ describe('the eight Task samples tell true stories about the shipped samples the
     ['a person acting after their account was locked', (s: Sample[]) => { s[7]!.state_history[1].at = '2026-09-24T09:00:00Z'; }, /Grace Okafor acts at 2026-09-24T09:00:00Z/],
     // The agent that hands the count over is taken back to draft at that moment, so it cannot be the one asking.
     ['an agent asking as its record leaves active', (s: Sample[]) => { Object.assign(s[6]!, { requested_by_id: agents[4]!.agent_id, requested_by_name: agents[4]!.name, requested_by_kind: 'agent' }); }, /Inventory Agent acts at 2026-10-19T07:00:00Z/],
-    ['an agent acting for a party none of its grants names', (s: Sample[]) => { Object.assign(s[5]!.state_history[0], { on_behalf_of_id: s[5]!.requested_for_id, on_behalf_of_name: 'Lindqvist Bakery' }); }, /Inventory Agent acts for Lindqvist Bakery, which none of its grants names/],
+    // s249-m01: rule 10 checks a grant active at the line's time, so its words name the time (0.15.0: "…, which none of its
+    // grants names").
+    ['an agent acting for a party none of its grants names', (s: Sample[]) => { Object.assign(s[5]!.state_history[0], { on_behalf_of_id: s[5]!.requested_for_id, on_behalf_of_name: 'Lindqvist Bakery' }); }, /Inventory Agent acts for Lindqvist Bakery at 2026-\S+, when no grant of its for that party was active/],
+    ['an agent acting for a party after its grant ended', (s: Sample[]) => { s[1]!.state_history[1].at = '2026-10-09T14:12:00Z'; }, /Support Agent acts for Northwind Traders at 2026-10-09T14:12:00Z, when no grant of its for that party was active/],
   ])('catches %s', (_name, mutate, says) => {
     const samples = copy();
     mutate(samples);
@@ -264,11 +274,18 @@ describe('the eight Task samples tell true stories about the shipped samples the
       }) }));
     // The digests of each object's samples as 0.13.1 shipped them (planning head 80b903a6d6).
     const SHIPPED: Record<string, string> = {
-      User: 'c46b7b8b2503dff1', Organization: '9f9ee86cf12d29fc', Product: 'b9743dd806f97cf8', Subscription: '3ea11bcf91188e07', Transaction: '8613e5416546e7e0',
+      // s249-m01 (Interface 15): Northwind Group and Harbor Channel Partners keep one id each, the one the Relationship
+      // samples give them, as Northwind Traders' and Summit Outfitters' owner (0.15.0: 9f9ee86cf12d29fc).
+      User: 'c46b7b8b2503dff1', Organization: '6042ad7979d3659b', Product: 'b9743dd806f97cf8', Subscription: '3ea11bcf91188e07', Transaction: '8613e5416546e7e0',
       // s248-m02: Relationship's two delegation samples are Grant samples now (0.14.0: ebfe1de18c636fee).
       Relationship: '8ddf3066c141d66e', Article: '9194b50293de1fae', Media: 'b659b30bae5d5093', Invoice: '5b755a0663efb6f5', Plan: '421f7fd719870b01',
       // s248-m02 (next step 1870): the resend approval's first line says why it was created (0.14.0: 0eaf67ca99658d7f).
-      Usage: 'c54a4d96226e4e98', Agent: 'f54bc01fdd86743e', Approval: 'f94c44459cde9683',
+      // s249-m01: Northwind customer replies was revoked on 8 Oct, so the Support Agent's acts_for reads None and its last
+      // change moves to then; two lines move a minute earlier, so no one acts at the instant their own account closes
+      // (next step 1876); the Billing Agent's activation says twelve days, as its dates do (next step 1880) (0.15.0:
+      // f54bc01fdd86743e). s249-m05 (the fresh read): the Support Agent's last event is that 8 October update, where it
+      // read its March activation (s249-m01: d15b318f0b15b758).
+      Usage: 'c54a4d96226e4e98', Agent: '35c65a8178353b29', Approval: 'f94c44459cde9683',
     };
     for (const [name, digest] of Object.entries(SHIPPED)) {
       expect(crypto.createHash('sha256').update(JSON.stringify(strip(name, loadObject(name).samples as Sample[] ?? []))).digest('hex').slice(0, 16), name).toBe(digest);

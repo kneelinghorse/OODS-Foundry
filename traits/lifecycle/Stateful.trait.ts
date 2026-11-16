@@ -9,7 +9,7 @@ export type TransitionRules = Record<string, string[]>;
 const StatefulTrait = {
   trait: {
     name: 'Stateful',
-    version: '2.4.0',
+    version: '2.5.0',
     description:
       'Normalizes lifecycle state transitions, exposes canonical status semantics, and provides ' +
       'optional transition governance for production workflows. Most-composed trait (18 objects).',
@@ -42,7 +42,18 @@ const StatefulTrait = {
       description:
         'JSON-encoded allowed state transition map (Record<string, string[]>). Keys are source states; ' +
         'values are arrays of permitted targets, and an empty array marks a final state. An order that names a state ' +
-        'the lifecycle lacks is refused. The product enforces the order. When null, all transitions are allowed (open model).',
+        'the lifecycle lacks is refused. Your product enforces the order; a generated app keeps it in its own store. ' +
+        'When null, all transitions are allowed (open model).',
+      default: null,
+    },
+    {
+      name: 'actions',
+      type: 'object[]',
+      required: false,
+      description:
+        'Named moves a person makes on a record, each to one state of the declared order (id, to, from, verb, event, and ' +
+        'optionally reasonField, bySeat, confirm and alsoEnds). A generated screen offers each only from the states it moves ' +
+        'from, and a generated app writes it as one change to its own records; it stops nothing. Each needs transitionRules.',
       default: null,
     },
     {
@@ -77,7 +88,7 @@ const StatefulTrait = {
       required: false,
       description:
         'Materialized next states the product allows from the current status, written by the product from transitionRules. ' +
-        'Listed by StatusTimeline; a generated StatusSelector offers every state.',
+        'Listed by StatusTimeline; a generated StatusSelector offers the current state and the moves transitionRules allows.',
       default: [],
     },
   },
@@ -173,12 +184,13 @@ const StatefulTrait = {
 
   metadata: {
     created: '2025-10-12',
-    updated: '2026-11-13',
+    updated: '2026-11-16',
     owners: ['Design team', 'Engineering team'],
     maturity: 'stable',
     accessibility: {
       keyboard:
-        'StatusSelector is a labelled native select: arrow keys move through the states. It offers every state and disables none.',
+        'StatusSelector is a labelled native select: arrow keys move through the states it offers, the current state and ' +
+        'the moves the declared order allows (every state where none is declared). It disables none.',
       screenreader:
         'StatusBadge announces the current state ("Status: Active"). ' +
         'StateTransitionEvent entries announce from-state, to-state, actor, and reason.',

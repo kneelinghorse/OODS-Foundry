@@ -46,6 +46,9 @@ import { composeObject, viewStateFields, type ComposedObject } from '../objects/
 import type { FieldDefinition, SemanticMapping, StateMachineDefinition, TraitAction } from '../objects/types.js';
 import { resolveIntentObject, fuzzyMatchObject } from '../compose/intent-object-resolver.js';
 import { populateCollections, populateListStates } from '../compose/collections.js';
+import { populateRelatedLists } from '../compose/related-region.js';
+import { placeEndingFields } from '../compose/ending-fields.js';
+import { declaredActions, declaredOrder } from '../objects/state-actions.js';
 import { reconcileFormDetail, KEPT_BESIDE_PATTERN, formFactFields } from '../compose/form-detail.js';
 import { enforceApprovalFacts } from '../compose/approval-facts.js';
 import { isLongTextField } from '../compose/long-text.js';
@@ -2202,12 +2205,23 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
         Object.keys(composed.schema),
         composed.traits.map((trait) => trait.ref.name),
         readOnly,
+        // s249-m03: the moves the object's lifecycle declares, and its order, which says which of them end the record.
+        (() => { try { return declaredActions(loadObject(composed.object.name)); } catch { return []; } })(),
+        (() => { try { return declaredOrder(loadObject(composed.object.name)); } catch { return undefined; } })(),
       );
     }
   }
 
   if (composed && effectiveContext) populateCollections(schema, effectiveContext, composed.object.name, composed.traits.find(trait => trait.ref.name === 'behavioral/Searchable')?.ref.parameters?.placeholder as string | undefined, listColumns, composed.semantics);
   if (composed && effectiveContext) reconcileFormDetail(schema, effectiveContext, composed, input.preferences?.tabLabels, readTab, viewState);
+  // s249-m02: an object's declared related lists end its detail page (and so a generated app's detail screen), after the
+  // record's own panels; a declaration that no longer fits the registered objects says so here.
+  if (composed && effectiveContext === 'detail' && layoutType !== 'dashboard') {
+    for (const message of populateRelatedLists(schema, composed.object.name)) warnings.push({ code: 'OODS-V119', message });
+  }
+  // s249-m03: an ending a person makes (a grant's Revoke) reads as facts once made: on the detail, an ender the app was not
+  // told of; on the form, why it ended, which a final record keeps.
+  if (composed && (effectiveContext === 'detail' || effectiveContext === 'form') && layoutType !== 'dashboard') placeEndingFields(schema, composed.object.name, effectiveContext);
   // Reconciled trait panels retain their slot identity; report the same confidence as their selection.
   const stampConfidence = (node: UiElement): void => {
     const slot = node.meta?.intent?.startsWith('slot:') ? node.meta.intent.slice(5) : undefined;

@@ -8,7 +8,7 @@
     "approvedRuntimeCensus": null,
     "classificationStatus": "proposed-awaiting-approval"
   },
-  "generatedAt": "2026-11-14T22:22:21Z",
+  "generatedAt": "2026-11-16T10:53:08Z",
   "stats": {
     "componentCount": 114,
     "traitCount": 54,
@@ -9265,8 +9265,6 @@
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/9",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/12",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/13",
-              "packages/mcp-server/registry/runtime-cells.v1.json#/rows/18",
-              "packages/mcp-server/registry/runtime-cells.v1.json#/rows/19",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/22",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/23",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/26",
@@ -12889,6 +12887,42 @@
           "traitCategory": "core",
           "context": "detail",
           "position": "main",
+          "priority": 77.9,
+          "props": {
+            "field": "asked_of_id",
+            "data-oods-omit-empty": true
+          },
+          "source": "traits/core/Mandate.trait.yaml"
+        },
+        {
+          "trait": "Mandate",
+          "traitCategory": "core",
+          "context": "detail",
+          "position": "main",
+          "priority": 77.8,
+          "props": {
+            "field": "asked_of_name",
+            "data-oods-omit-empty": true
+          },
+          "source": "traits/core/Mandate.trait.yaml"
+        },
+        {
+          "trait": "Mandate",
+          "traitCategory": "core",
+          "context": "detail",
+          "position": "main",
+          "priority": 77.7,
+          "props": {
+            "field": "asked_of_kind",
+            "data-oods-omit-empty": true
+          },
+          "source": "traits/core/Mandate.trait.yaml"
+        },
+        {
+          "trait": "Mandate",
+          "traitCategory": "core",
+          "context": "detail",
+          "position": "main",
           "priority": 77,
           "props": {
             "field": "allowed_actions",
@@ -13177,6 +13211,18 @@
           "traitCategory": "core",
           "context": "detail",
           "position": "main",
+          "priority": 53.5,
+          "props": {
+            "field": "ended_as",
+            "data-oods-omit-empty": true
+          },
+          "source": "traits/core/Mandate.trait.yaml"
+        },
+        {
+          "trait": "Mandate",
+          "traitCategory": "core",
+          "context": "detail",
+          "position": "main",
           "priority": 53,
           "props": {
             "field": "ended_reason",
@@ -13300,6 +13346,30 @@
           "priority": 81,
           "props": {
             "field": "requested_by_name",
+            "data-oods-omit-empty": true
+          },
+          "source": "traits/core/Mandate.trait.yaml"
+        },
+        {
+          "trait": "Mandate",
+          "traitCategory": "core",
+          "context": "form",
+          "position": "top",
+          "priority": 80.9,
+          "props": {
+            "field": "asked_of_id",
+            "data-oods-omit-empty": true
+          },
+          "source": "traits/core/Mandate.trait.yaml"
+        },
+        {
+          "trait": "Mandate",
+          "traitCategory": "core",
+          "context": "form",
+          "position": "top",
+          "priority": 80.8,
+          "props": {
+            "field": "asked_of_name",
             "data-oods-omit-empty": true
           },
           "source": "traits/core/Mandate.trait.yaml"
@@ -17814,7 +17884,7 @@
     {
       "name": "Approvable",
       "version": "1.1.0",
-      "description": "The ability to be approved: the thing's own rule for which change needs which level of yes, from how many and from\nwhom, and its outcome, worked out from the approvals that still stand. The approvals themselves are records of\ntheir own (the Approval object, through the Decision trait): one ask to one actor that becomes their answer.\n\nThe rule is the parameters. `levels` names the levels of yes the product declares, least deliberate first, as Decision does on\nthe Approval; `levelDefinitions` says what each one is, in six short texts; `requiredLevels` says which change (a\nstate the thing moves to, or a named action) needs which level; `approvalsNeeded`, `askerMayAnswer`,\n`agentLevels` and `lapsesOnChange` say how many, whether the asker may answer, which levels an agent's yes may\nsatisfy, and whether a yes lapses when the thing changes. `inAdvance` names the changes a grant's standing yes may\nallow in advance, where the product lets a yes given earlier stand for one asked now; it is empty by default, so\nevery change the rule names is asked each time. The definitions are kept with the rule; no screen changes by level.\n\nThe outcome is two read-only fields: `approval_state`, under a name of its own so it never collides with the\nlifecycle's `status`, and `approval_summary`, one kept line (\"Approved by Ruth Adeyemi · version 3 · 2 Nov\").\nThe product's own code works the outcome out from the approvals and writes both fields; they are kept off the\nthing's form and shown on its detail page. The summary restates the Approval records, because OODS Foundry cannot\nyet list the records that point at a record.\n\nOODS Foundry shows the outcome; it does not work it out. It does not count approvals, check who may approve,\nexpire an ask, lock the thing or stop a change.",
+      "description": "The ability to be approved: the thing's own rule for which change needs which level of yes, from how many and from\nwhom, and its outcome, worked out from the approvals that still stand. The approvals themselves are records of\ntheir own (the Approval object, through the Decision trait): one ask to one actor that becomes their answer.\n\nThe rule is the parameters. `levels` names the levels of yes the product declares, least deliberate first, as Decision does on\nthe Approval; `levelDefinitions` says what each one is, in six short texts; `requiredLevels` says which change (a\nstate the thing moves to, or a named action) needs which level; `approvalsNeeded`, `askerMayAnswer`,\n`agentLevels` and `lapsesOnChange` say how many, whether the asker may answer, which levels an agent's yes may\nsatisfy, and whether a yes lapses when the thing changes. `inAdvance` names the changes a grant's standing yes may\nallow in advance, where the product lets a yes given earlier stand for one asked now; it is empty by default, so\nevery change the rule names is asked each time. The definitions are kept with the rule; no screen changes by level.\n\nThe outcome is two read-only fields: `approval_state`, under a name of its own so it never collides with the\nlifecycle's `status`, and `approval_summary`, one kept line (\"Approved by Ruth Adeyemi · version 3 · 2 Nov\").\nThe product's own code works the outcome out from the approvals and writes both fields; they are kept off the\nthing's form and shown on its detail page. The summary restates the Approval records, since a thing's own page lists\nits approvals only where the thing declares that list (metadata.relatedLists), and no shipped object does.\n\nOODS Foundry shows the outcome; it does not work it out. It does not count approvals, check who may approve,\nexpire an ask, lock the thing or stop a change.",
       "category": "core",
       "tags": [
         "approval-rule",
@@ -17936,7 +18006,7 @@
           "type": "string",
           "required": false,
           "readOnly": true,
-          "description": "One kept line saying what the outcome rests on (\"Approved by Ruth Adeyemi · version 3 · 2 Nov\"), or why no\napproval was asked. It restates the Approval records, because OODS Foundry cannot yet list the records that point\nat a record. Read-only.\n",
+          "description": "One kept line saying what the outcome rests on (\"Approved by Ruth Adeyemi · version 3 · 2 Nov\"), or why no\napproval was asked. It restates the Approval records, since a thing's own page lists its approvals only where the\nthing declares that list (metadata.relatedLists), and no shipped object does. Read-only.\n",
           "validation": {
             "maxLength": 240
           }
@@ -24625,8 +24695,8 @@
     },
     {
       "name": "Mandate",
-      "version": "1.0.0",
-      "description": "The record of a grant: a standing yes that one actor may act for a person or organization, on stated terms,\nuntil it ends. It keeps who asked for it, who gave it and in what capacity, who holds it and who it is for; what it\ncovers in words, its three lines for that party, its limits and its end; its use as the product counts it; the\ngrant it sits inside or replaced; and who ended it and why. The Grant object composes this trait, and the importer\ncan propose it for another system's grant or consent record that keeps a state, an end and the agent or app that\nholds it, so every field lives here and a proposal can bind what the source has.\n\nThe state of the grant is not a field of this trait. It is the record's own lifecycle, through Stateful: for a\nGrant, requested, then active (or paused), declined or withdrawn, and a grant once given ends revoked, expired or\nreplaced. Its terms are not\nedited in place. A change of terms is a new grant that names the one it replaces, and a standing yes for one\naction is a new grant inside the first, with its own bounds and end.\n\nA reference to a person, an agent, an organization or another grant is an id and a kept name, so it still reads\nafter the person leaves or the grant ends. The kinds are the Actor trait's three words: person, agent or system.\nThe three lines follow the Agent's own: items separated by \"; \", and \"None\" when there are none. The money limits\nare whole numbers in the currency's minor units at two decimal places, so a currency with other decimals reads\nwrong. The end is kept three ways: the exact instant a product checks, the party's time zone, and one line in the\nparty's own words and zone, which is what people read.\n\nOODS Foundry keeps and shows this record. It does not check a grant against what an actor does, count its uses or\nspend, expire, pause, revoke or renew one, stop a token or decide whether an action was allowed.",
+      "version": "1.1.0",
+      "description": "The record of a grant: a standing yes that one actor may act for a person or organization, on stated terms,\nuntil it ends. It keeps who asked for it, who gave it and in what capacity, who holds it and who it is for; what it\ncovers in words, its three lines for that party, its limits and its end; its use as the product counts it; the\ngrant it sits inside or replaced; and who ended it and why. The Grant object composes this trait, and the importer\ncan propose it for another system's grant or consent record that keeps a state, an end and the agent or app that\nholds it, so every field lives here and a proposal can bind what the source has.\n\nThe state of the grant is not a field of this trait. It is the record's own lifecycle, through Stateful: for a\nGrant, requested, then active (or paused), declined or withdrawn, or expired when no one answers in time; a grant\nonce given ends revoked, expired or replaced. Its terms are not\nedited in place. A change of terms is a new grant that names the one it replaces, and a standing yes for one\naction is a new grant inside the first, with its own bounds and end.\n\nA reference to a person, an agent, an organization or another grant is an id and a kept name, so it still reads\nafter the person leaves or the grant ends. The kinds are the Actor trait's three words: person, agent or system.\nThe three lines follow the Agent's own: items separated by \"; \", and \"None\" when there are none. The money limits\nare whole numbers in the currency's minor units at two decimal places, so a currency with other decimals reads\nwrong. The end is kept three ways: the exact instant a product checks, the party's time zone, and one line in the\nparty's own words and zone, which is what people read.\n\nOODS Foundry keeps and shows this record. It does not check a grant against what an actor does, count its uses or\nspend, expire or renew one, stop a token or decide whether an action was allowed. A generated app's Revoke, Pause\nand Resume change the record when a person asks, and stop nothing outside it.",
       "category": "core",
       "tags": [
         "grant-record",
@@ -24834,6 +24904,36 @@
           "priority": 78,
           "props": {
             "field": "requested_by_kind",
+            "data-oods-omit-empty": true
+          }
+        },
+        {
+          "component": "Text",
+          "context": "detail",
+          "position": "main",
+          "priority": 77.9,
+          "props": {
+            "field": "asked_of_id",
+            "data-oods-omit-empty": true
+          }
+        },
+        {
+          "component": "Text",
+          "context": "detail",
+          "position": "main",
+          "priority": 77.8,
+          "props": {
+            "field": "asked_of_name",
+            "data-oods-omit-empty": true
+          }
+        },
+        {
+          "component": "Text",
+          "context": "detail",
+          "position": "main",
+          "priority": 77.7,
+          "props": {
+            "field": "asked_of_kind",
             "data-oods-omit-empty": true
           }
         },
@@ -25081,6 +25181,16 @@
           "component": "Text",
           "context": "detail",
           "position": "main",
+          "priority": 53.5,
+          "props": {
+            "field": "ended_as",
+            "data-oods-omit-empty": true
+          }
+        },
+        {
+          "component": "Text",
+          "context": "detail",
+          "position": "main",
           "priority": 53,
           "props": {
             "field": "ended_reason",
@@ -25184,6 +25294,26 @@
           "priority": 81,
           "props": {
             "field": "requested_by_name",
+            "data-oods-omit-empty": true
+          }
+        },
+        {
+          "component": "Text",
+          "context": "form",
+          "position": "top",
+          "priority": 80.9,
+          "props": {
+            "field": "asked_of_id",
+            "data-oods-omit-empty": true
+          }
+        },
+        {
+          "component": "Text",
+          "context": "form",
+          "position": "top",
+          "priority": 80.8,
+          "props": {
+            "field": "asked_of_name",
             "data-oods-omit-empty": true
           }
         },
@@ -25336,6 +25466,31 @@
           "required": false,
           "readOnly": true,
           "description": "What kind of actor asked for it (person, agent or system), as the Actor trait names them.",
+          "validation": {
+            "enum": [
+              "person",
+              "agent",
+              "system"
+            ]
+          }
+        },
+        "asked_of_id": {
+          "type": "string",
+          "required": false,
+          "readOnly": true,
+          "description": "Who was asked for the yes, by the id the product knows them by. A requested grant waits on them; the field stays once it is answered."
+        },
+        "asked_of_name": {
+          "type": "string",
+          "required": false,
+          "readOnly": true,
+          "description": "Who was asked for the yes, as shown (\"Ruth Adeyemi\"). Kept on the record."
+        },
+        "asked_of_kind": {
+          "type": "string",
+          "required": false,
+          "readOnly": true,
+          "description": "What kind of actor was asked for the yes (person, agent or system), as the Actor trait names them.",
           "validation": {
             "enum": [
               "person",
@@ -25625,6 +25780,15 @@
             ]
           }
         },
+        "ended_as": {
+          "type": "string",
+          "required": false,
+          "readOnly": true,
+          "description": "The capacity they ended it in, in one line, where it is not one of the grant's own seats (\"Accounts lead, Kestrel Print Co.\").",
+          "validation": {
+            "maxLength": 120
+          }
+        },
         "ended_reason": {
           "type": "string",
           "required": false,
@@ -25658,6 +25822,31 @@
           "ui_hints": {
             "component": "Text",
             "label": "Kind of asker"
+          }
+        },
+        "asked_of_id": {
+          "semantic_type": "mandate.asked_of_id",
+          "token_mapping": "tokenMap(text.body.*)",
+          "ui_hints": {
+            "component": "Text",
+            "label": "Asked of",
+            "displayLabelField": "asked_of_name"
+          }
+        },
+        "asked_of_name": {
+          "semantic_type": "mandate.asked_of_name",
+          "token_mapping": "tokenMap(text.body.*)",
+          "ui_hints": {
+            "component": "Text",
+            "label": "Asked of"
+          }
+        },
+        "asked_of_kind": {
+          "semantic_type": "mandate.asked_of_kind",
+          "token_mapping": "tokenMap(text.body.*)",
+          "ui_hints": {
+            "component": "Text",
+            "label": "Kind of the one asked"
           }
         },
         "granted_by_id": {
@@ -25824,7 +26013,7 @@
           "token_mapping": "tokenMap(text.body.*)",
           "ui_hints": {
             "component": "RelativeTimestamp",
-            "label": "Ends (UTC)"
+            "label": "End time"
           }
         },
         "timezone": {
@@ -25856,7 +26045,7 @@
           "token_mapping": "tokenMap(text.body.*)",
           "ui_hints": {
             "component": "RelativeTimestamp",
-            "label": "Last used (UTC)"
+            "label": "Last used"
           }
         },
         "last_use": {
@@ -25864,7 +26053,7 @@
           "token_mapping": "tokenMap(text.body.*)",
           "ui_hints": {
             "component": "Text",
-            "label": "Last use"
+            "label": "Last used for"
           }
         },
         "spent_minor": {
@@ -25951,6 +26140,14 @@
           "ui_hints": {
             "component": "Text",
             "label": "Kind of ender"
+          }
+        },
+        "ended_as": {
+          "semantic_type": "mandate.ended_as",
+          "token_mapping": "tokenMap(text.body.*)",
+          "ui_hints": {
+            "component": "Text",
+            "label": "Ended as"
           }
         },
         "ended_reason": {
@@ -30048,8 +30245,8 @@
     },
     {
       "name": "Stateful",
-      "version": "2.4.0",
-      "description": "Normalizes lifecycle state transitions, exposes canonical status semantics, and provides\noptional transition governance for production workflows. Many objects compose Stateful\n(User, Subscription and Product among them), and it serves as the data source for the\nColorized visual trait.\n\nAt its simplest, Stateful defines an ordered list of valid states and tracks the current\nstatus. With transitionRules, a product also declares which moves between states are allowed,\nfor auditable workflows where arbitrary state jumps are not permitted.\nThe product enforces that order: it checks each change against it and writes allowed_transitions.\nOODS Foundry keeps the order as data, refuses an order that names a state the lifecycle lacks,\nholds its own shipped samples to it and moves no record. In a generated React or Vue app it\nreads the order in one place: Cancel is offered, and the generated store accepts it, only from a\nstate the order lets move to where cancelling goes.\nA generated StatusSelector offers every state. Every recorded change, with an order or without\none, can name who made it and why.",
+      "version": "2.5.0",
+      "description": "Normalizes lifecycle state transitions, exposes canonical status semantics, and provides\noptional transition governance for production workflows. Many objects compose Stateful\n(User, Subscription and Product among them), and it serves as the data source for the\nColorized visual trait.\n\nAt its simplest, Stateful defines an ordered list of valid states and tracks the current\nstatus. With transitionRules, a product also declares which moves between states are allowed,\nfor auditable workflows where arbitrary state jumps are not permitted.\nYour product enforces that order on its own records: it checks each change against it and writes\nallowed_transitions. OODS Foundry keeps the order as data, refuses an order that names a state the\nlifecycle lacks and holds its own shipped samples to it. A generated app keeps the order in its own\nstore: a generated StatusSelector offers the record's state and the moves the order allows from it,\nand the store refuses any other move and any move out of a final state. In generated React and Vue\nscreens, Cancel is offered, and the store accepts it, only from a state the order lets move to where\ncancelling goes. With actions, a lifecycle also names the moves a person makes, such as a grant's\nRevoke, Pause and Resume: each is offered only from the states it moves from, is written as one\nchange to the app's own records, and stops nothing. Every recorded change, with an order or without one,\ncan name who made it and why.",
       "category": "lifecycle",
       "tags": [
         "lifecycle",
@@ -30140,7 +30337,14 @@
           "name": "transitionRules",
           "type": "Record<string, string[]>",
           "required": false,
-          "description": "Allowed state transition map. Keys are source states; values are arrays of permitted\ntarget states, and an empty array marks a final state. Every key and target must be one of\nthe states: an order that names a state the lifecycle lacks is refused. The product enforces\nthe order and rejects any other move; OODS Foundry keeps it as data, and in a generated React\nor Vue app reads it only for Cancel, which is offered and accepted only where the order\nallows. When omitted, a move between any two states is allowed (open model).\n\nExample for a subscription lifecycle:\n  draft: [active, archived]\n  active: [paused, archived]\n  paused: [active, archived]\n  archived: []\n",
+          "description": "Allowed state transition map. Keys are source states; values are arrays of permitted\ntarget states, and an empty array marks a final state. Every key and target must be one of\nthe states: an order that names a state the lifecycle lacks is refused. Your product enforces\nthe order and rejects any other move. OODS Foundry keeps it as data, and a generated app keeps\nit in its own store: its status select offers the current state and the moves allowed from it,\nits store refuses any other move and any move out of a final state, and Cancel and the declared\nactions are offered only where the order allows. When omitted, a move between any two states is\nallowed (open model).\n\nExample for a subscription lifecycle:\n  draft: [active, archived]\n  active: [paused, archived]\n  paused: [active, archived]\n  archived: []\n",
+          "default": null
+        },
+        {
+          "name": "actions",
+          "type": "object[]",
+          "required": false,
+          "description": "Named moves a person makes on a record, each to one state of the declared order: its id, the state it\nmoves to (to), the states it is offered from (from; by default every state whose declared targets include to),\nthe verb a person reads (verb), and the event Timestampable records for it (event). It may also name the field its\noptional note is written to (reasonField), the seat whose _id, _name and _kind fields name who acted when the app\nis told (bySeat), whether it asks once first (confirm), and the records of the same object that make the same move\nwith it (alsoEnds: { via }). Each action needs transitionRules. A generated screen offers an action only from the\nstates it moves from, and a generated app writes it as one change to its own records when a person asks; it stops\nnothing. A record whose object declares an action ending it (to a final state) is ended, never deleted, so its\ndetail offers no Delete.\nExample for a grant:\n  - { id: revoke, to: revoked, verb: Revoke, event: ended, reasonField: ended_reason, bySeat: ended_by, confirm: true, alsoEnds: { via: within_id } }\n  - { id: pause, to: paused, verb: Pause, event: paused }\n  - { id: resume, from: [paused], to: active, verb: Resume, event: resumed }\n",
           "default": null
         },
         {
@@ -30169,7 +30373,7 @@
         "allowed_transitions": {
           "type": "string[]",
           "required": false,
-          "description": "Materialized list of the next states the product allows from the current status, written\nby the product from the transitionRules parameter. When transitionRules is null (open model),\nthis contains all states except the current one. The detail page's StatusTimeline lists it\nwhen the record holds it; a generated StatusSelector offers every state whatever it holds.\n",
+          "description": "Materialized list of the next states the product allows from the current status, written\nby the product from the transitionRules parameter. When transitionRules is null (open model),\nthis contains all states except the current one. The detail page's StatusTimeline lists it\nwhen the record holds it. A generated StatusSelector reads transitionRules instead: it offers the\ncurrent state and the moves the order allows (every state where no order is declared).\n",
           "default": []
         }
       },
@@ -30212,7 +30416,7 @@
       "dependencies": [],
       "metadata": {
         "created": "2025-10-12",
-        "updated": "2026-11-14",
+        "updated": "2026-11-16",
         "owners": [
           "Design team",
           "Engineering team"
@@ -30230,7 +30434,7 @@
           ]
         },
         "accessibility": {
-          "keyboard": "StatusSelector is a labelled native select: arrow keys move through the states. It offers\nevery state and disables none.\n",
+          "keyboard": "StatusSelector is a labelled native select: arrow keys move through the states it offers, the\ncurrent state and the moves the declared order allows (every state where none is declared). It\ndisables none.\n",
           "screenreader": "StatusBadge announces the current state (\"Status: Active\"). StateTransitionEvent entries\nannounce from-state, to-state, actor, and reason.\n"
         },
         "regionsUsed": [
@@ -31140,7 +31344,7 @@
           "name": "timezone",
           "type": "string",
           "required": false,
-          "description": "Default timezone context applied when rendering timestamps.",
+          "description": "The time zone your product reads the record's times in. Screens show times in UTC, and a shown date-time says so; a date-time input does not yet.",
           "default": "UTC",
           "validation": {
             "enum": [
@@ -31415,6 +31619,90 @@
             "version": "1.0.0",
             "date": "2026-11-07",
             "description": "Initial Agent object, the twelfth public reference object; an agent is an actor, not a user."
+          }
+        ],
+        "relatedLists": [
+          {
+            "id": "acts-for",
+            "label": "Grants {name} holds",
+            "empty": "{name} holds no grant now.",
+            "filtered": {
+              "one": "1 other grant to {name} is asked for or has ended.",
+              "other": "{count} other grants to {name} are asked for or have ended."
+            },
+            "sources": [
+              {
+                "from": "Grant",
+                "via": "granted_to_id",
+                "when": {
+                  "granted_to_kind": "agent",
+                  "within_id": null
+                },
+                "states": [
+                  "active",
+                  "paused"
+                ],
+                "inner": "within_id",
+                "row": {
+                  "line": [
+                    "granted_for_name",
+                    "scope",
+                    "last_use",
+                    {
+                      "says": "No uses counted",
+                      "when": {
+                        "uses": 0
+                      }
+                    }
+                  ],
+                  "time": "ends_note"
+                }
+              }
+            ]
+          },
+          {
+            "id": "work",
+            "label": "Work {name} did",
+            "empty": "No recorded change names {name} as the one who acted.",
+            "sources": [
+              {
+                "from": [
+                  "Task",
+                  "Approval",
+                  "Transaction",
+                  "Grant"
+                ],
+                "via": "state_history[].actor_id"
+              }
+            ]
+          },
+          {
+            "id": "ended-grants",
+            "label": "Ended grants {name} held",
+            "empty": "No grant {name} held has ended.",
+            "collapsed": true,
+            "sources": [
+              {
+                "from": "Grant",
+                "via": "granted_to_id",
+                "when": {
+                  "granted_to_kind": "agent",
+                  "within_id": null
+                },
+                "states": [
+                  "revoked",
+                  "expired",
+                  "replaced"
+                ],
+                "inner": "within_id",
+                "row": {
+                  "line": [
+                    "granted_for_name",
+                    "scope"
+                  ]
+                }
+              }
+            ]
           }
         ]
       },
@@ -32664,7 +32952,8 @@
               "requested": [
                 "active",
                 "declined",
-                "withdrawn"
+                "withdrawn",
+                "expired"
               ],
               "active": [
                 "paused",
@@ -32683,7 +32972,36 @@
               "replaced": [],
               "declined": [],
               "withdrawn": []
-            }
+            },
+            "actions": [
+              {
+                "id": "revoke",
+                "to": "revoked",
+                "verb": "Revoke",
+                "event": "ended",
+                "reasonField": "ended_reason",
+                "bySeat": "ended_by",
+                "confirm": true,
+                "alsoEnds": {
+                  "via": "within_id"
+                }
+              },
+              {
+                "id": "pause",
+                "to": "paused",
+                "verb": "Pause",
+                "event": "paused"
+              },
+              {
+                "id": "resume",
+                "from": [
+                  "paused"
+                ],
+                "to": "active",
+                "verb": "Resume",
+                "event": "resumed"
+              }
+            ]
           }
         },
         {
@@ -32762,6 +33080,152 @@
             "version": "1.0.0",
             "date": "2026-11-14",
             "description": "Initial Grant object, the fifteenth public reference object; a grant is a standing yes, not a setting."
+          }
+        ],
+        "relatedLists": [
+          {
+            "id": "inside",
+            "label": "Grants inside it",
+            "empty": "No grant sits inside this one.",
+            "sources": [
+              {
+                "from": "Grant",
+                "via": "within_id",
+                "row": {
+                  "line": [
+                    "scope"
+                  ],
+                  "time": "ends_note"
+                }
+              }
+            ]
+          },
+          {
+            "id": "replaced-by",
+            "label": "Replaced by",
+            "empty": "No grant replaces this one.",
+            "sources": [
+              {
+                "from": "Grant",
+                "via": "replaces_id",
+                "row": {
+                  "line": [
+                    "scope"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "recorded",
+            "label": "Recorded under it",
+            "empty": "No recorded change names this grant.",
+            "beside": {
+              "field": "uses",
+              "one": "Your product counts 1 use.",
+              "other": "Your product counts {value} uses."
+            },
+            "sources": [
+              {
+                "from": [
+                  "Task",
+                  "Approval",
+                  "Transaction",
+                  "Grant"
+                ],
+                "via": "state_history[].grant_id"
+              }
+            ]
+          },
+          {
+            "id": "under-way",
+            "label": "Still under way",
+            "empty": "No record that names this grant is under way.",
+            "filtered": {
+              "one": "1 record that names this grant has reached an end.",
+              "other": "{count} records that name this grant have reached an end."
+            },
+            "note": "These are only the records here that name this grant; work under it elsewhere is not shown.",
+            "finality": [
+              "not_final",
+              "not_known"
+            ],
+            "sources": [
+              {
+                "from": [
+                  "Task",
+                  "Approval",
+                  "Transaction",
+                  "Grant"
+                ],
+                "via": "state_history[].grant_id"
+              }
+            ]
+          },
+          {
+            "id": "after-end",
+            "label": "Recorded after it ended",
+            "empty": "Nothing was recorded under it after it ended.",
+            "afterEnd": true,
+            "sources": [
+              {
+                "from": [
+                  "Task",
+                  "Approval",
+                  "Transaction",
+                  "Grant"
+                ],
+                "via": "state_history[].grant_id"
+              }
+            ]
+          },
+          {
+            "id": "parties",
+            "label": "Its parties now",
+            "empty": "No party of this grant is a record here.",
+            "sources": [
+              {
+                "from": "User",
+                "key": "granted_by_id",
+                "seat": "Given by",
+                "kept": {
+                  "name": "granted_by_name",
+                  "kind": "granted_by_kind"
+                }
+              },
+              {
+                "from": [
+                  "Agent",
+                  "User"
+                ],
+                "key": "granted_to_id",
+                "seat": "Held by",
+                "kept": {
+                  "name": "granted_to_name",
+                  "kind": "granted_to_kind"
+                }
+              },
+              {
+                "from": [
+                  "Organization",
+                  "User"
+                ],
+                "key": "granted_for_id",
+                "seat": "For",
+                "kept": {
+                  "name": "granted_for_name"
+                }
+              },
+              {
+                "from": "User",
+                "key": "owner_id",
+                "seat": "Answers for it",
+                "kept": {
+                  "name": "owner_name",
+                  "kind": "owner_type"
+                }
+              }
+            ]
           }
         ]
       },
@@ -33257,6 +33721,160 @@
             "version": "1.0.0",
             "date": "2025-10-16",
             "description": "Initial Universal Quintet baseline."
+          }
+        ],
+        "relatedLists": [
+          {
+            "id": "waiting",
+            "label": "Grants asked for {name}, not yet answered",
+            "empty": "No grant asked for {name} is waiting for an answer.",
+            "sources": [
+              {
+                "from": "Grant",
+                "via": "granted_for_id",
+                "states": [
+                  "requested"
+                ],
+                "row": {
+                  "line": [
+                    "requested_by_name",
+                    "scope"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "acting-for",
+            "label": "Agents holding a grant for {name}",
+            "empty": "No agent holds a grant for {name} now.",
+            "filtered": {
+              "one": "1 other grant for {name} is asked for or has ended.",
+              "other": "{count} other grants for {name} are asked for or have ended."
+            },
+            "sources": [
+              {
+                "from": "Grant",
+                "via": "granted_for_id",
+                "when": {
+                  "granted_to_kind": "agent",
+                  "within_id": null
+                },
+                "states": [
+                  "active",
+                  "paused"
+                ],
+                "inner": "within_id",
+                "row": {
+                  "line": [
+                    "granted_to_name",
+                    "scope",
+                    "last_use",
+                    {
+                      "says": "No uses counted",
+                      "when": {
+                        "uses": 0
+                      }
+                    }
+                  ],
+                  "time": "ends_note"
+                }
+              }
+            ]
+          },
+          {
+            "id": "done-for",
+            "label": "Recorded on behalf of {name}",
+            "empty": "No recorded change was made on behalf of {name}.",
+            "sources": [
+              {
+                "from": [
+                  "Task",
+                  "Approval",
+                  "Transaction",
+                  "Grant"
+                ],
+                "via": "state_history[].on_behalf_of_id"
+              }
+            ]
+          },
+          {
+            "id": "tasks",
+            "label": "Tasks for {name}",
+            "empty": "No task is asked for {name}.",
+            "sources": [
+              {
+                "from": "Task",
+                "via": "requested_for_id",
+                "row": {
+                  "line": [
+                    "asked_of_name"
+                  ],
+                  "time": "due_at"
+                }
+              }
+            ]
+          },
+          {
+            "id": "approvals",
+            "label": "Approvals for {name}",
+            "empty": "No approval is asked for {name}.",
+            "sources": [
+              {
+                "from": "Approval",
+                "via": "requested_for_id",
+                "row": {
+                  "line": [
+                    "asked_of_name"
+                  ],
+                  "time": "due_at"
+                }
+              }
+            ]
+          },
+          {
+            "id": "payments",
+            "label": "Payments for {name}",
+            "empty": "No payment names {name}.",
+            "note": "Subscriptions, usage and invoices name their customer in words, so they are not listed here.",
+            "sources": [
+              {
+                "from": "Transaction",
+                "via": "organization_id",
+                "row": {
+                  "time": "occurred_at"
+                }
+              }
+            ]
+          },
+          {
+            "id": "ended-grants",
+            "label": "Ended grants for {name}",
+            "empty": "No grant for {name} has ended.",
+            "collapsed": true,
+            "sources": [
+              {
+                "from": "Grant",
+                "via": "granted_for_id",
+                "when": {
+                  "within_id": null
+                },
+                "states": [
+                  "revoked",
+                  "expired",
+                  "replaced",
+                  "declined",
+                  "withdrawn"
+                ],
+                "inner": "within_id",
+                "row": {
+                  "line": [
+                    "granted_to_name",
+                    "scope"
+                  ]
+                }
+              }
+            ]
           }
         ]
       },
@@ -34931,6 +35549,264 @@
             "version": "1.0.0",
             "date": "2025-10-16",
             "description": "Initial Universal Quintet baseline."
+          }
+        ],
+        "relatedLists": [
+          {
+            "id": "waiting",
+            "label": "Waiting for {name}'s answer",
+            "empty": "Nothing waits for {name}'s answer.",
+            "sources": [
+              {
+                "from": "Approval",
+                "via": "asked_of_id",
+                "states": [
+                  "waiting"
+                ],
+                "order": "due_at",
+                "row": {
+                  "line": [
+                    "requested_by_name"
+                  ],
+                  "time": "due_at"
+                }
+              },
+              {
+                "from": "Task",
+                "via": "waiting_on_id",
+                "when": {
+                  "waiting_on_type": "User"
+                },
+                "states": [
+                  "needs_input"
+                ],
+                "order": "due_at",
+                "row": {
+                  "line": [
+                    "asked_of_name"
+                  ],
+                  "time": "due_at"
+                }
+              },
+              {
+                "from": "Grant",
+                "via": "asked_of_id",
+                "when": {
+                  "asked_of_kind": "person"
+                },
+                "states": [
+                  "requested"
+                ],
+                "row": {
+                  "line": [
+                    "requested_by_name",
+                    "scope"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "acting-for",
+            "label": "Agents holding a grant for {name}",
+            "empty": "No agent holds a grant for {name} now.",
+            "filtered": {
+              "one": "1 other grant for {name} is asked for or has ended.",
+              "other": "{count} other grants for {name} are asked for or have ended."
+            },
+            "rowsNote": "This list does not change grants: revoke one on the grant's own page.",
+            "sources": [
+              {
+                "from": "Grant",
+                "via": "granted_for_id",
+                "when": {
+                  "granted_to_kind": "agent",
+                  "within_id": null
+                },
+                "states": [
+                  "active",
+                  "paused"
+                ],
+                "inner": "within_id",
+                "row": {
+                  "line": [
+                    "granted_to_name",
+                    "scope",
+                    "last_use",
+                    {
+                      "says": "No uses counted",
+                      "when": {
+                        "uses": 0
+                      }
+                    }
+                  ],
+                  "time": "ends_note"
+                }
+              }
+            ]
+          },
+          {
+            "id": "given-for",
+            "label": "Given for {name} by someone else",
+            "empty": "No grant was given for {name} by someone else.",
+            "sources": [
+              {
+                "from": "Grant",
+                "via": "granted_for_id",
+                "exclude": [
+                  "granted_by_id"
+                ],
+                "when": {
+                  "within_id": null
+                },
+                "states": [
+                  "active",
+                  "paused",
+                  "revoked",
+                  "expired",
+                  "replaced"
+                ],
+                "inner": "within_id",
+                "row": {
+                  "line": [
+                    "granted_by_name",
+                    "granted_to_name",
+                    "scope"
+                  ],
+                  "time": "ends_note"
+                }
+              }
+            ]
+          },
+          {
+            "id": "gave",
+            "label": "Grants {name} gave",
+            "empty": "No grant {name} gave stands now.",
+            "filtered": {
+              "one": "1 other grant {name} gave no longer stands.",
+              "other": "{count} other grants {name} gave no longer stand."
+            },
+            "rowsNote": "This list does not change grants: revoke one on the grant's own page.",
+            "sources": [
+              {
+                "from": "Grant",
+                "via": "granted_by_id",
+                "when": {
+                  "granted_by_kind": "person",
+                  "within_id": null
+                },
+                "states": [
+                  "active",
+                  "paused"
+                ],
+                "inner": "within_id",
+                "row": {
+                  "line": [
+                    "granted_to_name",
+                    "granted_for_name",
+                    "scope"
+                  ],
+                  "time": "ends_note"
+                }
+              }
+            ]
+          },
+          {
+            "id": "answers-for",
+            "label": "Grants {name} answers for",
+            "empty": "No grant asked for or standing now names {name} as the one who answers for it.",
+            "filtered": {
+              "one": "1 grant {name} answers for has ended.",
+              "other": "{count} grants {name} answers for have ended."
+            },
+            "sources": [
+              {
+                "from": "Grant",
+                "via": "owner_id",
+                "when": {
+                  "owner_type": "user",
+                  "within_id": null
+                },
+                "states": [
+                  "requested",
+                  "active",
+                  "paused"
+                ],
+                "inner": "within_id",
+                "row": {
+                  "line": [
+                    "granted_to_name",
+                    "granted_for_name",
+                    "scope"
+                  ],
+                  "time": "ends_note"
+                }
+              }
+            ]
+          },
+          {
+            "id": "sponsors",
+            "label": "Agents {name} sponsors",
+            "empty": "No agent names {name} as its sponsor.",
+            "sources": [
+              {
+                "from": "Agent",
+                "via": "owner_id",
+                "when": {
+                  "owner_type": "user"
+                },
+                "row": {
+                  "line": [
+                    "acts_for"
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "id": "approved",
+            "label": "What {name} approved",
+            "empty": "No recorded change names {name} as the one who approved it.",
+            "sources": [
+              {
+                "from": [
+                  "Task",
+                  "Approval",
+                  "Transaction",
+                  "Grant"
+                ],
+                "via": "state_history[].approved_by_id"
+              }
+            ]
+          },
+          {
+            "id": "ended-grants",
+            "label": "Ended grants {name} gave",
+            "empty": "No grant {name} gave has ended.",
+            "collapsed": true,
+            "sources": [
+              {
+                "from": "Grant",
+                "via": "granted_by_id",
+                "when": {
+                  "granted_by_kind": "person",
+                  "within_id": null
+                },
+                "states": [
+                  "revoked",
+                  "expired",
+                  "replaced"
+                ],
+                "inner": "within_id",
+                "row": {
+                  "line": [
+                    "granted_to_name",
+                    "granted_for_name",
+                    "scope"
+                  ]
+                }
+              }
+            ]
           }
         ]
       },

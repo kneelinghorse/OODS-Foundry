@@ -22,7 +22,7 @@ parameters:
   - name: timezone
     type: string
     required: false
-    description: Default timezone context applied when rendering timestamps.
+    description: The time zone your product reads the record's times in. Screens show times in UTC, and a shown date-time says so; a date-time input does not yet.
     default: UTC
     validation:
       enum:

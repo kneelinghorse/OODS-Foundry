@@ -63,7 +63,8 @@ describe('workflow collection domain ownership (s191)', () => {
       // s213-m01: the generated modules are transpiled to CommonJS .js, so the folder declares that scope itself; a temp
       // folder inside a "type": "module" package (the handoff keeps TMPDIR in the repository) otherwise loads them as ESM.
       writeFileSync(path.join(directory, 'package.json'), '{"type":"commonjs"}\n');
-      for (const file of result.artifact!.files.filter(file => /^src\/(store|sample-data|application|actions)\.ts$/.test(file.path))) {
+      // s249-m02: an object that declares related lists also has src/related-data.ts, which store.ts imports.
+      for (const file of result.artifact!.files.filter(file => /^src\/(store|sample-data|application|actions|related-data)\.ts$/.test(file.path))) {
         writeFileSync(path.join(directory, path.basename(file.path, '.ts') + '.js'), ts.transpileModule(file.contents, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText);
       }
       mkdirSync(path.join(directory, 'node_modules/@oods'), { recursive: true });

@@ -60,7 +60,7 @@
       ]
     }
   ],
-  "head": "f9c695a448f569767f5617526fe813b055cec4b3",
+  "head": "debe0d170d8c96a3ddc6c81c58755f3b7480f514",
   "builderSelfCertified": false,
   "methodology": {
     "testImportLocation": "Where a spec that imports the tool's handler module lives: packages/mcp-server/test/product-reality, then test/contracts, then any other mcp-server spec. A literal runtime import is source evidence that a test reaches the handler, not proof of invocation, passing execution or browser certification. Grouped action imports roll up to their registered family. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not count.",
@@ -1356,6 +1356,11 @@
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
+            "path": "packages/mcp-server/test/compose/codes-and-tables.s249.spec.ts",
+            "line": 19,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
             "path": "packages/mcp-server/test/compose/form-field-differentiation.spec.ts",
             "line": 3,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
@@ -1436,6 +1441,11 @@
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
+            "path": "packages/mcp-server/test/objects/cancel-unchanged.s249.spec.ts",
+            "line": 25,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
             "path": "packages/mcp-server/test/objects/capture.spec.ts",
             "line": 6,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
@@ -1466,8 +1476,23 @@
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
+            "path": "packages/mcp-server/test/objects/related-region.s249.spec.ts",
+            "line": 23,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
             "path": "packages/mcp-server/test/objects/research.spec.ts",
             "line": 7,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/revoke.s249.spec.ts",
+            "line": 17,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/search.s249.spec.ts",
+            "line": 17,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -1617,7 +1642,7 @@
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/render/html-interactions.ts",
           "reason": "Static HTML domain actions show an integration notice; local edits and list controls do not persist records or implement application navigation. Browser coverage is separate from build validation.",
-          "line": 41
+          "line": 56
         },
         {
           "kind": "documented-limit",
@@ -2106,6 +2131,11 @@
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
+            "path": "packages/mcp-server/test/compose/codes-and-tables.s249.spec.ts",
+            "line": 18,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
             "path": "packages/mcp-server/test/compose/confidence-scoring.spec.ts",
             "line": 16,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
@@ -2266,6 +2296,11 @@
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
+            "path": "packages/mcp-server/test/objects/cancel-unchanged.s249.spec.ts",
+            "line": 24,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
             "path": "packages/mcp-server/test/objects/capture.spec.ts",
             "line": 5,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
@@ -2278,6 +2313,11 @@
           {
             "path": "packages/mcp-server/test/objects/dialog-facts.s248.spec.ts",
             "line": 17,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/ending.s249.spec.ts",
+            "line": 23,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2306,8 +2346,28 @@
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
+            "path": "packages/mcp-server/test/objects/related-lists.s249.spec.ts",
+            "line": 18,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/related-region.s249.spec.ts",
+            "line": 22,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
             "path": "packages/mcp-server/test/objects/research.spec.ts",
             "line": 11,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/revoke.s249.spec.ts",
+            "line": 16,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/search.s249.spec.ts",
+            "line": 16,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2447,7 +2507,7 @@
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/design.compose.ts",
           "reason": "An intent sentence is matched against keyword tables. A sentence with no layout keyword uses the dashboard default without numeric confidence and reports OODS-V116; no object is chosen. Naming an object and a context is the reliable input.",
-          "line": 321,
+          "line": 324,
           "observed": {
             "receiptSha256": "sha256:d17b61cf074ca5f736b21ed71f9dcbc630408ac2bebb18d7cb63c2de23176be9",
             "probes": [
@@ -2851,8 +2911,23 @@
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
           },
           {
+            "path": "packages/mcp-server/test/objects/revoke.s249.spec.ts",
+            "line": 18,
+            "handler": "packages/mcp-server/src/tools/pipeline.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/search.s249.spec.ts",
+            "line": 18,
+            "handler": "packages/mcp-server/src/tools/pipeline.ts"
+          },
+          {
             "path": "packages/mcp-server/test/objects/task.s247.spec.ts",
             "line": 27,
+            "handler": "packages/mcp-server/src/tools/pipeline.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/render/html-notice.s249.spec.ts",
+            "line": 16,
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
           },
           {
@@ -4775,6 +4850,11 @@
             "handler": "packages/mcp-server/src/tools/object.ts"
           },
           {
+            "path": "packages/mcp-server/test/objects/ending.s249.spec.ts",
+            "line": 22,
+            "handler": "packages/mcp-server/src/tools/object.validate.ts"
+          },
+          {
             "path": "packages/mcp-server/test/objects/intelligence.spec.ts",
             "line": 4,
             "handler": "packages/mcp-server/src/tools/object.ts"
@@ -4798,6 +4878,16 @@
             "path": "packages/mcp-server/test/objects/public-runtime.s233.spec.ts",
             "line": 6,
             "handler": "packages/mcp-server/src/tools/object.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/related-lists.s249.spec.ts",
+            "line": 16,
+            "handler": "packages/mcp-server/src/tools/object.validate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/related-lists.s249.spec.ts",
+            "line": 17,
+            "handler": "packages/mcp-server/src/tools/object.register.ts"
           },
           {
             "path": "packages/mcp-server/test/objects/relationships.s215.spec.ts",
@@ -4895,7 +4985,7 @@
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/object.validate.ts",
           "reason": "A team's own trait may place only the components the runtime ships; validate and register refuse any other component. Mapped implementations replace shipped ids; new catalog components are not supported.",
-          "line": 288
+          "line": 298
         },
         {
           "kind": "documented-limit",

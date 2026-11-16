@@ -77,11 +77,49 @@ export interface ObjectMetadata {
   detailTab?: string;
   /** Ordered record fields displayed in each list row; shared by imports and hand-written objects. */
   listColumns?: Array<{ field: string; label?: string }>;
+  /**
+   * s249-m01: lists of the records that point at this one, declared on the page that shows them (objects/related-lists.ts),
+   * never as forward relationships, so they move nothing on the source objects' screens.
+   */
+  relatedLists?: RelatedList[];
   owners?: string[];
   steward?: string;
   maturity?: string;
   changelog?: ChangelogEntry[];
   references?: string[];
+}
+
+/** s249-m01: one item of a related row's line: a field of the source, or fixed words shown when the source's fields hold the given values. */
+export type RelatedLineItem = string | { says: string; when: Record<string, string | number | boolean | null> };
+
+/** s249-m01: one source of a related list (objects/related-lists.ts says what each key means). */
+export interface RelatedListSource {
+  from: string | string[];
+  via?: string;
+  key?: string;
+  when?: Record<string, string | number | boolean | null>;
+  exclude?: string[];
+  states?: string[];
+  order?: string;
+  inner?: string;
+  seat?: string;
+  kept?: { name: string; kind?: string };
+  row?: { line?: RelatedLineItem[]; time?: string };
+}
+
+/** s249-m01: a list of the records that point at the subject, declared on the subject's own object. */
+export interface RelatedList {
+  id: string;
+  label: string;
+  empty?: string;
+  filtered?: { one: string; other: string };
+  note?: string;
+  rowsNote?: string;
+  collapsed?: boolean;
+  afterEnd?: boolean;
+  finality?: Array<'final' | 'not_final' | 'not_known'>;
+  beside?: { field: string; one: string; other: string };
+  sources: RelatedListSource[];
 }
 
 export interface ObjectRelationship {

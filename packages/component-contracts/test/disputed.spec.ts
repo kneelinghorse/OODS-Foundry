@@ -4,7 +4,8 @@ import { auditSummary, initialSort, nextSort, ariaSort } from '../src/index.js';
 describe('retained audit and sorting obligations', () => {
   it('counts all records but picks the latest valid instant, independent of input order or display limit', () => {
     const log = [{ to_state: 'paused', transitioned_at: '2026-09-06T12:00:00Z', actor_id: 'last' }, { to_state: 'active', transitioned_at: '2026-09-05T12:00:00Z', actor_id: 'first' }, { transitioned_at: 'invalid', actor_id: 'invalid' }, null];
-    expect(auditSummary({ auditLog: log, lastN: 1 })).toMatchObject({ count: 3, actor: 'last', timestamp: 'Sep 6, 2026, 12:00 PM', recent: [log[0]] });
+    // s249-m04 (Interface 13): a date-time names the zone it is shown in ("… UTC"); a date alone names none.
+    expect(auditSummary({ auditLog: log, lastN: 1 })).toMatchObject({ count: 3, actor: 'last', timestamp: 'Sep 6, 2026, 12:00 PM UTC', recent: [log[0]] });
     expect(auditSummary({ auditLog: log, lastN: 0 }).recent).toEqual([]);
     expect(log).toHaveLength(4);
   });

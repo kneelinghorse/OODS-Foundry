@@ -2,7 +2,7 @@ import { BILLING_INTERVALS, billingSummary, summaryValue, formatDateTime, auditS
 import { createRequire } from 'node:module';
 import type { GeneratedArtifactAction } from '../../packages/mcp-server/src/codegen/types.js';
 import type { UiElement, UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
-import { holdsValue, omitEmptyFields } from '../../packages/mcp-server/src/codegen/binding-utils.js';
+import { holdsValue, omitEmptyFields, OPENED_STATUSES_PROP, STATUSES_PROP, WHEN_UNSET_PROP } from '../../packages/mcp-server/src/codegen/binding-utils.js';
 
 const { JSDOM } = createRequire(import.meta.url)('jsdom') as {
   JSDOM: { fragment(html: string): DocumentFragment };
@@ -247,6 +247,23 @@ export function deriveMountObligations(schema: UiSchema, source: string, model: 
     const omitted = inactive.has(node.id) ? undefined : omitEmptyFields(node, schema.objectSchema);
     if (omitted && !omitted.some(field => holdsValue(model[modelKey(field)]))) {
       for (const inner of schemaNodes({ version: '1.0', screens: [node] })) if (!inactive.has(inner.id)) inactive.set(inner.id, `${node.id} shows no value and opts out of drawing an empty place (s247-m01)`);
+    }
+    // s249-m05: a place drawn only for a record in some states, or only where a field is unset (s249-m03,
+    // compose/ending-fields.ts: an ended grant's "Ended by: This app was not told who ended it."), is not drawn where the
+    // mounted record is not in those states or holds that field, in React, Vue and HTML, which read the same props
+    // (binding-utils.ts recordStateCondition, render/record-renderer.ts); its own nodes are then not required. At mount the
+    // state a screen opened with is the record's own.
+    if (!inactive.has(node.id)) {
+      const statusField = Object.keys(schema.objectSchema ?? {}).find(name => schema.objectSchema?.[name]?.semanticType === 'status.state') ?? 'status';
+      const status = String(model[modelKey(statusField)] ?? '');
+      const lists = [STATUSES_PROP, OPENED_STATUSES_PROP].map(prop => node.props?.[prop]).filter((value): value is string => typeof value === 'string');
+      const unset = node.props?.[WHEN_UNSET_PROP];
+      const outOfState = lists.find(list => !list.split(' ').includes(status));
+      const held = typeof unset === 'string' && holdsValue(model[modelKey(unset)]);
+      if (outOfState !== undefined || held) {
+        const why = outOfState !== undefined ? `is drawn only for a record that is ${outOfState.split(' ').join(' or ')}` : `is drawn only where ${String(unset)} is unset`;
+        for (const inner of schemaNodes({ version: '1.0', screens: [node] })) if (!inactive.has(inner.id)) inactive.set(inner.id, `${node.id} ${why} (s249-m03)`);
+      }
     }
   }
   const collections = new Map<string, number>();

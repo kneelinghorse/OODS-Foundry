@@ -46,7 +46,7 @@ export interface User {
   addresses?: AddressableEntry[];
 
   /**
-   * Materialized next states the product allows from the current status, written by the product from transitionRules. Listed by StatusTimeline; a generated StatusSelector offers every state.
+   * Materialized next states the product allows from the current status, written by the product from transitionRules. Listed by StatusTimeline; a generated StatusSelector offers the current state and the moves transitionRules allows.
    *
    * Source: Stateful (trait)
    *
@@ -312,7 +312,7 @@ export interface User {
   template_catalog: Template[];
 
   /**
-   * Preferred timezone applied when rendering timestamps.
+   * The person's preferred time zone, kept for your product. Screens show times in UTC, and a shown date-time says so; a date-time input does not yet.
    *
    * Source: User (object override)
    *

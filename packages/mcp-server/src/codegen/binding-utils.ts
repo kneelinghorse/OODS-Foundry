@@ -1,3 +1,5 @@
+import { listObjects, loadObject } from '../objects/object-loader.js';
+import { declaredActions, declaredOrder, stateActionEvent } from '../objects/state-actions.js';
 import { unitFieldLabel } from '../compose/unit-field-label.js';
 /**
  * Shared codegen utilities for object schema type mapping, binding analysis,
@@ -150,6 +152,44 @@ export function valueSelect(node: UiElement, objectSchema?: Record<string, Field
   const kept = typeof entry.displayLabelField === 'string' && ownFieldSchemaEntry(objectSchema, entry.displayLabelField) ? entry.displayLabelField : undefined;
   const label = node.props?.label;
   return { field, keptName: kept, subject: typeof label === 'string' && label ? label : entry.displayLabel ?? fieldLabel(field.replace(/_ids?$/, '')), options: options as Array<{ value: string; label: string }> };
+}
+
+/**
+ * s249-m03 (Interface 10): a status select of an object that declares the order of its states (Approval, Task, Grant)
+ * offers the record's current state and the moves the order allows from it, through statusOptionsInOrder, alike in
+ * React, Vue and HTML. React reads the state the record was in when the screen opened (STATUS_WHEN_OPENED), as its select
+ * keeps its own choice from then; Vue's field refs and HTML's binding read the same. Objects that declare no order keep
+ * every option.
+ */
+export const STATUS_WHEN_OPENED = 'statusWhenOpened';
+export function orderedStatusSelect(node: UiElement, objectSchema: Record<string, FieldSchemaEntry> | undefined, objectName: string | undefined, options: unknown = node.props?.options): { field: string; options: unknown[]; order: Record<string, string[]> } | undefined {
+  if (node.component !== 'StatusSelector' || !objectName) return undefined;
+  const field = node.props?.field;
+  if (typeof field !== 'string' || !Array.isArray(options) || ownFieldSchemaEntry(objectSchema, field)?.semanticType !== 'status.state') return undefined;
+  let order: Record<string, string[]> | undefined;
+  try { order = declaredOrder(loadObject(objectName)); } catch { return undefined; }
+  return order ? { field, options, order } : undefined;
+}
+
+/**
+ * s249-m03 (compose/ending-fields.ts): a place drawn only for a record in one of these states (space-separated); the same
+ * read from the state the record was in when the screen opened, as a form's own select may already show another; and a
+ * place drawn only where the record holds no value for a field. Every renderer reads them, and none draws them.
+ */
+export const STATUSES_PROP = 'data-oods-statuses';
+export const OPENED_STATUSES_PROP = 'data-oods-opened-statuses';
+export const WHEN_UNSET_PROP = 'data-oods-when-unset';
+export const RECORD_STATE_PROPS = [STATUSES_PROP, OPENED_STATUSES_PROP, WHEN_UNSET_PROP] as const;
+
+/** The React and Vue expression that draws a place only where its declared states and unset field allow, if it declares any. */
+export function recordStateCondition(node: UiElement, objectSchema: Record<string, FieldSchemaEntry> | undefined, framework: 'react' | 'vue'): string | undefined {
+  const status = snakeToCamel(Object.keys(objectSchema ?? {}).find(name => objectSchema?.[name]?.semanticType === 'status.state') ?? 'status');
+  const states = (value: unknown) => `[${String(value).split(' ').filter(Boolean).map(javascriptSingleQuotedString).join(', ')}]`;
+  const parts: string[] = [];
+  if (typeof node.props?.[STATUSES_PROP] === 'string') parts.push(`${states(node.props[STATUSES_PROP])}.includes(String(${status}))`);
+  if (typeof node.props?.[OPENED_STATUSES_PROP] === 'string') parts.push(`${states(node.props[OPENED_STATUSES_PROP])}.includes(String(${framework === 'react' ? STATUS_WHEN_OPENED : status}))`);
+  if (typeof node.props?.[WHEN_UNSET_PROP] === 'string') parts.push(`String(${snakeToCamel(String(node.props[WHEN_UNSET_PROP]))} ?? '').trim() === ''`);
+  return parts.length ? parts.join(' && ') : undefined;
 }
 
 /** Whether a record holds a value for a place: present, and not blank. */
@@ -425,6 +465,18 @@ function localSymbols(handlerName: string): LocalBindingSymbols {
   };
 }
 
+/**
+ * s249-m03: a screen event a registered object's declared action binds to ("onRevoke", objects/state-actions.ts). It is a
+ * domain action with no parameters, as Cancel is; any other event outside the vocabulary is still refused.
+ */
+function declaredActionEvent(event: string): boolean {
+  if (!/^on[A-Z][A-Za-z0-9]*$/.test(event)) return false;
+  for (const name of listObjects()) {
+    try { if (declaredActions(loadObject(name)).some(action => stateActionEvent(action) === event)) return true; } catch { /* an object that does not load declares nothing */ }
+  }
+  return false;
+}
+
 function findBindingDefinition(
   component: string,
   event: string,
@@ -439,7 +491,7 @@ function findBindingDefinition(
   if (!screenRoot) return undefined;
   return SUPPORTED_BINDING_DEFINITIONS.find((definition) => (
     definition.scope === 'screen' && definition.event === event
-  ));
+  )) ?? (declaredActionEvent(event) ? { id: `screen:${event}`, scope: 'screen', component: '$screen', event, kind: 'domain', signature: NO_PARAMETERS } : undefined);
 }
 
 function signaturesAreCallableTogether(
@@ -1513,8 +1565,8 @@ export const SLOT_DATE_HELPER = 'formatSlotDate';
  *
  * This is that lowering: a module-LOCAL function, emitted into the artifact, so nothing is imported
  * and the declared dependency surface does not move. It is deliberately the same computation as
- * `formatDateTime` in @oods/component-contracts — same locale, same date and time styles, and the
- * same UTC pin that keeps output identical across host time zones — and
+ * `formatDateTime` in @oods/component-contracts — same locale, same date and time styles, the
+ * same UTC pin that keeps output identical across host time zones, and the same zone label (s249-m04) — and
  * `slot-date-lowering.s204.spec.ts` holds the two in agreement over a corpus so this copy cannot
  * drift from the contract it mirrors.
  *
@@ -1530,9 +1582,11 @@ export function slotDateHelperSource(typescript: boolean): string {
     "  if (value == null || value === '') return '';",
     `  const date = new Date(value${cast});`,
     "  if (!Number.isFinite(date.getTime())) return '';",
-    "  return new Intl.DateTimeFormat('en-US', {",
+    "  const text = new Intl.DateTimeFormat('en-US', {",
     "    dateStyle: 'medium', ...(dateOnly ? {} : { timeStyle: 'short'" + (typescript ? " as const" : "") + " }), timeZone: 'UTC',",
     '  }).format(date);',
+    // s249-m04: a date-time names its zone, as formatDateTime does; a date alone names none.
+    "  return dateOnly ? text : text + ' UTC';",
     '}',
   ].join('\n');
 }

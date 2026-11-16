@@ -203,7 +203,8 @@ describe('a generated workflow saves each control\'s value (s223-m02)', () => {
     const saved = Object.fromEntries(globals.map(name => [name, (globalThis as Record<string, unknown>)[name]]));
     try {
       fs.writeFileSync(path.join(directory, 'package.json'), '{"type":"commonjs"}\n');
-      for (const file of artifact.files.filter(file => /^src\/(store|sample-data|application|actions)\.ts$/.test(file.path))) {
+      // s249-m02: an object that declares related lists also has src/related-data.ts, which store.ts imports.
+      for (const file of artifact.files.filter(file => /^src\/(store|sample-data|application|actions|related-data)\.ts$/.test(file.path))) {
         fs.writeFileSync(path.join(directory, path.basename(file.path, '.ts') + '.js'), ts.transpileModule(file.contents, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText);
       }
       fs.mkdirSync(path.join(directory, 'node_modules/@oods'), { recursive: true });

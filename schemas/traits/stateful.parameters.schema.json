@@ -41,6 +41,32 @@
         "minItems": 0
       }
     },
+    "actions": {
+      "type": ["array", "null"],
+      "description": "Named moves a person makes on a record, each to one state of the declared order: a generated screen offers each only from the states it moves from, and a generated app writes it as one change. Each needs transitionRules.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$", "description": "The action's id, unique on the object (\"revoke\")." },
+          "to": { "type": "string", "minLength": 1, "maxLength": 32, "description": "The state the action moves the record to." },
+          "from": { "type": "array", "items": { "type": "string", "minLength": 1, "maxLength": 32 }, "minItems": 1, "uniqueItems": true, "description": "The states it is offered from; by default every state whose declared targets include `to`." },
+          "verb": { "type": "string", "minLength": 1, "maxLength": 40, "description": "The verb a person reads on its button (\"Revoke\")." },
+          "event": { "type": "string", "minLength": 1, "description": "The event Timestampable records for it, one of its recordedEvents." },
+          "reasonField": { "type": "string", "minLength": 1, "description": "The field its optional note is written to." },
+          "bySeat": { "type": "string", "minLength": 1, "description": "The seat whose _id, _name and _kind fields name who acted, when the app is told." },
+          "confirm": { "type": "boolean", "description": "When true, the action asks once, stating what it ends and what goes on, before it is written." },
+          "alsoEnds": {
+            "type": "object",
+            "description": "Records of the same object whose `via` names this one make the same move with it, each with its own line.",
+            "properties": { "via": { "type": "string", "minLength": 1 } },
+            "required": ["via"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["id", "to", "verb", "event"],
+        "additionalProperties": false
+      }
+    },
     "requireTransitionReason": {
       "type": "boolean",
       "description": "When true, every state transition must include a human-readable reason.",

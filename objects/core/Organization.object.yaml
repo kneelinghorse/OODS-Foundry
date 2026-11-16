@@ -188,10 +188,64 @@ metadata:
     - version: 1.0.0
       date: "2025-10-16"
       description: Initial Universal Quintet baseline.
+  # s249-m01: the lists this object's detail page shows of the records that point at one of its records, seat by seat,
+  # declared here on the page that shows them (packages/mcp-server/src/objects/related-lists.ts says what each key means).
+  # They read the registered objects' records by id only, never by name.
+  relatedLists:
+    - id: waiting
+      label: "Grants asked for {name}, not yet answered"
+      empty: "No grant asked for {name} is waiting for an answer."
+      sources:
+        - { from: Grant, via: granted_for_id, states: [requested], row: { line: [requested_by_name, scope] } }
+    - id: acting-for
+      label: "Agents holding a grant for {name}"
+      empty: "No agent holds a grant for {name} now."
+      filtered: { one: "1 other grant for {name} is asked for or has ended.", other: "{count} other grants for {name} are asked for or have ended." }
+      sources:
+        - from: Grant
+          via: granted_for_id
+          when: { granted_to_kind: agent, within_id: null }
+          states: [active, paused]
+          inner: within_id
+          row: { line: [granted_to_name, scope, last_use, { says: No uses counted, when: { uses: 0 } }], time: ends_note }
+    - id: done-for
+      label: "Recorded on behalf of {name}"
+      empty: "No recorded change was made on behalf of {name}."
+      sources:
+        - { from: [Task, Approval, Transaction, Grant], via: "state_history[].on_behalf_of_id" }
+    - id: tasks
+      label: "Tasks for {name}"
+      empty: "No task is asked for {name}."
+      sources:
+        - { from: Task, via: requested_for_id, row: { line: [asked_of_name], time: due_at } }
+    - id: approvals
+      label: "Approvals for {name}"
+      empty: "No approval is asked for {name}."
+      sources:
+        - { from: Approval, via: requested_for_id, row: { line: [asked_of_name], time: due_at } }
+    - id: payments
+      label: "Payments for {name}"
+      empty: "No payment names {name}."
+      note: Subscriptions, usage and invoices name their customer in words, so they are not listed here.
+      sources:
+        - { from: Transaction, via: organization_id, row: { time: occurred_at } }
+    - id: ended-grants
+      label: "Ended grants for {name}"
+      empty: "No grant for {name} has ended."
+      collapsed: true
+      sources:
+        - from: Grant
+          via: granted_for_id
+          when: { within_id: null }
+          states: [revoked, expired, replaced, declined, withdrawn]
+          inner: within_id
+          row: { line: [granted_to_name, scope] }
 
 # Eight authored sample organizations. Each is one coherent account: the same names appear as the customers on the
 # Subscription, Invoice, Transaction and Usage samples. Its lifecycle follows its plan: a prospect is on Free, an
-# onboarding account is trialling a paid plan, an active account pays, and a churned account is back on Free.
+# onboarding account is trialling a paid plan, an active account pays, and a churned account is back on Free. A parent
+# organization or reseller that is no sample here (Northwind Group, Harbor Channel Partners) keeps one id everywhere,
+# the one the Relationship samples give it (s249).
 samples:
   - organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01
     label: Northwind Traders
@@ -203,7 +257,7 @@ samples:
     employee_count: 85
     billing_contact_email: billing@northwind.example
     data_residency: us
-    owner_id: org_northwind_group
+    owner_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a09
     owner_type: parent_organization
     owner_name: Northwind Group
     ownership_role: Parent account
@@ -353,7 +407,7 @@ samples:
     employee_count: 120
     billing_contact_email: ap@summit.example
     data_residency: us
-    owner_id: reseller_harbor_channel
+    owner_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a10
     owner_type: reseller
     owner_name: Harbor Channel Partners
     ownership_role: Reseller of record

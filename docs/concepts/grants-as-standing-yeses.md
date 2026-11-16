@@ -79,15 +79,15 @@ A cost of this reading: a sponsor cannot say "ask every time, never in advance" 
 | Requested | Asked for, and not given yet. |
 | Active | Given, and it stands. It may stand unused. |
 | Paused | It stands, and may not be used until it is resumed. Its end still runs. |
-| Revoked | Taken back by someone. Who and why are kept. |
-| Expired | It reached its end, or went unused as long as its terms allow. |
+| Revoked | Someone ended it. Who ended it is kept when your product says who is acting, and why when they give a reason. |
+| Expired | It reached its end, went unused as long as its terms allow, or was asked for and never answered in time. |
 | Replaced | A newer grant with other terms took its place, and names it. |
 | Declined | It was asked for, and the answer was no. |
-| Withdrawn | Its asker dropped the request before an answer. |
+| Withdrawn | The ask was called off before an answer, by its asker or by your product. |
 
-The last five are endings, and final: a grant never comes back. A new grant follows it and names it. Paused is the one stop that can be lifted. No ending takes a success colour, and revoked is not a failure: it is the rule working. `Grant` declares this order. Your product enforces it: OODS Foundry keeps it as data, holds its own samples to it, and reads it nowhere at run time. A generated status select offers every state, and a generated app saves any move, a revoked grant back to active included.
+The last five are endings, and final: a grant never comes back. A new grant follows it and names it. Paused is the one state a grant comes back from. No ending takes a success colour, and revoked is not a failure: it is the rule working. `Grant` declares this order. Your product enforces it on its own records, and OODS Foundry holds its own samples to it. A generated app keeps it in its own store: a grant's status select offers its state and the moves the order allows from it, and the store refuses any other move, so a revoked grant never goes back to active there.
 
-**The end, in the party's own day.** A grant to an agent names its end, kept three ways: the exact instant a product checks (`ends_at`), the party's time zone (`timezone`, such as Pacific/Auckland), and one line in the party's own words and zone (`ends_note`, "At the end of 31 Dec 2026, Tauranga time"), written by your product. People read the line: the list, the card and the detail page show it, and the detail page also shows the instant, labelled as UTC. Every other time on a grant's screens, its history included, is UTC. For a grant with no end, your product writes that too ("No end: it stands until someone ends it"); with no line, no end is shown. Showing a record's own times in its own zone on every screen is the next step.
+**The end, in the party's own day.** A grant to an agent names its end, kept three ways: the exact instant a product checks (`ends_at`), the party's time zone (`timezone`, such as Pacific/Auckland), and one line in the party's own words and zone (`ends_note`, "At the end of 31 Dec 2026, Tauranga time"), written by your product. People read the line: the list, the card and the detail page show it, and the detail page also shows the instant. Every time a grant's screens show, the instant and its history included, is in UTC and says so ("Dec 31, 2026, 10:59 AM UTC"); a form's date-time input does not say its zone yet. For a grant with no end, your product writes that too ("No end: it stands until someone ends it"); with no line, no end is shown. Showing a record's own times in its own zone on every screen is not built yet.
 
 **Disuse** is your product's rule: the grant shows its last use, and a grant that ends unused is expired, with its reason ("Unused for 90 days"). Reconfirmation is not modelled yet.
 
@@ -97,11 +97,13 @@ A standing yes for one action is a new grant inside the grant it narrows. It has
 
 ## Taking it back
 
-Taking a grant back is one change of its state, to revoked, with the reason: the same step giving took, on the same screen. In a generated app a grant is given by moving its status from requested to active on its form, and taken back by moving it to revoked there, with the reason typed in "Why it ended". There is no Revoke button: your product builds its own, and that button is the next step.
+Taking a grant back is one change of its state, to revoked. In a generated app a grant is given by moving its status from requested to active on its form. Its page offers **Revoke** while it stands (active or paused), **Pause** while it is active and **Resume** while it is paused; an ended grant offers none of them, and a grant has no Delete: an ended grant is kept. Moving its status to revoked on its form is the same Revoke. [The person's side](the-persons-side.md) shows the three.
 
-What the record keeps: the grant stays, marked revoked, with who, when and why. What your product does: it withdraws the approvals asked or not yet used under it, pauses or hands on a task under way, and ends the grants inside it. What does not change: work already done stays done, and credentials and payments already issued may still run. OODS Foundry cannot know whether everything stopped. Taking back only the standing yes ends that one grant and leaves the first standing.
+In a generated app, Revoke asks once first, on one screen: the grants inside it that end with it, the records that name it and are still under way, that revoking recalls nothing already issued, the other grants its holder still holds for the party, and who is ending it, with an optional note for the record. Pause asks nothing, and its result says how to resume. Resume gives the grant again, so a paused grant's page says that only someone who may give grants for the party should resume it; the app does not check.
 
-A revocation made in a generated app names no one, because the app does not know who is looking.
+What the record keeps: the grant stays, marked revoked, with when; who ended it, when your product tells the app who is acting; and why, when they give a reason. The grants inside it end with it, each with its own line ("Ended with Tidewater invoices and payments"). What your product does: it withdraws the approvals asked or not yet used under it, and pauses or hands on a task under way. What does not change: work already done stays done, credentials issued under it may still work, and payments already sent are not recalled; revoking stops none of them. The grant's page lists the records here that name it and were still under way at its end, with their state then and now; work under it elsewhere is not shown. Taking back only the standing yes inside ends that one grant and leaves the first standing.
+
+A generated app names who ended a grant when your product passes who is acting (`createWorkflow({ actor })`). Told no one, the grant's page says the app was not told who ended it.
 
 ## The trace on each line
 
@@ -134,26 +136,25 @@ A later resend under it needs no new approval: its line names the standing yes, 
 
 In this release a helper acts under its own grant from the one the work is for, given by a person. The first agent may ask for it, and the grant records that it asked. Passing part of a grant on, as a grant inside a grant held by the helper, never wider and never longer, ending when the first grant ends and only where the first grant allows it, is not modelled yet.
 
-## The person's side today
+## The person's side
 
-The person's side is the Grant list. Search for your name or your organization's to see everything you gave, hold, or have held for you, and filter by state. Each grant's page shows its last use, and its form is where it is taken back. A person's own page listing their grants, a grant's page listing what was done under it, and "agents that can act for you" need OODS Foundry to list the records that point at a record, and a viewer: they are the next piece, shared with approvals and tasks. The list opens on every state: a person can filter it to active ones, and it does not do so by default.
+A person's page lists what waits for their answer, the agents holding a grant for them, and the grants they gave or answer for. An organization's page lists the agents holding a grant for it and what was recorded on its behalf, and an agent's page the grants it holds. A grant's page lists the grants inside it, what was recorded under it, what is still under way, and its parties now. [The person's side](the-persons-side.md) has each list and what it cannot see. There is no viewer: every page is composed the same for everyone, and none speaks to the person it lists as "you". The Grant list still finds a grant by the name in any of its seats, and filters by state.
 
 ## Bringing your own grant records
 
 Your own consent, mandate or connection records can compose `Mandate` on an object of your own, beside your own lifecycle: the seats, the terms, the end and the use are the fields above, and a place your record holds no value for is left undrawn.
 
-`object_import` proposes `Mandate` where another system's record has a grant's shape, from three facts together: a state with a value in force (active, granted, authorised, valid) beside one that says it was revoked or ended (revoked, expired, ended, terminated, withdrawn, deactivated), a date-time named for an end (`expires_at`, `expirationTime`, `valid_until`), and a single reference to the record of the agent or app that holds it. It binds who holds it, the end and, where the record references them, who gave it, asked for it and ended it and who it is for, and the state becomes the lifecycle; any other `Mandate` field binds only to a field of its own name and type. It never fills a scope or limits written inside the record (FDX's resources, Stripe's usage limits). An import of FDX 6.6's Consent Grant, Stripe's shared payment issued token, ReBIT's consent or GitHub's programmatic access grant gets no `Mandate`, because each lacks one of the three facts, while a team's own flat table, with text ids, gets every seat. The [importing guide](../../packages/foundry/IMPORTING-OBJECTS.md#records-of-a-grant) has the word lists and the measurements.
+`object_import` proposes `Mandate` where another system's record has a grant's shape, from three facts together: a state with a value in force (active, granted, authorised, valid) beside one that says it was revoked or ended (revoked, expired, ended, terminated, withdrawn, deactivated), a date-time named for an end (`expires_at`, `expirationTime`, `valid_until`), and a single reference to the record of the agent or app that holds it. It binds who holds it, the end and, where the record references them, who gave it, asked for it and ended it and who it is for, and the state becomes the lifecycle; any other `Mandate` field binds only to a field of its own name and type. It never fills a scope or limits written inside the record (FDX's resources, Stripe's usage limits). An import of FDX 6.6's Consent Grant, Stripe's shared payment issued token, ReBIT's consent or GitHub's programmatic access grant gets no `Mandate`, because each lacks one of the three facts, while a team's own flat table, with text ids, gets every seat it holds a column for. The [importing guide](../../packages/foundry/IMPORTING-OBJECTS.md#records-of-a-grant) has the word lists and the measurements.
 
 ## What OODS Foundry does not do
 
-It models and renders. It does not check a grant against what an actor does, expire, pause, revoke or renew one, propagate an end, stop a token, or decide whether an action was allowed. No ending is enforced: a grant's status select offers every state, and a generated app saves any move, a revoked grant back to active included. Beyond that:
-- In a generated app, a grant is taken back by changing its status on its form. There is no Revoke button: your product builds its own.
-- A revocation made in a generated app names no one.
-- Screens show times in UTC. The end is also kept in the party's own words and zone, written by your product.
+It models and renders. It does not check a grant against what an actor does, expire or renew one, stop a token, or decide whether an action was allowed. A generated app's Revoke, Pause and Resume change the app's own records when a person asks, and stop nothing; your product wires its own. The app keeps the declared order in its own store, and your product enforces it on its records. Beyond that:
+- A generated app names who acted only when your product passes who is acting. It never asks anyone to type their own name or capacity, and never writes `ended_as`.
+- Screens show times in UTC, and a shown date-time says so; a form's date-time input does not yet. The end is also kept in the party's own words and zone, written by your product.
 - Money limits assume two decimal places, so a currency with other decimals reads wrong.
-- Taking a grant back does not stop what was issued under it, and OODS Foundry cannot know whether everything stopped.
+- Taking a grant back stops nothing issued under it, and a grant's page shows only the records here that name it.
 - Uses, the last use, the money spent and an agent's `acts_for` are kept by your product and checked by nothing.
-- It cannot list a person's grants on their own page, a grant's uses, or "agents that can act for you": those wait for the next piece.
+- Its lists read the records here that point at a record by id. A record that names it only in words, or that another product keeps, is not listed, and a generated app's lists of other objects read records copied from the samples when the app was made.
 - A grant passed on is not modelled yet, and reconfirmation is not modelled yet.
-- A grant's form also offers fields a person would not edit there: the owner's id, type, name and role, the grant's own id, when it was asked for, and its last event.
+- A grant's form also offers fields a person would not edit there: the owner's id, type, name and role. It does not offer the grant's own id, when it was asked for or last changed, or its last event.
 - A team's own object named Grant replaces the shipped one, and a team's own trait named Mandate is refused.

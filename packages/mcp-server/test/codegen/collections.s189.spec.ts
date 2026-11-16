@@ -4,7 +4,7 @@ import { handle as generate } from '../../src/tools/code.generate.js';
 import type { UiElement } from '../../src/schemas/generated.js';
 import { typecheckWorkflow } from '../product-reality/workflow-typecheck.js';
 import { validateGeneratedArtifact } from '../../src/codegen/artifact-envelope.js';
-import { chronologicalEvents, formatDateTime } from '../../../component-contracts/src/date-time.js';
+import { chronologicalEvents, formatDateTime, timeZoneLabel } from '../../../component-contracts/src/date-time.js';
 
 const walk = (nodes: UiElement[]): UiElement[] => nodes.flatMap(node => [node, ...walk(node.children ?? [])]);
 
@@ -96,8 +96,10 @@ describe('collection screens own the data presentation', () => {
   }, 30_000);
 
   it('formats instants with an explicit UTC policy and allows callers to select their locale and zone', () => {
-    expect(formatDateTime('2026-09-08T12:00:00.000Z')).toBe('Sep 8, 2026, 12:00 PM');
-    expect(formatDateTime('2026-09-08T12:00:00.000Z', { timeZone: 'America/Chicago' })).toBe('Sep 8, 2026, 7:00 AM');
+    // s249-m04 (Interface 13): a date-time names the zone it is shown in. Only UTC is pinned by name: another zone's name
+    // comes from the platform's ICU data, so Chicago's time is pinned and its label is the formatter's own.
+    expect(formatDateTime('2026-09-08T12:00:00.000Z')).toBe('Sep 8, 2026, 12:00 PM UTC');
+    expect(formatDateTime('2026-09-08T12:00:00.000Z', { timeZone: 'America/Chicago' })).toBe(`Sep 8, 2026, 7:00 AM ${timeZoneLabel(new Date('2026-09-08T12:00:00.000Z'), 'America/Chicago')}`);
     expect(formatDateTime('invalid')).toBe('');
     expect(formatDateTime(null)).toBe('');
   });

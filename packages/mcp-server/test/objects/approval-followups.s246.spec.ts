@@ -285,9 +285,12 @@ describe('Approval declares the order of its states, and the product enforces it
   it('says who enforces it: Stateful 2.3.0 names the product, and the samples leave allowed_transitions to it', () => {
     const stateful = loadTrait('lifecycle/Stateful');
     // s248-m01: 2.4.0 adds the optional grant pointer and name to state_history; these lines are unchanged.
-    expect(stateful.trait.version).toBe('2.4.0');
-    expect(stateful.trait.description).toContain('The product enforces that order');
-    expect(stateful.trait.description).toContain('A generated StatusSelector offers every state');
+    // s249-m03 (Interface 11): 2.5.0 adds actions, and a generated app keeps the order, so the select offers the record's
+    // state and its allowed moves where it offered every state; the product still enforces the order on its own records.
+    expect(stateful.trait.version).toBe('2.5.0');
+    // s249-m05 (the fresh read): "your product", so "the product" cannot read as OODS Foundry enforcing it.
+    expect(stateful.trait.description).toContain('Your product enforces that order on its own records');
+    expect(stateful.trait.description).toContain("a generated StatusSelector offers the record's state and the moves the order allows");
     for (const sample of samples) expect(sample, String(sample.name)).not.toHaveProperty('allowed_transitions');
   });
 });

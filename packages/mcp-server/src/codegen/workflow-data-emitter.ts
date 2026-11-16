@@ -8,6 +8,10 @@ import { recordTitleField } from '../compose/record-label.js';
 import { recordDisplayValue } from '../compose/record-display.js';
 import { cancellableStates, cancellationMode } from '../objects/cancellation-mode.js';
 import { declaredCancelOrder } from '../objects/declared-order.js';
+import { relatedAppData } from '../compose/related-records.js';
+import { enumOptionLabel } from '../compose/internal-fields.js';
+import { loadObject } from '../objects/object-loader.js';
+import { declaredActions, declaredOrder, endsRecord } from '../objects/state-actions.js';
 
 /** The chart-assets.ts export holding one render prop's SVG per record: svg -> chartSvgByRecord (as chart-assets.ts writes it). */
 const chartAssetMap = (prop: string): string => `chart${prop[0]!.toUpperCase()}${prop.slice(1)}ByRecord`;
@@ -149,11 +153,28 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
   // s220-m01 (#2461, #2458): a record billed on a Billable cycle reconciles that cycle when its terms change.
   const billingCycle = ['billing_interval', 'current_period_start', 'current_period_end'].every(name => fields[name] && !fields[name]!.unavailable);
   const types = Object.entries(fields).map(([name, field]) => `  ${JSON.stringify(name)}${field.required ? '' : '?'}: ${mapFieldType(field)};`).join('\n');
+  // s249-m02 (Interface 5): an object that declares related lists lists its records' related records at run time, from
+  // records copied from the other objects' samples and the app's own live records (relatedAppData).
+  const related = relatedAppData(workflow.object);
+  // s249-m03 (Interfaces 6, 8 and 10): an object whose lifecycle declares an order (Approval, Task, Grant) keeps it in its
+  // store; one that declares actions (a grant's Revoke, Pause and Resume) takes each through transition, as one change.
+  // Every store signs the lines it writes with the actor it was told of, and only then.
+  const definition = (() => { try { return loadObject(workflow.object); } catch { return undefined; } })();
+  const order = definition ? declaredOrder(definition) : undefined;
+  const stateActions = order && definition ? declaredActions(definition) : [];
+  const stateWords = { object: workflow.object.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase(), labels: Object.fromEntries(Object.keys(order ?? {}).map(state => [state, enumOptionLabel(state)])) };
+  const seatFields = (seat: string | undefined) => seat ? ['_id', '_name', '_kind'].map(suffix => seat + suffix).filter(name => Object.hasOwn(fields, name)) : [];
+  const locked = order ? [...new Set(stateActions.filter(action => endsRecord(action, order)).flatMap(action => [...(action.reasonField && Object.hasOwn(fields, action.reasonField) ? [action.reasonField] : []), ...seatFields(action.bySeat)]))] : [];
+  const mandate = workflow.data.traits.some(trait => trait.split('/').pop() === 'Mandate');
+  const status = (target: string) => `${target}${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`}`;
   const camelProps = Object.keys(fields).map((name) => `  ${snakeToCamel(name)}: record[${JSON.stringify(name)}],`).join('\n');
   return [
     { path: 'src/sample-data.ts', contents: `import type { DomainRecord } from './store';\n\nexport const sampleData: DomainRecord[] = ${JSON.stringify(records, null, 2)};\n` },
-    { path: 'src/store.ts', contents: `import { recordCollectionEvents, ${billingCycle ? 'restartedBillingPeriod, ' : ''}type CollectionEvent } from '@oods/component-contracts';
-import { sampleData } from './sample-data';
+    ...(related ? [{ path: 'src/related-data.ts', contents: relatedDataFile(related) }] : []),
+    { path: 'src/store.ts', contents: `import { recordCollectionEvents, recordMatchesSearch, ${billingCycle ? 'restartedBillingPeriod, ' : ''}${order ? `${stateActions.length ? 'declaredActionRefusal, ' : ''}declaredMoveRefusal, isFinalState, ` : ''}type CollectionEvent${order ? ', type DeclaredStateOrder' : ''} } from '@oods/component-contracts';
+import { sampleData } from './sample-data';${related ? `
+import { resolveRelatedListRows, type ResolvedRelatedList } from '@oods/component-contracts';
+import { relatedCopied, relatedLists, relatedObjects, relatedOwn } from './related-data';` : ''}
 ${chartNodes(schema.screens).length ? `import { ${VIZ_SVG_PROPS.map(chartAssetMap).join(', ')} } from './chart-assets';` : ''}
 
 export type DomainRecord = {
@@ -180,9 +201,19 @@ export const sortField = ${JSON.stringify(sortField)} as const;
 export const fieldLabels: Record<string, string> = ${JSON.stringify(Object.fromEntries(Object.keys(fields).map(name => [name, fieldLabel(name)])))};
 export const fieldTypes: Record<string, string> = ${JSON.stringify(Object.fromEntries(Object.entries(fields).map(([key, value]) => [key, value.type])))};
 export const traits: readonly string[] = ${JSON.stringify(workflow.data.traits.map((name) => name.split('/').pop()))};
-export interface StoreOptions { empty?: boolean; fail?: boolean; latency?: number; now?: () => string; seed?: DomainRecord[] }
+/** Who is acting, when the app is told: the store signs each line it writes with them${stateActions.some(action => action.bySeat) ? ', and a declared action names them in its seat' : ''}. Not a viewer: nothing is shown or hidden by it. */
+export interface StoreActor { id: string; name: string; kind: 'person' | 'agent' | 'system' }
+export interface StoreOptions { empty?: boolean; fail?: boolean; latency?: number; now?: () => string; seed?: DomainRecord[]; actor?: StoreActor }
 export interface ListQuery { search?: string; status?: string; archived?: boolean; sort?: keyof DomainRecord; descending?: boolean; page?: number; pageSize?: number }
-export interface HistoryEntry { title?: string; from: string | null; to: string; at: string; reason: string; code?: string; atPeriodEnd?: boolean }
+export interface HistoryEntry { title?: string; from: string | null; to: string; at: string; reason: string; code?: string; atPeriodEnd?: boolean; actor_id?: string; actor_name?: string; actor_kind?: string }${order ? `
+/** The order this object declares for its states (Stateful's transitionRules): the store refuses any other move, and any move out of a final state. */
+export const stateOrder: DeclaredStateOrder = ${JSON.stringify(order)};
+const stateWords: { object: string; labels: Record<string, string> } = ${JSON.stringify(stateWords)};` : ''}${stateActions.length ? `
+/** The moves a person makes on a record (Stateful's actions), each written by transition as one change. */
+export interface StateAction { id: string; to: string; from: readonly string[]; verb: string; event: string; reasonField?: string; bySeat?: string; confirm: boolean; alsoEnds?: { via: string } }
+export const stateActions: readonly StateAction[] = ${JSON.stringify(stateActions)};
+/** What a declared action would move and leave, for the confirmation that asks first: it is worked out from the records here. */
+export interface ActionPreview { name: string; endsWith: string[]; notEnded: string[]; underWay: Array<{ title: string; state: string }>; leftRunning: Array<{ title: string; state: string }>; actor?: StoreActor }` : ''}
 export function screenProps(record: DomainRecord) {
   return {
 ${camelProps}
@@ -193,13 +224,24 @@ export function history(record: DomainRecord): HistoryEntry[] {
   const value = (record as Record<string, unknown>).state_history;
   return Array.isArray(value) ? value.filter((entry): entry is HistoryEntry => !!entry && typeof entry === 'object' && typeof entry.to === 'string' && typeof entry.at === 'string') : [];
 }
-export function collectionEvents(record: DomainRecord): CollectionEvent[] {
+${related ? `/**
+ * The record's related lists (metadata.relatedLists), worked out by the same core HTML and the standalone screens use.
+ * Records of other objects come from related-data.ts, copied from the samples when this app was made; the app's own
+ * records are the store's, so a change made here shows on the page that lists it. Replace this with your own query.
+ */
+export function relatedRows(record: DomainRecord, records: readonly DomainRecord[]): ResolvedRelatedList[] {
+  const objects = { ...relatedObjects, [relatedOwn.name]: { ...relatedOwn, records: records as unknown as Array<Record<string, unknown>> } };
+  return relatedLists.map((list) => ({ ...resolveRelatedListRows(list, relatedOwn, record as unknown as Record<string, unknown>, objects), ...(relatedCopied[list.id] ? { copied: relatedCopied[list.id] } : {}) }));
+}
+` : ''}export function collectionEvents(record: DomainRecord): CollectionEvent[] {
   return recordCollectionEvents(${Object.keys(aliases).length ? `{ ...record, ${Object.entries(aliases).map(([canonical, source]) => `${JSON.stringify(canonical)}: (record as Record<string, unknown>)[${JSON.stringify(source)}]`).join(', ')} }` : 'record'}, ${JSON.stringify({ historyField: eventCollection?.historyField, payments: paymentSources, minorUnits: workflow.data.minorUnits })});
 }
 export function createStore(options: StoreOptions = {}) {
   let records = structuredClone(options.seed ?? (options.empty ? [] : sampleData));
   let fail = options.fail ?? false;
   const now = options.now ?? (() => new Date().toISOString());
+  // s249-m03 (Interface 8): told who is acting, the store signs every line it writes with them; told no one, a line names no one.
+  const signature: Pick<HistoryEntry, 'actor_id' | 'actor_name' | 'actor_kind'> = options.actor ? { actor_id: options.actor.id, actor_name: options.actor.name, actor_kind: options.actor.kind } : {};
   const requireTrait = (trait: string) => { if (!traits.includes(trait)) throw new Error('Object does not support ' + trait); };
   const get = (id: string) => {
     const record = records.find((entry) => String(entry[idField]) === id);
@@ -213,13 +255,26 @@ export function createStore(options: StoreOptions = {}) {
     return get(String(record[idField]));
   };
   // A saved edit is history: the record's state history gains an entry naming the changed fields.
-  const update = (record: DomainRecord) => {
+  const update = (record: DomainRecord${stateActions.length ? ', note?: string): DomainRecord' : ')'} => {
     const previous = records.find((entry) => entry[idField] === record[idField]);
     if (!previous) throw new Error('Cannot save a missing record');
     const values = record as Record<string, unknown>;
     const before = previous as Record<string, unknown>;
     const changed = Object.keys(values).filter((name) => Object.hasOwn(fieldTypes, name) && name !== 'state_history' && name !== ${JSON.stringify(updatedField)} && JSON.stringify(values[name]) !== JSON.stringify(before[name]));
-    if (changed.length === 0) return save(record);
+    if (changed.length === 0) return save(record);${order ? `
+    // s249-m03 (Interface 10): the declared order is kept. A move it does not allow and any move out of a final state are
+    // refused${locked.length ? ', and so is a change to how a final record ended' : ''}.
+    const moving = changed.includes(${JSON.stringify(statusField)});
+    if (moving) { const refusal = declaredMoveRefusal(stateOrder, ${status('before')}, ${status('values')}, stateWords); if (refusal) throw new Error(refusal); }${locked.length ? `
+    if (isFinalState(stateOrder, ${status('before')}) && changed.some((name) => (${JSON.stringify(locked)} as readonly string[]).includes(name))) throw new Error("This ${stateWords.object}'s status is " + ((label) => label.charAt(0).toUpperCase() + label.slice(1))(String(stateWords.labels[String(${status('before')})] ?? ${status('before')}).replace(/[_-]+/g, ' ').toLowerCase()) + ', and how it ended stays as it was recorded.');` : ''}${stateActions.length ? `
+    // A saved move that a declared action makes is that action, written as its button writes it (transition); any other
+    // change the form made saves first, as an edit.
+    const action = moving ? stateActions.find((entry) => entry.to === String(${status('values')}) && entry.from.includes(String(${status('before')}))) : undefined;
+    if (action) {
+      const typed = action.reasonField && changed.includes(action.reasonField) ? String(values[action.reasonField] ?? '') : undefined;
+      update({ ...values, [${JSON.stringify(statusField)}]: ${status('before')}, ...(action.reasonField ? { [action.reasonField]: before[action.reasonField] } : {}) } as DomainRecord);
+      return transition(String(values[idField]), action.id, note ?? typed);
+    }` : ''}` : ''}
     const at = now();
     const next = structuredClone(record);
     const target = next as Record<string, unknown>;
@@ -233,7 +288,7 @@ export function createStore(options: StoreOptions = {}) {
     if (Object.hasOwn(fieldTypes, 'state_history')) {
       const status = String(target${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? before${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? '');
       const moved = changed.includes(${JSON.stringify(statusField)});
-      const entry: HistoryEntry = { title: moved ? String(status).split(/[_-]/).filter(Boolean).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ') : 'Updated', from: moved ? String(before${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? '') : null, to: status, at, reason: 'Edited ' + changed.map((name) => fieldLabels[name] ?? name).join(', ')${billingCycle ? " + (restarted ? '; a new billing period started' : '')" : ''} };
+      const entry: HistoryEntry = { title: moved ? String(status).split(/[_-]/).filter(Boolean).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ') : 'Updated', from: moved ? String(before${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? '') : null, to: status, at, reason: 'Edited ' + changed.map((name) => fieldLabels[name] ?? name).join(', ')${billingCycle ? " + (restarted ? '; a new billing period started' : '')" : ''}, ...signature };
       target.state_history = [...history(next), entry];
     }
     const events: readonly string[] = ${JSON.stringify(eventNames)};
@@ -246,21 +301,102 @@ export function createStore(options: StoreOptions = {}) {
     const record = get(id);
     Object.assign(record, { is_archived: archived, archived_at: archived ? now() : null });
     return save(record);
+  };${stateActions.length ? `
+  // s249-m03 (Interface 6): a declared action (a grant's Revoke) is one change: the new state, the note in its reason field
+  // when one is given, who acted in its seat when the store was told, a line titled with the new state and the note as its
+  // reason, and its event. Records of this object inside the record (alsoEnds) that can make the same move make it at the
+  // same instant, each with its own line; one that cannot (a grant still asked for) is left as it is.
+  const titleOf = (record: DomainRecord) => String((record as Record<string, unknown>)[titleField] ?? record[idField]);
+  const inside = (record: DomainRecord, action: StateAction) => {
+    const moved: DomainRecord[] = [];
+    const held: DomainRecord[] = [];
+    const visit = (id: string) => {
+      if (!action.alsoEnds) return;
+      for (const entry of records) {
+        const values = entry as Record<string, unknown>;
+        if (String(values[action.alsoEnds.via] ?? '') !== id || entry === previousOf(record) || moved.includes(entry) || held.includes(entry)) continue;
+        if (action.from.includes(String(${status('values')}))) { moved.push(entry); visit(String(entry[idField])); }
+        else if (!isFinalState(stateOrder, ${status('values')})) held.push(entry);
+      }
+    };
+    visit(String(record[idField]));
+    return { moved, held };
   };
+  const previousOf = (record: DomainRecord) => records.find((entry) => entry[idField] === record[idField]);
+  const transition = (id: string, actionId: string, note?: string): DomainRecord => {
+    const action = stateActions.find((entry) => entry.id === actionId);
+    if (!action) throw new Error('A ${stateWords.object} has no action ' + actionId);
+    const record = get(id);
+    const values = record as Record<string, unknown>;
+    const refusal = declaredActionRefusal(action, ${status('values')}, stateOrder, stateWords);
+    if (refusal) throw new Error(refusal);
+    const at = now();
+    const text = note?.trim() ?? '';
+    const write = (target: Record<string, unknown>, reason: string) => {
+      const entry: HistoryEntry = { title: stateWords.labels[action.to] ?? action.to, from: String(${status('target')} ?? ''), to: action.to, at, reason, ...signature };
+      ${status('target')} = action.to;
+      if (action.bySeat && options.actor) for (const [suffix, value] of [['_id', options.actor.id], ['_name', options.actor.name], ['_kind', options.actor.kind]] as const) if (Object.hasOwn(fieldTypes, action.bySeat + suffix)) target[action.bySeat + suffix] = value;${fields.last_event && !fields.last_event.unavailable ? `
+      target.last_event = action.event;${fields.last_event_at && !fields.last_event_at.unavailable ? ' target.last_event_at = at;' : ''}` : ''}
+      if (Object.hasOwn(fieldTypes, 'state_history')) target.state_history = [...history(target as DomainRecord), entry];
+      if (Object.hasOwn(fieldTypes, ${JSON.stringify(updatedField)})) target[${JSON.stringify(updatedField)}] = at;
+    };
+    const { moved } = inside(record, action);
+    if (text && action.reasonField) values[action.reasonField] = text;
+    write(values, text);
+    for (const entry of moved) { const inner = get(String(entry[idField])); write(inner as Record<string, unknown>, 'Ended with ' + titleOf(record)); save(inner); }
+    return save(record);
+  };
+  const preview = (id: string, actionId: string): ActionPreview => {
+    const action = stateActions.find((entry) => entry.id === actionId);
+    if (!action) throw new Error('A ${stateWords.object} has no action ' + actionId);
+    const record = get(id);
+    const { moved, held } = inside(record, action);
+    const ending = new Set([String(record[idField]), ...moved.map((entry) => String(entry[idField]))]);
+    const label = (state: unknown) => stateWords.labels[String(state)] ?? String(state ?? '');
+    const underWay: ActionPreview['underWay'] = [];${related ? `
+    // The records its lines name that are not final, or not known, from the lists that read finality, leaving out what ends with it.
+    const seen = new Set<string>();
+    for (const list of relatedRows(record, records)) {
+      const declared = relatedLists.find((entry) => entry.id === list.id);
+      if (declared?.afterEnd || !declared?.finality?.length || declared.finality.includes('final')) continue;
+      for (const row of list.rows) {
+        const key = row.object + ':' + String(row.key);
+        if ((row.object === relatedOwn.name && ending.has(String(row.key))) || seen.has(key)) continue;
+        seen.add(key);
+        underWay.push({ title: row.title, state: row.stateLabel ?? label(row.state) });
+      }
+    }` : ''}
+    const leftRunning: ActionPreview['leftRunning'] = [];${mandate ? `
+    // Other grants the same holder holds for the same party that still stand, leaving out what ends with it.
+    const values = record as Record<string, unknown>;
+    for (const entry of records) {
+      const other = entry as Record<string, unknown>;
+      if (!ending.has(String(entry[idField])) && action.from.includes(String(${status('other')})) && other.granted_to_id === values.granted_to_id && other.granted_for_id === values.granted_for_id) leftRunning.push({ title: titleOf(entry), state: label(${status('other')}) });
+    }` : ''}
+    return { name: titleOf(record), endsWith: moved.map(titleOf), notEnded: held.map(titleOf), underWay, leftRunning, ...(options.actor ? { actor: options.actor } : {}) };
+  };
+  /** The declared action a saved status move makes, if any: the form's way to the same change as the button. */
+  const actionFor = (record: DomainRecord) => {
+    const previous = previousOf(record) as Record<string, unknown> | undefined;
+    const values = record as Record<string, unknown>;
+    if (!previous || String(${status('previous')}) === String(${status('values')})) return undefined;
+    return stateActions.find((entry) => entry.to === String(${status('values')}) && entry.from.includes(String(${status('previous')})));
+  };` : ''}
   return {
-    get, save, update,
+    get, save, update,${stateActions.length ? ' transition, preview, actionFor,' : ''}${related ? `
+    related(record: DomainRecord) { return relatedRows(record, records); },` : ''}
     async ready() {
       await new Promise<void>((resolve) => setTimeout(resolve, Math.max(0, options.latency ?? 180)));
       if (fail) throw new Error('Simulated data service failure');
     },
     setFailure(value: boolean) { fail = value; },
     list(query: ListQuery = {}) {
-      const search = (query.search ?? '').trim().toLowerCase();
+      // One search rule (recordMatchesSearch): any text or number at any depth, its history included; never a key name.
       const filtered = records.filter((record) => {
         const values = record as Record<string, unknown>;
         return Boolean(values.is_archived) === (query.archived ?? false)
           && (!query.status || values${filterField === 'status' ? '.status' : `[${JSON.stringify(filterField)}]`} === query.status)
-          && (!search || Object.values(record).some((value) => String(value).toLowerCase().includes(search)));
+          && recordMatchesSearch(record, query.search);
       });
       const sort = query.sort ?? sortField;
       filtered.sort((a, b) => {
@@ -289,7 +425,7 @@ export function createStore(options: StoreOptions = {}) {
       const deferred = target === 'pending_cancellation' && atPeriodEnd;${billingCycle ? `
       // Ending at the period's end cancels the renewal: a payment due at or after that end will not be taken.
       if (deferred && typeof values.next_payment_due_at === 'string' && typeof values.current_period_end === 'string' && Date.parse(values.next_payment_due_at) >= Date.parse(values.current_period_end)) values.next_payment_due_at = undefined;` : ''}
-      const entry: HistoryEntry = { title: target === 'cancelled' ? 'Cancelled' : 'Pending Cancellation', from: String(values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`}), to: target, at, reason: reason.trim(), code, atPeriodEnd: deferred };
+      const entry: HistoryEntry = { title: target === 'cancelled' ? 'Cancelled' : 'Pending Cancellation', from: String(values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`}), to: target, at, reason: reason.trim(), code, atPeriodEnd: deferred, ...signature };
       Object.assign(record, { [${JSON.stringify(statusField)}]: target, cancellation_reason: reason.trim(), cancellation_reason_code: code, ${fields.cancel_at_period_end && !fields.cancel_at_period_end.unavailable ? 'cancel_at_period_end: deferred, ' : ''}cancellation_requested_at: at, ${cancelEvent ? `last_event: ${JSON.stringify(cancelEvent)}, ${fields.last_event_at && !fields.last_event_at.unavailable ? 'last_event_at: at, ' : ''}` : ''}state_history: [...history(record), entry], [${JSON.stringify(updatedField)}]: at });
       return save(record);
     },
@@ -299,4 +435,27 @@ export function createStore(options: StoreOptions = {}) {
 }
 ` },
   ];
+}
+
+/** s249-m02: the generated src/related-data.ts: the declared lists, the app's own object, and the records it copied. */
+function relatedDataFile(related: NonNullable<ReturnType<typeof relatedAppData>>): string {
+  const json = (value: unknown) => JSON.stringify(value, null, 2);
+  return `import type { RelatedList, RelatedObject } from '@oods/component-contracts';
+
+/**
+ * The related lists this object declares (metadata.relatedLists), read by relatedRows in store.ts. relatedObjects holds
+ * the records of the other objects the lists read, copied from the samples when this app was made, with only the fields
+ * the lists read; the app's own records are its store's. A product replaces relatedRows with its own query.
+ */
+export const relatedLists: RelatedList[] = ${json(related.lists)};
+
+/** This app's own object; its records are the store's live records. */
+export const relatedOwn: RelatedObject = ${json(related.own)};
+
+/** The other objects' records, copied from the samples when this app was made. */
+export const relatedObjects: Record<string, RelatedObject> = ${json(related.objects)};
+
+/** The note a list carries when it reads records copied from other objects. */
+export const relatedCopied: Record<string, string> = ${json(related.copied)};
+`;
 }

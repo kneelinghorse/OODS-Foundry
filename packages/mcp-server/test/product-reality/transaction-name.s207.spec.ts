@@ -65,7 +65,8 @@ describe('authored Transaction name (Derek approval, decision 2266)', () => {
     const directory = mkdtempSync(path.join(tmpdir(), 'transaction-name-'));
     try {
       writeFileSync(path.join(directory, 'package.json'), '{"type":"commonjs"}');
-      for (const file of artifact.files.filter(file => /^src\/(store|sample-data|application|actions)\.ts$/.test(file.path))) {
+      // s249-m02: an object that declares related lists also has src/related-data.ts, which store.ts imports.
+      for (const file of artifact.files.filter(file => /^src\/(store|sample-data|application|actions|related-data)\.ts$/.test(file.path))) {
         writeFileSync(path.join(directory, path.basename(file.path, '.ts') + '.js'), ts.transpileModule(file.contents, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText);
       }
       mkdirSync(path.join(directory, 'node_modules/@oods'), { recursive: true });

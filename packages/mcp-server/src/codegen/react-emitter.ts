@@ -37,6 +37,10 @@ import {
   SLOT_DATE_HELPER,
   slotExcerptHelperSource,
   SLOT_EXCERPT_HELPER,
+  orderedStatusSelect,
+  STATUS_WHEN_OPENED,
+  RECORD_STATE_PROPS,
+  recordStateCondition,
 } from './binding-utils.js';
 import { artifactActionsFromBindings, bindingsForNode, nativeSubmitHandler } from './action-protocol.js';
 import {
@@ -336,12 +340,12 @@ function reactScreenActionSurface(
 
   // s211-m02: the design system's Button in one action bar, Edit leading and a destructive Delete last.
   // s221-m01: an action the record's state governs renders only while that state allows it (screenActionGate).
-  const buttons = orderScreenActions(occurrences).map((occurrence) => {
+  const buttons = orderScreenActions(occurrences, objectName).map((occurrence) => {
     const label = screenActionLabel(occurrence.event, objectName, workflow, SCREEN_ACTION_LABELS);
     const activation = occurrence.signature.parameters.length
       ? 'disabled title="This action needs input from your application."'
       : `onClick={() => ${occurrence.handlerName}()}`;
-    const button = `<Button intent="${screenActionIntent(occurrence.event)}" data-oods-action="${escapeDoubleQuotedAttr(occurrence.handlerName)}" ${activation}>${childValueToJsx(label)}</Button>`;
+    const button = `<Button intent="${screenActionIntent(occurrence.event, objectName)}" data-oods-action="${escapeDoubleQuotedAttr(occurrence.handlerName)}" ${activation}>${childValueToJsx(label)}</Button>`;
     const gate = screenActionGate(occurrence.event, objectSchema, workflow, objectName);
     return gate ? `{${screenActionCondition(gate)} && (\n${indent(button, 1)}\n)}` : button;
   });
@@ -472,6 +476,7 @@ function emitNode(
     : null;
   // s247-m01: the opt-in to leave an empty place undrawn is a condition around the node (below), never an attribute.
   if (propsObject) delete propsObject[OMIT_EMPTY_PROP];
+  if (propsObject) for (const prop of RECORD_STATE_PROPS) delete propsObject[prop];
   const tailwindVariant = tailwindVariants.get(tag);
   const localBinding = localBindingForNode(bindingAnalysis, node.id);
   const readonlyField = bindingAnalysis.readonlyFieldSubscriptions.find((subscription) => subscription.nodeId === node.id);
@@ -480,7 +485,9 @@ function emitNode(
   const anchor = screenActionAnchor(node);
   // s247-m01: a place that opts in is drawn only where the record holds a value for it.
   const emptyCondition = omitEmptyCondition(node, objectSchema);
-  const timelineCondition = [statusTimelineCondition(node, objectSchema), emptyCondition && `(${emptyCondition})`].filter(Boolean).join(' && ') || undefined;
+  // s249-m03: a place drawn only for a record in some states, or only where a field is unset (compose/ending-fields.ts).
+  const stateCondition = recordStateCondition(node, objectSchema, 'react');
+  const timelineCondition = [statusTimelineCondition(node, objectSchema), emptyCondition && `(${emptyCondition})`, stateCondition && `(${stateCondition})`].filter(Boolean).join(' && ') || undefined;
   const finish = (code: string): string => wrapReactStateNode(
     wrapReactScreenActionSurface(timelineCondition ? `{${timelineCondition} ? (${code}) : null}` : anchor ? `${code}\n${REACT_ACTION_ANCHORS[anchor]}` : code, node, bindingAnalysis, options.objectName, objectSchema, Boolean(options.workflowCollections)),
     node.state,
@@ -558,12 +565,16 @@ function emitNode(
   // s248-m01 (next step 1861): a reference select names the record's own value when it does not list it.
   const valueOptions = valueSelect(node, objectSchema);
   if (valueOptions && propsObject) delete propsObject.options;
+  // s249-m03: a status select of an object that declares its order offers the state the record was in and its moves.
+  const orderedOptions = orderedStatusSelect(node, objectSchema, options.objectName, propsObject?.options);
+  if (orderedOptions && propsObject) delete propsObject.options;
   // Spread user props (except style and children)
   if (propsObject) {
     const propsStr = propsToJsxAttrs(propsObject, options.styling === 'tailwind');
     if (propsStr) attrParts.push(propsStr);
   }
   if (valueOptions) attrParts.push(`options={selectOptionsWithValue(${JSON.stringify(valueOptions.options)}, ${snakeToCamel(valueOptions.field)}, ${valueOptions.keptName ? snakeToCamel(valueOptions.keptName) : 'undefined'}, ${javascriptSingleQuotedString(valueOptions.subject)})}`);
+  if (orderedOptions) attrParts.push(`options={statusOptionsInOrder(${JSON.stringify(orderedOptions.options)}, ${STATUS_WHEN_OPENED}, ${JSON.stringify(orderedOptions.order)})}`);
 
   attrParts.push(...recipeProps.bindings.map(({ targetProp, expression }) => (
     `${targetProp}={${expression}}`
@@ -1151,6 +1162,8 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
     .join('\n'), REACT_ACTION_ANCHORS);
   // The action bar is written outside the tree, so its Button is imported here.
   if (screenJsx.includes('data-oods-screen-actions=')) components.add('Button');
+  // s249-m02: a related list draws each row's state with StatusBadge, written outside the tree's own nodes.
+  if (screenJsx.includes('data-oods-collection="related"')) components.add('StatusBadge');
 
   // Build the complete file
   const importBlock = buildImportBlock(components, tailwindVariants.size > 0, options.brandStylesheet);
@@ -1235,13 +1248,17 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
     ctx.objectSchema,
   );
   const actionGuards = generateReactActionGuards(bindingAnalysis);
+  // s249-m03: the state the record was in when the screen opened, read by an ordered status select (orderedStatusSelect).
+  const openedField = new RegExp(`\\b${STATUS_WHEN_OPENED}\\b`).test(screenJsx)
+    ? Object.keys(ctx.objectSchema ?? {}).find(name => ctx.objectSchema?.[name]?.semanticType === 'status.state') : undefined;
+  const opened = openedField ? `  const [${STATUS_WHEN_OPENED}] = React.useState(${snakeToCamel(openedField)});` : '';
 
   // Prop defaults from objectSchema field values (collected in the shared pre-emit pass)
   const propDefaults = hasObjectSchema ? ctx.propDefaults : null;
 
   // Read the lowered body and collection defaults; unused schema fields remain part of PageProps, not local bindings.
   const collections = collectionParameters(ctx.tree, normalizedSchema.objectSchema ?? {}, 'react');
-  const reads = reactBindingReads(`${bindingProtocol}\n${actionGuards}\nreturn (<>${screenJsx}${referenceInspection(normalizedSchema, 'react')}</>);`);
+  const reads = reactBindingReads(`${bindingProtocol}\n${opened}\n${actionGuards}\nreturn (<>${screenJsx}${referenceInspection(normalizedSchema, 'react')}</>);`);
 
   for (const name of reactBindingReads(collections.map(parameter => `const ${parameter};`).join('\n'))) reads.add(name);
 
@@ -1277,6 +1294,7 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
     lines.push(bindingProtocol);
     lines.push('');
   }
+  if (opened) lines.push(opened, '');
 
   // Emit prop default declarations — but skip any names already destructured
   // from the component params to avoid illegal const redeclarations

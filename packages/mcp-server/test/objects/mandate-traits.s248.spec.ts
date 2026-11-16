@@ -57,12 +57,13 @@ const controlLabels = (html: string): string[] => {
 };
 /** The page before the closed Reference details block, which lists every reference set or not, by design. */
 const shown = (html: string) => { const body = text(html); const at = body.indexOf('Reference details'); return at >= 0 ? body.slice(0, at) : body; };
+// s249-m03 (Mandate 1.1.0): who a requested grant waits on (asked_of_*) and the capacity it was ended in (ended_as).
 const FIELDS = [
-  'requested_by_id', 'requested_by_name', 'requested_by_kind', 'granted_by_id', 'granted_by_name', 'granted_by_kind', 'granted_as',
+  'requested_by_id', 'requested_by_name', 'requested_by_kind', 'asked_of_id', 'asked_of_name', 'asked_of_kind', 'granted_by_id', 'granted_by_name', 'granted_by_kind', 'granted_as',
   'granted_to_id', 'granted_to_name', 'granted_to_kind', 'granted_for_id', 'granted_for_name', 'scope', 'allowed_actions', 'asks_first_for',
   'never_allowed', 'amount_limit_minor', 'period_limit_minor', 'limit_currency', 'limit_period', 'uses_per_period', 'conditions', 'ends_at',
   'timezone', 'ends_note', 'uses', 'last_used_at', 'last_use', 'spent_minor', 'within_id', 'within_name', 'replaces_id', 'replaces_name',
-  'first_grant_id', 'first_grant_name', 'ended_by_id', 'ended_by_name', 'ended_by_kind', 'ended_reason',
+  'first_grant_id', 'first_grant_name', 'ended_by_id', 'ended_by_name', 'ended_by_kind', 'ended_as', 'ended_reason',
 ];
 const STATES = ['requested', 'active', 'paused', 'revoked', 'expired', 'replaced', 'declined', 'withdrawn'];
 const ENDINGS = ['revoked', 'expired', 'replaced', 'declined', 'withdrawn'];
@@ -72,7 +73,7 @@ describe('core/Mandate is a shipped trait', () => {
   it('holds the record\'s fields, every id a plain string so an imported reference can bind, none required', () => {
     expect(listTraits()).toContain('Mandate');
     const trait = loadTrait('core/Mandate');
-    expect(trait.trait).toMatchObject({ name: 'Mandate', version: '1.0.0', category: 'core' });
+    expect(trait.trait).toMatchObject({ name: 'Mandate', version: '1.1.0', category: 'core' });
     expect(Object.keys(trait.schema)).toEqual(FIELDS);
     for (const field of FIELDS.filter(name => name.endsWith('_id'))) expect(trait.schema[field]!.type, field).toBe('string');
     expect(Object.entries(trait.schema).filter(([, field]) => field.required)).toEqual([]);
@@ -121,9 +122,12 @@ describe('core/Mandate is a shipped trait', () => {
 describe('every state a grant can be in has a tone, in words that read for any object, and no ending reads as success', () => {
   it('requested, revoked and replaced are new, expired is reworded, and none says anything of grants or agents', () => {
     expect(getStatusPresentation('lifecycle', 'requested').description).toBe('Requested and not yet answered.');
-    // s248-m04 (the fresh read): revoked says only that someone took it back, true of a grant with no end too and asserting
-    // no authority nothing checks; active reads only "Active.", true of a person, a product and a grant alike.
-    expect(getStatusPresentation('lifecycle', 'revoked').description).toBe('Revoked: someone took it back.');
+    // s248-m04 (the fresh read): revoked says only that someone ended it, true of a grant with no end too and asserting
+    // no authority nothing checks; active reads only "Active.", true of a person, a product and a grant alike. s249-m03
+    // (Interface 11): "took it back" became "ended it", true too of a holder giving a grant up; and withdrawn names no one,
+    // true of an asker dropping an ask and of a product calling one off because its grant ended.
+    expect(getStatusPresentation('lifecycle', 'revoked').description).toBe('Revoked: someone ended it.');
+    expect(getStatusPresentation('lifecycle', 'withdrawn').description).toBe('Withdrawn: the ask was called off.');
     expect(getStatusPresentation('lifecycle', 'active').description).toBe('Active.');
     expect(getStatusPresentation('lifecycle', 'replaced').description).toBe('Replaced: a newer one took its place.');
     // An approval that was never answered and a grant that reached its end both ran out of time.
@@ -228,7 +232,7 @@ describe('the record trait composed onto test objects, in every context where it
   };
   // The places that are empty on the sparse sample, by their labels.
   const EMPTY_LABELS = ['Kind of holder', 'Kind of giver', 'Given as', 'Asked for by', 'Allowed actions', 'Asks first for', 'Never allowed', 'Most per use', 'Most per period',
-    'Period', 'Uses per period', 'Conditions', 'Ends', 'Time zone', 'Uses', 'Last used', 'Last use', 'Spent this period', 'Inside', 'Replaces', 'First grant'];
+    'Period', 'Uses per period', 'Conditions', 'Ends', 'Time zone', 'Uses', 'Last used', 'Last used for', 'Spent this period', 'Inside', 'Replaces', 'First grant'];
   const yamlSample = (sample: Record<string, unknown>) => ['  -', ...Object.entries(sample).map(([key, value]) => `    ${key}: ${JSON.stringify(value)}`)].join('\n').replace('  -\n    ', '  - ');
 
   beforeAll(() => {
@@ -347,13 +351,17 @@ describe('the record trait composed onto test objects, in every context where it
     const order = ['Covers', 'Resend returned transfers', 'For', 'Tidewater Co-op', 'Held by', 'Billing Agent', 'Kind of holder', 'Agent', 'Given by', 'Ruth Adeyemi', 'Kind of giver', 'Person',
       'Given as', 'Finance manager, Tidewater Co-op', 'Asked for by', 'Billing Agent', 'Kind of asker', 'Agent', 'Allowed actions', 'Resend a payment', 'Asks first for', 'None',
       'Never allowed', 'None', 'Most per use', '$12,000.00', 'Most per period', '$30,000.00', 'Period', 'Month', 'Uses per period', '3', 'Conditions', 'Only a payment the bank returned',
-      'Ends', 'At the end of 31 Dec 2026, Tauranga time', 'Ends (UTC)', 'Dec 31, 2026, 10:59 AM', 'Time zone', 'Pacific/Auckland', 'Uses', '1', 'Last used (UTC)', 'Oct 20, 2026',
-      'Last use', '20 Oct: PAY-2026-0512 sent again', 'Spent this period', '$4,100.00', 'Inside', 'Tidewater Co-op invoices and payments', 'Replaces', 'Resend transfers once',
+      // s249-m04 (Interface 13): an instant names its zone, so its label no longer does; s249-m05's fresh read names the
+      // instants apart from the party's words and the last use's line ("End time", "Last used", "Last used for").
+      'Ends', 'At the end of 31 Dec 2026, Tauranga time', 'End time', 'Dec 31, 2026, 10:59 AM UTC', 'Time zone', 'Pacific/Auckland', 'Uses', '1', 'Last used', 'Oct 20, 2026',
+      'Last used for', '20 Oct: PAY-2026-0512 sent again', 'Spent this period', '$4,100.00', 'Inside', 'Tidewater Co-op invoices and payments', 'Replaces', 'Resend transfers once',
       'First grant', 'Resend transfers once'];
     const page = await pages('Consent', 'detail', [full]);
     for (const renderer of RENDERERS) {
       const body = shown(page[renderer]);
       inOrder(body.slice(body.indexOf('Covers')), order, renderer);
+      // s249-m04: the values say UTC, so no label does ("Last used (UTC)" would still hold "Last used" in order).
+      expect(body, renderer).not.toContain('(UTC)');
       // A reference shows its kept name, never the id the product knows the party by; no amount is the stored number.
       expect(body, renderer).not.toMatch(/usr_ruth|agt_billing|org_tidewater|grt_[0-9]\b|1200000|3000000/);
     }
@@ -391,7 +399,7 @@ describe('the record trait composed onto test objects, in every context where it
         expect(body, `${renderer} ${context}`).toContain('$5,000.00');
         expect(body, `${renderer} ${context}`).not.toMatch(/Most per use|\$0\.00/);
         expect(body, `${renderer} ${context}`).toContain('No end: it stands until someone ends it');
-        expect(body, `${renderer} ${context}`).not.toContain('Ends (UTC)');
+        expect(body, `${renderer} ${context}`).not.toContain('End time');
       }
     }
   });
@@ -402,7 +410,8 @@ describe('the record trait composed onto test objects, in every context where it
     const controls = (field: string) => nodes.filter(node => [node.props?.field, node.props?.amountField].includes(field) && !['Text', 'Stack', 'BillingSummaryBadge'].includes(node.component));
     for (const field of FIELDS.filter(name => name !== 'ended_reason')) expect(controls(field), `${field} is no control`).toEqual([]);
     expect(nodes.filter(node => node.meta?.intent === 'form-fact').map(node => node.children?.find(child => child.meta?.intent === 'read-only-field')).map(node => node?.props?.field ?? node?.props?.amountField))
-      .toEqual(['scope', 'granted_for_name', 'granted_to_name', 'granted_by_name', 'granted_as', 'requested_by_name', 'allowed_actions', 'asks_first_for', 'never_allowed',
+      // s249-m03: who a requested grant waits on is a fact too, read by its kept name.
+      .toEqual(['scope', 'granted_for_name', 'granted_to_name', 'granted_by_name', 'granted_as', 'requested_by_name', 'asked_of_name', 'allowed_actions', 'asks_first_for', 'never_allowed',
         'amount_limit_minor', 'period_limit_minor', 'limit_period', 'uses_per_period', 'conditions', 'ends_note', 'ends_at', 'within_name']);
     expect(controls('ended_reason').map(node => node.component)).toEqual(['Input']);
     expect(controls('ended_reason')[0]!.bindings?.onChange).toBe('handleChange_ended_reason');

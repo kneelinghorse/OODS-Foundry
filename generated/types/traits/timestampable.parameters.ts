@@ -11,7 +11,7 @@ export interface TimestampableTraitParameters {
    */
   recordedEvents: [string, ...string[]];
   /**
-   * Default timezone context applied when presenting timestamps.
+   * The time zone your product reads the record's times in. Screens show times in UTC, and a shown date-time says so; a date-time input does not yet.
    */
   timezone?: 'UTC' | 'LOCAL' | 'OFFSET';
   /**

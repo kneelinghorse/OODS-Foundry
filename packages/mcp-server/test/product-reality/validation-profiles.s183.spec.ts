@@ -363,7 +363,10 @@ describe('Sprint 183 M03 validation profiles', () => {
       const result = await generateCode({ framework: 'html', profile, schema });
       expect(result.status).toBe('ok');
       expect(result.code).toContain('data-oods-action="saveChanges"');
-      expect(result.code).toContain('No record was changed.');
+      // s249-m04 (Interface 14): HTML's notice names the button as it reads ("Save needs your app to act. Nothing was
+      // changed."), never a handler's name; it read "<handler> needs your application’s data or navigation handler. No record
+      // was changed."
+      expect(result.code).toContain(' needs your application to act. Nothing was changed.');
       expect(result.artifact.actions.map(action => action.name)).toContain('saveChanges');
       expectDisclosure(result.validationReceipt, profile, 'html', { requested: 'html' });
     }

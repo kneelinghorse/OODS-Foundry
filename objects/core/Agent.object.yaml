@@ -154,12 +154,45 @@ metadata:
     - version: 1.0.0
       date: "2026-11-07"
       description: Initial Agent object, the twelfth public reference object; an agent is an actor, not a user.
+  # s249-m01: the lists this object's detail page shows of the records that point at one of its records, seat by seat,
+  # declared here on the page that shows them (packages/mcp-server/src/objects/related-lists.ts says what each key means).
+  # They read the registered objects' records by id only, never by name.
+  # The agent's own acts_for stays a field: the product's words beside the record.
+  relatedLists:
+    - id: acts-for
+      label: "Grants {name} holds"
+      empty: "{name} holds no grant now."
+      filtered: { one: "1 other grant to {name} is asked for or has ended.", other: "{count} other grants to {name} are asked for or have ended." }
+      sources:
+        - from: Grant
+          via: granted_to_id
+          when: { granted_to_kind: agent, within_id: null }
+          states: [active, paused]
+          inner: within_id
+          row: { line: [granted_for_name, scope, last_use, { says: No uses counted, when: { uses: 0 } }], time: ends_note }
+    - id: work
+      label: "Work {name} did"
+      empty: "No recorded change names {name} as the one who acted."
+      sources:
+        - { from: [Task, Approval, Transaction, Grant], via: "state_history[].actor_id" }
+    - id: ended-grants
+      label: "Ended grants {name} held"
+      empty: "No grant {name} held has ended."
+      collapsed: true
+      sources:
+        - from: Grant
+          via: granted_to_id
+          when: { granted_to_kind: agent, within_id: null }
+          states: [revoked, expired, replaced]
+          inner: within_id
+          row: { line: [granted_for_name, scope] }
 
 # Seven authored sample agents, one at each of seven sample organizations, each sponsored by a person or team there. Six
-# hold a grant to act for it, and each acts_for restates the grants its agent holds, one phrase per party. The Grant
-# samples hold all but one of them: the Order Agent's reseller grant for Harbor Channel Partners, which owns Summit's
-# account and is not a sample organization. The Inventory Agent holds none: its one task is its sponsor's own, and its
-# lines name no party. An agent is created as a draft
+# have held a grant to act for it, and each acts_for restates the grants its agent holds now, one phrase per party, or
+# None. The Grant samples hold all but one of them: the Order Agent's reseller grant for Harbor Channel Partners, which
+# owns Summit's account and is not a sample organization. Two hold none now: the Scheduling Agent's grant was revoked when
+# Marlow Yoga closed, and the Support Agent's on 8 October, when its acts_for was restated as None. The Inventory Agent
+# holds none: its one task is its sponsor's own, and its lines name no party. An agent is created as a draft
 # (the lifecycle's initial state); each history ends in the agent's status, names who made each change, and its last
 # event is the latest recorded change. A list is one line with its items separated by "; ", and None when it is empty.
 samples:
@@ -180,7 +213,7 @@ samples:
     status: active
     state_history:
       - { title: Created, from: null, to: draft, at: '2026-08-20T21:00:00Z', reason: Set up to match bank transfers to invoices, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02, actor_name: Ruth Adeyemi, actor_kind: person }
-      - { title: Activated, from: draft, to: active, at: '2026-09-01T21:00:00Z', reason: Approved after two weeks of supervised matching, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02, actor_name: Ruth Adeyemi, actor_kind: person }
+      - { title: Activated, from: draft, to: active, at: '2026-09-01T21:00:00Z', reason: Approved after twelve days of supervised matching, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02, actor_name: Ruth Adeyemi, actor_kind: person }
     created_at: '2026-08-20T21:00:00Z'
     updated_at: '2026-09-01T21:00:00Z'
     last_event: activated
@@ -190,7 +223,7 @@ samples:
     description: Answers order questions for Northwind Traders
     provider: Built by Northwind's support team
     skills: Answer order questions; Track shipments; Draft replies
-    acts_for: Northwind Traders · customer replies · until 30 Jun 2027
+    acts_for: None
     allowed_actions: Track shipments; Draft replies
     asks_first_for: Send a reply; Offer a discount code
     never_allowed: Cancel an order; Change a delivery address
@@ -204,9 +237,9 @@ samples:
       - { title: Created, from: null, to: draft, at: '2026-03-02T15:00:00Z', reason: Set up for the spring order rush, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01, actor_name: Dana Whitfield, actor_kind: person }
       - { title: Activated, from: draft, to: active, at: '2026-03-09T15:00:00Z', reason: Replies reviewed and approved for customers, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01, actor_name: Dana Whitfield, actor_kind: person }
     created_at: '2026-03-02T15:00:00Z'
-    updated_at: '2026-03-09T15:00:00Z'
-    last_event: activated
-    last_event_at: '2026-03-09T15:00:00Z'
+    updated_at: '2026-10-08T16:00:00Z'
+    last_event: updated
+    last_event_at: '2026-10-08T16:00:00Z'
   - agent_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a03
     name: Order Agent
     description: Reserves stock for Summit Outfitters and its reseller
@@ -225,7 +258,7 @@ samples:
     state_history:
       - { title: Created, from: null, to: draft, at: '2026-05-04T16:00:00Z', reason: Set up for online orders, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08, actor_name: Arjun Mehta, actor_kind: person }
       - { title: Activated, from: draft, to: active, at: '2026-05-11T16:00:00Z', reason: Stock checks matched the warehouse counts, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08, actor_name: Arjun Mehta, actor_kind: person }
-      - { title: Paused, from: active, to: paused, at: '2026-06-30T18:00:00Z', reason: Paused while single sign-on was reset, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08, actor_name: Arjun Mehta, actor_kind: person }
+      - { title: Paused, from: active, to: paused, at: '2026-06-30T17:59:00Z', reason: Paused while single sign-on was reset, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08, actor_name: Arjun Mehta, actor_kind: person }
       - { title: Resumed, from: paused, to: active, at: '2026-07-01T15:00:00Z', reason: Single sign-on restored, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d08, actor_name: Arjun Mehta, actor_kind: person }
     created_at: '2026-05-04T16:00:00Z'
     updated_at: '2026-07-01T15:00:00Z'
@@ -318,8 +351,8 @@ samples:
     state_history:
       - { title: Created, from: null, to: draft, at: '2026-01-12T10:00:00Z', reason: Set up for the class waitlist, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07, actor_name: Jonah Marlow, actor_kind: person }
       - { title: Activated, from: draft, to: active, at: '2026-01-19T10:00:00Z', reason: Waitlist offers checked for a week, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07, actor_name: Jonah Marlow, actor_kind: person }
-      - { title: Retired, from: active, to: retired, at: '2026-07-10T09:00:00Z', reason: Studio closed; its grant was revoked, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07, actor_name: Jonah Marlow, actor_kind: person }
+      - { title: Retired, from: active, to: retired, at: '2026-07-10T08:59:00Z', reason: Studio closed; its grant was revoked, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07, actor_name: Jonah Marlow, actor_kind: person }
     created_at: '2026-01-12T10:00:00Z'
-    updated_at: '2026-07-10T09:00:00Z'
+    updated_at: '2026-07-10T08:59:00Z'
     last_event: retired
-    last_event_at: '2026-07-10T09:00:00Z'
+    last_event_at: '2026-07-10T08:59:00Z'

@@ -1,6 +1,6 @@
 trait:
   name: Stateful
-  version: 2.4.0
+  version: 2.5.0
   description: |
     Normalizes lifecycle state transitions, exposes canonical status semantics, and provides
     optional transition governance for production workflows. Many objects compose Stateful
@@ -10,13 +10,16 @@ trait:
     At its simplest, Stateful defines an ordered list of valid states and tracks the current
     status. With transitionRules, a product also declares which moves between states are allowed,
     for auditable workflows where arbitrary state jumps are not permitted.
-    The product enforces that order: it checks each change against it and writes allowed_transitions.
-    OODS Foundry keeps the order as data, refuses an order that names a state the lifecycle lacks,
-    holds its own shipped samples to it and moves no record. In a generated React or Vue app it
-    reads the order in one place: Cancel is offered, and the generated store accepts it, only from a
-    state the order lets move to where cancelling goes.
-    A generated StatusSelector offers every state. Every recorded change, with an order or without
-    one, can name who made it and why.
+    Your product enforces that order on its own records: it checks each change against it and writes
+    allowed_transitions. OODS Foundry keeps the order as data, refuses an order that names a state the
+    lifecycle lacks and holds its own shipped samples to it. A generated app keeps the order in its own
+    store: a generated StatusSelector offers the record's state and the moves the order allows from it,
+    and the store refuses any other move and any move out of a final state. In generated React and Vue
+    screens, Cancel is offered, and the store accepts it, only from a state the order lets move to where
+    cancelling goes. With actions, a lifecycle also names the moves a person makes, such as a grant's
+    Revoke, Pause and Resume: each is offered only from the states it moves from, is written as one
+    change to the app's own records, and stops nothing. Every recorded change, with an order or without one,
+    can name who made it and why.
   category: lifecycle
   tags:
     - lifecycle
@@ -56,16 +59,37 @@ parameters:
     description: |
       Allowed state transition map. Keys are source states; values are arrays of permitted
       target states, and an empty array marks a final state. Every key and target must be one of
-      the states: an order that names a state the lifecycle lacks is refused. The product enforces
-      the order and rejects any other move; OODS Foundry keeps it as data, and in a generated React
-      or Vue app reads it only for Cancel, which is offered and accepted only where the order
-      allows. When omitted, a move between any two states is allowed (open model).
+      the states: an order that names a state the lifecycle lacks is refused. Your product enforces
+      the order and rejects any other move. OODS Foundry keeps it as data, and a generated app keeps
+      it in its own store: its status select offers the current state and the moves allowed from it,
+      its store refuses any other move and any move out of a final state, and Cancel and the declared
+      actions are offered only where the order allows. When omitted, a move between any two states is
+      allowed (open model).
 
       Example for a subscription lifecycle:
         draft: [active, archived]
         active: [paused, archived]
         paused: [active, archived]
         archived: []
+    default: null
+
+  - name: actions
+    type: object[]
+    required: false
+    description: |
+      Named moves a person makes on a record, each to one state of the declared order: its id, the state it
+      moves to (to), the states it is offered from (from; by default every state whose declared targets include to),
+      the verb a person reads (verb), and the event Timestampable records for it (event). It may also name the field its
+      optional note is written to (reasonField), the seat whose _id, _name and _kind fields name who acted when the app
+      is told (bySeat), whether it asks once first (confirm), and the records of the same object that make the same move
+      with it (alsoEnds: { via }). Each action needs transitionRules. A generated screen offers an action only from the
+      states it moves from, and a generated app writes it as one change to its own records when a person asks; it stops
+      nothing. A record whose object declares an action ending it (to a final state) is ended, never deleted, so its
+      detail offers no Delete.
+      Example for a grant:
+        - { id: revoke, to: revoked, verb: Revoke, event: ended, reasonField: ended_reason, bySeat: ended_by, confirm: true, alsoEnds: { via: within_id } }
+        - { id: pause, to: paused, verb: Pause, event: paused }
+        - { id: resume, from: [paused], to: active, verb: Resume, event: resumed }
     default: null
 
   - name: requireTransitionReason
@@ -142,7 +166,8 @@ schema:
       Materialized list of the next states the product allows from the current status, written
       by the product from the transitionRules parameter. When transitionRules is null (open model),
       this contains all states except the current one. The detail page's StatusTimeline lists it
-      when the record holds it; a generated StatusSelector offers every state whatever it holds.
+      when the record holds it. A generated StatusSelector reads transitionRules instead: it offers the
+      current state and the moves the order allows (every state where no order is declared).
     default: []
 
 semantics:
@@ -212,7 +237,7 @@ dependencies: []
 
 metadata:
   created: "2025-10-12"
-  updated: "2026-11-14"
+  updated: "2026-11-16"
   owners:
     - Design team
     - Engineering team
@@ -228,8 +253,9 @@ metadata:
       - Article
   accessibility:
     keyboard: |
-      StatusSelector is a labelled native select: arrow keys move through the states. It offers
-      every state and disables none.
+      StatusSelector is a labelled native select: arrow keys move through the states it offers, the
+      current state and the moves the declared order allows (every state where none is declared). It
+      disables none.
     screenreader: |
       StatusBadge announces the current state ("Status: Active"). StateTransitionEvent entries
       announce from-state, to-state, actor, and reason.

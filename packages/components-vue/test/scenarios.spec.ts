@@ -209,7 +209,8 @@ describe('@oods/components-vue shared scenarios', () => {
           assertTraitRecipeScenario(scenario.id, component.element); break;
 
           case 'AuditSummaryCard':
-            expect([...component.element!.querySelectorAll('dd')].map(node => node.textContent)).toEqual(['2', 'user-2', 'Sep 6, 2026, 12:00 PM']);
+            // s249-m04 (Interface 13): a date-time names the zone it is shown in ("… UTC"); a date alone names none.
+            expect([...component.element!.querySelectorAll('dd')].map(node => node.textContent)).toEqual(['2', 'user-2', 'Sep 6, 2026, 12:00 PM UTC']);
             break;
           case 'SortIndicator':
             expect(component.element!.querySelector('th')?.getAttribute('aria-sort')).toBe('none');
@@ -796,12 +797,12 @@ describe('@oods/components-vue shared scenarios', () => {
               mounted.unmount();
               return rows;
             };
-            expect(card({ ...scenario.props, hideWhenDefault: true })).toEqual(['Yes', 'Sep 5, 2026, 12:00 PM', 'Customer request']);
+            expect(card({ ...scenario.props, hideWhenDefault: true })).toEqual(['Yes', 'Sep 5, 2026, 12:00 PM UTC', 'Customer request']);
             expect(card({ cancelAtPeriodEnd: false, hideWhenDefault: true })).toBeNull();
             // A generated template writes the bare attribute, which the compiler passes as an empty string; an empty code
             // is not a value.
             expect(card({ cancelAtPeriodEnd: false, code: '', hideWhenDefault: '' })).toBeNull();
-            expect(card({ cancelAtPeriodEnd: false, requestedAt: '2026-09-21T16:40:00Z', hideWhenDefault: true })).toEqual(['No', 'Sep 21, 2026, 4:40 PM']);
+            expect(card({ cancelAtPeriodEnd: false, requestedAt: '2026-09-21T16:40:00Z', hideWhenDefault: true })).toEqual(['No', 'Sep 21, 2026, 4:40 PM UTC']);
             expect(card({ cancelAtPeriodEnd: false, code: 'budget', hideWhenDefault: true })).toEqual(['No', 'Budget']);
             expect(card({ cancelAtPeriodEnd: false })).toEqual(['No']);
             break;
@@ -933,7 +934,7 @@ describe('@oods/components-vue shared scenarios', () => {
         }
         case 'archive-summary-false-and-reason': {
           // Preserve false as the human-readable Archived answer and format the associated timestamp.
-          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['No', 'Sep 5, 2026, 12:00 PM', 'Retention policy']);
+          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['No', 'Sep 5, 2026, 12:00 PM UTC', 'Retention policy']);
           // s224-m01 (#2542 ruling 6): hideWhenDefault hides only the default. This record has a date and a reason, so it
           // keeps its card; so does an archived one, and a summary not asked to hide still states the field.
           const card = (props: Record<string, unknown>) => {
@@ -942,7 +943,7 @@ describe('@oods/components-vue shared scenarios', () => {
             mounted.unmount();
             return rows;
           };
-          expect(card({ ...scenario.props, hideWhenDefault: true })).toEqual(['No', 'Sep 5, 2026, 12:00 PM', 'Retention policy']);
+          expect(card({ ...scenario.props, hideWhenDefault: true })).toEqual(['No', 'Sep 5, 2026, 12:00 PM UTC', 'Retention policy']);
           expect(card({ isArchived: false, archivedAt: null, reason: '', hideWhenDefault: '' })).toBeNull();
           expect(card({ isArchived: false, reason: 'Retention policy', hideWhenDefault: true })).toEqual(['No', 'Retention policy']);
           expect(card({ isArchived: true, hideWhenDefault: true })).toEqual(['Yes']);

@@ -47,7 +47,8 @@ describe('the history paths print the phrase, and an unnamed entry exactly as be
     expect(named).toMatchObject({ attribution: 'Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi', actor: undefined, reason: 'Duplicate charge' });
     // The 0.11.3 row, key for key: no attribution key at all.
     expect(traitEventRows('transition', { history: [unnamed] })).toStrictEqual([{
-      title: 'Refunded · Paid → Refunded', at: '2026-11-03T10:00:00Z', actor: 'usr_1', reason: 'Duplicate charge', code: undefined, time: 'Nov 3, 2026, 10:00 AM',
+      // s249-m04 (Interface 13): a date-time names the zone it is shown in ("… UTC"); a date alone names none.
+      title: 'Refunded · Paid → Refunded', at: '2026-11-03T10:00:00Z', actor: 'usr_1', reason: 'Duplicate charge', code: undefined, time: 'Nov 3, 2026, 10:00 AM UTC',
     }]);
     // showActor false hides who acted, named or not.
     expect(traitEventRows('transition', { history: [agentEntry], showActor: false })[0]).not.toHaveProperty('attribution');

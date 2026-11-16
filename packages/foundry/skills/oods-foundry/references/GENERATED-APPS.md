@@ -85,10 +85,20 @@ Other inputs add files. Use the actual returned file list for your generation. T
 | --- | --- | --- | --- |
 | Placed charts (empty payment history emits only the three size files) | `src/charts/<record>.svg`, plus `.narrow.svg`, `.wide.svg`, `.dark.svg`, `.dark.narrow.svg`, `.dark.wide.svg`, `.hc.svg`, `.hc.narrow.svg`, `.hc.wide.svg` | Replaced | Chart renders for each record, size and theme; a standalone payment chart uses the same authored sample record as its preview and sample app. |
 | Workflow declares a chart | `src/chart-assets.ts` | Replaced | Chart render lookup used by the store. |
+| Object declares related lists | `src/related-data.ts` | Replaced | The lists the object declares, and the other objects' records they read, copied from the samples when the app was made. |
 | Team brand needs a stylesheet | `src/oods-brand-<lowercase-brand>.css` | Replaced | The selected brand's generated styles. |
 | Team component substitutions, file mode | `component-contracts.json` | Replaced | Component contract report, outside the artifact's source-file list. |
 
 JavaScript component output (`typescript: false`) uses `src/GeneratedUI.jsx` for React and still `src/GeneratedUI.vue` for Vue. Applications and workflows require TypeScript. HTML output is a static document, outside this React/Vue app guide.
+
+### What a workflow's store does
+
+The store is a local prototype. Replace each part with your own services; these are what the generated one does.
+
+- **Related records.** For an object that declares related lists, `relatedRows(record, records)` in `src/store.ts`, and `store.related(record)` over the store's live records, give the detail screen its lists. The app's own records are the store's, so a change made in the app shows on the page that lists it. Other objects' records come from `src/related-data.ts`, copied from the samples when the app was made, with only the fields the lists read; the page says so once. Replace `relatedRows` with your own query.
+- **Who is acting.** `createWorkflow({ actor: { id, name, kind } })`, or `createStore` with the same option, tells the store who is acting. Every line it writes then carries `actor_id`, `actor_name` and `actor_kind`, Cancel's and an edit's included, and a declared action names them in its seat. It is not a viewer: no screen is shown or hidden by it. Told no one, a line names no one.
+- **The declared order.** For an object whose lifecycle declares one, `update` refuses a move the order does not allow and any move out of a final state, in plain words, and the status select offers only the current state and the moves allowed from it. An object that declares no order saves any move, as before.
+- **Declared actions.** For an object whose lifecycle declares actions, such as a grant's Revoke, Pause and Resume, `store.transition(id, action, note?)` writes one as a single change, `store.preview(id, action)` says what it would end and leave, and `store.actionFor(record)` finds the action a saved status move makes, so `update` writes that move as the action. An action that asks first opens its confirmation from its button and from the form. Once a record has ended, `update` refuses a change to how it ended, and still saves its other fields.
 
 ## Accepting a new generation
 

@@ -72,7 +72,8 @@ describe('Sprint 187 built package export cells', () => {
       expect(root.textContent).toBe(component === 'CancellationBadge' ? 'No cancellation scheduled' : 'Not archived');
       expect(root.getAttribute('data-badge-status')).toBe('false');
     } else if (component === 'ArchiveSummary') {
-      expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['No', 'Sep 5, 2026, 12:00 PM', 'Retention policy']);
+      // s249-m04 (Interface 13): a date-time names the zone it is shown in ("… UTC"); a date alone names none.
+      expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['No', 'Sep 5, 2026, 12:00 PM UTC', 'Retention policy']);
     } else if (component === 'CancellationForm') {
       expect(root.querySelector('option[selected]')?.textContent).toBe('Budget');
       expect(root.querySelector('option[selected]')?.getAttribute('value')).toBe('budget');

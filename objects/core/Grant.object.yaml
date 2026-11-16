@@ -14,11 +14,11 @@ object:
 # it covers, its three lines for that party, its limits, its end, its use as the product counts it, and how it ended (the
 # Mandate trait's fields). Its terms are never edited in place: a change of terms is a new grant that names the one it
 # replaces, which ends as replaced and is kept whole, and "always allow" for one action is a new grant inside the first,
-# with its own bounds and end. Taking a grant back is a change of its status to revoked, with the reason, on the same
-# form that gave it. The one who answers for it is the owner, a person or a team, never an agent. OODS Foundry keeps and
-# shows the record; it does not check a grant against what an actor does, expire, pause, revoke or renew one, or decide
-# whether an action was allowed, and nothing at run time reads its declared order: a generated status select offers
-# every state.
+# with its own bounds and end. Taking a grant back is its Revoke, which asks once first and ends the grants inside it
+# with it, or the same move of its status to revoked on its form. The one who answers for it is the owner, a person or a
+# team, never an agent. OODS Foundry keeps and shows the record; it does not check a grant against what an actor does,
+# expire or renew one, or decide whether an action was allowed. A generated app's Revoke, Pause and Resume change the
+# app's own records when a person asks, and its store keeps the declared order; they stop nothing outside the app.
 traits:
   - name: core/Mandate
   - name: lifecycle/Stateful
@@ -34,12 +34,14 @@ traits:
         - declined
         - withdrawn
       initialState: requested
-      # The order the product enforces. A grant is asked for, then given, declined or withdrawn by its asker; a given grant
-      # may be paused and resumed, and ends one of three ways: taken back (revoked), at its end or from disuse (expired), or
-      # replaced by a grant with other terms. The five endings are final (empty lists), so a grant never comes back: a new one
-      # follows it and names it. OODS Foundry keeps the order and holds its own samples to it; nothing at run time reads it.
+      # The order your product enforces. A grant is asked for, then given, declined or withdrawn by its asker, or it expires
+      # when no one answers in time (s249); a given grant may be paused and resumed, and ends one of three ways: taken back
+      # (revoked), at its end or from disuse (expired), or replaced by a grant with other terms. The five endings are final
+      # (empty lists), so a grant never comes back: a new one follows it and names it. OODS Foundry holds its own samples to
+      # the order, and a generated app keeps it: its status select offers only the moves it allows, and its store refuses
+      # any other.
       transitionRules:
-        requested: [active, declined, withdrawn]
+        requested: [active, declined, withdrawn, expired]
         active: [paused, revoked, expired, replaced]
         paused: [active, revoked, expired, replaced]
         revoked: []
@@ -47,6 +49,15 @@ traits:
         replaced: []
         declined: []
         withdrawn: []
+      # s249-m03: the moves a person makes on a grant. Revoke ends it, asks once first, writes the note given (if any) as
+      # why it ended and who ended it when the app is told, and ends the grants inside it with it. Pause can be undone:
+      # Resume gives it again, and only someone who may give grants for the party should resume it (shown, not checked).
+      # A move to expired, replaced, declined or withdrawn has no action: it saves as an edit, from the form's status
+      # select or from your product.
+      actions:
+        - { id: revoke, to: revoked, verb: Revoke, event: ended, reasonField: ended_reason, bySeat: ended_by, confirm: true, alsoEnds: { via: within_id } }
+        - { id: pause, to: paused, verb: Pause, event: paused }
+        - { id: resume, from: [paused], to: active, verb: Resume, event: resumed }
   - name: lifecycle/Timestampable
     alias: GrantTimes
     parameters:
@@ -122,12 +133,59 @@ metadata:
     - version: 1.0.0
       date: "2026-11-14"
       description: Initial Grant object, the fifteenth public reference object; a grant is a standing yes, not a setting.
+  # s249-m01: the lists this object's detail page shows of the records that point at one of its records, seat by seat,
+  # declared here on the page that shows them (packages/mcp-server/src/objects/related-lists.ts says what each key means).
+  # They read the registered objects' records by id only, never by name.
+  relatedLists:
+    - id: inside
+      label: Grants inside it
+      empty: No grant sits inside this one.
+      sources:
+        - { from: Grant, via: within_id, row: { line: [scope], time: ends_note } }
+    - id: replaced-by
+      label: Replaced by
+      empty: No grant replaces this one.
+      sources:
+        - { from: Grant, via: replaces_id, row: { line: [scope] } }
+    # The records whose lines name the grant, each with its lines, beside the product's own count where the grant holds one.
+    - id: recorded
+      label: Recorded under it
+      empty: No recorded change names this grant.
+      beside: { field: uses, one: Your product counts 1 use., other: "Your product counts {value} uses." }
+      sources:
+        - { from: [Task, Approval, Transaction, Grant], via: "state_history[].grant_id" }
+    # The same records that are not final, or not known; on an ended grant, read at its end, with their state then and now.
+    - id: under-way
+      label: Still under way
+      empty: No record that names this grant is under way.
+      filtered: { one: 1 record that names this grant has reached an end., other: "{count} records that name this grant have reached an end." }
+      note: These are only the records here that name this grant; work under it elsewhere is not shown.
+      finality: [not_final, not_known]
+      sources:
+        - { from: [Task, Approval, Transaction, Grant], via: "state_history[].grant_id" }
+    - id: after-end
+      label: Recorded after it ended
+      empty: Nothing was recorded under it after it ended.
+      afterEnd: true
+      sources:
+        - { from: [Task, Approval, Transaction, Grant], via: "state_history[].grant_id" }
+    # Its seats' own records as they stand now, by forward lookup; a seat with no record here shows its kept name and kind.
+    - id: parties
+      label: Its parties now
+      empty: No party of this grant is a record here.
+      sources:
+        - { from: User, key: granted_by_id, seat: Given by, kept: { name: granted_by_name, kind: granted_by_kind } }
+        - { from: [Agent, User], key: granted_to_id, seat: Held by, kept: { name: granted_to_name, kind: granted_to_kind } }
+        - { from: [Organization, User], key: granted_for_id, seat: For, kept: { name: granted_for_name } }
+        - { from: User, key: owner_id, seat: Answers for it, kept: { name: owner_name, kind: owner_type } }
 
 # Eight authored sample grants. Each names its giver and its holder as shipped User and Agent samples, the party it is for
 # as a shipped Organization, and the one who answers for it as a shipped User or the team an Agent sample names as its
 # sponsor. The first carries on the Tidewater story: Ruth Adeyemi's grant to the Billing Agent, and the standing yes inside
-# it that Ruth gave after the 28 September resend, for returned transfers only, within limits. Every line an agent writes for a
-# party in any shipped sample names the grant it acted under, active at the time; every grant that stands, and is not
+# it that the Billing Agent asked Ruth for and she gave after the 28 September resend, for returned transfers only, within
+# limits. "Northwind customer replies" ended with work under way: Dana Whitfield revoked it on 8 October while the task
+# it was used for still needed her answer, so the task stays as it was. Taking the grant back ended the yes, not the work
+# (s249). Every line an agent writes for a party in any shipped sample names the grant it acted under, active at the time; every grant that stands, and is not
 # inside another, is restated in its holder's acts_for. Each history follows the declared order from requested, and every
 # actor acts inside the dates of its own record. A grant's uses count the moments its holder acted under it: one act can
 # write lines on several records at once (the 21:00 resend writes the payment's, the task's and the approval's). Times are
@@ -164,7 +222,7 @@ samples:
     status: active
     state_history:
       - { title: Requested, from: null, to: requested, at: '2026-08-20T21:30:00Z', reason: Requested to match bank transfers to invoices, actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02', actor_name: Ruth Adeyemi, actor_kind: person }
-      - { title: Given, from: requested, to: active, at: '2026-09-01T21:00:00Z', reason: Given after two weeks of supervised matching, actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02', actor_name: Ruth Adeyemi, actor_kind: person }
+      - { title: Given, from: requested, to: active, at: '2026-09-01T21:00:00Z', reason: Given after twelve days of supervised matching, actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02', actor_name: Ruth Adeyemi, actor_kind: person }
     created_at: '2026-08-20T21:30:00Z'
     updated_at: '2026-09-28T21:05:00Z'
     last_event: updated
@@ -175,6 +233,9 @@ samples:
     requested_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01'
     requested_by_name: Billing Agent
     requested_by_kind: agent
+    asked_of_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02'
+    asked_of_name: Ruth Adeyemi
+    asked_of_kind: person
     granted_by_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02'
     granted_by_name: Ruth Adeyemi
     granted_by_kind: person
@@ -316,18 +377,23 @@ samples:
     replaces_name: Northwind spring order replies
     first_grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c04'
     first_grant_name: Northwind spring order replies
+    ended_by_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01'
+    ended_by_name: Dana Whitfield
+    ended_by_kind: person
+    ended_reason: Replies go back to the support team
     owner_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01'
     owner_type: user
     owner_name: Dana Whitfield
     ownership_role: Answers for it
-    status: active
+    status: revoked
     state_history:
       - { title: Requested, from: null, to: requested, at: '2026-03-09T14:50:00Z', reason: 'Requested to answer every customer, not only spring orders', actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01', actor_name: Dana Whitfield, actor_kind: person }
       - { title: Given, from: requested, to: active, at: '2026-03-09T15:00:00Z', reason: Given once replies were reviewed and approved, actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01', actor_name: Dana Whitfield, actor_kind: person }
+      - { title: Revoked, from: active, to: revoked, at: '2026-10-08T16:00:00Z', reason: Replies go back to the support team, actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01', actor_name: Dana Whitfield, actor_kind: person }
     created_at: '2026-03-09T14:50:00Z'
-    updated_at: '2026-10-06T14:12:00Z'
-    last_event: updated
-    last_event_at: '2026-10-06T14:12:00Z'
+    updated_at: '2026-10-08T16:00:00Z'
+    last_event: ended
+    last_event_at: '2026-10-08T16:00:00Z'
   - grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c06'
     name: Summit online orders
     scope: Online orders

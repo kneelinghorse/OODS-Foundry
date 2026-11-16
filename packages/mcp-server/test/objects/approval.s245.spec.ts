@@ -99,7 +99,8 @@ describe('Approval is the thirteenth public object', () => {
   // carries the mark.
   it('marks a form view a fact only where Decision, Assignment and Mandate say so: no other shipped form view carries the mark', () => {
     const marked = listTraits().flatMap(name => (loadTrait(name).view_extensions.form ?? []).filter(view => view.fact !== undefined).map(view => `${name}:${String(view.props?.field)}`));
-    expect(marked).toEqual(['Assignment:instruction', 'Assignment:requested_by_id', 'Assignment:requested_by_name', 'Assignment:requested_for_id', 'Assignment:requested_for_name', 'Assignment:asked_of_id', 'Assignment:asked_of_name', 'Decision:subject_id', 'Decision:subject_name', 'Decision:shown', 'Decision:level', 'Decision:meaning', 'Decision:requested_by_id', 'Decision:requested_by_name', 'Decision:requested_for_id', 'Decision:requested_for_name', 'Mandate:scope', 'Mandate:granted_for_id', 'Mandate:granted_for_name', 'Mandate:granted_to_id', 'Mandate:granted_to_name', 'Mandate:granted_by_id', 'Mandate:granted_by_name', 'Mandate:granted_as', 'Mandate:requested_by_id', 'Mandate:requested_by_name', 'Mandate:allowed_actions', 'Mandate:asks_first_for', 'Mandate:never_allowed', 'Mandate:amount_limit_minor', 'Mandate:period_limit_minor', 'Mandate:limit_period', 'Mandate:uses_per_period', 'Mandate:conditions', 'Mandate:ends_note', 'Mandate:ends_at', 'Mandate:within_id', 'Mandate:within_name']);
+    // s249-m03: Mandate's asked_of_id and asked_of_name are facts on the form too.
+    expect(marked).toEqual(['Assignment:instruction', 'Assignment:requested_by_id', 'Assignment:requested_by_name', 'Assignment:requested_for_id', 'Assignment:requested_for_name', 'Assignment:asked_of_id', 'Assignment:asked_of_name', 'Decision:subject_id', 'Decision:subject_name', 'Decision:shown', 'Decision:level', 'Decision:meaning', 'Decision:requested_by_id', 'Decision:requested_by_name', 'Decision:requested_for_id', 'Decision:requested_for_name', 'Mandate:scope', 'Mandate:granted_for_id', 'Mandate:granted_for_name', 'Mandate:granted_to_id', 'Mandate:granted_to_name', 'Mandate:granted_by_id', 'Mandate:granted_by_name', 'Mandate:granted_as', 'Mandate:requested_by_id', 'Mandate:requested_by_name', 'Mandate:asked_of_id', 'Mandate:asked_of_name', 'Mandate:allowed_actions', 'Mandate:asks_first_for', 'Mandate:never_allowed', 'Mandate:amount_limit_minor', 'Mandate:period_limit_minor', 'Mandate:limit_period', 'Mandate:uses_per_period', 'Mandate:conditions', 'Mandate:ends_note', 'Mandate:ends_at', 'Mandate:within_id', 'Mandate:within_name']);
     for (const name of listObjects()) expect(JSON.stringify(loadObject(name)), name).not.toContain('"fact":');
   });
 
@@ -133,7 +134,9 @@ describe('Approval is the thirteenth public object', () => {
     expect(found.waiting).toEqual(['Approve publishing Refund a duplicate charge']);
     expect(found.ruth).toEqual(['Approve the resend of PAY-2026-0429']);
     expect(found.prorations).toEqual(['Approve publishing How prorations work when plans change']);
-    expect(found.finance).toEqual(['Review Invoice numbers, tax IDs and legal names']);
+    // s249-m04 (Interface 12): one search rule reads history too, and the sign-off approval's line says "the finance team
+    // sent the article back", so a search for the Finance team finds it beside the review it was asked of.
+    expect(found.finance).toEqual(['Review Invoice numbers, tax IDs and legal names', 'Sign off Invoice numbers, tax IDs and legal names']);
   });
 });
 

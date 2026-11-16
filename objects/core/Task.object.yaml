@@ -17,7 +17,8 @@ object:
 # one waits. The one who answers for the work is the owner, a person or a team, never an agent: a person doing the work
 # answers for it; when an agent is doing it and a person asked, the person who asked; otherwise the doing agent's sponsor.
 # OODS Foundry keeps and shows the record; it does not run, retry, pause, cancel or time out the work, or check who may
-# do it. The one change it refuses is a generated app's Cancel from a state the order does not let move to cancelled.
+# do it. A generated app keeps the declared order in its own store: it refuses a move the order does not allow, Cancel
+# included where the order does not let the record move to cancelled.
 traits:
   - name: core/Assignment
   - name: lifecycle/Stateful
@@ -36,10 +37,11 @@ traits:
         - cancelled
         - handed_over
       initialState: not_started
-      # The order the product enforces. A task is started, may need a person, wait on something else, be paused by a
+      # The order your product enforces. A task is started, may need a person, wait on something else, be paused by a
       # person or not know whether its last step took, and ends one of five ways; the endings are final (empty lists),
-      # so a second ask is a second record. OODS Foundry keeps the order, holds its own samples to it, and in a generated
-      # React or Vue app reads it only for Cancel, which it offers and accepts only where the order allows.
+      # so a second ask is a second record. OODS Foundry keeps the order and holds its own samples to it; a generated app's
+      # status select offers only the moves it allows, its store refuses any other, and Cancel is offered and accepted only
+      # where the order allows.
       transitionRules:
         not_started: [working, paused, declined, cancelled, handed_over]
         working: [needs_input, waiting, paused, outcome_unknown, finished, failed, declined, cancelled, handed_over]

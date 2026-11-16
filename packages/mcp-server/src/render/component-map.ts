@@ -1,5 +1,5 @@
 import { historyAttribution, recipeItemLabels, traitEventRows, type TraitEventKind, auditSummary, initialSort, ariaSort, assertStaticSvg, svgCarriesTitle, vizPreviewLayers, VIZ_THEME_SVG_PROPS, type VizPreviewLayer } from '@oods/component-contracts';
-import { getStatusPresentation, resolveStatusIcon, statusIconMarkup } from '@oods/component-contracts';
+import { getStatusPresentation, resolveStatusIcon, statusIconMarkup, RELATED_SHOWN_ROWS } from '@oods/component-contracts';
 import { currencyMinorUnits, dateTimeInputValue, formatDateTime, formatReadOnlyValue, summaryValue, formatReferenceLabel, formatPriceAmount, formatPriceCode, ownershipPhrase } from '@oods/component-contracts';
 import { billingCycle, billingPaymentRows, billingPaymentSummary, BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary, formatBillingAmount } from '@oods/component-contracts';
 import type { UiElement } from '../schemas/generated.js';
@@ -236,8 +236,45 @@ function renderCard(node: UiElement, childrenHtml = ''): string {
   return `<${tag}${attrs}>${content}</${tag}>`;
 }
 
+/**
+ * s249-m02: a record's related lists, bound by record-renderer.ts: the markup codegen/collection-emitter.ts's
+ * relatedRegion writes for React and Vue, from the same resolved lists (@oods/component-contracts resolveRelatedListRows),
+ * so the three renderers write the same words: a section per list, then the page's notes once. Rows are read-only and
+ * never links; a collapsed list and a history row's lines open in place with details and summary, which need no script.
+ */
+function renderRelatedArea(id: string, all: Array<Record<string, unknown>>): string {
+  // A list that applies only once its record has ended ("Recorded after it ended") is left out until then, as in React and Vue.
+  const lists = all.filter(list => list.applies !== false);
+  if (!lists.length) return '';
+  type Row = Record<string, unknown> & { inner?: Row[]; lines?: Array<{ text?: string }> };
+  const text = (value: unknown) => escapeHtml(String(value ?? ''));
+  const shown = (value: unknown) => typeof value === 'string' && value.length > 0;
+  const paragraph = (value: unknown, className: string) => shown(value) ? `<p class="${className}">${text(value)}</p>` : '';
+  // A row's badge reads its object's status table (the row's stateDomain), as that object's own record badge does, and says
+  // the row's state words in sentence case (stateLabel), as that object's own list does.
+  const badge = (row: Row, at: string) => shown(row.state) ? renderStatusBadge({ id: at, component: 'StatusBadge', props: { status: row.state, domain: shown(row.stateDomain) ? row.stateDomain : 'lifecycle', ...(shown(row.stateLabel) ? { label: row.stateLabel } : {}), tone: 'lifecycle' } }) : '';
+  const section = (list: Record<string, unknown>) => {
+    const at = `${id}-${String(list.id)}`;
+    const inner = (row: Row, rowAt: string) => row.inner?.length ? `<div class="oods-related-inner"><p>${text(row.innerText)}</p><ul class="oods-related-rows" aria-label="${text(row.innerText)}">${row.inner.map((innerRow, index) => `<li class="oods-related-row"><p class="oods-related-title"><strong>${text(innerRow.title)}</strong>${badge(innerRow, `${rowAt}-inner-${index + 1}-state`)}</p>${paragraph(innerRow.lineText, 'oods-related-line')}${paragraph(innerRow.timeText, 'oods-related-time')}</li>`).join('')}</ul></div>` : '';
+    const lines = (row: Row) => row.lines?.length ? `<details class="oods-related-lines"><summary>${text(row.linesText)}</summary><ol>${row.lines.map(line => `<li>${text(line.text)}</li>`).join('')}</ol></details>` : '';
+    const row = (entry: Row, index: number) => {
+      const rowAt = `${at}-row-${index + 1}`;
+      return `<li class="oods-related-row"><p class="oods-related-title">${shown(entry.seat) ? `<span class="oods-related-seat">${text(`${String(entry.seat)}: `)}</span>` : ''}<strong>${text(entry.title)}</strong>${badge(entry, `${rowAt}-state`)}</p>${paragraph(entry.lineText, 'oods-related-line')}${paragraph(entry.timeText, 'oods-related-time')}${paragraph(entry.atEndText, 'oods-related-at-end')}${paragraph(entry.keptText, 'oods-related-kept')}${inner(entry, rowAt)}${lines(entry)}</li>`;
+    };
+    const rows = (Array.isArray(list.rows) ? list.rows : []) as Row[];
+    const body = `${paragraph(list.beside, 'oods-related-beside')}${rows.length === 0
+      ? `<p class="oods-related-empty">${text(shown(list.filtered) ? `${String(list.empty)} ${String(list.filtered)}` : list.empty)}</p>`
+      : `<ul class="oods-related-rows" aria-label="${text(list.label)}">${rows.slice(0, RELATED_SHOWN_ROWS).map(row).join('')}</ul>`}${paragraph(list.more, 'oods-related-more')}${paragraph(list.note, 'oods-related-note')}`;
+    const heading = `<h2 id="${text(`${at}-heading`)}" class="oods-related-heading">${text(list.heading)}</h2>`;
+    return `<section id="${text(at)}" data-oods-list="${text(list.id)}" class="oods-related" aria-labelledby="${text(`${at}-heading`)}">${list.collapsed === true ? `<details class="oods-related-fold"><summary>${heading}</summary>${body}</details>` : `${heading}${body}`}</section>`;
+  };
+  const copied = lists.find(list => shown(list.copied))?.copied;
+  return `<div id="${text(id)}" data-oods-collection="related" class="oods-related-area">${lists.map(section).join('')}${paragraph(copied, 'oods-related-note')}<p class="oods-related-note">${text(lists[0]?.cannotSee)}</p></div>`;
+}
+
 function renderStack(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
+  if (Array.isArray(props['data-oods-related'])) return renderRelatedArea(node.id, props['data-oods-related'] as Array<Record<string, unknown>>);
   // s222-m03 (#2502 ruling 13): a collection is the markup React and Vue write: a section holding an ordered list of its
   // records, one item each (record-renderer.ts).
   const list = asString(props['data-oods-collection-list']);

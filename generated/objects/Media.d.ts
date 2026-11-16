@@ -28,7 +28,7 @@ export interface StateTransition {
 
 export interface Media {
   /**
-   * Materialized next states the product allows from the current status, written by the product from transitionRules. Listed by StatusTimeline; a generated StatusSelector offers every state.
+   * Materialized next states the product allows from the current status, written by the product from transitionRules. Listed by StatusTimeline; a generated StatusSelector offers the current state and the moves transitionRules allows.
    *
    * Source: Stateful (trait)
    *

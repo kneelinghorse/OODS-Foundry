@@ -1,6 +1,7 @@
 import type { FieldSchemaEntry, UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenOptions } from './types.js';
-import { listObjects } from '../objects/object-loader.js';
+import { listObjects, loadObject } from '../objects/object-loader.js';
+import { declaredActions, declaredOrder, endsRecord, stateActionEvent, stateActionHandler, type StateAction } from '../objects/state-actions.js';
 import { cancellableStates } from '../objects/cancellation-mode.js';
 import { declaredCancelOrder } from '../objects/declared-order.js';
 import { javascriptSingleQuotedString } from './emission-safety.js';
@@ -115,9 +116,33 @@ export function screenActionAnchor(node: UiElement): ScreenActionAnchor | undefi
   return node.component === 'DetailHeader' && isLevelOneHeading(node) ? 'title' : undefined;
 }
 
-/** A screen action's design-system Button intent: Edit leads, a destructive Delete is the danger intent. */
-export function screenActionIntent(event: string): 'primary' | 'secondary' | 'danger' {
-  return event === 'onEdit' ? 'primary' : event === 'onDelete' ? 'danger' : 'secondary';
+/**
+ * s249-m03: the screen action a lifecycle's declared action binds to: its event ("onRevoke") and handler ("handleRevoke"),
+ * named from its id. A screen of an object that declares actions offers each of them (compose/object-slot-filler.ts).
+ */
+export { stateActionEvent, stateActionHandler };
+
+/** The declared action a screen action event names on an object, if any. */
+export function declaredScreenAction(event: string, objectName: string | undefined): StateAction | undefined {
+  if (!objectName || !/^on[A-Z]/.test(event)) return undefined;
+  let actions: StateAction[];
+  try { actions = declaredActions(loadObject(objectName)); } catch { return undefined; }
+  return actions.find(action => stateActionEvent(action) === event);
+}
+
+/** A declared action that moves its record to a final state of its declared order: an ending, so the record is kept. */
+export function declaredEndingAction(event: string, objectName: string | undefined): boolean {
+  const action = declaredScreenAction(event, objectName);
+  if (!action || !objectName) return false;
+  try { return endsRecord(action, declaredOrder(loadObject(objectName))); } catch { return false; }
+}
+
+/**
+ * A screen action's design-system Button intent: Edit leads, a destructive Delete is the danger intent. s249-m03: a
+ * declared action that ends its record (a grant's Revoke) is a danger too; Pause and Resume are secondary.
+ */
+export function screenActionIntent(event: string, objectName?: string): 'primary' | 'secondary' | 'danger' {
+  return event === 'onEdit' ? 'primary' : event === 'onDelete' || declaredEndingAction(event, objectName) ? 'danger' : 'secondary';
 }
 
 /**
@@ -128,6 +153,9 @@ export function screenActionIntent(event: string): 'primary' | 'secondary' | 'da
  */
 export function screenActionLabel(event: string, objectName: string | undefined, workflow: boolean, labels: Readonly<Record<string, string>>): string {
   if (event === 'onCancel') return cancelActionLabel(objectName);
+  // s249-m03: a declared action says its verb and the object: "Revoke grant".
+  const declared = declaredScreenAction(event, objectName);
+  if (declared && objectName) return `${declared.verb} ${objectLabel(objectName).toLowerCase()}`;
   if (event === 'onDelete' && workflow) return 'Archive';
   return labels[event] ?? event;
 }
@@ -151,6 +179,10 @@ export function screenActionGate(event: string, objectSchema: Record<string, Fie
     return { ...(statuses ? { statuses } : {}), ...(archivable ? { notArchived: true } : {}) };
   }
   if (event === 'onDelete' && workflow && archivable) return { notArchived: true };
+  // s249-m03: a declared action is offered only from the states it moves from, in every renderer: a revoked grant offers
+  // no Revoke, Pause or Resume.
+  const declared = declaredScreenAction(event, objectName);
+  if (declared) return declared.from.length ? { statuses: declared.from, ...(archivable ? { notArchived: true } : {}) } : { never: true };
   return undefined;
 }
 
@@ -163,9 +195,9 @@ export function screenActionCondition(gate: ScreenActionGate): string {
 }
 
 /** The leading action first and the destructive one last; the rest keep their binding order. */
-export function orderScreenActions<T extends { event: string }>(occurrences: readonly T[]): T[] {
+export function orderScreenActions<T extends { event: string }>(occurrences: readonly T[], objectName?: string): T[] {
   const rank = { primary: 0, secondary: 1, danger: 2 } as const;
-  return [...occurrences].sort((a, b) => rank[screenActionIntent(a.event)] - rank[screenActionIntent(b.event)]);
+  return [...occurrences].sort((a, b) => rank[screenActionIntent(a.event, objectName)] - rank[screenActionIntent(b.event, objectName)]);
 }
 
 /**

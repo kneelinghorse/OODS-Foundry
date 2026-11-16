@@ -44,7 +44,7 @@ export function parameterProblems(name: string, supplied: Record<string, unknown
   const problems = validate!(parameters) ? [] : (validate!.errors ?? []).map(error => ({
     path: error.instancePath || '/', message: `${definition.trait.name}${error.instancePath}: ${error.message} (${JSON.stringify(error.params)})`,
   }));
-  return traitEntry(name)?.source === 'shipped' ? [...problems, ...levelProblems(definition.trait.name, parameters), ...inAdvanceProblems(definition.trait.name, parameters), ...orderProblems(definition.trait.name, parameters)] : problems;
+  return traitEntry(name)?.source === 'shipped' ? [...problems, ...levelProblems(definition.trait.name, parameters), ...inAdvanceProblems(definition.trait.name, parameters), ...orderProblems(definition.trait.name, parameters), ...actionProblems(definition.trait.name, parameters)] : problems;
 }
 
 /**
@@ -122,4 +122,45 @@ function orderProblems(trait: string, parameters: Record<string, unknown>): Arra
       ? [{ path: `/transitionRules/${from}/${index}`, message: `${trait}/transitionRules/${from}/${index}: "${target}" is not one of the lifecycle's states (${list}).` }]
       : []),
   ]);
+}
+
+/**
+ * s249-m03: a lifecycle's declared actions (Stateful 2.5.0 `actions`) move a record within its declared order. Each moves
+ * to a state the lifecycle declares, from states it declares, by moves the order allows; with no `from`, an action is
+ * offered from every state whose declared targets include its `to`, and one that no state reaches is refused. Ids are
+ * unique. An action needs `transitionRules`: without an order there is nothing to move within. The fields an action names
+ * and its event are checked against the composed object (objects/state-actions.ts).
+ */
+function actionProblems(trait: string, parameters: Record<string, unknown>): Array<{ path: string; message: string }> {
+  const actions = parameters.actions;
+  if (trait !== 'Stateful' || !Array.isArray(actions)) return [];
+  const states = Array.isArray(parameters.states) ? (parameters.states as unknown[]).map(String) : [];
+  const rules = parameters.transitionRules;
+  if (!rules || typeof rules !== 'object' || Array.isArray(rules)) {
+    return [{ path: '/actions', message: `${trait}/actions: an action moves a record within its declared order, so it needs transitionRules.` }];
+  }
+  const order = rules as Record<string, unknown>;
+  const targets = (from: string) => Array.isArray(order[from]) ? (order[from] as unknown[]).map(String) : [];
+  const ids = new Set<string>();
+  return actions.flatMap((raw, index) => {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return [];
+    const action = raw as Record<string, unknown>;
+    const at = `/actions/${index}`;
+    const problems: Array<{ path: string; message: string }> = [];
+    if (typeof action.id === 'string') {
+      if (ids.has(action.id)) problems.push({ path: `${at}/id`, message: `${trait}${at}/id: "${action.id}" names another action too.` });
+      ids.add(action.id);
+    }
+    const to = typeof action.to === 'string' ? action.to : undefined;
+    if (to !== undefined && !states.includes(to)) problems.push({ path: `${at}/to`, message: `${trait}${at}/to: "${to}" is not one of the lifecycle's states (${states.join(', ')}).` });
+    const from = Array.isArray(action.from) ? (action.from as unknown[]).map(String) : undefined;
+    for (const [position, state] of (from ?? []).entries()) {
+      if (!states.includes(state)) problems.push({ path: `${at}/from/${position}`, message: `${trait}${at}/from/${position}: "${state}" is not one of the lifecycle's states (${states.join(', ')}).` });
+      else if (to !== undefined && !targets(state).includes(to)) problems.push({ path: `${at}/from/${position}`, message: `${trait}${at}/from/${position}: the declared order does not move "${state}" to "${to}"; add "${to}" to transitionRules.${state}, or take "${state}" out of from.` });
+    }
+    if (!from && to !== undefined && states.includes(to) && !states.some(state => targets(state).includes(to))) {
+      problems.push({ path: `${at}/to`, message: `${trait}${at}/to: no state of the declared order moves to "${to}", so the action is offered from none; add "${to}" to the transitionRules of the states it should move from.` });
+    }
+    return problems;
+  });
 }

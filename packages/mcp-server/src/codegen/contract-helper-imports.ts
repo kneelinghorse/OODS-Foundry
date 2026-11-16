@@ -10,7 +10,7 @@
 export const CONTRACT_HELPER_IMPORTS = '/* @oods-contract-helper-imports */';
 
 const HELPER_GROUPS: ReadonlyArray<readonly string[]> = [
-  ['formatReferenceLabel', 'formatRecordLabel', 'selectOptionsWithValue'],
+  ['formatReferenceLabel', 'formatRecordLabel', 'selectOptionsWithValue', 'statusOptionsInOrder'],
   ['formatReadOnlyValue'],
   // s223-m02: a single screen's address panel summary (#2527 ruling 13i).
   ['addressCollectionSummary'],
@@ -26,6 +26,8 @@ export function resolveContractHelperImports(code: string, typescript: boolean):
   const statements = HELPER_GROUPS.map((group, index) => [
     ...group.filter(uses),
     ...(index === HELPER_GROUPS.length - 1 && typescript && uses('CollectionEvent') ? ['type CollectionEvent'] : []),
+    // s249-m02: a screen that draws related lists types its `related` prop with the shared core's resolved list.
+    ...(index === HELPER_GROUPS.length - 1 && typescript && uses('ResolvedRelatedList') ? ['type ResolvedRelatedList'] : []),
   ]).filter(names => names.length).map(names => `import { ${names.join(', ')} } from '@oods/component-contracts';`);
   lines.splice(at, 1, ...statements);
   return { code: lines.join('\n'), imported: statements.length > 0 };

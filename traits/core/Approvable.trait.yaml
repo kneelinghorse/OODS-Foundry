@@ -17,8 +17,8 @@ trait:
     The outcome is two read-only fields: `approval_state`, under a name of its own so it never collides with the
     lifecycle's `status`, and `approval_summary`, one kept line ("Approved by Ruth Adeyemi · version 3 · 2 Nov").
     The product's own code works the outcome out from the approvals and writes both fields; they are kept off the
-    thing's form and shown on its detail page. The summary restates the Approval records, because OODS Foundry cannot
-    yet list the records that point at a record.
+    thing's form and shown on its detail page. The summary restates the Approval records, since a thing's own page lists
+    its approvals only where the thing declares that list (metadata.relatedLists), and no shipped object does.
 
     OODS Foundry shows the outcome; it does not work it out. It does not count approvals, check who may approve,
     expire an ask, lock the thing or stop a change.
@@ -127,8 +127,8 @@ schema:
     readOnly: true
     description: |
       One kept line saying what the outcome rests on ("Approved by Ruth Adeyemi · version 3 · 2 Nov"), or why no
-      approval was asked. It restates the Approval records, because OODS Foundry cannot yet list the records that point
-      at a record. Read-only.
+      approval was asked. It restates the Approval records, since a thing's own page lists its approvals only where the
+      thing declares that list (metadata.relatedLists), and no shipped object does. Read-only.
     validation:
       maxLength: 240
 

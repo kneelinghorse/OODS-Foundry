@@ -12,10 +12,19 @@ export function nameStatusTables(schema: UiSchema): void {
   const walk = (node: UiElement): void => {
     const field = node.component === 'StatusBadge' ? node.props?.statusField ?? node.props?.field : undefined;
     if (typeof field === 'string' && fields[field] && node.props?.domain === undefined) {
-      const named = /^billing\.([a-z_]+)\.status$/.exec(fields[field]!.semanticType ?? '')?.[1];
-      node.props = { ...node.props, domain: named && STATUS_DOMAINS.includes(named) ? named : 'lifecycle' };
+      node.props = { ...node.props, domain: statusTableOf(fields[field]!.semanticType) };
     }
     node.children?.forEach(walk);
   };
   schema.screens.forEach(walk);
+}
+
+/**
+ * The table a status field's badge reads, from its semantic type: a billing.<domain>.status the status registry holds
+ * names that table, and every other status field reads the lifecycle table. A related list's rows read their object's
+ * table by the same rule (compose/related-records.ts), so a grant row's "Active" is not described as a paid subscription.
+ */
+export function statusTableOf(semanticType: string | undefined): string {
+  const named = /^billing\.([a-z_]+)\.status$/.exec(semanticType ?? '')?.[1];
+  return named && STATUS_DOMAINS.includes(named) ? named : 'lifecycle';
 }

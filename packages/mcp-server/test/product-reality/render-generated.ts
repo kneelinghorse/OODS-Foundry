@@ -66,6 +66,18 @@ const actions = Object.fromEntries(${JSON.stringify(actions)}.map(name => [name,
  * the script receives the store module as `store` and prints JSON, which is returned parsed.
  */
 export function runGeneratedStore(files: ReadonlyArray<{ path: string; contents: string }>, script: string): unknown {
+  return runGeneratedModule(files, 'src/store.ts', 'store', script);
+}
+
+/**
+ * s249-m03: runGeneratedStore for a workflow's application (src/application.ts, its store and what they import): the script
+ * receives the module as `app` and may await; it prints JSON, which is returned parsed.
+ */
+export function runGeneratedApplication(files: ReadonlyArray<{ path: string; contents: string }>, script: string): unknown {
+  return runGeneratedModule(files, 'src/application.ts', 'app', `(async () => {\n${script}\n})().catch((error) => { console.error(error); process.exit(1); });`);
+}
+
+function runGeneratedModule(files: ReadonlyArray<{ path: string; contents: string }>, entry: string, name: string, script: string): unknown {
   const cacheRoot = path.join(root, 'packages/components-react/.cache');
   mkdirSync(cacheRoot, { recursive: true });
   const directory = mkdtempSync(path.join(cacheRoot, 's213-store-'));
@@ -74,8 +86,8 @@ export function runGeneratedStore(files: ReadonlyArray<{ path: string; contents:
       mkdirSync(path.dirname(path.join(directory, file.path)), { recursive: true });
       writeFileSync(path.join(directory, file.path), file.contents);
     }
-    esbuild.buildSync({ entryPoints: [path.join(directory, 'src/store.ts')], outfile: path.join(directory, 'store.cjs'), bundle: true, platform: 'node', format: 'cjs', target: 'es2022', logLevel: 'silent' });
-    const run = spawnSync(process.execPath, ['-e', `const store = require('./store.cjs');\n${script}`], { cwd: directory, encoding: 'utf8', timeout: 60_000 });
+    esbuild.buildSync({ entryPoints: [path.join(directory, entry)], outfile: path.join(directory, `${name}.cjs`), bundle: true, platform: 'node', format: 'cjs', target: 'es2022', logLevel: 'silent' });
+    const run = spawnSync(process.execPath, ['-e', `const ${name} = require('./${name}.cjs');\n${script}`], { cwd: directory, encoding: 'utf8', timeout: 60_000 });
     if (run.status !== 0) throw new Error(`store script failed: ${run.stderr}`);
     return JSON.parse(run.stdout);
   } finally { rmSync(directory, { recursive: true, force: true }); }

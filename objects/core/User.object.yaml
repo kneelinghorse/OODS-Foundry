@@ -109,7 +109,7 @@ schema:
     type: string
     required: false
     default: UTC
-    description: Preferred timezone applied when rendering timestamps.
+    description: The person's preferred time zone, kept for your product. Screens show times in UTC, and a shown date-time says so; a date-time input does not yet.
 
 semantics:
   user_id:
@@ -168,6 +168,83 @@ metadata:
     - version: 1.0.0
       date: "2025-10-16"
       description: Initial Universal Quintet baseline.
+  # s249-m01: the lists this object's detail page shows of the records that point at one of its records, seat by seat,
+  # declared here on the page that shows them (packages/mcp-server/src/objects/related-lists.ts says what each key means).
+  # They read the registered objects' records by id only, never by name.
+  relatedLists:
+    # Ordered by due date, then oldest first, with no "late" label: static output has no clock.
+    - id: waiting
+      label: "Waiting for {name}'s answer"
+      empty: "Nothing waits for {name}'s answer."
+      sources:
+        - { from: Approval, via: asked_of_id, states: [waiting], order: due_at, row: { line: [requested_by_name], time: due_at } }
+        - { from: Task, via: waiting_on_id, when: { waiting_on_type: User }, states: [needs_input], order: due_at, row: { line: [asked_of_name], time: due_at } }
+        # s249-m03: a grant asked for and waiting on this person's yes, including a standing yes asked for inside a grant.
+        # A request holds no due date, so it follows the asks that do, oldest first.
+        - { from: Grant, via: asked_of_id, when: { asked_of_kind: person }, states: [requested], row: { line: [requested_by_name, scope] } }
+    # s249-m03 (Interface 4): the two lists of standing grants a person may end say, under their rows, where to end one;
+    # a generated User app cannot act on the Grant app's records.
+    - id: acting-for
+      label: "Agents holding a grant for {name}"
+      empty: "No agent holds a grant for {name} now."
+      filtered: { one: "1 other grant for {name} is asked for or has ended.", other: "{count} other grants for {name} are asked for or have ended." }
+      rowsNote: "This list does not change grants: revoke one on the grant's own page."
+      sources:
+        - from: Grant
+          via: granted_for_id
+          when: { granted_to_kind: agent, within_id: null }
+          states: [active, paused]
+          inner: within_id
+          row: { line: [granted_to_name, scope, last_use, { says: No uses counted, when: { uses: 0 } }], time: ends_note }
+    - id: given-for
+      label: "Given for {name} by someone else"
+      empty: "No grant was given for {name} by someone else."
+      sources:
+        - { from: Grant, via: granted_for_id, exclude: [granted_by_id], when: { within_id: null }, states: [active, paused, revoked, expired, replaced], inner: within_id, row: { line: [granted_by_name, granted_to_name, scope], time: ends_note } }
+    - id: gave
+      label: "Grants {name} gave"
+      empty: "No grant {name} gave stands now."
+      filtered: { one: "1 other grant {name} gave no longer stands.", other: "{count} other grants {name} gave no longer stand." }
+      rowsNote: "This list does not change grants: revoke one on the grant's own page."
+      sources:
+        - from: Grant
+          via: granted_by_id
+          when: { granted_by_kind: person, within_id: null }
+          states: [active, paused]
+          inner: within_id
+          row: { line: [granted_to_name, granted_for_name, scope], time: ends_note }
+    - id: answers-for
+      label: "Grants {name} answers for"
+      empty: "No grant asked for or standing now names {name} as the one who answers for it."
+      filtered: { one: "1 grant {name} answers for has ended.", other: "{count} grants {name} answers for have ended." }
+      sources:
+        - from: Grant
+          via: owner_id
+          when: { owner_type: user, within_id: null }
+          states: [requested, active, paused]
+          inner: within_id
+          row: { line: [granted_to_name, granted_for_name, scope], time: ends_note }
+    - id: sponsors
+      label: "Agents {name} sponsors"
+      empty: "No agent names {name} as its sponsor."
+      sources:
+        - { from: Agent, via: owner_id, when: { owner_type: user }, row: { line: [acts_for] } }
+    - id: approved
+      label: "What {name} approved"
+      empty: "No recorded change names {name} as the one who approved it."
+      sources:
+        - { from: [Task, Approval, Transaction, Grant], via: "state_history[].approved_by_id" }
+    - id: ended-grants
+      label: "Ended grants {name} gave"
+      empty: "No grant {name} gave has ended."
+      collapsed: true
+      sources:
+        - from: Grant
+          via: granted_by_id
+          when: { granted_by_kind: person, within_id: null }
+          states: [revoked, expired, replaced]
+          inner: within_id
+          row: { line: [granted_to_name, granted_for_name, scope] }
 
 # Eight authored sample users, each a person at one of the sample organizations. A user is created active (the
 # lifecycle's initial state), so an invited user is one invited back after leaving; each history ends in the user's

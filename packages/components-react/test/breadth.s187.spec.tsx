@@ -137,7 +137,8 @@ describe('Sprint 187 lifecycle and financial semantics', () => {
     expect(root.getAttribute('data-badge-status')).toBe('false');
   });
   it('ArchiveSummary preserves false ahead of aliases and keeps fallback and authored body semantics', () => {
-    expect(values(mountFamily('ArchiveSummary', { isArchived: false, archived: true, status: 'active', archivedAt: '2026-09-05', reason: 'Primary', archiveReason: 'Alias' }))).toEqual(['No', 'Sep 5, 2026, 12:00 AM', 'Primary']);
+    // s249-m04 (Interface 13): a date-time names the zone it is shown in ("… UTC"); a date alone names none.
+    expect(values(mountFamily('ArchiveSummary', { isArchived: false, archived: true, status: 'active', archivedAt: '2026-09-05', reason: 'Primary', archiveReason: 'Alias' }))).toEqual(['No', 'Sep 5, 2026, 12:00 AM UTC', 'Primary']);
     expect(values(mountFamily('ArchiveSummary', { archived: true, archiveReason: 'Alias' }))).toEqual(['Yes', 'Alias']);
     expect(values(mountFamily('ArchiveSummary'))).toEqual([]);
     expect(values(mountFamily('ArchiveSummary', { isArchived: false, archivedAt: null, reason: 'Retained' }))).toEqual(['No', 'Retained']);

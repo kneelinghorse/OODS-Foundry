@@ -1,6 +1,6 @@
 trait:
   name: Mandate
-  version: 1.0.0
+  version: 1.1.0
   description: |
     The record of a grant: a standing yes that one actor may act for a person or organization, on stated terms,
     until it ends. It keeps who asked for it, who gave it and in what capacity, who holds it and who it is for; what it
@@ -10,8 +10,8 @@ trait:
     holds it, so every field lives here and a proposal can bind what the source has.
 
     The state of the grant is not a field of this trait. It is the record's own lifecycle, through Stateful: for a
-    Grant, requested, then active (or paused), declined or withdrawn, and a grant once given ends revoked, expired or
-    replaced. Its terms are not
+    Grant, requested, then active (or paused), declined or withdrawn, or expired when no one answers in time; a grant
+    once given ends revoked, expired or replaced. Its terms are not
     edited in place. A change of terms is a new grant that names the one it replaces, and a standing yes for one
     action is a new grant inside the first, with its own bounds and end.
 
@@ -23,7 +23,8 @@ trait:
     party's own words and zone, which is what people read.
 
     OODS Foundry keeps and shows this record. It does not check a grant against what an actor does, count its uses or
-    spend, expire, pause, revoke or renew one, stop a token or decide whether an action was allowed.
+    spend, expire or renew one, stop a token or decide whether an action was allowed. A generated app's Revoke, Pause
+    and Resume change the record when a person asks, and stop nothing outside it.
   category: core
   # Compound tags: a trait's tags are inherited by the components it places (Text, LabelCell, Input), and an intent's
   # words never match a compound tag, so these describe the trait without changing how any screen picks its components.
@@ -38,7 +39,8 @@ trait:
 parameters: []
 
 # Every field but one is written by the product, when the grant is asked for, given, used and ended, so a form never
-# edits it (readOnly). Why a grant ended is written where it is ended, on the grant's form, so the form offers it. The
+# edits it (readOnly). Why a grant ended is written where it is ended: the note Revoke asks for, or the grant's form
+# while the grant stands, so the form offers it then. The
 # terms and the seats are still read on the form (below).
 schema:
   requested_by_id:
@@ -56,6 +58,28 @@ schema:
     required: false
     readOnly: true
     description: What kind of actor asked for it (person, agent or system), as the Actor trait names them.
+    validation:
+      enum:
+        - person
+        - agent
+        - system
+  # s249-m03: who was asked for the yes; a requested grant waits on them. Decision's asked_of_id and asked_of_name share the names and the
+  # meaning (who was asked); the kind follows this trait's other seats.
+  asked_of_id:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who was asked for the yes, by the id the product knows them by. A requested grant waits on them; the field stays once it is answered.'
+  asked_of_name:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who was asked for the yes, as shown ("Ruth Adeyemi"). Kept on the record.'
+  asked_of_kind:
+    type: string
+    required: false
+    readOnly: true
+    description: What kind of actor was asked for the yes (person, agent or system), as the Actor trait names them.
     validation:
       enum:
         - person
@@ -285,6 +309,15 @@ schema:
         - person
         - agent
         - system
+  # s249-m03: the mirror of granted_as. The product writes it; a generated app never does, and never asks anyone to type
+  # their own name or capacity.
+  ended_as:
+    type: string
+    required: false
+    readOnly: true
+    description: 'The capacity they ended it in, in one line, where it is not one of the grant''s own seats ("Accounts lead, Kestrel Print Co.").'
+    validation:
+      maxLength: 120
   ended_reason:
     type: string
     required: false
@@ -312,6 +345,25 @@ semantics:
     ui_hints:
       component: Text
       label: Kind of asker
+  asked_of_id:
+    semantic_type: mandate.asked_of_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked of
+      displayLabelField: asked_of_name
+  asked_of_name:
+    semantic_type: mandate.asked_of_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Asked of
+  asked_of_kind:
+    semantic_type: mandate.asked_of_kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of the one asked
   granted_by_id:
     semantic_type: mandate.granted_by_id
     token_mapping: tokenMap(text.body.*)
@@ -438,7 +490,9 @@ semantics:
     token_mapping: tokenMap(text.body.*)
     ui_hints:
       component: RelativeTimestamp
-      label: Ends (UTC)
+      # s249-m04: the instant itself says UTC (Interface 13), so its label does not; the fresh read named it apart from
+      # ends_note's "Ends".
+      label: End time
   timezone:
     semantic_type: mandate.timezone
     token_mapping: tokenMap(text.body.*)
@@ -462,13 +516,13 @@ semantics:
     token_mapping: tokenMap(text.body.*)
     ui_hints:
       component: RelativeTimestamp
-      label: Last used (UTC)
+      label: Last used
   last_use:
     semantic_type: mandate.last_use
     token_mapping: tokenMap(text.body.*)
     ui_hints:
       component: Text
-      label: Last use
+      label: Last used for
   spent_minor:
     semantic_type: mandate.spent_minor
     token_mapping: tokenMap(text.body.*)
@@ -535,6 +589,12 @@ semantics:
     ui_hints:
       component: Text
       label: Kind of ender
+  ended_as:
+    semantic_type: mandate.ended_as
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Ended as
   ended_reason:
     semantic_type: mandate.ended_reason
     token_mapping: tokenMap(text.body.*)
@@ -670,6 +730,24 @@ view_extensions:
       priority: 78
       props:
         field: requested_by_kind
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 77.9
+      props:
+        field: asked_of_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 77.8
+      props:
+        field: asked_of_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 77.7
+      props:
+        field: asked_of_kind
         data-oods-omit-empty: true
     - component: Text
       position: main
@@ -817,6 +895,12 @@ view_extensions:
         data-oods-omit-empty: true
     - component: Text
       position: main
+      priority: 53.5
+      props:
+        field: ended_as
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
       priority: 53
       props:
         field: ended_reason
@@ -897,6 +981,20 @@ view_extensions:
       fact: true
       props:
         field: requested_by_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 80.9
+      fact: true
+      props:
+        field: asked_of_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 80.8
+      fact: true
+      props:
+        field: asked_of_name
         data-oods-omit-empty: true
     - component: Text
       position: top

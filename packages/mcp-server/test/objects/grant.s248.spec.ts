@@ -216,6 +216,18 @@ describe('the eight Grant samples tell true stories about the shipped samples th
     const marlow = grants.find(grant => grant.status === 'revoked')!;
     expect(marlow).toMatchObject({ ended_by_name: 'Jonah Marlow', ended_reason: 'The studio closed' });
     expect(Date.parse(marlow.state_history.at(-1).at)).toBeLessThan(Date.parse('2026-07-10T09:00:00Z'));
+    // s249-m01: one grant ended with work under way. Dana Whitfield revoked Northwind customer replies on 8 Oct, two days
+    // after the task it was used for went to needs input; the task still needs her answer, as its record says, and the
+    // Support Agent's acts_for was restated as None.
+    const replies = grants.find(grant => grant.name === 'Northwind customer replies')!;
+    expect(replies).toMatchObject({ status: 'revoked', ended_by_name: 'Dana Whitfield', last_event: 'ended', uses: 2 });
+    const ended = Date.parse(replies.state_history.at(-1).at);
+    const task = (loadObject('Task').samples as Sample[]).find(sample => sample.name === 'Reply about order NW-2207')!;
+    expect(task).toMatchObject({ status: 'needs_input', waiting_on_name: 'Dana Whitfield' });
+    expect(Date.parse(task.state_history.at(-1).at)).toBeLessThan(ended);
+    expect(task.state_history.every((entry: Sample) => entry.grant_name === replies.name)).toBe(true);
+    expect(agent(replies.granted_to_id, replies.granted_to_name)!.acts_for).toBe('None');
+    expect(user(replies.ended_by_id, replies.ended_by_name)!.status).toBe('active');
   });
 
   it('keep every rule: the seats, the lines, inside and replaced, the order, the dates, the ending, the end, the money, acts_for, the use and every agent line', () => {
@@ -265,7 +277,8 @@ describe('Grant is the fifteenth public object', () => {
     expect(lifecycle.initialState).toBe('requested');
     // The five endings are final: a grant never comes back, and a new one follows it. Paused is the stop that lifts.
     for (const ending of ENDINGS) expect(order[ending], ending).toEqual([]);
-    expect(order).toMatchObject({ requested: ['active', 'declined', 'withdrawn'], active: ['paused', 'revoked', 'expired', 'replaced'], paused: ['active', 'revoked', 'expired', 'replaced'] });
+    // s249-m03: a request can also lapse unanswered (requested to expired).
+    expect(order).toMatchObject({ requested: ['active', 'declined', 'withdrawn', 'expired'], active: ['paused', 'revoked', 'expired', 'replaced'], paused: ['active', 'revoked', 'expired', 'replaced'] });
     expect(grant.traits[2]!.parameters!.recordedEvents).toEqual(['requested', 'granted', 'paused', 'resumed', 'ended', 'updated']);
     expect(grant.traits[3]!.parameters!.ownerTypes).toEqual(['user', 'team']);
     for (const state of STATES) expect(getStatusPresentation('lifecycle', state).description, state).not.toMatch(/not found in registry/);
@@ -304,8 +317,12 @@ describe('on Grant\'s form its terms and seats are read beside the status, and w
   it('places the facts as labelled rows with no control, a status select, the reason, and the grant\'s name as its one required input', async () => {
     const { schema } = await compose({ object: 'Grant', context: 'form', options: { transient: true } } as never) as { schema: UiSchema };
     const nodes = schemaNodes(schema);
-    expect(nodes.filter(node => node.meta?.intent === FORM_FACT).map(row => row.children?.[0]?.props?.content)).toEqual(['Covers', 'For', 'Held by', 'Given by', 'Given as', 'Asked for by',
-      'Allowed actions', 'Asks first for', 'Never allowed', 'Most per use', 'Most per period', 'Period', 'Uses per period', 'Conditions', 'Ends', 'Ends (UTC)', 'Inside']);
+    // s249-m03: "Asked of" (s249-m05's fresh read: it read "Waiting on", false once the grant is given), who was asked for
+    // the yes, is read beside who asked for it; and once a grant is final, why it ended is a fact after the others, where
+    // the input it replaces is drawn only while the grant is open (compose/ending-fields.ts). s249-m04/m05: the instant's
+    // label is "End time", since its value says UTC and "Ends" is the party's own words.
+    expect(nodes.filter(node => node.meta?.intent === FORM_FACT).map(row => row.children?.[0]?.props?.content)).toEqual(['Covers', 'For', 'Held by', 'Given by', 'Given as', 'Asked for by', 'Asked of',
+      'Allowed actions', 'Asks first for', 'Never allowed', 'Most per use', 'Most per period', 'Period', 'Uses per period', 'Conditions', 'Ends', 'End time', 'Inside', 'Why it ended']);
     for (const field of MANDATE.filter(name => name !== 'ended_reason')) expect(nodes.filter(node => CONTROLS.has(node.component) && bound(node).includes(field)), field).toEqual([]);
     expect(nodes.filter(node => node.component === 'StatusSelector').map(node => node.props?.field)).toEqual(['status']);
     for (const field of ['ended_reason', 'name']) expect(nodes.filter(node => node.component === 'Input' && node.props?.field === field), field).toHaveLength(1);
@@ -368,12 +385,16 @@ process.stdout.write(JSON.stringify({ records, revoked: { ...screenProps(saved),
 
   it('takes a grant back by moving its status to revoked on its form, and its page shows the reason', () => {
     expect(revoked).toMatchObject({ status: 'revoked', endedReason: 'No longer needed: the bank fixed its reference check' });
+    // s249-m03 (Interface 6): the form's move is Revoke, written as its button writes it: one line titled with the new state,
+    // the reason typed there as its reason, naming no one since the store was told no one, and the ended event.
+    expect((revoked.stateHistory as unknown[]).at(-1)).toEqual({ title: 'Revoked', from: 'active', to: 'revoked', at: '2026-11-20T09:00:00.000Z', reason: 'No longer needed: the bank fixed its reference check' });
+    expect(revoked).toMatchObject({ lastEvent: 'ended', lastEventAt: '2026-11-20T09:00:00.000Z' });
     for (const framework of ['react', 'vue'] as const) {
       const detail = apps[framework].files.find(file => file.path === `src/screens/Detail.${framework === 'react' ? 'tsx' : 'vue'}`)!;
       const [page] = renderGeneratedModels(framework, detail.contents, [revoked], apps[framework].actions.map(action => action.name), { entry: detail.path, files: apps[framework].files });
       expect(shown(page!), framework).toContain('Why it ended');
       expect(shown(page!), framework).toContain('No longer needed: the bank fixed its reference check');
-      // A grant has no Cancel: taking it back is the same step giving took, on its form.
+      // A grant has no Cancel: it is taken back by Revoke, or on its form (s249-m03).
       expect(page!, framework).not.toMatch(/data-oods-action="handleCancel"|Cancel grant/);
     }
   });
@@ -409,8 +430,9 @@ process.stdout.write(JSON.stringify({ records, revoked: { ...screenProps(saved),
       for (const renderer of RENDERERS) {
         const body = shown(pages[renderer]!);
         expect(body, `${renderer} ${context}`).toContain('At the end of 31 Dec 2026, Tauranga time');
-        // The instant is shown only on the detail page, and only labelled as UTC.
-        if (context === 'detail') expect(body, renderer).toMatch(/Ends \(UTC\)\s*Dec 31, 2026, 10:59 AM/);
+        // The instant is shown only on the detail page, and says UTC. s249-m04 (Interface 13): the value names its zone, so
+        // its label is "End time", where it read "Ends (UTC)" beside an unlabelled time.
+        if (context === 'detail') expect(body, renderer).toMatch(/End time\s*Dec 31, 2026, 10:59 AM UTC/);
         else expect(body, `${renderer} ${context}`).not.toContain('10:59 AM');
       }
     }

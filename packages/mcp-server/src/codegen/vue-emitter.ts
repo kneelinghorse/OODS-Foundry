@@ -38,6 +38,9 @@ import {
   hasHeadingExcerpts,
   slotExcerptHelperSource,
   SLOT_EXCERPT_HELPER,
+  orderedStatusSelect,
+  RECORD_STATE_PROPS,
+  recordStateCondition,
 } from './binding-utils.js';
 import { artifactActionsFromBindings, bindingsForNode, nativeSubmitHandler } from './action-protocol.js';
 import {
@@ -354,7 +357,7 @@ function vueScreenActionSurface(
 
   // s211-m02: the design system's Button in one action bar, Edit leading and a destructive Delete last.
   // s221-m01: an action the record's state governs renders only while that state allows it (screenActionGate).
-  const buttons = orderScreenActions(occurrences).map((occurrence) => {
+  const buttons = orderScreenActions(occurrences, objectName).map((occurrence) => {
     const label = screenActionLabel(occurrence.event, objectName, workflow, SCREEN_ACTION_LABELS);
     const gate = screenActionGate(occurrence.event, objectSchema, workflow, objectName);
     const condition = gate ? ` v-if="${escapeDoubleQuotedAttr(screenActionCondition(gate))}"` : '';
@@ -363,7 +366,7 @@ function vueScreenActionSurface(
     const activation = occurrence.signature.parameters.length
       ? 'disabled title="This action needs input from your application."'
       : `@activate="${occurrence.handlerName}()"`;
-    return `<Button intent="${screenActionIntent(occurrence.event)}" data-oods-action="${escapeDoubleQuotedAttr(occurrence.handlerName)}"${condition} ${activation}>${childValueToVue(label)}</Button>`;
+    return `<Button intent="${screenActionIntent(occurrence.event, objectName)}" data-oods-action="${escapeDoubleQuotedAttr(occurrence.handlerName)}"${condition} ${activation}>${childValueToVue(label)}</Button>`;
   });
   return [
     `<div role="group" aria-label="Screen actions" class="oods-action-bar" data-oods-screen-actions="${escapeDoubleQuotedAttr(node.id)}">`,
@@ -454,7 +457,9 @@ function emitTemplateNode(
   const surface = actionSurface ? placeAtAnchor(body, VUE_ACTION_ANCHORS, actionSurface) ?? `${body}\n${actionSurface}` : body;
   // s247-m01: a place that opts in is drawn only where the record holds a value for it.
   const emptyCondition = omitEmptyCondition(node, objectSchema);
-  const timelineCondition = [statusTimelineCondition(node, objectSchema), emptyCondition && `(${emptyCondition})`].filter(Boolean).join(' && ') || undefined;
+  // s249-m03: a place drawn only for a record in some states, or only where a field is unset (compose/ending-fields.ts).
+  const stateCondition = recordStateCondition(node, objectSchema, 'vue');
+  const timelineCondition = [statusTimelineCondition(node, objectSchema), emptyCondition && `(${emptyCondition})`, stateCondition && `(${stateCondition})`].filter(Boolean).join(' && ') || undefined;
   const code = timelineCondition ? `<template v-if="${escapeDoubleQuotedAttr(timelineCondition)}">${surface}</template>` : surface;
   if (node.state === undefined) return code;
   const condition = escapeDoubleQuotedAttr(
@@ -487,6 +492,7 @@ function emitTemplateNodeBody(
     : null;
   // s247-m01: the opt-in to leave an empty place undrawn is a v-if around the node (emitTemplateNode), never an attribute.
   if (propsObject) delete propsObject[OMIT_EMPTY_PROP];
+  if (propsObject) for (const prop of RECORD_STATE_PROPS) delete propsObject[prop];
   const tailwindVariant = tailwindVariants.get(tag);
   const localBinding = localBindingForNode(bindingAnalysis, node.id);
   const readonlyField = bindingAnalysis.readonlyFieldSubscriptions.find((subscription) => subscription.nodeId === node.id);
@@ -568,11 +574,16 @@ function emitTemplateNodeBody(
   // s248-m01 (next step 1861): a reference select names the record's own value when it does not list it.
   const valueOptions = valueSelect(node, objectSchema);
   if (valueOptions && propsObject) delete propsObject.options;
+  // s249-m03: a status select of an object that declares its order offers the state the record was in and its moves
+  // (the field's ref keeps the state the screen opened with; the select keeps its own choice).
+  const orderedOptions = orderedStatusSelect(node, objectSchema, options.objectName, propsObject?.options);
+  if (orderedOptions && propsObject) delete propsObject.options;
   if (propsObject) {
     const propsStr = propsToVueAttrs(propsObject, options.styling === 'tailwind');
     if (propsStr) attrParts.push(propsStr);
   }
   if (valueOptions) attrParts.push(`:options="selectOptionsWithValue(${serializeVueBinding(valueOptions.options)}, ${snakeToCamel(valueOptions.field)}, ${valueOptions.keptName ? snakeToCamel(valueOptions.keptName) : 'undefined'}, ${javascriptSingleQuotedString(valueOptions.subject)})"`);
+  if (orderedOptions) attrParts.push(`:options="statusOptionsInOrder(${serializeVueBinding(orderedOptions.options)}, ${snakeToCamel(orderedOptions.field)}, ${serializeVueBinding(orderedOptions.order)})"`);
 
   attrParts.push(...recipeProps.bindings.map(({ targetProp, expression }) => (
     `:${targetProp}="${expression}"`
@@ -1479,6 +1490,8 @@ export function emit(schema: UiSchema, options: CodegenOptions): CodegenResult {
     .join('\n'), VUE_ACTION_ANCHORS);
   // The action bar is written outside the tree, so its Button is imported here.
   if (screenTemplates.includes('data-oods-screen-actions=')) ctx.components.add('Button');
+  // s249-m02: a related list draws each row's state with StatusBadge, written outside the tree's own nodes.
+  if (screenTemplates.includes('data-oods-collection="related"')) ctx.components.add('StatusBadge');
 
   // A standalone screen is a page: one main landmark and one level-one heading (the composer's record title, else the screen label).
   const shell = screenShell(normalizedSchema, options);

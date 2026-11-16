@@ -1,3 +1,4 @@
+import { endsRecord, stateActionEvent, stateActionHandler, type StateAction } from '../objects/state-actions.js';
 import { enumOptionLabel } from './internal-fields.js';
 /**
  * Object slot filler (s62-m03).
@@ -653,6 +654,8 @@ export function populateBindings(
   fieldNames?: string[],
   traitNames: readonly string[] = [],
   readOnly = false,
+  actions: readonly StateAction[] = [],
+  order?: Record<string, string[]>,
 ): void {
   const contextBindings = CONTEXT_BINDINGS[context];
   if (!contextBindings) return;
@@ -671,6 +674,14 @@ export function populateBindings(
     }
     if (context === 'detail' && traitNames.some((name) => name.split('/').pop() === 'Timestampable')) {
       screen.bindings.onViewTimeline = 'handleViewTimeline';
+    }
+    // s249-m03: a detail offers the moves its lifecycle declares (a grant's Revoke, Pause and Resume), each gated by the
+    // record's state where it is drawn (codegen/screen-shell.ts screenActionGate). A record that a declared action ends is
+    // kept, never deleted, so its detail offers no Delete, in every renderer; other objects keep Delete, which their host
+    // decides.
+    if (context === 'detail' && !readOnly) {
+      for (const action of actions) screen.bindings[stateActionEvent(action)] = stateActionHandler(action);
+      if (actions.some(action => endsRecord(action, order))) delete screen.bindings.onDelete;
     }
 
     // For form context, walk the tree and add per-field onChange bindings
