@@ -1,5 +1,5 @@
 import { svgCarriesTitle, vizPreviewLayers } from '@oods/component-contracts';
-import { formatDateTime, formatReadOnlyValue, summaryValue, formatReferenceLabel, formatPriceAmount, formatPriceCode, ownershipPhrase } from '@oods/component-contracts';
+import { formatDateTime, formatReadOnlyValue, summaryValue, formatReferenceLabel, formatPriceAmount, formatPriceCode, ownerKindLabel, ownershipPhrase } from '@oods/component-contracts';
 import * as React from 'react';
 
 import { Badge } from './presentational.js';
@@ -1041,7 +1041,7 @@ export const OwnerBadge = createBadgeFamily<OwnerBadgeProps>({
 export const OwnershipSummary = React.forwardRef<HTMLElement, OwnershipSummaryProps>(
   ({ title, label, heading, name, ownerLabel, ownerId, owner_id, ownerType, owner_type, role, ownershipRole, summary, text, description, children, className, ...rest }, ref) => {
     const content = childContent(children);
-    const terms = ([['Owner', ownerId === undefined && owner_id === undefined && ownerLabel === undefined ? undefined : formatReferenceLabel(ownerId ?? owner_id, ownerLabel, 'Owner')], ['Owner Type', firstScalar(ownerType, owner_type)], ['Role', firstScalar(role, ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+    const terms = ([['Owner', ownerId === undefined && owner_id === undefined && ownerLabel === undefined ? undefined : formatReferenceLabel(ownerId ?? owner_id, ownerLabel, 'Owner')], ['Owner Type', ownerKindLabel(firstScalar(ownerType, owner_type))], ['Role', firstScalar(role, ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
     const fallback = firstText(summary, text, description);
     return <section ref={ref} className={classes('oods-ownership-summary', className)} data-oods-component="OwnershipSummary" data-summary-type="ownership" {...rest}>
       <h2 data-summary-title="true">{firstText(title, label, heading, name) ?? 'Ownership Summary'}</h2>
@@ -1072,7 +1072,7 @@ TagSummary.displayName = 'OODS.TagSummary';
 export const OwnershipMeta = React.forwardRef<HTMLDivElement, OwnershipMetaProps>(
   ({ title, label, heading, name, ownerType, owner_type, role, ownershipRole, ownerLabel, children, className, ...rest }, ref) => {
     const content = childContent(children);
-    const terms = ([['Owner Type', firstScalar(ownerType, owner_type)], ['Role', firstScalar(role, ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+    const terms = ([['Owner Type', ownerKindLabel(firstScalar(ownerType, owner_type))], ['Role', firstScalar(role, ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
     // s223-m01 (#2527 ruling 6): given the owner's label (a generated card binds it), the meta is one phrase, never
     // "Ownership Owner Type: team". Without it the inline terms stay as they were.
     const phrase = ownerLabel !== undefined ? ownershipPhrase(ownerLabel, firstScalar(ownerType, owner_type), firstScalar(role, ownershipRole)) : undefined;

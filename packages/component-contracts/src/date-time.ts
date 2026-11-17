@@ -182,6 +182,15 @@ export function selectOptionsWithValue(options: ReadonlyArray<{ value: string; l
 const UNRESOLVED_REFERENCE_LABEL = / (?:unavailable|reference not resolved)$/;
 
 /**
+ * s250-m04 (next step 1887, item 2): the owner's kind as a word, as a detail page writes an enum's value ("User", "Team"),
+ * never the stored code; one formatter for React, Vue and HTML. Undefined when there is none.
+ */
+export function ownerKindLabel(value: unknown): string | undefined {
+  const word = typeof value === 'string' ? value.trim().replace(/[_-]+/g, ' ') : '';
+  return word ? `${word.charAt(0).toUpperCase()}${word.slice(1)}` : undefined;
+}
+
+/**
  * s223-m01 (#2527 ruling 6): ownership on a card as one phrase, "Owned by Pricing and packaging · team", or by its type
  * alone when the owner has no name to show ("Team-owned"). Undefined when there is nothing to say.
  */

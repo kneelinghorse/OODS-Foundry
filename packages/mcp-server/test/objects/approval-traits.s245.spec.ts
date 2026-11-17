@@ -113,7 +113,8 @@ describe('a rule that names a level its list lacks is refused, with a message th
     ].join('\n');
     const result = await validate({ yaml });
     expect(result.valid).toBe(false);
-    expect(result.errors).toContainEqual(expect.objectContaining({ kind: 'invalid-parameter', path: 'traits[0].parameters/requiredLevels/send', message: expect.stringContaining('"sign_off"') }));
+    // s250-m04 (next step 1887, item 6): a trait parameter's path reads one way, with dots and brackets.
+    expect(result.errors).toContainEqual(expect.objectContaining({ kind: 'invalid-parameter', path: 'traits[0].parameters.requiredLevels.send', message: expect.stringContaining('"sign_off"') }));
   });
 
   it('a level list that repeats or misspells a name is refused by the parameter schema', () => {

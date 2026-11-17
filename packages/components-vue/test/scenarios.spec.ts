@@ -892,13 +892,15 @@ describe('@oods/components-vue shared scenarios', () => {
         case 'ownership-summary-terms': {
           expect(component.element?.querySelector('h2')?.textContent).toBe('Ownership Summary');
           // s221-m01: user-7 has no resolved name, so the contract reports the unresolved reference (65c1c6f84, #2426).
-          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['Owner reference not resolved', 'person', 'administrator']);
+          // s250-m04 (next step 1887, item 2): the owner's kind reads as a word, through the one shared formatter.
+          expect([...component.element!.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['Owner reference not resolved', 'Person', 'administrator']);
           expect(component.element?.hasAttribute('role')).toBe(false);
           break;
         }
         case 'ownership-meta-inline-terms': {
           expect(component.element?.querySelector('[data-meta-title]')?.textContent).toBe('Ownership');
-          expect([...component.element!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: organization', 'Role: custodian']);
+          // s250-m04 (next step 1887, item 2): the owner's kind reads as a word, through the one shared formatter.
+          expect([...component.element!.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: Organization', 'Role: custodian']);
           expect(component.element?.hasAttribute('role')).toBe(false);
           // s223-m01 (#2527 ruling 6): a card binds the owner's label and reads one phrase, as React writes it.
           const named = mount(implementation, { props: { ...scenario.props, ownerLabel: 'Northwind' } });

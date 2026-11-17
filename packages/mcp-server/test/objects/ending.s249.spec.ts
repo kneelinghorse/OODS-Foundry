@@ -171,12 +171,13 @@ describe('Stateful 2.5.0\'s actions: a lifecycle declares the moves a person mak
   });
 
   it.each([
-    ['a state the lifecycle lacks', [{ ...close, to: 'archived' }], undefined, 'traits[0].parameters/actions/0/to', /"archived" is not one of the lifecycle's states/],
-    ['a move the order does not allow', [{ ...close, id: 'reopen', to: 'open', from: ['closed'] }], undefined, 'traits[0].parameters/actions/0/from/0', /does not move "closed" to "open"; add "open" to transitionRules\.closed, or take "closed" out of from/],
-    ['an action no state moves to', [{ id: 'restart', to: 'open', verb: 'Restart', event: 'created' }], '{ open: [held, closed], held: [closed], closed: [] }', 'traits[0].parameters/actions/0/to', /offered from none; add "open" to the transitionRules of the states it should move from/],
-    ['two actions with one id', [close, { ...close, verb: 'Shut' }], undefined, 'traits[0].parameters/actions/1/id', /names another action too/],
-    ['no declared order', [close], '', 'traits[0].parameters/actions', /needs transitionRules/],
-    ['no verb', [{ id: 'close', to: 'closed', event: 'closed' }], undefined, 'traits[0].parameters/actions/0', /verb/],
+    // s250-m04 (next step 1887, item 6): a trait parameter's path reads one way, with dots and brackets.
+    ['a state the lifecycle lacks', [{ ...close, to: 'archived' }], undefined, 'traits[0].parameters.actions[0].to', /"archived" is not one of the lifecycle's states/],
+    ['a move the order does not allow', [{ ...close, id: 'reopen', to: 'open', from: ['closed'] }], undefined, 'traits[0].parameters.actions[0].from[0]', /does not move "closed" to "open"; add "open" to transitionRules\.closed, or take "closed" out of from/],
+    ['an action no state moves to', [{ id: 'restart', to: 'open', verb: 'Restart', event: 'created' }], '{ open: [held, closed], held: [closed], closed: [] }', 'traits[0].parameters.actions[0].to', /offered from none; add "open" to the transitionRules of the states it should move from/],
+    ['two actions with one id', [close, { ...close, verb: 'Shut' }], undefined, 'traits[0].parameters.actions[1].id', /names another action too/],
+    ['no declared order', [close], '', 'traits[0].parameters.actions', /needs transitionRules/],
+    ['no verb', [{ id: 'close', to: 'closed', event: 'closed' }], undefined, 'traits[0].parameters.actions[0]', /verb/],
     ['an event Timestampable does not record', [{ ...close, event: 'ended' }], undefined, 'traits[0].parameters.actions[0].event', /"ended" is not one of Timestampable's recordedEvents/],
     ['a note field the object lacks', [{ ...close, reasonField: 'why' }], undefined, 'traits[0].parameters.actions[0].reasonField', /"why" is not a field/],
     ['a seat whose fields the object lacks', [{ ...close, bySeat: 'ended_by' }], undefined, 'traits[0].parameters.actions[0].bySeat', /"ended_by_id" is not a field/],

@@ -240,6 +240,12 @@ metadata:
           states: [revoked, expired, replaced, declined, withdrawn]
           inner: within_id
           row: { line: [granted_to_name, scope] }
+    # s250-m03: the closures of grants for this organization, with their lines (the third part of the Grant story).
+    - id: closures
+      label: "Closures of grants for {name}"
+      empty: "No closure here is of a grant for {name}."
+      sources:
+        - { from: Closure, via: for_id, order: ended_at, lines: true, row: { line: [summary], time: ended_at } }
 
 # Eight authored sample organizations. Each is one coherent account: the same names appear as the customers on the
 # Subscription, Invoice, Transaction and Usage samples. Its lifecycle follows its plan: a prospect is on Free, an

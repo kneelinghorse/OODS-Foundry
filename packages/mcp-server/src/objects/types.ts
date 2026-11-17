@@ -90,14 +90,17 @@ export interface ObjectMetadata {
 }
 
 /** s249-m01: one item of a related row's line: a field of the source, or fixed words shown when the source's fields hold the given values. */
-export type RelatedLineItem = string | { says: string; when: Record<string, string | number | boolean | null> };
+export type RelatedLineItem = string | { says: string; when: Record<string, string | number | boolean | null> }
+  // s250-m04 (next step 1887, item 4): a field shown except when it holds one of the given values.
+  | { field: string; except: string | number | boolean | null | Array<string | number | boolean | null> };
 
 /** s249-m01: one source of a related list (objects/related-lists.ts says what each key means). */
 export interface RelatedListSource {
   from: string | string[];
   via?: string;
   key?: string;
-  when?: Record<string, string | number | boolean | null>;
+  /** s250-m01: a value of `{ present: true }` keeps a record that holds any value in the field. */
+  when?: Record<string, string | number | boolean | null | { present: true }>;
   exclude?: string[];
   states?: string[];
   order?: string;
@@ -105,6 +108,8 @@ export interface RelatedListSource {
   seat?: string;
   kept?: { name: string; kind?: string };
   row?: { line?: RelatedLineItem[]; time?: string };
+  /** s250-m01: on a source matched by a top-level field, each row carries its record's whole history. */
+  lines?: boolean;
 }
 
 /** s249-m01: a list of the records that point at the subject, declared on the subject's own object. */
@@ -119,6 +124,8 @@ export interface RelatedList {
   afterEnd?: boolean;
   finality?: Array<'final' | 'not_final' | 'not_known'>;
   beside?: { field: string; one: string; other: string };
+  /** s250-m01: the end afterEnd and finality read, from a date-time field of the subject, and the noun naming what ended. */
+  endedAt?: { field: string; noun: string };
   sources: RelatedListSource[];
 }
 

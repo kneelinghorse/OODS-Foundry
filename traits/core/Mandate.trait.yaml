@@ -631,6 +631,13 @@ view_extensions:
         field: ends_note
         description: Ends
         data-oods-omit-empty: true
+    # s250-m03 (next step 1888): the last use, in the product's own line; a grant that holds none draws no cell.
+    - component: LabelCell
+      position: after
+      props:
+        field: last_use
+        description: Last used for
+        data-oods-omit-empty: true
   card:
     - component: LabelCell
       position: after
@@ -1080,11 +1087,14 @@ view_extensions:
       props:
         field: within_name
         data-oods-omit-empty: true
+    # s250-m04 (next step 1887, item 5): the input is drawn only while the grant is open (once it has ended, why is a fact
+    # labelled "Why it ended"), so it is labelled for an open grant. A label here renames the input and not the fact.
     - component: Input
       position: main
       priority: 60
       props:
         field: ended_reason
+        label: Why it is ending, if you end it here
 
 # The state of the grant is the record's lifecycle, so the record composes Stateful beside this trait.
 dependencies:
@@ -1096,7 +1106,7 @@ metadata:
     - Core team
   maturity: alpha
   accessibility:
-    keyboard: The record's facts add no interactive control; why it ended is a labelled form input.
+    keyboard: The record's facts add no interactive control; on an open grant, why it is ending is a labelled form input.
     screenreader: Each fact is read with its visible label, label first on the detail page and the form ("Held by, Billing Agent") and value first on a list row or a card ("Billing Agent, Held by").
   regionsUsed:
     - list

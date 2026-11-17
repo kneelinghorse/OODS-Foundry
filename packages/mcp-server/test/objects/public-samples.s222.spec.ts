@@ -18,7 +18,16 @@ import { SUBSCRIPTION_TRANSITIONS } from '../../../../src/domain/billing/states.
 type Sample = Record<string, unknown>;
 // s247-m02: Approval joins the list (its eight samples pass as authored) and so does Task, the fourteenth public object.
 // s248-m02: and Grant, the fifteenth.
-const PUBLIC = ['User', 'Organization', 'Product', 'Subscription', 'Transaction', 'Relationship', 'Article', 'Media', 'Invoice', 'Plan', 'Usage', 'Agent', 'Approval', 'Task', 'Grant'];
+// s250-m02: and Closure, the sixteenth, with two differences, each for its reason; every other rule holds for it unchanged:
+// - it ships one sample per Grant sample that was given and then ended, three, since a closure must agree with the grant it
+//   closes (closure.s250.spec.ts holds them to the grants), and inventing grants to reach six would contradict the samples;
+// - its lines are its history, so a line after the first may report without moving the state, written as the generated
+//   store writes an edit's line: from null, to the state it stands in; such reports make a history of up to eight lines.
+const PUBLIC = ['User', 'Organization', 'Product', 'Subscription', 'Transaction', 'Relationship', 'Article', 'Media', 'Invoice', 'Plan', 'Usage', 'Agent', 'Approval', 'Task', 'Grant', 'Closure'];
+const KEEPS_STATE_IN_LINES = new Set(['Closure']);
+/** Grant samples that were given (a line into active) and then ended: each has one closure. */
+const givenAndEnded = () => ((loadObject('Grant').samples ?? []) as Sample[]).filter(grant =>
+  (grant.state_history as Array<{ to: string }>).some(line => line.to === 'active') && ['revoked', 'expired', 'replaced'].includes(String(grant.status))).length;
 
 function prepared(name: string) {
   const definition = loadObject(name);
@@ -40,8 +49,11 @@ describe.each(PUBLIC)('%s samples', name => {
   const { samples, fields, parameters } = all[name]!;
 
   it('authors six to eight records, each named, summarised and distinguishable', () => {
-    expect(samples.length).toBeGreaterThanOrEqual(6);
-    expect(samples.length).toBeLessThanOrEqual(8);
+    if (name === 'Closure') expect(samples.length).toBe(givenAndEnded());
+    else {
+      expect(samples.length).toBeGreaterThanOrEqual(6);
+      expect(samples.length).toBeLessThanOrEqual(8);
+    }
     const title = recordNameField(name, fields)!;
     const summary = recordSummaryField(name, fields)!;
     expect(summary, 'a text.summary field for the list row').toBeDefined();
@@ -67,12 +79,14 @@ describe.each(PUBLIC)('%s samples', name => {
     for (const sample of samples) {
       const history = sample.state_history as Array<{ from: string | null; to: string; at: string; reason: string }>;
       expect(history.length).toBeGreaterThanOrEqual(2);
-      expect(history.length).toBeLessThanOrEqual(4);
+      expect(history.length).toBeLessThanOrEqual(KEEPS_STATE_IN_LINES.has(name) ? 8 : 4);
       // A record is created in the initial state: either an explicit creation entry, or its first transition leaves it.
       expect(history[0]!.from === null ? history[0]!.to : history[0]!.from).toBe(initial);
       history.forEach((entry, index) => {
         expect(states).toContain(entry.to);
         expect(text(entry.reason), `reason for ${entry.to}`).toBe(true);
+        // A line that keeps the state stands in the state the line before it left.
+        if (index > 0 && entry.from === null && KEEPS_STATE_IN_LINES.has(name)) { expect(entry.to, `${String(sample.status)} kept state`).toBe(history[index - 1]!.to); return; }
         if (index > 0) expect(entry.from, `${String(sample.status)} history continuity`).toBe(history[index - 1]!.to);
         if (entry.from === null) { expect(index).toBe(0); return; }
         expect(entry.to).not.toBe(entry.from);

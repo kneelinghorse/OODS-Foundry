@@ -17,6 +17,8 @@
  * - An ended subject (its state final in its own declared order) is read at its end: a list that declares `finality`
  *   keeps the rows final, not final or not known at that instant and says each row's state then and now, and a list that
  *   declares `afterEnd` applies only once the subject has ended and reads only the lines written after its end.
+ * - s250-m01: a list can read its end from a field of the subject instead (`endedAt`): the instant another record ended,
+ *   as a closure's page reads its grant's end, with the noun that names what ended in the row's sentence.
  */
 import { historyAttribution } from './attribution.js';
 import { formatDateTime } from './date-time.js';
@@ -25,14 +27,20 @@ import { getStatusPresentation, type StatusDomain } from './status-registry.js';
 export type RelatedFinality = 'final' | 'not_final' | 'not_known';
 type Scalar = string | number | boolean | null;
 type Row = Record<string, unknown>;
-export type RelatedLineItem = string | { says: string; when: Record<string, Scalar> };
+/**
+ * A row line's item: a field of the source; fixed words shown when its fields hold the given values ({ says, when }); or,
+ * s250-m04 (next step 1887, item 4), a field shown except when it holds one of the given values ({ field, except }).
+ */
+export type RelatedLineItem = string | { says: string; when: Record<string, Scalar> } | { field: string; except: Scalar | Scalar[] };
+/** s250-m01: what a source's `when` asks of a field: this value, no value (null), or any value ({ present: true }). */
+export type RelatedWhenValue = Scalar | { present: true };
 
 /** One source of a declared list (OODS Foundry's objects/related-lists.ts says what each key means). */
 export interface RelatedListSource {
   from: string | string[];
   via?: string;
   key?: string;
-  when?: Record<string, Scalar>;
+  when?: Record<string, RelatedWhenValue>;
   exclude?: string[];
   states?: string[];
   order?: string;
@@ -40,6 +48,8 @@ export interface RelatedListSource {
   seat?: string;
   kept?: { name: string; kind?: string };
   row?: { line?: RelatedLineItem[]; time?: string };
+  /** s250-m01: on a source matched by a top-level field, each row carries its record's whole history. */
+  lines?: boolean;
 }
 
 /** A declared list of the records that point at the subject. */
@@ -56,6 +66,11 @@ export interface RelatedList {
   afterEnd?: boolean;
   finality?: RelatedFinality[];
   beside?: { field: string; one: string; other: string };
+  /**
+   * s250-m01: the end this list reads, from a date-time field of the subject, and the noun its rows' sentence names
+   * ("grant"); left out, the subject's own end, read from its history and declared order.
+   */
+  endedAt?: { field: string; noun: string };
   sources: RelatedListSource[];
 }
 
@@ -136,6 +151,10 @@ export interface ResolvedRelatedList {
   note?: string;
   /** What every list cannot see. */
   cannotSee: string;
+  /** s250-m05 (the fresh read): a source of this list reads another of the subject's fields through key (a grant's parties),
+   * so its cannotSee does not name the subject as the thing named. A page prints, once under the lists it draws, the first
+   * keyed list's cannotSee, true of both kinds of list, or else its first list's (component-map.ts, collection-emitter.ts). */
+  keyed?: true;
   /** Set by a generated app on a list that reads records it copied from other objects. */
   copied?: string;
   collapsed: boolean;
@@ -161,6 +180,9 @@ const instant = (value: unknown) => { const at = Date.parse(String(value)); retu
 const names = (from: unknown): string[] => (Array.isArray(from) ? from : [from]).filter((name): name is string => typeof name === 'string');
 const plural = (count: number, noun: { one: string; other: string } | undefined, fallback: string) => count === 1 ? noun?.one ?? fallback : noun?.other ?? `${fallback}s`;
 const fill = (words: string, name: string) => words.replaceAll('{name}', name);
+/** s250-m01: whether a record's field holds what a source's `when` asks: no value (null), any value, or this value. */
+const holds = (record: Row, field: string, value: RelatedWhenValue) => value === null ? !present(record[field])
+  : typeof value === 'object' ? present(record[field]) : present(record[field]) && String(record[field]) === String(value);
 
 /**
  * The state's words, from the status table a badge of the same table reads, in sentence case as a record's own list and
@@ -204,6 +226,11 @@ export function relatedTitle(object: RelatedObject, record: Row): string {
 function lineOf(source: RelatedListSource, record: Row): string[] {
   return (source.row?.line ?? []).flatMap(item => {
     if (typeof item === 'string') return present(record[item]) ? [String(record[item])] : [];
+    if ('field' in item) {
+      const value = record[item.field];
+      const except = (Array.isArray(item.except) ? item.except : [item.except]).map(String);
+      return present(value) && !except.includes(String(value)) ? [String(value)] : [];
+    }
     return Object.entries(item.when).every(([field, value]) => value === null ? !present(record[field]) : present(record[field]) && String(record[field]) === String(value)) ? [item.says] : [];
   });
 }
@@ -237,9 +264,12 @@ function keptWords(kind: string | undefined, subject: RelatedObject): string {
  */
 export function resolveRelatedListRows(list: RelatedList, subject: RelatedObject, record: Row, objects: Readonly<Record<string, RelatedObject>>): ResolvedRelatedList {
   const name = relatedTitle(subject, record);
-  // The subject as a sentence names it ("grant"), for a row read at the subject's end: "When the grant ended: …".
-  const subjectNoun = subject.noun?.one ?? subject.name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase();
-  const ended = relatedEndedAt(record, subject.order);
+  // The subject as a sentence names it ("grant"), for a row read at the subject's end: "When the grant ended: …". s250-m01:
+  // a list that reads its end from a field (endedAt) names what ended by its own noun, and reads that instant whatever the
+  // subject's own state; a subject holding no instant there is read as not ended.
+  const subjectNoun = list.endedAt?.noun ?? subject.noun?.one ?? subject.name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase();
+  const endValue = list.endedAt ? record[list.endedAt.field] : undefined;
+  const ended = list.endedAt ? (present(endValue) && instant(endValue) !== undefined ? String(endValue) : undefined) : relatedEndedAt(record, subject.order);
   const end = ended === undefined ? undefined : instant(ended);
   const readsAtEnd = Boolean(list.finality) && end !== undefined;
   const applies = list.afterEnd !== true || ended !== undefined;
@@ -277,11 +307,17 @@ export function resolveRelatedListRows(list: RelatedList, subject: RelatedObject
     }
     return row;
   };
+  // s250-m01: a source that reads another field of the subject through `key` (a closure's grant, a grant's parties) matches
+  // records by the id that field holds, not by the subject's own, so the list's sentences do not name the subject as the
+  // thing named.
+  const keyed = list.sources.some(source => source.key !== undefined && source.key !== subject.key);
   const base = {
-    id: list.id, label: fill(list.label, name), empty: fill(list.empty ?? `Nothing here names ${name} by id.`, name),
+    id: list.id, label: fill(list.label, name), empty: fill(list.empty ?? (keyed ? 'No record here matches by id.' : `Nothing here names ${name} by id.`), name),
     ...(list.note ? { note: fill(list.note, name) } : {}),
-    cannotSee: `These lists show only records here that name ${name} by id; records that name ${name} only in words, or that another product keeps, are not listed.`,
-    collapsed: list.collapsed === true, applies, ...(ended ? { endedAt: ended } : {}), warnings: [] as string[],
+    cannotSee: keyed
+      ? 'These lists show only records here, matched by id; records named only in words, or that another product keeps, are not listed.'
+      : `These lists show only records here that name ${name} by id; records that name ${name} only in words, or that another product keeps, are not listed.`,
+    collapsed: list.collapsed === true, applies, ...(keyed ? { keyed: true as const } : {}), ...(ended ? { endedAt: ended } : {}), warnings: [] as string[],
   };
   let beside: string | undefined;
   if (list.beside && present(record[list.beside.field])) {
@@ -305,13 +341,18 @@ export function resolveRelatedListRows(list: RelatedList, subject: RelatedObject
           lines = ((Array.isArray(sample.state_history) ? sample.state_history : []) as Row[]).filter(entry => same(entry[entryKey], key));
           if (list.afterEnd) lines = lines.filter(entry => { const at = instant(entry.at); return at !== undefined && end !== undefined && at > end; });
           if (!lines.length) continue;
-        } else if (!same(sample[via], key)) continue;
-        if (Object.entries(source.when ?? {}).some(([field, value]) => value === null ? present(sample[field]) : !present(sample[field]) || String(sample[field]) !== String(value))) continue;
+        } else {
+          if (!same(sample[via], key)) continue;
+          // s250-m01: a source matched by a top-level field carries the record's whole history when it asks (lines), not
+          // filtered by time even after an end: a closure's first line is written at the instant its grant ended.
+          if (source.lines === true && Array.isArray(sample.state_history)) lines = sample.state_history as Row[];
+        }
+        if (Object.entries(source.when ?? {}).some(([field, value]) => !holds(sample, field, value))) continue;
         if ((source.exclude ?? []).some(field => same(sample[field], key))) continue;
         const identity = JSON.stringify([fromName, target.key && present(sample[target.key]) ? sample[target.key] : relatedTitle(target, sample), source.seat ?? null]);
         if (source.states && !source.states.includes(String(sample.status))) { if (!counted.has(identity)) { counted.add(identity); leftOut++; } continue; }
         const row = rowOf(target, source, sample);
-        if (lines) { row.lines = lines.map(printed); row.linesText = `${lines.length} ${lines.length === 1 ? 'line' : 'lines'}`; }
+        if (lines?.length) { row.lines = lines.map(printed); row.linesText = `${lines.length} ${lines.length === 1 ? 'line' : 'lines'}`; }
         if (list.finality) {
           const read = readsAtEnd ? row.finalityAtEnd : row.finality;
           if (readsAtEnd && row.stateAtEnd === null) continue;

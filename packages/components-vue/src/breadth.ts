@@ -1,5 +1,5 @@
 import { svgCarriesTitle, vizPreviewLayers, type VizPreviewLayer } from '@oods/component-contracts';
-import { formatDateTime, formatReadOnlyValue, summaryValue, formatReferenceLabel, formatPriceAmount, formatPriceCode, ownershipPhrase } from '@oods/component-contracts';
+import { formatDateTime, formatReadOnlyValue, summaryValue, formatReferenceLabel, formatPriceAmount, formatPriceCode, ownerKindLabel, ownershipPhrase } from '@oods/component-contracts';
 import {
   Comment,
   Fragment,
@@ -1000,7 +1000,7 @@ export const OwnershipSummary = defineComponent({
   setup(props, { slots }) {
     return () => {
       const content = authoredContent(slots.default?.());
-      const terms = ([['Owner', props.ownerId === undefined && props.owner_id === undefined && props.ownerLabel === undefined ? undefined : formatReferenceLabel(props.ownerId ?? props.owner_id, props.ownerLabel, 'Owner')], ['Owner Type', firstScalar(props.ownerType, props.owner_type)], ['Role', firstScalar(props.role, props.ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+      const terms = ([['Owner', props.ownerId === undefined && props.owner_id === undefined && props.ownerLabel === undefined ? undefined : formatReferenceLabel(props.ownerId ?? props.owner_id, props.ownerLabel, 'Owner')], ['Owner Type', ownerKindLabel(firstScalar(props.ownerType, props.owner_type))], ['Role', firstScalar(props.role, props.ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
       const fallback = firstText(props.summary, props.text, props.description);
       return h('section', { class: 'oods-ownership-summary', 'data-oods-component': 'OwnershipSummary', 'data-summary-type': 'ownership' }, [
         h('h2', { 'data-summary-title': 'true' }, firstText(props.title, props.label, props.heading, props.name) ?? 'Ownership Summary'),
@@ -1035,7 +1035,7 @@ export const OwnershipMeta = defineComponent({
   setup(props, { slots }) {
     return () => {
       const content = authoredContent(slots.default?.());
-      const terms = ([['Owner Type', firstScalar(props.ownerType, props.owner_type)], ['Role', firstScalar(props.role, props.ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
+      const terms = ([['Owner Type', ownerKindLabel(firstScalar(props.ownerType, props.owner_type))], ['Role', firstScalar(props.role, props.ownershipRole)]] as Array<[string, string | undefined]>).filter((entry): entry is [string, string] => entry[1] !== undefined);
       // s223-m01 (#2527 ruling 6): given the owner's label, one phrase, as React writes it.
       const phrase = props.ownerLabel !== undefined ? ownershipPhrase(props.ownerLabel, firstScalar(props.ownerType, props.owner_type), firstScalar(props.role, props.ownershipRole)) : undefined;
       return h('div', { class: 'oods-ownership-meta', 'data-oods-component': 'OwnershipMeta', 'data-meta-type': 'ownership' }, content.length ? content : phrase ? [h('span', { 'data-meta-item': 'true' }, phrase)] : [

@@ -1,5 +1,10 @@
 # Grants as standing yeses
 
+> **The Grant story has three parts.** [Grants as standing yeses](grants-as-standing-yeses.md): what a grant is.
+> [The person's side](the-persons-side.md): where a person sees their grants, and takes one back.
+> [What became of the work](what-became-of-the-work.md): what a product reports after a grant ended.
+> Taking a grant back ends the yes, not the work.
+
 When someone tells an agent it can keep doing something, what gets saved, and where do they see it and take it back? In OODS Foundry a grant is **a standing yes, not a setting**: one set of terms on which one actor may act for one person or organization, as given by one person, until it ends. It is an object of its own, `Grant`. Its facts live on a trait, `Mandate`, so your own consent, mandate or connection records can take them too. Every change an agent makes under a grant can name it in that record's history.
 
 ![The Grant list searched for Ruth Adeyemi: every grant Ruth Adeyemi gave, with its holder, its party and its end](grants-as-standing-yeses/grant-list-light.png)
@@ -87,7 +92,7 @@ A cost of this reading: a sponsor cannot say "ask every time, never in advance" 
 
 The last five are endings, and final: a grant never comes back. A new grant follows it and names it. Paused is the one state a grant comes back from. No ending takes a success colour, and revoked is not a failure: it is the rule working. `Grant` declares this order. Your product enforces it on its own records, and OODS Foundry holds its own samples to it. A generated app keeps it in its own store: a grant's status select offers its state and the moves the order allows from it, and the store refuses any other move, so a revoked grant never goes back to active there.
 
-**The end, in the party's own day.** A grant to an agent names its end, kept three ways: the exact instant a product checks (`ends_at`), the party's time zone (`timezone`, such as Pacific/Auckland), and one line in the party's own words and zone (`ends_note`, "At the end of 31 Dec 2026, Tauranga time"), written by your product. People read the line: the list, the card and the detail page show it, and the detail page also shows the instant. Every time a grant's screens show, the instant and its history included, is in UTC and says so ("Dec 31, 2026, 10:59 AM UTC"); a form's date-time input does not say its zone yet. For a grant with no end, your product writes that too ("No end: it stands until someone ends it"); with no line, no end is shown. Showing a record's own times in its own zone on every screen is not built yet.
+**The end, in the party's own day.** A grant to an agent names its end, kept three ways: the exact instant a product checks (`ends_at`), the party's time zone (`timezone`, such as Pacific/Auckland), and one line in the party's own words and zone (`ends_note`, "At the end of 31 Dec 2026, Tauranga time"), written by your product. People read the line: the list, the card and the detail page show it, and the detail page also shows the instant. Every time a grant's screens show, the instant and its history included, is in UTC and says so ("Dec 31, 2026, 10:59 AM UTC"), and a form's date-time input says UTC in its label. For a grant with no end, your product writes that too ("No end: it stands until someone ends it"); with no line, no end is shown. Showing a record's own times in its own zone on every screen is not built yet.
 
 **Disuse** is your product's rule: the grant shows its last use, and a grant that ends unused is expired, with its reason ("Unused for 90 days"). Reconfirmation is not modelled yet.
 
@@ -138,7 +143,7 @@ In this release a helper acts under its own grant from the one the work is for, 
 
 ## The person's side
 
-A person's page lists what waits for their answer, the agents holding a grant for them, and the grants they gave or answer for. An organization's page lists the agents holding a grant for it and what was recorded on its behalf, and an agent's page the grants it holds. A grant's page lists the grants inside it, what was recorded under it, what is still under way, and its parties now. [The person's side](the-persons-side.md) has each list and what it cannot see. There is no viewer: every page is composed the same for everyone, and none speaks to the person it lists as "you". The Grant list still finds a grant by the name in any of its seats, and filters by state.
+A person's page lists what waits for their answer, the agents holding a grant for them, and the grants they gave or answer for. An organization's page lists the agents holding a grant for it and what was recorded on its behalf, and an agent's page the grants it holds. A grant's page lists the grants inside it, what was recorded under it, what is still under way, its parties now, and, once it has ended, its closure. [The person's side](the-persons-side.md) has each list and what it cannot see, and the story's third part, [What became of the work](what-became-of-the-work.md), what a product reports after a grant ended. There is no viewer: every page is composed the same for everyone, and none speaks to the person it lists as "you". The Grant list still finds a grant by the name in any of its seats, and filters by state.
 
 ## Bringing your own grant records
 
@@ -150,9 +155,9 @@ Your own consent, mandate or connection records can compose `Mandate` on an obje
 
 It models and renders. It does not check a grant against what an actor does, expire or renew one, stop a token, or decide whether an action was allowed. A generated app's Revoke, Pause and Resume change the app's own records when a person asks, and stop nothing; your product wires its own. The app keeps the declared order in its own store, and your product enforces it on its records. Beyond that:
 - A generated app names who acted only when your product passes who is acting. It never asks anyone to type their own name or capacity, and never writes `ended_as`.
-- Screens show times in UTC, and a shown date-time says so; a form's date-time input does not yet. The end is also kept in the party's own words and zone, written by your product.
+- Screens show times in UTC, and a shown date-time says so, as a form's date-time input does in its label. The end is also kept in the party's own words and zone, written by your product.
 - Money limits assume two decimal places, so a currency with other decimals reads wrong.
-- Taking a grant back stops nothing issued under it, and a grant's page shows only the records here that name it.
+- Taking a grant back stops nothing issued under it, and a grant's page shows only the records here that name it. What became of the work is your product's report, recorded as a closure; OODS Foundry writes none.
 - Uses, the last use, the money spent and an agent's `acts_for` are kept by your product and checked by nothing.
 - Its lists read the records here that point at a record by id. A record that names it only in words, or that another product keeps, is not listed, and a generated app's lists of other objects read records copied from the samples when the app was made.
 - A grant passed on is not modelled yet, and reconfirmation is not modelled yet.

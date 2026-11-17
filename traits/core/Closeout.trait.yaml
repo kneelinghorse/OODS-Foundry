@@ -1,0 +1,456 @@
+trait:
+  name: Closeout
+  version: 1.0.0
+  description: |
+    The record of what became of the work after something ended: what ended, how and when, who it was for, what the
+    record covers and where it stands now. It also keeps when your product stops waiting for answers, until when access
+    already given may still work, and the receipt your product sent, each as your product reports it. The Closure object,
+    the third part of the Grant story, composes this trait for a grant that was given and then ended; a team's own record of
+    a revocation or an offboarding can compose it too.
+
+    Who was told, what each answered and what became of each piece of work are not fields of this trait. They are the
+    record's history, through Stateful: each line names who reported it, and a line that reports without moving the
+    record's state keeps that state. The state is the record's own lifecycle.
+
+    A reference to what ended, or to who it was for, is an id and a kept name, so it still reads after that record is
+    gone. Every field is written by your product when it reports, so a form reads them as facts and edits none. An
+    instant is shown in UTC, labelled so.
+
+    OODS Foundry models and shows this record. It does not close anything, tell anyone, stop a token, send a receipt or
+    work out whether everything stopped. Only a report should move the record, and that rule is your product's to keep:
+    OODS Foundry does not check who moves it, and on an object with a form its status can be changed there.
+  category: core
+  # Compound tags: a trait's tags are inherited by the components it places (Text, LabelCell), and an intent's words never
+  # match a compound tag, so these describe the trait without changing how any screen picks its components.
+  tags:
+    - closeout-record
+    - after-the-end
+    - reported-outcome
+    - kept-receipt
+
+# No parameter: the states are the record's own lifecycle, declared through Stateful.
+parameters: []
+
+# Every field is written by your product when it reports, so a form never edits one (readOnly).
+schema:
+  closes_id:
+    type: string
+    required: false
+    readOnly: true
+    description: 'What ended, by the id your product knows it by: for a closure, the grant.'
+  closes_name:
+    type: string
+    required: false
+    readOnly: true
+    description: 'What ended, as shown ("Northwind customer replies"). Kept on the record.'
+  ended_how:
+    type: string
+    required: false
+    readOnly: true
+    description: 'How it ended: the ended record''s state as people read it ("Revoked", "Replaced", "Expired").'
+    validation:
+      maxLength: 64
+  ended_at:
+    type: datetime
+    required: false
+    readOnly: true
+    description: The instant it ended, as the ended record keeps it.
+    validation:
+      format: date-time
+  for_id:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who it was for, by the id your product knows them by: the person or organization the ended record was for.'
+  for_name:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who it was for, as shown ("Northwind Traders"). Kept on the record.'
+  scope:
+    type: string
+    required: false
+    readOnly: true
+    description: 'What this record covers, in words: the systems and the work its reports speak for ("What the support desk controls").'
+    validation:
+      maxLength: 240
+  summary:
+    type: string
+    required: false
+    readOnly: true
+    description: Where it stands now, in one line your product writes with each report.
+    validation:
+      maxLength: 240
+  deadline_at:
+    type: datetime
+    required: false
+    readOnly: true
+    description: When your product stops waiting for answers. A line saying it passed with no answer reports only that nothing is known.
+    validation:
+      format: date-time
+  still_works_until:
+    type: datetime
+    required: false
+    readOnly: true
+    description: Until when access already given may still work, as reported.
+    validation:
+      format: date-time
+  still_works_note:
+    type: string
+    required: false
+    readOnly: true
+    description: 'What access already given may still work, and until when, in words ("Not known: the booking service has not said").'
+    validation:
+      maxLength: 240
+  receipt_sent_at:
+    type: datetime
+    required: false
+    readOnly: true
+    description: When your product sent the receipt, outside this page.
+    validation:
+      format: date-time
+  receipt_sent_to_name:
+    type: string
+    required: false
+    readOnly: true
+    description: Who the receipt was sent to, as shown. Kept on the record.
+  receipt_channel:
+    type: string
+    required: false
+    readOnly: true
+    description: 'How the receipt was sent ("Email").'
+    validation:
+      maxLength: 64
+
+semantics:
+  closes_id:
+    semantic_type: closeout.closes_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: What ended
+      displayLabelField: closes_name
+  closes_name:
+    semantic_type: closeout.closes_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: What ended
+  ended_how:
+    semantic_type: closeout.ended_how
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: How it ended
+  ended_at:
+    semantic_type: closeout.ended_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      label: When it ended
+  for_id:
+    semantic_type: closeout.for_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: For
+      displayLabelField: for_name
+  for_name:
+    semantic_type: closeout.for_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: For
+  scope:
+    semantic_type: closeout.scope
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: This record covers
+  summary:
+    semantic_type: closeout.summary
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Where it stands
+  deadline_at:
+    semantic_type: closeout.deadline_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      label: Waits for answers until
+  still_works_until:
+    semantic_type: closeout.still_works_until
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      label: May still work until
+  still_works_note:
+    semantic_type: closeout.still_works_note
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: What may still work
+  receipt_sent_at:
+    semantic_type: closeout.receipt_sent_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      label: Receipt sent
+  receipt_sent_to_name:
+    semantic_type: closeout.receipt_sent_to_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Receipt sent to
+  receipt_channel:
+    semantic_type: closeout.receipt_channel
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Receipt sent by
+
+view_extensions:
+  # The record travels with its facts on every surface it is read on, each as labelled text. A reference is placed by its
+  # id, which shows its kept name; on the detail page and the form the kept name's row is placed too, and where both are
+  # placed the name's row is read and the id's row is dropped. Every place is left undrawn where the record holds no
+  # value for it (`data-oods-omit-empty`). A list row and a card place only words, what ended and who it was for, so no
+  # instant is ever printed there as stored; the instants are on the detail page, each in UTC, labelled so.
+  list:
+    - component: LabelCell
+      position: after
+      props:
+        field: closes_id
+        description: What ended
+        data-oods-omit-empty: true
+    - component: LabelCell
+      position: after
+      props:
+        field: for_id
+        description: For
+        data-oods-omit-empty: true
+  card:
+    - component: LabelCell
+      position: after
+      props:
+        field: closes_id
+        description: What ended
+        data-oods-omit-empty: true
+    - component: LabelCell
+      position: after
+      props:
+        field: for_id
+        description: For
+        data-oods-omit-empty: true
+  detail:
+    - component: Text
+      position: main
+      priority: 90
+      props:
+        field: closes_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 89
+      props:
+        field: closes_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 88
+      props:
+        field: ended_how
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 87
+      props:
+        field: ended_at
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 86
+      props:
+        field: for_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 85
+      props:
+        field: for_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 84
+      props:
+        field: scope
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 83
+      props:
+        field: summary
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 82
+      props:
+        field: deadline_at
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 81
+      props:
+        field: still_works_until
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 80
+      props:
+        field: still_works_note
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 79
+      props:
+        field: receipt_sent_at
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 78
+      props:
+        field: receipt_sent_to_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: main
+      priority: 77
+      props:
+        field: receipt_channel
+        data-oods-omit-empty: true
+
+  # On a form every fact is read beside the status and edited nowhere (`fact: true`, as Mandate's terms are): your product
+  # writes them when it reports. On the shipped Closure there is no form at all.
+  form:
+    - component: Text
+      position: top
+      priority: 90
+      fact: true
+      props:
+        field: closes_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 89
+      fact: true
+      props:
+        field: closes_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 88
+      fact: true
+      props:
+        field: ended_how
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 87
+      fact: true
+      props:
+        field: ended_at
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 86
+      fact: true
+      props:
+        field: for_id
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 85
+      fact: true
+      props:
+        field: for_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 84
+      fact: true
+      props:
+        field: scope
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 83
+      fact: true
+      props:
+        field: summary
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 82
+      fact: true
+      props:
+        field: deadline_at
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 81
+      fact: true
+      props:
+        field: still_works_until
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 80
+      fact: true
+      props:
+        field: still_works_note
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 79
+      fact: true
+      props:
+        field: receipt_sent_at
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 78
+      fact: true
+      props:
+        field: receipt_sent_to_name
+        data-oods-omit-empty: true
+    - component: Text
+      position: top
+      priority: 77
+      fact: true
+      props:
+        field: receipt_channel
+        data-oods-omit-empty: true
+
+# The record's state is its lifecycle, and its history holds who was told and what became of the work, so the record
+# composes Stateful beside this trait.
+dependencies:
+  - Stateful
+
+metadata:
+  created: "2026-11-17"
+  owners:
+    - Core team
+  maturity: alpha
+  accessibility:
+    keyboard: The record's facts add no interactive control.
+    screenreader: Each fact is read with its visible label, label first on the detail page and the form ("For, Northwind Traders") and value first on a list row or a card ("Northwind Traders, For").
+  regionsUsed:
+    - list
+    - card
+    - detail
+    - form
+  examples:
+    - Closure
+  references:
+    - "draft-watts-oauth-agent-revocation-closure-04 (individual Internet-Draft, 16 Nov 2026): a closure receipt in six states, where PARTIAL, FAILED and UNKNOWN MUST NOT be interpreted as CLOSED"
+    - "draft-hardt-oauth-aauth-protocol-11, section 11.12.3: a PS MAY report the outcome of a revocation the person initiated to that person, per recipient"
+    - "draft-abak-agent-control-delivery-evidence-02 (individual Internet-Draft, 11 Oct 2026): one result per instruction and target, APPLIED, REFUSED, NO_EFFECT or UNKNOWN, and work already in flight"

@@ -312,7 +312,7 @@ export interface User {
   template_catalog: Template[];
 
   /**
-   * The person's preferred time zone, kept for your product. Screens show times in UTC, and a shown date-time says so; a date-time input does not yet.
+   * The person's preferred time zone, kept for your product. Screens show times in UTC, and a shown date-time says so, as a date-time input's label does.
    *
    * Source: User (object override)
    *

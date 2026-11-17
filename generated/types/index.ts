@@ -15,6 +15,7 @@ export * from './traits/authable.parameters';
 export * from './traits/billable.parameters';
 export * from './traits/cancellable.parameters';
 export * from './traits/classifiable.parameters';
+export * from './traits/closeout.parameters';
 export * from './traits/colorized.parameters';
 export * from './traits/communicable.parameters';
 export * from './traits/decision.parameters';

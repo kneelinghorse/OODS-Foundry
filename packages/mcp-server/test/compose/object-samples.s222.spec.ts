@@ -84,10 +84,14 @@ describe('samples become aligned per-field examples', () => {
 });
 
 describe('sample count', () => {
-  it('equals the number of samples, clamped to 5-10; an object without samples keeps ten', () => {
+  // s250-m01: one to four samples seed exactly those records (they were repeated to five under made-up ids, which replaced
+  // every authored id); the moved pin is named for the gate (artifacts/product-reality/sprint-250/m01/README.md).
+  it('equals the number of samples, at most ten; an object without samples keeps ten', () => {
     expect(sampleCountFor(undefined)).toBe(10);
     expect(sampleCountFor([])).toBe(10);
-    expect(sampleCountFor([{}, {}, {}])).toBe(5);
+    expect(sampleCountFor([{}])).toBe(1);
+    expect(sampleCountFor([{}, {}, {}])).toBe(3);
+    expect(sampleCountFor(Array.from({ length: 5 }, () => ({})))).toBe(5);
     expect(sampleCountFor(Array.from({ length: 8 }, () => ({})))).toBe(8);
     expect(sampleCountFor(Array.from({ length: 12 }, () => ({})))).toBe(10);
   });

@@ -11,8 +11,11 @@
  * and `other` with `{count}`), `note` (one more sentence on what it cannot see), `rowsNote` (a sentence said with the rows,
  * only when there are some: where a row is acted on), `collapsed` (drawn closed), `afterEnd` (it applies only once the
  * subject has ended, and its history sources read only the lines written after that), `finality` (it keeps only rows
- * read as final, not final or not known: at the subject's end when the subject has ended, else now) and `beside` (a
- * sentence shown beside the heading when the subject holds a value in `field`: `one` for 1, `other` with `{value}`).
+ * read as final, not final or not known: at the subject's end when the subject has ended, else now), `beside` (a
+ * sentence shown beside the heading when the subject holds a value in `field`: `one` for 1, `other` with `{value}`) and,
+ * s250-m01, `endedAt` (the end `afterEnd` and `finality` read, from a date-time `field` of the subject, the instant another
+ * record ended, with the `noun` that names what ended in a row's sentence: "When the grant ended: …"; with it, `afterEnd`
+ * needs no declared order of the subject's own, and a subject holding no instant there is read as not ended).
  *
  * Each source names:
  * - `from`: an object, or a list of objects;
@@ -20,8 +23,9 @@
  *   Stateful documents. Left out with `key` set, it is each `from`'s own id: a forward lookup of the record the subject's
  *   `key` field names;
  * - `key`: the subject's field to match, by default its own id;
- * - `when`: equality filters on `from`'s top-level fields (a `null` matches a record that holds no value there), so
- *   integer-keyed data cannot list user 42's grants on agent 42's page;
+ * - `when`: equality filters on `from`'s top-level fields (a `null` matches a record that holds no value there, and,
+ *   s250-m01, `{ present: true }` one that holds any value), so integer-keyed data cannot list user 42's grants on agent
+ *   42's page;
  * - `exclude`: fields that, when they also hold the subject's key, leave the row out;
  * - `states`: states of `from`'s lifecycle;
  * - `order`: a field of `from` to sort by, earliest first (records holding none last, then the oldest first);
@@ -31,7 +35,10 @@
  * - `seat` and `kept`: for a forward lookup, the words naming the seat it reads ("Given by"), and the subject's fields
  *   that keep the seat's name and kind, shown when no record here matches (a team that is no sample);
  * - `row`: the row's `line`, fields of `from` (or `{ says, when }`: fixed words shown when the record's fields hold the
- *   given values), and its `time`, one field.
+ *   given values; or, s250-m04, `{ field, except }`: a field shown except when it holds one of the given values), and its
+ *   `time`, one field;
+ * - s250-m01, `lines`: on a source matched by a top-level field, each row carries its record's whole history, printed as a
+ *   history source's lines are (a source that reads a history already carries the lines that name the subject).
  *
  * Validation follows `listColumns` (tools/object.validate.ts): each `from` is registered, each field exists on its
  * composed `from`, a history key is one of the six, and states belong to `from`'s lifecycle. A malformed declaration is
@@ -45,8 +52,10 @@ export const HISTORY_KEYS = ['actor_id', 'on_behalf_of_id', 'approved_by_id', 'a
 export const FINALITIES = ['final', 'not_final', 'not_known'] as const;
 const HISTORY_PATH = /^state_history\[\]\.([A-Za-z_][A-Za-z0-9_]*)$/;
 const LIST_ID = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
-const LIST_KEYS = ['id', 'label', 'empty', 'filtered', 'note', 'rowsNote', 'collapsed', 'afterEnd', 'finality', 'beside', 'sources'];
-const SOURCE_KEYS = ['from', 'via', 'key', 'when', 'exclude', 'states', 'order', 'inner', 'seat', 'kept', 'row'];
+const LIST_KEYS = ['id', 'label', 'empty', 'filtered', 'note', 'rowsNote', 'collapsed', 'afterEnd', 'finality', 'beside', 'endedAt', 'sources'];
+const SOURCE_KEYS = ['from', 'via', 'key', 'when', 'exclude', 'states', 'order', 'inner', 'seat', 'kept', 'row', 'lines'];
+/** s250-m01: the field types that hold an instant, as the resolver reads them (compose/related-records.ts). */
+const INSTANT_TYPES = ['datetime', 'timestamp'];
 
 /** What a list's checks need to know of one object: its composed fields, its lifecycle and its own id. */
 export type RelatedShape = {
@@ -70,6 +79,8 @@ export const sourceNames = (from: unknown): string[] => (Array.isArray(from) ? f
 const isMap = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value);
 const text = (value: unknown) => typeof value === 'string' && value.trim().length > 0;
 const scalar = (value: unknown) => value === null || ['string', 'number', 'boolean'].includes(typeof value);
+/** s250-m01: `{ present: true }`, a `when` that keeps a record holding any value; a map, since "present" is a value too. */
+const anyValue = (value: unknown) => isMap(value) && Object.keys(value).length === 1 && value.present === true;
 
 /**
  * Check `metadata.relatedLists` for one subject. `shape` answers for any object a source names (undefined when it is no
@@ -95,7 +106,19 @@ export function relatedListProblems(raw: unknown, subject: RelatedShape, shape: 
     for (const key of ['empty', 'note', 'rowsNote'] as const) if (entry[key] !== undefined && !text(entry[key])) fail(`${path}.${key}`, `${path}.${key} must be text.`);
     if (entry.filtered !== undefined && (!isMap(entry.filtered) || !text(entry.filtered.one) || !text(entry.filtered.other))) fail(`${path}.filtered`, `${path}.filtered must be a map with one and other: the words for one record, and for any other count as {count}.`);
     for (const key of ['collapsed', 'afterEnd'] as const) if (entry[key] !== undefined && typeof entry[key] !== 'boolean') fail(`${path}.${key}`, `${path}.${key} must be true or false.`);
-    if (entry.afterEnd === true && !subject.order) fail(`${path}.afterEnd`, `${path}.afterEnd needs ${subject.name} to declare its lifecycle's order, which says when it has ended.`);
+    if (entry.afterEnd === true && !subject.order && entry.endedAt === undefined) fail(`${path}.afterEnd`, `${path}.afterEnd needs ${subject.name} to declare its lifecycle's order, which says when it has ended, or the list to read its end from a date-time field (endedAt).`);
+    if (entry.endedAt !== undefined) {
+      const endedAt = entry.endedAt;
+      if (!isMap(endedAt)) fail(`${path}.endedAt`, `${path}.endedAt must be a map with field (a date-time field of ${subject.name} holding the instant the list reads as the end) and noun (the words naming what ended, "grant").`);
+      else {
+        for (const key of Object.keys(endedAt)) if (!['field', 'noun'].includes(key)) fail(`${path}.endedAt.${key}`, `${path}.endedAt takes field and noun.`);
+        const type = typeof endedAt.field === 'string' ? subject.fields[endedAt.field]?.type : undefined;
+        if (typeof endedAt.field !== 'string' || !endedAt.field) fail(`${path}.endedAt.field`, `${path}.endedAt.field must name a date-time field of ${subject.name}.`);
+        else if (!Object.hasOwn(subject.fields, endedAt.field)) fail(`${path}.endedAt.field`, `${path}.endedAt.field "${endedAt.field}" is not a field of ${subject.name}, including its traits.`);
+        else if (!INSTANT_TYPES.includes(String(type ?? '').replace(/\?$/, ''))) fail(`${path}.endedAt.field`, `${path}.endedAt.field "${endedAt.field}" is a ${String(type)} field, and an end is an instant: name a date-time field of ${subject.name}.`);
+        if (!text(endedAt.noun)) fail(`${path}.endedAt.noun`, `${path}.endedAt.noun must be the words naming what ended, as a row's sentence says it ("When the grant ended: …").`);
+      }
+    }
     if (entry.finality !== undefined && (!Array.isArray(entry.finality) || !entry.finality.length || entry.finality.some(value => !(FINALITIES as readonly unknown[]).includes(value)))) {
       fail(`${path}.finality`, `${path}.finality must list some of ${FINALITIES.join(', ')}.`);
     }
@@ -143,7 +166,7 @@ export function relatedListProblems(raw: unknown, subject: RelatedShape, shape: 
         if (!isMap(source.when)) problem(`${where}.when`, `${where}.when must map fields of ${names.join(', ')} to the values a row holds there.`);
         else for (const [name, value] of Object.entries(source.when)) {
           field(`${where}.when.${name}`, name, 'a field');
-          if (!scalar(value)) problem(`${where}.when.${name}`, `${where}.when.${name} must be one value: text, a number, true or false, or null for none.`);
+          if (!scalar(value) && !anyValue(value)) problem(`${where}.when.${name}`, `${where}.when.${name} must be one value: text, a number, true or false, null for none, or { present: true } for any value.`);
         }
       }
       if (source.exclude !== undefined) {
@@ -169,17 +192,31 @@ export function relatedListProblems(raw: unknown, subject: RelatedShape, shape: 
           else if (typeof name !== 'string' || !Object.hasOwn(subject.fields, name)) problem(`${where}.kept.${key}`, `${where}.kept.${key} must name a field of ${subject.name}, including its traits.`);
         }
       }
+      if (source.lines !== undefined) {
+        if (typeof source.lines !== 'boolean') problem(`${where}.lines`, `${where}.lines must be true or false.`);
+        else if (source.lines && typeof source.via === 'string' && historyKey(source.via) !== undefined) {
+          problem(`${where}.lines`, `${where}.lines: this source reads a history (${source.via}), so each row already carries the lines that name the subject. lines is for a source matched by a top-level field.`);
+        } else if (source.lines) for (const found of shapes) if (!Object.hasOwn(found.fields, 'state_history')) problem(`${where}.lines`, `${where}.lines reads a history, and ${found.name} keeps none (it composes no lifecycle/Stateful).`, found.name);
+      }
       if (source.row !== undefined) {
         const row = source.row;
         if (!isMap(row)) { problem(`${where}.row`, `${where}.row must be a map with line, time or both.`); return; }
         for (const key of Object.keys(row)) if (!['line', 'time'].includes(key)) problem(`${where}.row.${key}`, `${where}.row takes line and time.`);
         if (row.time !== undefined) field(`${where}.row.time`, row.time, 'a field');
         if (row.line !== undefined) {
-          if (!Array.isArray(row.line)) problem(`${where}.row.line`, `${where}.row.line must list fields.`);
+          if (!Array.isArray(row.line)) problem(`${where}.row.line`, `${where}.row.line must be a list of fields, fields left out for given values ({ field, except }) and fixed words ({ says, when }).`);
           else row.line.forEach((item, position) => {
             const place = `${where}.row.line[${position}]`;
             if (typeof item === 'string') { field(place, item, 'a field'); return; }
-            if (!isMap(item) || !text(item.says) || !isMap(item.when) || !Object.keys(item.when).length) { problem(place, `${place} must be a field, or fixed words with the values that show them ({ says, when }).`); return; }
+            // s250-m04 (next step 1887, item 4): a field shown except when it holds one of the given values.
+            if (isMap(item) && 'field' in item) {
+              for (const key of Object.keys(item)) if (!['field', 'except'].includes(key)) problem(`${place}.${key}`, `${place} takes field and except.`);
+              field(`${place}.field`, item.field, 'a field');
+              const except = Array.isArray(item.except) ? item.except : [item.except];
+              if (item.except === undefined || !except.length || !except.every(scalar)) problem(`${place}.except`, `${place}.except must be the value, or a list of the values, for which the field is left out of the line.`);
+              return;
+            }
+            if (!isMap(item) || !text(item.says) || !isMap(item.when) || !Object.keys(item.when).length) { problem(place, `${place} must be a field, a field left out for given values ({ field, except }), or fixed words with the values that show them ({ says, when }).`); return; }
             for (const [name, value] of Object.entries(item.when)) {
               field(`${place}.when.${name}`, name, 'a field');
               if (!scalar(value)) problem(`${place}.when.${name}`, `${place}.when.${name} must be one value.`);

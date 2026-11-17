@@ -155,10 +155,12 @@ function copiedFields(object: RelatedObject, lists: readonly RelatedList[], from
   for (const list of lists) for (const source of list.sources) {
     if (!sourceNames(source.from).includes(from)) continue;
     if (source.via && !historyKey(source.via)) fields.add(source.via);
-    if ((source.via && historyKey(source.via)) || list.finality || list.afterEnd) fields.add('state_history');
+    // s250-m01: a source that carries its records' whole history (lines) copies it too.
+    if ((source.via && historyKey(source.via)) || source.lines || list.finality || list.afterEnd) fields.add('state_history');
     for (const field of [...Object.keys(source.when ?? {}), ...(source.exclude ?? []), source.order, source.inner, source.row?.time]) if (field) fields.add(field);
     for (const item of source.row?.line ?? []) {
       if (typeof item === 'string') fields.add(item);
+      else if ('field' in item) fields.add(item.field);
       else for (const field of Object.keys(item.when)) fields.add(field);
     }
   }

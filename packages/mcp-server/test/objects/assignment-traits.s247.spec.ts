@@ -119,13 +119,15 @@ describe('a declared order may name only the states its lifecycle declares (next
     ].join('\n');
     const result = await validate({ yaml });
     expect(result.valid).toBe(false);
-    expect(result.errors).toContainEqual(expect.objectContaining({ kind: 'invalid-parameter', path: 'traits[0].parameters/transitionRules/packed/0', message: expect.stringContaining('"shiped"') }));
+    // s250-m04 (next step 1887, item 6): a trait parameter's path reads one way, with dots and brackets.
+    expect(result.errors).toContainEqual(expect.objectContaining({ kind: 'invalid-parameter', path: 'traits[0].parameters.transitionRules.packed[0]', message: expect.stringContaining('"shiped"') }));
   });
 
   it('every checkout object still validates, Approval\'s declared order among them', async () => {
     const objects = listObjects();
     // m02: Task is the 31st checkout object, and its own declared order validates too. s248-m02: Grant the 32nd.
-    expect(objects).toHaveLength(32);
+    // s250-m02: Closure the 33rd.
+    expect(objects).toHaveLength(33);
     for (const name of objects) {
       const result = await validate({ yaml: fs.readFileSync(getObjectFilePath(name)!, 'utf8') });
       expect(result.errors, name).toEqual([]);

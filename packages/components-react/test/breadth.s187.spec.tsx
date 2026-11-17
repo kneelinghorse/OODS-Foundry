@@ -81,9 +81,10 @@ describe('Sprint 187 ownership and summary semantics', () => {
     expect(root.querySelector('h2')?.textContent).toBe('By name');
     // s221-m01 (ruling 12): an owner id with no resolved name reads 'Owner reference not resolved'; 'unavailable' is for no id
     // at all (formatReferenceLabel, s216-m01 65c1c6f84, kept by #2426; the OwnershipSummary contract says both).
-    expect(values(root)).toEqual(['Owner reference not resolved', 'person', 'custodian']);
+    // s250-m04 (next step 1887, item 2): the owner's kind reads as a word, through the one shared formatter.
+    expect(values(root)).toEqual(['Owner reference not resolved', 'Person', 'custodian']);
     expect(root.hasAttribute('role')).toBe(false);
-    expect(values(mountFamily('OwnershipSummary', { owner_id: 'legacy', owner_type: 'team', ownershipRole: 'steward' }))).toEqual(['Owner reference not resolved', 'team', 'steward']);
+    expect(values(mountFamily('OwnershipSummary', { owner_id: 'legacy', owner_type: 'team', ownershipRole: 'steward' }))).toEqual(['Owner reference not resolved', 'Team', 'steward']);
     expect(mountFamily('OwnershipSummary', { text: 'Fallback', description: 'Ignored' }).querySelector('[data-summary-fallback]')?.textContent).toBe('Fallback');
     expect(mountFamily('OwnershipSummary').querySelector('dl')?.childNodes).toHaveLength(0);
     const authored = mountFamily('OwnershipSummary', { title: 'Owner', ownerId: 'Hidden' }, 'Authored');
@@ -94,7 +95,8 @@ describe('Sprint 187 ownership and summary semantics', () => {
   it('OwnershipMeta keeps literal term separators and lets authored children replace its entire body', () => {
     const root = mountFamily('OwnershipMeta', { label: 'Principal', owner_type: 'team', ownershipRole: 'steward' });
     expect(root.querySelector('[data-meta-title]')?.textContent).toBe('Principal');
-    expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: team', 'Role: steward']);
+    // s250-m04 (next step 1887, item 2): the owner's kind reads as a word, through the one shared formatter.
+    expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: Team', 'Role: steward']);
     expect(root.hasAttribute('role')).toBe(false);
     expect(mountFamily('OwnershipMeta').textContent).toBe('Ownership');
     expect(mountFamily('OwnershipMeta', { title: 'Hidden', role: 'Hidden' }, 'Authored').textContent).toBe('Authored');

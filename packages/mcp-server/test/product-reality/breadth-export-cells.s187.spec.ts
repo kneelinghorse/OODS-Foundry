@@ -59,10 +59,12 @@ describe('Sprint 187 built package export cells', () => {
     } else if (component === 'OwnershipSummary') {
       // s213-m01: Sprint 212 m02 (806ce6ded, #2326) shows an owner only by an explicitly resolved label; a bare id is honest
       // unavailability, never a name. This expectation still read the id (learning #723).
-      expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['Owner reference not resolved', 'person', 'administrator']);
+      // s250-m04 (next step 1887, item 2): the owner's kind reads as a word, through the one shared formatter.
+      expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['Owner reference not resolved', 'Person', 'administrator']);
       expect(root.getAttribute('role')).toBeNull();
     } else if (component === 'OwnershipMeta') {
-      expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: organization', 'Role: custodian']);
+      // s250-m04 (next step 1887, item 2): the owner's kind reads as a word, through the one shared formatter.
+      expect([...root.querySelectorAll('[data-meta-item]')].map((node) => node.textContent)).toEqual(['Owner Type: Organization', 'Role: custodian']);
       expect(root.getAttribute('role')).toBeNull();
     } else if (component === 'TagSummary') {
       expect([...root.querySelectorAll('dd')].map((node) => node.textContent)).toEqual(['0', 'alpha, beta']);

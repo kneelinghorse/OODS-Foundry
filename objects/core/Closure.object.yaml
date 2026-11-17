@@ -1,0 +1,241 @@
+object:
+  name: Closure
+  version: 1.0.0
+  domain: core.governance
+  description: The third part of the Grant story, what a product reports became of the work after a grant ended. Only a report should move it, a rule your product keeps.
+  tags:
+    - universal
+    - governance
+    - core
+    - closure
+
+# The third part of the Grant story: a grant is a standing yes (0.15.0), a person sees their grants and takes one back
+# (0.16.0), and a closure is what a product reports became of the work after a grant ended (0.17.0). Taking a grant back
+# ends the yes, not the work. A product opens one closure for each grant that was given and then ended: revoked,
+# replaced, or expired after it was given. A request that was declined, withdrawn or left to expire was never given and
+# gets none, and a grant that ended with its outer grant gets none of its own: your product may name it, in words, in a
+# line of the outer grant's closure.
+#
+# Its facts are the Closeout trait's: what ended and how, when, who it was for, what the closure covers, where it stands,
+# when your product stops waiting for answers, until when access already given may still work, and the receipt as sent.
+# Its lines are its history: each names who reported it, and a line that reports without moving the state (a party
+# told, a party's answer, a piece of work's fate, the receipt sent) keeps the state it stands in, written from: null.
+# Only a report should move a closure, a rule your product keeps; time and silence close nothing. A product's own
+# deadline line may move it to not known, never to reported closed or failed. Reported closed means nothing more can start under the grant, as reported, for the
+# stated scope; it never means everything stopped. A reported-closed closure moves again only to failed, on a report that
+# something that had to stop did not, and failed is final.
+#
+# It is read-only in OODS Foundry: it composes no form and so no workflow, and its page offers no Edit, no Delete and no
+# move. A product writes its closures from reports. OODS Foundry models and shows the record; it writes no closure,
+# tells no one, stops nothing and cannot know whether everything stopped. The receipt is sent outside the page by your
+# product; the closure's own page, drawn by your product from its own record with the generated components, is its
+# content.
+traits:
+  - name: core/Closeout
+  - name: lifecycle/Stateful
+    alias: ClosureState
+    parameters:
+      states:
+        - closing
+        - reported_closed
+        - still_running
+        - not_known
+        - failed
+      initialState: closing
+      # The order your product keeps. A closure opens closing, when its grant ends; a report moves it to reported closed,
+      # still running, not known or failed. Reported closed moves only to failed, on a report that something that had to
+      # stop did not, and failed is final (an empty list): what is done about it afterwards is a line on the failed
+      # closure. The order cannot tell a deadline line from another report, so no check holds the deadline rule; the
+      # product keeps it.
+      transitionRules:
+        closing: [reported_closed, still_running, not_known, failed]
+        still_running: [reported_closed, not_known, failed]
+        not_known: [reported_closed, still_running, failed]
+        reported_closed: [failed]
+        failed: []
+  - name: lifecycle/Timestampable
+    alias: ClosureTimes
+    parameters:
+      recordedEvents:
+        - opened
+        - reported
+        - updated
+      timezone: UTC
+  # The one who answers for the closure: the one who answered for the grant when it ended, a person or a team.
+  - name: structural/Ownerable
+    alias: ClosureAnswers
+    parameters:
+      ownerTypes:
+        - user
+        - team
+      primaryOwnerType: user
+      allowTransfer: true
+
+schema:
+  closure_id:
+    type: uuid
+    required: true
+    description: Primary identifier for the closure.
+  name:
+    type: string
+    required: true
+    description: What the closure is called, saying it is a closure and of what ("Closure of Northwind customer replies").
+    validation:
+      minLength: 1
+      maxLength: 160
+  owner_name:
+    type: string
+    required: false
+    description: Who answers for the closure, a person or a team, as shown.
+
+semantics:
+  closure_id:
+    semantic_type: governance.closure.id
+    token_mapping: tokenMap(identity.id.primary)
+  name:
+    semantic_type: text.label
+    token_mapping: tokenMap(identity.name.primary)
+  # The one-line summary under the closure's name in lists: where it stands now.
+  summary:
+    semantic_type: text.summary
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Where it stands
+  # structural/Ownerable's owner reference: the one who answers for the closure, named by owner_name.
+  owner_id:
+    semantic_type: ownership.owner.id
+    token_mapping: tokenMap(ownership.owner.id)
+    ui_hints:
+      component: OwnerReference
+      ownerTypeField: owner_type
+      displayLabelField: owner_name
+
+tokens:
+  identity.id.primary: "var(--text-strong)"
+  identity.name.primary: "var(--text-strong)"
+
+metadata:
+  owners:
+    - Core team
+    - Platform team
+  steward: Design team
+  maturity: alpha
+  # Read-only: no form, so no workflow, no Edit, no Delete and no move.
+  supportedContexts:
+    - card
+    - detail
+    - inline
+    - list
+    - timeline
+  changelog:
+    - version: 1.0.0
+      date: "2026-11-17"
+      description: Initial Closure object, the sixteenth public reference object and the third part of the Grant story; what a product reports became of the work after a grant ended.
+  # The lists a closure's page shows. Each reads a field of the closure through key (the grant it closes, the party), so
+  # the page says its rows were matched by id. The grant's end is the closure's own ended_at (endedAt), so a row is read
+  # at the instant the grant ended, not at the closure's own state.
+  relatedLists:
+    - id: ended
+      label: The grant and its party now
+      empty: Neither the grant nor its party is a record here.
+      sources:
+        - { from: Grant, key: closes_id, seat: Grant, kept: { name: closes_name }, row: { line: [ended_reason] } }
+        - { from: [Organization, User], key: for_id, seat: For, kept: { name: for_name } }
+    - id: under-way
+      label: Still under way when the grant ended, by the records here
+      empty: No record here that names the grant was under way when it ended.
+      note: These are read from the records here that name the grant. They are not a report.
+      endedAt: { field: ended_at, noun: grant }
+      finality: [not_final, not_known]
+      sources:
+        - { from: [Task, Approval, Transaction, Grant], via: "state_history[].grant_id", key: closes_id }
+    - id: after-end
+      label: Recorded under the grant after it ended
+      empty: Nothing here was recorded under the grant after it ended.
+      endedAt: { field: ended_at, noun: grant }
+      afterEnd: true
+      sources:
+        - { from: [Task, Approval, Transaction, Grant], via: "state_history[].grant_id", key: closes_id }
+
+# Three authored closures, one for each shipped Grant sample that was given and then ended, in the order the grants
+# ended, so the third is the one a measured detail screen shows. Each names its grant, the grant's party and the one who
+# answered for the grant at its end as the shipped records do. Every line names its reporter: the product's own system,
+# or a service it told, each named in words, so no line carries the id of a shipped record. Times are UTC.
+samples:
+  - closure_id: '7c3e9b1d-2a4f-4b6c-8d0e-1f2a3b4c5d01'
+    name: Closure of Northwind spring order replies
+    closes_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c04'
+    closes_name: Northwind spring order replies
+    ended_how: Replaced
+    ended_at: '2026-03-09T15:00:00Z'
+    for_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01'
+    for_name: Northwind Traders
+    scope: What the support desk controls
+    summary: Reported closed for what the support desk controls; nothing was recorded under it.
+    owner_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01'
+    owner_type: user
+    owner_name: Dana Whitfield
+    ownership_role: Answers for it
+    status: reported_closed
+    state_history:
+      - { title: Opened, from: null, to: closing, at: '2026-03-09T15:00:00Z', reason: Opened when the grant was replaced by Northwind customer replies, actor_name: Northwind support desk, actor_kind: system }
+      - { title: Nothing recorded under it, from: null, to: closing, at: '2026-03-09T15:02:00Z', reason: 'The grant holds no use, and no recorded change here names it', actor_name: Northwind support desk, actor_kind: system }
+      - { title: Reported closed, from: closing, to: reported_closed, at: '2026-03-09T15:05:00Z', reason: Nothing more can start under it at the support desk, actor_name: Northwind support desk, actor_kind: system }
+    created_at: '2026-03-09T15:00:00Z'
+    updated_at: '2026-03-09T15:05:00Z'
+    last_event: reported
+    last_event_at: '2026-03-09T15:05:00Z'
+  - closure_id: '7c3e9b1d-2a4f-4b6c-8d0e-1f2a3b4c5d02'
+    name: Closure of Marlow Yoga class bookings
+    closes_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c03'
+    closes_name: Marlow Yoga class bookings
+    ended_how: Revoked
+    ended_at: '2026-07-10T08:55:00Z'
+    for_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a06'
+    for_name: Marlow Yoga
+    scope: Class bookings and the waitlist offers the Scheduling Agent sent
+    summary: Not known; the booking service did not answer by the deadline.
+    deadline_at: '2026-07-17T08:55:00Z'
+    still_works_note: 'Not known: the booking service has not said whether offers already sent can still be taken up.'
+    owner_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d07'
+    owner_type: user
+    owner_name: Jonah Marlow
+    ownership_role: Answers for it
+    status: not_known
+    state_history:
+      - { title: Opened, from: null, to: closing, at: '2026-07-10T08:55:00Z', reason: 'Opened when Jonah Marlow revoked the grant: the studio closed', actor_name: Marlow Yoga front desk, actor_kind: system }
+      - { title: Booking service told, from: null, to: closing, at: '2026-07-10T09:00:00Z', reason: Asked the booking service to stop the Scheduling Agent's waitlist offers, actor_name: Marlow Yoga front desk, actor_kind: system }
+      - { title: No answer by the deadline, from: closing, to: not_known, at: '2026-07-17T08:55:00Z', reason: 'The booking service did not answer by the deadline, so nothing is known', actor_name: Marlow Yoga front desk, actor_kind: system }
+    created_at: '2026-07-10T08:55:00Z'
+    updated_at: '2026-07-17T08:55:00Z'
+    last_event: reported
+    last_event_at: '2026-07-17T08:55:00Z'
+  - closure_id: '7c3e9b1d-2a4f-4b6c-8d0e-1f2a3b4c5d03'
+    name: Closure of Northwind customer replies
+    closes_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c05'
+    closes_name: Northwind customer replies
+    ended_how: Revoked
+    ended_at: '2026-10-08T16:00:00Z'
+    for_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01'
+    for_name: Northwind Traders
+    scope: What the support desk controls
+    summary: Still running; the reply about order NW-2207 waits on Dana Whitfield's answer.
+    still_works_until: '2026-10-09T16:00:00Z'
+    still_works_note: The Support Agent's access to the order system may still work until it runs out.
+    receipt_sent_at: '2026-10-08T16:10:00Z'
+    receipt_sent_to_name: Dana Whitfield
+    receipt_channel: Email
+    owner_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d01'
+    owner_type: user
+    owner_name: Dana Whitfield
+    ownership_role: Answers for it
+    status: still_running
+    state_history:
+      - { title: Opened, from: null, to: closing, at: '2026-10-08T16:00:00Z', reason: 'Opened when Dana Whitfield revoked the grant: replies go back to the support team', actor_name: Northwind support desk, actor_kind: system }
+      - { title: A reply is still waiting, from: closing, to: still_running, at: '2026-10-08T16:05:00Z', reason: Reply about order NW-2207 still waits on Dana Whitfield's answer, actor_name: Northwind support desk, actor_kind: system }
+      - { title: Receipt sent, from: null, to: still_running, at: '2026-10-08T16:10:00Z', reason: Sent to Dana Whitfield by email, actor_name: Northwind support desk, actor_kind: system }
+    created_at: '2026-10-08T16:00:00Z'
+    updated_at: '2026-10-08T16:10:00Z'
+    last_event: reported
+    last_event_at: '2026-10-08T16:10:00Z'

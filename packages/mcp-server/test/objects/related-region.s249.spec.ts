@@ -115,8 +115,10 @@ describe('the region draws the same lists, rows and words in React, Vue and HTML
         expect(page.lists.every(list => list.labelled && list.links === 0 && list.buttons === 0), `${object} ${name} ${renderer}: labelled, no links, no buttons`).toBe(true);
         // Rows past the first five are counted, not drawn; the grants inside a grant are drawn under it.
         expect(page.lists.map(list => list.rows)).toEqual(applying.map(list => list.rows.slice(0, 5).reduce((total, row) => total + 1 + (row.inner?.length ?? 0), 0)));
-        // The page says once what no list can see, and no copied note outside a generated app.
-        expect(page.notes).toEqual([resolved[0]!.cannotSee]);
+        // The page says once what no list can see, and no copied note outside a generated app. s250-m05 (the fresh read): a
+        // page with a list that reads another of its record's fields through key (a grant's parties) prints that list's
+        // sentence, which is true of both kinds of list; any other page prints its first list's, which names the record.
+        expect(page.notes).toEqual([(applying.find(list => list.keyed) ?? applying[0])!.cannotSee]);
         expect(page.text).not.toContain(RELATED_COPIED_NOTE);
         expect(page.text).not.toMatch(/Not recorded|unavailable|not resolved/);
       }
@@ -207,7 +209,9 @@ describe('the four pages say what Interface 4 says', () => {
   it('the organization lists the agents holding a grant for it, one row per outer grant with the grants inside it, and says what it cannot see', () => {
     const tidewater = page('Organization', 'Tidewater Co-op');
     expect(tidewater.lists.map(list => list.heading)).toEqual(['Grants asked for Tidewater Co-op, not yet answered (0)', 'Agents holding a grant for Tidewater Co-op (1)', 'Recorded on behalf of Tidewater Co-op (4)',
-      'Tasks for Tidewater Co-op (1)', 'Approvals for Tidewater Co-op (1)', 'Payments for Tidewater Co-op (1)', 'Ended grants for Tidewater Co-op (0)']);
+      'Tasks for Tidewater Co-op (1)', 'Approvals for Tidewater Co-op (1)', 'Payments for Tidewater Co-op (1)', 'Ended grants for Tidewater Co-op (0)',
+      // s250-m03: the closures of grants for the organization (the third part of the Grant story).
+      'Closures of grants for Tidewater Co-op (0)']);
     expect(tidewater.text).toContain('Tidewater invoices and payments Active Billing Agent · Invoices and payments · 28 Sep: asked for a standing yes to resend returned transfers At the end of 31 Dec 2026, Tauranga time 1 grant inside it Resend returned transfers Active Billing Agent · Resend a payment the bank returned · No uses counted');
     expect(tidewater.text).toContain('Subscriptions, usage and invoices name their customer in words, so they are not listed here.');
     expect(tidewater.notes).toEqual(['These lists show only records here that name Tidewater Co-op by id; records that name Tidewater Co-op only in words, or that another product keeps, are not listed.']);
@@ -218,7 +222,8 @@ describe('the four pages say what Interface 4 says', () => {
 
   it('a person sees what waits for their answer, and an agent the grants it holds, or why none now', () => {
     expect(page('User', 'Dana Whitfield').text).toContain('Waiting for Dana Whitfield\'s answer (1) Reply about order NW-2207 Needs input Support Agent Oct 7, 2026, 5:00 PM');
-    expect(page('User', 'Ruth Adeyemi').text).toContain('Given for Ruth Adeyemi by someone else (0) No grant was given for Ruth Adeyemi by someone else.');
+    // s250-m03: the list holds only grants that stand; the ended ones are kept apart in their own list.
+    expect(page('User', 'Ruth Adeyemi').text).toContain('Given for Ruth Adeyemi by someone else (0) No grant given for Ruth Adeyemi by someone else stands now.');
     expect(page('Agent', 'Support Agent').text).toContain('Grants Support Agent holds (0) Support Agent holds no grant now. 2 other grants to Support Agent are asked for or have ended.');
   });
 
@@ -226,7 +231,8 @@ describe('the four pages say what Interface 4 says', () => {
     const tidewater = page('Grant', 'Tidewater invoices and payments');
     // "Recorded after it ended" is drawn only once a grant has ended.
     expect(tidewater.lists.map(list => list.id)).toEqual(['inside', 'replaced-by', 'recorded', 'under-way', 'parties']);
-    expect(page('Grant', 'Northwind customer replies').lists.map(list => list.id)).toEqual(['inside', 'replaced-by', 'recorded', 'under-way', 'after-end', 'parties']);
+    // s250-m03: an ended grant's page shows its closure, after what was recorded after it ended.
+    expect(page('Grant', 'Northwind customer replies').lists.map(list => list.id)).toEqual(['inside', 'replaced-by', 'recorded', 'under-way', 'after-end', 'closure', 'parties']);
     const recorded = resolveRelatedLists('Grant', samplesOf('Grant')[0]!).find(list => list.id === 'recorded')!;
     expect([recorded.rows.length, recorded.lineCount, recorded.beside]).toEqual([4, 9, 'Your product counts 6 uses.']);
     expect(tidewater.text).toContain('Recorded under it (4) Your product counts 6 uses.');
@@ -319,7 +325,8 @@ process.stdout.write(JSON.stringify({ outer: s.get(String(outer.grant_id)), befo
       const [html] = renderGeneratedModels(framework, detail.contents, [props], apps.Grant![framework].actions.map(action => action.name), { entry: detail.path, files: apps.Grant![framework].files });
       const drawn = region(html!)!;
       expect(drawn.text, framework).toContain('Grants inside it (1) Resend returned transfers Revoked');
-      expect(drawn.notes, framework).toEqual([RELATED_COPIED_NOTE, 'These lists show only records here that name Tidewater invoices and payments by id; records that name Tidewater invoices and payments only in words, or that another product keeps, are not listed.']);
+      // s250-m05 (the fresh read): a grant's page reads its parties through key, so its note says the rows were matched by id.
+      expect(drawn.notes, framework).toEqual([RELATED_COPIED_NOTE, 'These lists show only records here, matched by id; records named only in words, or that another product keeps, are not listed.']);
     }
   });
 });

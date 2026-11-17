@@ -6,12 +6,15 @@ import outputSchema from '../../src/schemas/registry.snapshot.output.json' with 
 // With no arguments registry_snapshot returned about 410,000 characters: every trait's schema, view extensions and
 // tokens. Anthropic documents ~150,000 characters as a connector's largest tool result, and Claude Code saves results
 // over 50,000 characters to a file. The default is a summary that fits; full detail is one argument away.
+// s250-m01: the summary is measured as it is sent. Every server sends it compact, the stdio adapter included since 0.17.0
+// (compact-replies.s250.spec.ts runs the adapter); measured indented, as the adapter used to send it, it was 49,549 at
+// 0.16.0, and Closure with its trait would have taken it over.
 
-const size = (value: unknown) => JSON.stringify(value, null, 2).length;
+const size = (value: unknown) => JSON.stringify(value).length;
 const validate = getAjv().compile(outputSchema);
 
 describe('registry_snapshot sizes its reply for the client', () => {
-  it('answers with a summary by default, under 50,000 characters, without schemas or view extensions', async () => {
+  it('answers with a summary by default, under 50,000 characters as sent, without schemas or view extensions', async () => {
     const summary = await handle({});
     expect(validate(summary), JSON.stringify(validate.errors)).toBe(true);
     expect(summary.detail).toBe('summary');
@@ -30,6 +33,8 @@ describe('registry_snapshot sizes its reply for the client', () => {
     expect(summary.traits.Assignment!.description).toMatch(/^The record of one ask to one person or agent to do one piece of work, and what became of it: .*\.$/);
     // s248-m01: the record of a grant, the 54th trait, says what it is in its first sentence too.
     expect(summary.traits.Mandate!.description).toBe('The record of a grant: a standing yes that one actor may act for a person or organization, on stated terms, until it ends.');
+    // s250-m01: the record of what became of the work after something ended, the 55th trait, does too.
+    expect(summary.traits.Closeout!.description).toBe('The record of what became of the work after something ended: what ended, how and when, who it was for, what the record covers and where it stands now.');
   });
 
   it('returns complete definitions with detail full, and only the named ones when names are given', async () => {

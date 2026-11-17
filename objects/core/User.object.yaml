@@ -109,7 +109,7 @@ schema:
     type: string
     required: false
     default: UTC
-    description: The person's preferred time zone, kept for your product. Screens show times in UTC, and a shown date-time says so; a date-time input does not yet.
+    description: The person's preferred time zone, kept for your product. Screens show times in UTC, and a shown date-time says so, as a date-time input's label does.
 
 semantics:
   user_id:
@@ -196,11 +196,14 @@ metadata:
           states: [active, paused]
           inner: within_id
           row: { line: [granted_to_name, scope, last_use, { says: No uses counted, when: { uses: 0 } }], time: ends_note }
+    # s250-m03 (next step 1888): only the grants given for this person that stand; the ended ones are kept apart below. Who
+    # should end one is said under the rows, in words, and that this app does not check who is asking.
     - id: given-for
       label: "Given for {name} by someone else"
-      empty: "No grant was given for {name} by someone else."
+      empty: "No grant given for {name} by someone else stands now."
+      rowsNote: "This list does not change grants. Only someone who may give grants for {name} should end one, on the grant's own page; this app does not check who is asking."
       sources:
-        - { from: Grant, via: granted_for_id, exclude: [granted_by_id], when: { within_id: null }, states: [active, paused, revoked, expired, replaced], inner: within_id, row: { line: [granted_by_name, granted_to_name, scope], time: ends_note } }
+        - { from: Grant, via: granted_for_id, exclude: [granted_by_id], when: { within_id: null }, states: [active, paused], inner: within_id, row: { line: [granted_by_name, granted_to_name, scope, last_use, { says: No uses counted, when: { uses: 0 } }], time: ends_note } }
     - id: gave
       label: "Grants {name} gave"
       empty: "No grant {name} gave stands now."
@@ -212,7 +215,7 @@ metadata:
           when: { granted_by_kind: person, within_id: null }
           states: [active, paused]
           inner: within_id
-          row: { line: [granted_to_name, granted_for_name, scope], time: ends_note }
+          row: { line: [granted_to_name, granted_for_name, scope, last_use, { says: No uses counted, when: { uses: 0 } }], time: ends_note }
     - id: answers-for
       label: "Grants {name} answers for"
       empty: "No grant asked for or standing now names {name} as the one who answers for it."
@@ -223,17 +226,20 @@ metadata:
           when: { owner_type: user, within_id: null }
           states: [requested, active, paused]
           inner: within_id
-          row: { line: [granted_to_name, granted_for_name, scope], time: ends_note }
+          row: { line: [granted_to_name, granted_for_name, scope, last_use, { says: No uses counted, when: { uses: 0 } }], time: ends_note }
     - id: sponsors
       label: "Agents {name} sponsors"
       empty: "No agent names {name} as its sponsor."
       sources:
-        - { from: Agent, via: owner_id, when: { owner_type: user }, row: { line: [acts_for] } }
+        # s250-m04 (next step 1887, item 4): an agent that acts for no one keeps acts_for "None"; the row leaves it out.
+        - { from: Agent, via: owner_id, when: { owner_type: user }, row: { line: [{ field: acts_for, except: None }] } }
     - id: approved
       label: "What {name} approved"
       empty: "No recorded change names {name} as the one who approved it."
       sources:
         - { from: [Task, Approval, Transaction, Grant], via: "state_history[].approved_by_id" }
+    # s250-m03 (next step 1888): an ended list keeps only grants that hold a giver, since expired is reachable from requested
+    # and a request that expired unanswered was never given.
     - id: ended-grants
       label: "Ended grants {name} gave"
       empty: "No grant {name} gave has ended."
@@ -241,10 +247,34 @@ metadata:
       sources:
         - from: Grant
           via: granted_by_id
-          when: { granted_by_kind: person, within_id: null }
+          when: { granted_by_kind: person, within_id: null, granted_by_id: { present: true } }
           states: [revoked, expired, replaced]
           inner: within_id
           row: { line: [granted_to_name, granted_for_name, scope] }
+    - id: ended-given-for
+      label: "Ended grants given for {name} by someone else"
+      empty: "No grant given for {name} by someone else has ended."
+      collapsed: true
+      sources:
+        - from: Grant
+          via: granted_for_id
+          exclude: [granted_by_id]
+          when: { within_id: null, granted_by_id: { present: true } }
+          states: [revoked, expired, replaced]
+          inner: within_id
+          row: { line: [granted_by_name, granted_to_name, scope] }
+    # s250-m03: the closures that name this person, one list per seat, since one heading cannot be true of both: the one who
+    # answers for a closure (a person's id only, as for the grants they answer for), and the party an ended grant was for.
+    - id: closures
+      label: "Closures {name} answers for"
+      empty: "No closure here names {name} as the one who answers for it."
+      sources:
+        - { from: Closure, via: owner_id, when: { owner_type: user }, order: ended_at, lines: true, row: { line: [summary], time: ended_at } }
+    - id: closures-for
+      label: "Closures of grants for {name}"
+      empty: "No closure here is of a grant for {name}."
+      sources:
+        - { from: Closure, via: for_id, order: ended_at, lines: true, row: { line: [summary], time: ended_at } }
 
 # Eight authored sample users, each a person at one of the sample organizations. A user is created active (the
 # lifecycle's initial state), so an invited user is one invited back after leaving; each history ends in the user's

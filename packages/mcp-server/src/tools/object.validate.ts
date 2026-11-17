@@ -22,6 +22,11 @@ import type { UiSchema } from '../schemas/generated.js';
 import { loadComponentRegistry } from './repl.utils.js';
 import { findClosestMatch } from './object.show.js';
 
+/** s250-m04: a JSON pointer ("/actions/2/from/0") as a dotted path (".actions[2].from[0]"); the root ("/") as none. */
+const pointerPath = (pointer: string) => pointer.split('/').slice(1).filter(Boolean)
+  .map(part => part.replace(/~1/g, '/').replace(/~0/g, '~'))
+  .map(part => /^\d+$/.test(part) ? `[${part}]` : `.${part}`).join('');
+
 /** The contexts design.compose composes an object in. */
 export const OBJECT_CONTEXTS = ['list', 'detail', 'form', 'timeline', 'card', 'inline'] as const;
 /** The contexts a trait's views may extend: the object contexts and the dashboard layout. */
@@ -157,7 +162,12 @@ function checkObject(document: Record<string, unknown>, result: Checked, availab
         }
       }
       for (const problem of parameterProblems(reference.name, given)) {
-        errors.push({ kind: 'invalid-parameter', path: `${at}.parameters${problem.path}`, message: problem.message });
+        // s250-m04 (next step 1887, item 6): the parameter check speaks JSON pointers ("/actions/2/from/0"); the reply writes
+        // every path one way, with dots and brackets ("traits[1].parameters.actions[2].from[0]"), and a message that opens
+        // with the pointer opens with that path instead, so the two never disagree.
+        const path = `${at}.parameters${pointerPath(problem.path)}`;
+        const opening = `${definition.trait.name}${problem.path === '/' ? '' : problem.path}:`;
+        errors.push({ kind: 'invalid-parameter', path, message: problem.message.startsWith(opening) ? `${path}:${problem.message.slice(opening.length)}` : problem.message });
       }
       const declared = new Set(definition.parameters.map(parameter => parameter.name));
       for (const parameter of Object.keys(given)) {

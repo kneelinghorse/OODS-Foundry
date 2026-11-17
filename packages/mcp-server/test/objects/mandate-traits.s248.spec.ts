@@ -422,7 +422,8 @@ describe('the record trait composed onto test objects, in every context where it
     for (const renderer of RENDERERS) {
       const html = page[renderer];
       const labels = controlLabels(html);
-      expect(labels.filter(label => label.startsWith('Why it ended')), `${renderer}: one control for why it ended (${labels.join(' | ')})`).toHaveLength(1);
+      // s250-m04 (next step 1887, item 5): the input, drawn only while the grant is open, is labelled for an open grant.
+      expect(labels.filter(label => label === 'Why it is ending, if you end it here'), `${renderer}: one control for why it ended (${labels.join(' | ')})`).toHaveLength(1);
       expect(labels.filter(label => label.startsWith('Status')), `${renderer}: the status select`).toHaveLength(1);
       for (const label of ['Covers', 'For', 'Held by', 'Given by', 'Allowed actions', 'Most per use', 'Currency', 'Ends']) expect(labels.filter(text => text === label || text.startsWith(`${label} `)), `${renderer}: no control labelled ${label}`).toEqual([]);
       inOrder(shown(html), ['Covers', 'Resend returned transfers', 'For', 'Tidewater Co-op', 'Held by', 'Billing Agent', 'Given by', 'Ruth Adeyemi', 'Most per use', '$12,000.00', 'Most per period', '$30,000.00', 'Status'], renderer);

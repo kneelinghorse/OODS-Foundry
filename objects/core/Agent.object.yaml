@@ -175,6 +175,7 @@ metadata:
       empty: "No recorded change names {name} as the one who acted."
       sources:
         - { from: [Task, Approval, Transaction, Grant], via: "state_history[].actor_id" }
+    # s250-m03 (next step 1888): only grants that hold a giver, since a request that expired unanswered was never held.
     - id: ended-grants
       label: "Ended grants {name} held"
       empty: "No grant {name} held has ended."
@@ -182,7 +183,7 @@ metadata:
       sources:
         - from: Grant
           via: granted_to_id
-          when: { granted_to_kind: agent, within_id: null }
+          when: { granted_to_kind: agent, within_id: null, granted_by_id: { present: true } }
           states: [revoked, expired, replaced]
           inner: within_id
           row: { line: [granted_for_name, scope] }

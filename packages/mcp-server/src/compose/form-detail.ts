@@ -261,6 +261,9 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         }
         if (entry.type.replace(/\?$/, '') === 'datetime' && ['Input', 'DatePicker'].includes(node.component)) {
           node.component = 'Input'; node.props.type = 'datetime-local';
+          // s250-m04 (next step 1887, item 1): the input holds the time in UTC, as the app writes it back, and says so in its
+          // label; a shown date-time says its zone in its value, which an input cannot.
+          if (typeof node.props.label === 'string' && !node.props.label.endsWith('(UTC)')) node.props.label = `${node.props.label} (UTC)`;
         }
       }
       if (owners[node.component] && !['ColorStatePicker', 'GeoFieldMappingForm'].includes(node.component)) {
@@ -463,7 +466,12 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
     }
     if (remaining.length && tabs) {
       // The trait panels (Billing, Status & History) are the record's own content and come first; the generic read-only summary follows them.
-      tabs.children = [...(tabs.children ?? []), { id: `${tabs.id}-read-fields`, component: 'Stack', props: { label: readTab }, children: remaining.map(name => fieldRow(name, `${tabs!.id}-${name}`)) }];
+      // s250-m04 (next step 1884): a field a trait's own detail view draws only when it holds a value keeps that when the
+      // layout leaves the trait's place out and adds the field back here (the dashboard keeps a few places per slot), so an
+      // empty reference no longer reads "<seat> unavailable".
+      const omitWhenEmpty = new Set((composed.viewExtensions?.detail ?? []).filter(extension => extension.props?.[OMIT_EMPTY_PROP]).flatMap(extension => boundFields(extension.props)));
+      const row = (name: string) => { const read = fieldRow(name, `${tabs!.id}-${name}`); return omitWhenEmpty.has(name) ? { ...read, props: { ...read.props, [OMIT_EMPTY_PROP]: true } } : read; };
+      tabs.children = [...(tabs.children ?? []), { id: `${tabs.id}-read-fields`, component: 'Stack', props: { label: readTab }, children: remaining.map(row) }];
     }
     if (!tabs?.children) continue;
     tabs.props = { ...tabs.props, ariaLabel: tabs.props?.ariaLabel ?? 'Record details' };

@@ -43,8 +43,9 @@ const shown = (html: string) => {
   walk(fragment);
   return words.map(word => word.trim()).filter(Boolean).join(' ');
 };
-/** The form's inputs labelled "Why it ended". */
-const reasonInputs = (html: string) => { const fragment = JSDOM.fragment(html); return [...fragment.querySelectorAll('label')].filter(label => label.textContent?.trim() === 'Why it ended' && fragment.querySelector(`[id="${label.htmlFor}"]`)?.matches('input, textarea')).length; };
+/** The form's inputs for why it ended. s250-m04 (next step 1887, item 5): drawn only while the grant is open, the input is
+ * labelled for an open grant; once the grant has ended, why is a fact labelled "Why it ended". */
+const reasonInputs = (html: string) => { const fragment = JSDOM.fragment(html); return [...fragment.querySelectorAll('label')].filter(label => label.textContent?.trim() === 'Why it is ending, if you end it here' && fragment.querySelector(`[id="${label.htmlFor}"]`)?.matches('input, textarea')).length; };
 const barLabels = (html: string) => [...JSDOM.fragment(html).querySelectorAll('[data-oods-screen-actions] button, .oods-action-bar button')].map(button => (button.textContent ?? '').trim());
 const statusOptions = (html: string) => [...JSDOM.fragment(html).querySelectorAll('select[name="status"] option')].map(option => (option as HTMLOptionElement).value);
 

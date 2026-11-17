@@ -17,7 +17,8 @@ import type { RelatedList } from '../../src/objects/types.js';
 
 type Sample = Record<string, any>;
 const NAME: Record<string, string> = { Organization: 'label', User: 'name', Agent: 'name', Grant: 'name', Task: 'name' };
-const KEY: Record<string, string> = { Organization: 'organization_id', User: 'user_id', Agent: 'agent_id', Grant: 'grant_id', Task: 'task_id', Approval: 'approval_id', Transaction: 'payment_reference' };
+// s250-m03: Closure, whose closure_id is its own id, is listed on the grant's, the party's and the answerer's pages.
+const KEY: Record<string, string> = { Organization: 'organization_id', User: 'user_id', Agent: 'agent_id', Grant: 'grant_id', Task: 'task_id', Approval: 'approval_id', Transaction: 'payment_reference', Closure: 'closure_id' };
 const show = (row: RelatedRow): string => [row.seat ? `${row.seat}: ` : '', row.title, row.kept ? ` (kept${row.kept.kind ? ', ' + row.kept.kind : ''})` : '',
   row.state ? ` [${row.state}${row.stateAtEnd !== undefined ? ` at end ${row.stateAtEnd ?? 'none'}` : ''}]` : '', row.lines ? ` (${row.lines.length} lines)` : '',
   row.inner ? ` {${row.inner.map(inner => `${inner.title} [${inner.state}]`).join(', ')}}` : ''].join('');
@@ -28,6 +29,8 @@ const list = (object: string, name: string, id: string) => resolveRelatedLists(o
 const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does not apply'>>> = {
   Organization: {
     "Northwind Traders": {
+      // s250-m03: the closures of its ended grants.
+      'closures': ["Closure of Northwind spring order replies [reported_closed] (3 lines)", "Closure of Northwind customer replies [still_running] (3 lines)"],
       'done-for': ["Reply about order NW-2207 [needs_input] (2 lines)"],
       'tasks': ["Reply about order NW-2207 [needs_input]"],
       'payments': ["PAY-2026-0412 [settled]","PAY-2026-0388 [settled]"],
@@ -57,6 +60,8 @@ const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does no
       'payments': ["PAY-2026-0429 [pending]"],
     },
     "Marlow Yoga": {
+      // s250-m03: the closures of its ended grants.
+      'closures': ["Closure of Marlow Yoga class bookings [not_known] (3 lines)"],
       'ended-grants': ["Marlow Yoga class bookings [revoked]"],
     },
     "Summit Outfitters": {
@@ -70,6 +75,8 @@ const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does no
   },
   User: {
     "Dana Whitfield": {
+      // s250-m03: the closures of its ended grants.
+      'closures': ["Closure of Northwind spring order replies [reported_closed] (3 lines)", "Closure of Northwind customer replies [still_running] (3 lines)"],
       'waiting': ["Reply about order NW-2207 [needs_input]"],
       'sponsors': ["Support Agent [active]"],
       'ended-grants': ["Northwind spring order replies [replaced]","Northwind customer replies [revoked]"],
@@ -93,6 +100,8 @@ const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does no
     },
     "Mei Chen": {},
     "Jonah Marlow": {
+      // s250-m03: the closures of its ended grants.
+      'closures': ["Closure of Marlow Yoga class bookings [not_known] (3 lines)"],
       'sponsors': ["Scheduling Agent [retired]"],
       'ended-grants': ["Marlow Yoga class bookings [revoked]"],
     },
@@ -132,6 +141,7 @@ const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does no
   },
   Grant: {
     "Tidewater invoices and payments": {
+      'closure': 'does not apply',
       'inside': ["Resend returned transfers [active]"],
       'recorded': ["Get INV-2026-0155 paid [waiting] (4 lines)","Approve the resend of PAY-2026-0429 [used] (3 lines)","PAY-2026-0429 [pending] (1 lines)","Resend returned transfers [active] (1 lines)"],
       'under-way': ["Get INV-2026-0155 paid [waiting] (4 lines)","PAY-2026-0429 [pending] (1 lines)","Resend returned transfers [active] (1 lines)"],
@@ -139,35 +149,42 @@ const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does no
       'parties': ["Given by: Ruth Adeyemi [active]","Held by: Billing Agent [active]","For: Tidewater Co-op [active]","Answers for it: Ruth Adeyemi [active]"],
     },
     "Resend returned transfers": {
+      'closure': 'does not apply',
       'recorded': [],
       'after-end': 'does not apply',
       'parties': ["Given by: Ruth Adeyemi [active]","Held by: Billing Agent [active]","For: Tidewater Co-op [active]","Answers for it: Ruth Adeyemi [active]"],
     },
     "Marlow Yoga class bookings": {
+      'closure': ["Closure of Marlow Yoga class bookings [not_known] (3 lines)"],
       'parties': ["Given by: Jonah Marlow [deactivated]","Held by: Scheduling Agent [retired]","For: Marlow Yoga [churned]","Answers for it: Jonah Marlow [deactivated]"],
     },
     "Northwind spring order replies": {
+      'closure': ["Closure of Northwind spring order replies [reported_closed] (3 lines)"],
       'replaced-by': ["Northwind customer replies [revoked]"],
       'parties': ["Given by: Dana Whitfield [active]","Held by: Support Agent [active]","For: Northwind Traders [active]","Answers for it: Dana Whitfield [active]"],
     },
     "Northwind customer replies": {
+      'closure': ["Closure of Northwind customer replies [still_running] (3 lines)"],
       'recorded': ["Reply about order NW-2207 [needs_input] (2 lines)"],
       'under-way': ["Reply about order NW-2207 [needs_input at end needs_input] (2 lines)"],
       'parties': ["Given by: Dana Whitfield [active]","Held by: Support Agent [active]","For: Northwind Traders [active]","Answers for it: Dana Whitfield [active]"],
     },
     "Summit online orders": {
+      'closure': 'does not apply',
       'recorded': ["Hold 40 trail tents for the autumn sale [paused] (1 lines)"],
       'under-way': ["Hold 40 trail tents for the autumn sale [paused] (1 lines)"],
       'after-end': 'does not apply',
       'parties': ["Given by: Arjun Mehta [active]","Held by: Order Agent [active]","For: Summit Outfitters [active]","Answers for it: Arjun Mehta [active]"],
     },
     "Blue Harbor session bookings": {
+      'closure': 'does not apply',
       'recorded': ["Send Sunday's session reminders [outcome_unknown] (2 lines)"],
       'under-way': ["Send Sunday's session reminders [outcome_unknown] (2 lines)"],
       'after-end': 'does not apply',
       'parties': ["Given by: Priya Raman [active]","Held by: Booking Agent [paused]","For: Blue Harbor Studio [onboarding]","Answers for it: Priya Raman [active]"],
     },
     "Kestrel overdue invoices": {
+      'closure': 'does not apply',
       'recorded': ["Add a late fee to overdue invoices [declined] (1 lines)","Send September's payment reminders [cancelled] (1 lines)"],
       'after-end': 'does not apply',
       'parties': ["Given by: Grace Okafor [suspended]","Held by: Collections Agent [paused]","For: Kestrel Print Co. [active]","Answers for it: Accounts team (kept, team)"],
@@ -199,7 +216,8 @@ describe('the resolver returns, for every sample of the four objects, the rows t
   it('heads each list with the subject\'s name and says, when it lists nothing, which seat it read', () => {
     // s249-m05 (the fresh read): the headings and empty sentences claim no permission and no "standing" beyond now.
     expect(list('Organization', 'Tidewater Co-op', 'acting-for')).toMatchObject({ label: 'Agents holding a grant for Tidewater Co-op', collapsed: false });
-    expect(list('User', 'Ruth Adeyemi', 'given-for')).toMatchObject({ label: 'Given for Ruth Adeyemi by someone else', empty: 'No grant was given for Ruth Adeyemi by someone else.', rows: [] });
+    // s250-m03: the list holds only the grants that stand, so its empty sentence is true of a person whose such grants have all ended.
+    expect(list('User', 'Ruth Adeyemi', 'given-for')).toMatchObject({ label: 'Given for Ruth Adeyemi by someone else', empty: 'No grant given for Ruth Adeyemi by someone else stands now.', rows: [] });
     expect(list('User', 'Dana Whitfield', 'waiting')).toMatchObject({ label: 'Waiting for Dana Whitfield\'s answer' });
     expect(list('Agent', 'Support Agent', 'acts-for')).toMatchObject({ label: 'Grants Support Agent holds', empty: 'Support Agent holds no grant now.', rows: [] });
     expect(list('Organization', 'Tidewater Co-op', 'payments').note).toBe('Subscriptions, usage and invoices name their customer in words, so they are not listed here.');
@@ -285,7 +303,7 @@ describe('the resolver matches by id only', () => {
   /** R4's method: a value points at a party only when it equals a registered id; every top-level value and history entry. */
   function pointersAt(id: string): Set<string> {
     const found = new Set<string>();
-    for (const object of ['Task', 'Approval', 'Transaction', 'Grant', 'Agent', 'User', 'Organization']) for (const record of samplesOf(object)) {
+    for (const object of ['Task', 'Approval', 'Transaction', 'Grant', 'Agent', 'User', 'Organization', 'Closure']) for (const record of samplesOf(object)) {
       const values = [...Object.values(record), ...((record.state_history ?? []) as Sample[]).flatMap(entry => Object.values(entry))];
       if (values.some(value => value === id || (Array.isArray(value) && value.includes(id)))) found.add(`${object}:${String(record[KEY[object]!])}`);
     }

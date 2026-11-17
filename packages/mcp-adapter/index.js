@@ -106,6 +106,8 @@ function resolveEnabledTools(registry) {
 }
 
 const TOOL_SURFACE = JSON.parse(fs.readFileSync(new URL('./tool-surface.json', import.meta.url), 'utf8'));
+// s250-m01: the tools whose replies the adapter sends as compact JSON (registry_snapshot and object_registry).
+const COMPACT_REPLIES = new Set(['registry.snapshot', 'object']);
 const SCHEMA_RESOURCE_PREFIX = 'oods://schemas/';
 const SERVER_INSTRUCTIONS = 'OODS Foundry is an object-oriented design system. Its tools read the component, object and trait registry; '
   + 'draft objects from schema files a team already has (OpenAPI, JSON Schema, Postgres, Prisma, dbt, OData, GraphQL); compose list, '
@@ -508,11 +510,15 @@ async function main() {
       const structured = internalName === 'design.preview' && result && typeof result === 'object' && !Array.isArray(result)
         ? { ...result, ...(uiOffered() ? { resources: previewResources(result, previewApp.current()) } : {}) }
         : undefined;
+      // s250-m01: replies near Claude Code's 50,000-character inline limit go out compact, as the brand template does: the
+      // registry summary (49,549 characters indented at 0.16.0) and object_registry's (an object's show, Grant's 51,048).
+      // Their JSON is unchanged; only the indentation goes.
+      const compact = COMPACT_REPLIES.has(internalName) || (internalName === 'brand.read' && args.action === 'template');
       return {
         content: [
           {
             type: 'text',
-            text: typeof result === 'string' ? result : JSON.stringify(result, null, internalName === 'brand.read' && args.action === 'template' ? 0 : 2),
+            text: typeof result === 'string' ? result : JSON.stringify(result, null, compact ? 0 : 2),
           },
         ],
         ...(structured ? { structuredContent: structured } : {}),

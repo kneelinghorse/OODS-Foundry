@@ -151,6 +151,12 @@ const S249_USER_TIMEZONE = {
   after: "The person's preferred time zone, kept for your product. Screens show times in UTC, and a shown date-time says so; a date-time input does not yet.",
 };
 
+/** s250-m04 (next step 1887, item 1): a date-time input's label says UTC, so User's timezone description says so. */
+const S250_USER_TIMEZONE = {
+  before: S249_USER_TIMEZONE.after,
+  after: "The person's preferred time zone, kept for your product. Screens show times in UTC, and a shown date-time says so, as a date-time input's label does.",
+};
+
 /**
  * A baseline field as Sprint 249 declares it: Sprint 248's, with allowed_transitions' revised description (m03) and User's
  * timezone description (m04).
@@ -159,6 +165,13 @@ export function s249Field<T extends Record<string, unknown>>(object: string, nam
   const declared = s248Field(object, name, field);
   if (name === 'allowed_transitions' && declared.description === S249_ALLOWED_TRANSITIONS.before) return { ...declared, description: S249_ALLOWED_TRANSITIONS.after };
   if (object === 'User' && name === 'timezone' && declared.description === S249_USER_TIMEZONE.before) return { ...declared, description: S249_USER_TIMEZONE.after };
+  return declared;
+}
+
+/** A baseline field as Sprint 250 declares it: Sprint 249's, with User's timezone description saying the input's label says UTC. */
+export function s250Field<T extends Record<string, unknown>>(object: string, name: string, field: T): T {
+  const declared = s249Field(object, name, field);
+  if (object === 'User' && name === 'timezone' && declared.description === S250_USER_TIMEZONE.before) return { ...declared, description: S250_USER_TIMEZONE.after };
   return declared;
 }
 

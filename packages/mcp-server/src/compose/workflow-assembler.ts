@@ -14,11 +14,13 @@ const ROUTES = { list: '/', detail: '/:id', form: '/:id/edit', timeline: '/:id/t
 type WorkflowData = NonNullable<UiSchema['workflow']>['data'];
 
 /**
- * s222-m03 (#2502 ruling 14): an object with authored samples seeds one record per sample, from 5 to 10 (fewer than five
- * repeat to five; more than ten show the first ten); an object without samples keeps its ten.
+ * s222-m03 (#2502 ruling 14): an object with authored samples seeds one record per sample, up to ten (more than ten show
+ * the first ten); an object without samples keeps its ten. s250-m01: one to four samples seed exactly those records, under
+ * their own ids. They were repeated to five under made-up ids, which replaced every authored id, so a list reading an id
+ * (a grant inside another, a closure's grant) found nothing, and a list of one record per grant showed one twice.
  */
 export function sampleCountFor(samples: readonly unknown[] | undefined): number {
-  return samples?.length ? Math.min(10, Math.max(5, samples.length)) : 10;
+  return samples?.length ? Math.min(10, samples.length) : 10;
 }
 
 /** The sample-data descriptor a workflow's records are seeded from: its id field, lifecycle and trait parameters. */

@@ -169,6 +169,16 @@ metadata:
       afterEnd: true
       sources:
         - { from: [Task, Approval, Transaction, Grant], via: "state_history[].grant_id" }
+    # s250-m03: once the grant has ended, the closure a product recorded for it, with its lines (the third part of the
+    # Grant story). A request never given gets none, and a grant that ended with its outer grant gets none of its own (your
+    # product may name it, in words, in a line of the outer grant's closure), so the empty sentence says only what the list
+    # reads.
+    - id: closure
+      label: Its closure
+      empty: No closure here is of this grant.
+      afterEnd: true
+      sources:
+        - { from: Closure, via: closes_id, lines: true, row: { line: [summary], time: ended_at } }
     # Its seats' own records as they stand now, by forward lookup; a seat with no record here shows its kept name and kind.
     - id: parties
       label: Its parties now

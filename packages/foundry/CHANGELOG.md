@@ -2,6 +2,44 @@
 
 What changed in each version of OODS Foundry, in the terms you use it in.
 
+## 0.17.0
+
+The third part of the Grant story: what became of the work after a grant ended. A grant is a standing yes (0.15.0), a person sees their grants and takes one back (0.16.0), and now a product can record what became of the work after a grant ended, as a record of its own: a closure. Taking a grant back ends the yes, not the work. Only a report should move a closure, a rule your product keeps, and none reads "Closed": the nearest it comes is "Reported closed". OODS Foundry models and shows the record; it writes no closure, tells no one and stops nothing. See [What became of the work](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.17.0/docs/concepts/what-became-of-the-work.md).
+
+**Closure, the sixteenth public object.** `Closure` 1.0.0 is what a product reports became of the work after a grant that was given has ended: one per grant revoked, replaced or expired after it was given; a grant that ended with its outer grant gets none of its own, and your product may name it in a line of the outer grant's closure. It composes `Closeout`, `Stateful` (closing, reported closed, still running, not known and failed; reported closed moves only to failed, and failed is final), `Timestampable` and `Ownerable` for the one who answers for it. It is read-only: it composes a list, a detail page, a timeline, a card and an inline view, and no form, so its pages offer no Edit, no Delete and no move, and no app is generated for it; a request for its form is refused in the words every read-only object's is. Its lines are its history: each names who reported it, and a line that reports without moving the state (a party told, a party's answer, the receipt sent) keeps it. Its page lists the grant and its party as they stand now, what the records here show was still under way when the grant ended (labelled as read from records, not a report), and what was recorded under the grant after it ended. It ships three samples, one for each shipped grant that was given and then ended, resting in reported closed, not known and still running. Your own object named `Closure` is used in its place.
+
+**Closeout, the record trait.** `Closeout` 1.0.0, the 55th trait, holds a closure's facts, each written by your product and shown read-only, as reported: what ended and how and when, who it was for, what the record covers, where it stands, when the product stops waiting for answers, until when access already given may still work, and the receipt as sent. Your own revocation or offboarding record can compose it. On a list row and a card it shows what ended and who it was for; on the detail page every instant is in UTC, labelled so. A team trait named `Closeout` is refused, as every shipped trait's name is.
+
+**Where a closure shows.** A grant's page lists "Its closure" once the grant has ended, with the closure's lines in its row, or says "No closure here is of this grant.": a generated Grant app writes no closure, so a grant revoked there says so at once. A person's page lists "Closures {name} answers for" and "Closures of grants for {name}", and an organization's "Closures of grants for {name}". The generated Grant, User and Organization apps carry the shipped closures as copies, under the note that says so.
+
+**Related lists.** A list can read another record's end from a date-time field of the page's own record, `endedAt: { field, noun }`: its `finality` and `afterEnd` then read that instant, whatever the record's own state, and a row says "When the grant ended: …". A source matched by a field can carry each row's whole history, `lines: true`. A `when` can keep only records that hold a value, `{ present: true }`; a `when` whose value is the word "present" still matches only that word. A row's line can leave a field out for given values, `{ field, except }`. The note under a page's lists says the rows were matched by id where one of its lists reads another of the record's fields through `key`, so a grant's page, whose parties are looked up so, now ends its lists with "These lists show only records here, matched by id; …". See [your own objects and traits](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.17.0/packages/foundry/OBJECTS-AND-TRAITS.md#related-lists).
+
+Changed: an object with one to four samples seeds exactly its samples; it was padded to five by repeating records, which gave every record a made-up id, so a list reading an authored id found nothing. Each record keeps its sample's id where every sample names a different one. An object with five or more samples, or none, seeds as before.
+
+Changed: four states join the shared lifecycle tone table, under names no other record uses: `closing` ("Closing: an end was asked for, and no report yet says what became of it."), `reported_closed` ("Reported closed: a report says nothing more can start under it, for the scope it states."), `still_running` ("Still running: it, or some of the work it covers, is still going.") and `not_known` ("Not known: no report says."). None takes the success tone. `closed` and `unknown` gain no entry, so no other badge changes.
+
+Changed: `registry_snapshot` and `object_registry` reply with compact JSON through the stdio adapter, as the brand template does; the JSON is the same. The registry summary is under 50,000 characters as sent, and so is every public object's `show`.
+
+Changed: a person's "Given for {name} by someone else" lists only the grants that stand, says under its rows that only someone who may give grants for that person should end one and that the app does not check who is asking, and the ended ones move to a new list, "Ended grants given for {name} by someone else", closed until opened. A person's "Grants {name} gave", "Grants {name} answers for" and "Given for {name} by someone else" rows show the last use, as the Grant list's rows now do. A person's two ended lists and an agent's "Ended grants {name} held" list only grants that were given, so a request that expired unanswered is in none.
+
+Changed: a person's "Agents {name} sponsors" row leaves out "None" for an agent that acts for no one ("Support Agent · Active").
+
+Changed: every generated app's own button style leaves the design system's Buttons alone, so a primary and a danger Button read as such before hover (Revoke grant is red at once). A team's mapped adapters keep their own look.
+
+Changed: a form's date-time input says it is in UTC, in its label ("Due (UTC)").
+
+Changed: where a page shows the owner's kind beside its label, it reads as a word: "Owner Type: User", where it read "user".
+
+Changed: in HTML, a list's search label sits above its box, as the Status and Sort labels beside it do.
+
+Changed: an open grant's form labels its note "Why it is ending, if you end it here"; an ended grant's page keeps "Why it ended".
+
+Fixed: the dashboard layout leaves out an empty place the trait asked to leave out, so a grant's and a task's dashboards no longer read "<seat> unavailable" for a seat nobody holds.
+
+Fixed: `object_registry` (action `validate`) writes every path one way: a trait parameter's problem reads `traits[1].parameters.actions[2].from[0]`, where it read `traits[1].parameters/actions/2/from/0`, and its message opens with that path.
+
+Not in this release: one closure across several grants, "stop everything this agent does for me", a closure pointer on other records' lines, "Report" actions in a generated app, and an importer rule for closure records. Each page still shows times in UTC, not in its subject's own zone.
+
 ## 0.16.0
 
 Taking a grant back ends the yes, not the work. A person's, an organization's, an agent's and a grant's own pages now list the records that point at them, and a generated app can revoke, pause and resume a grant. A revoke asks once first, saying what ends with it and what goes on, and the grant's page then shows what was still under way when it ended. See [The person's side](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.16.0/docs/concepts/the-persons-side.md).

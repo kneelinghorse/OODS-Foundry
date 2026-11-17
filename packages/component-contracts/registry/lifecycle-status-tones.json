@@ -71,6 +71,10 @@
     "requested": { "tone": "info", "icon": "icon.status.pending", "description": "Requested and not yet answered." },
     "revoked": { "tone": "neutral", "icon": "icon.status.canceled", "description": "Revoked: someone ended it." },
     "replaced": { "tone": "neutral", "icon": "icon.status.refunded", "description": "Replaced: a newer one took its place." },
-    "allowed_in_advance": { "tone": "info", "icon": "icon.status.scheduled", "description": "Allowed in advance: a person set the terms earlier, and no one was asked this time." }
+    "allowed_in_advance": { "tone": "info", "icon": "icon.status.scheduled", "description": "Allowed in advance: a person set the terms earlier, and no one was asked this time." },
+    "closing": { "tone": "info", "icon": "icon.status.pending", "description": "Closing: an end was asked for, and no report yet says what became of it." },
+    "reported_closed": { "tone": "neutral", "icon": "icon.status.default", "description": "Reported closed: a report says nothing more can start under it, for the scope it states." },
+    "still_running": { "tone": "warning", "icon": "icon.status.processing", "description": "Still running: it, or some of the work it covers, is still going." },
+    "not_known": { "tone": "warning", "icon": "icon.status.warning", "description": "Not known: no report says." }
   }
 }

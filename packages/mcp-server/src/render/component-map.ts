@@ -1,6 +1,6 @@
 import { historyAttribution, recipeItemLabels, traitEventRows, type TraitEventKind, auditSummary, initialSort, ariaSort, assertStaticSvg, svgCarriesTitle, vizPreviewLayers, VIZ_THEME_SVG_PROPS, type VizPreviewLayer } from '@oods/component-contracts';
 import { getStatusPresentation, resolveStatusIcon, statusIconMarkup, RELATED_SHOWN_ROWS } from '@oods/component-contracts';
-import { currencyMinorUnits, dateTimeInputValue, formatDateTime, formatReadOnlyValue, summaryValue, formatReferenceLabel, formatPriceAmount, formatPriceCode, ownershipPhrase } from '@oods/component-contracts';
+import { currencyMinorUnits, dateTimeInputValue, formatDateTime, formatReadOnlyValue, summaryValue, formatReferenceLabel, formatPriceAmount, formatPriceCode, ownerKindLabel, ownershipPhrase } from '@oods/component-contracts';
 import { billingCycle, billingPaymentRows, billingPaymentSummary, BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary, formatBillingAmount } from '@oods/component-contracts';
 import type { UiElement } from '../schemas/generated.js';
 import { escapeHtml } from './escape-html.js';
@@ -269,7 +269,7 @@ function renderRelatedArea(id: string, all: Array<Record<string, unknown>>): str
     return `<section id="${text(at)}" data-oods-list="${text(list.id)}" class="oods-related" aria-labelledby="${text(`${at}-heading`)}">${list.collapsed === true ? `<details class="oods-related-fold"><summary>${heading}</summary>${body}</details>` : `${heading}${body}`}</section>`;
   };
   const copied = lists.find(list => shown(list.copied))?.copied;
-  return `<div id="${text(id)}" data-oods-collection="related" class="oods-related-area">${lists.map(section).join('')}${paragraph(copied, 'oods-related-note')}<p class="oods-related-note">${text(lists[0]?.cannotSee)}</p></div>`;
+  return `<div id="${text(id)}" data-oods-collection="related" class="oods-related-area">${lists.map(section).join('')}${paragraph(copied, 'oods-related-note')}<p class="oods-related-note">${text((lists.find(list => list.keyed === true) ?? lists[0])?.cannotSee)}</p></div>`;
 }
 
 function renderStack(node: UiElement, childrenHtml = ''): string {
@@ -1824,7 +1824,7 @@ function renderOwnershipSummary(node: UiElement, childrenHtml = ''): string {
     summaryType: 'ownership',
     fields: [
       { term: 'Owner', keys: ['ownerId', 'owner_id', 'ownerIdField'], format: value => value === undefined && (props.ownerIdField || !['ownerId', 'owner_id', 'ownerLabel'].some(key => props[key] !== undefined)) ? undefined : formatReferenceLabel(value, props.ownerLabel, 'Owner') },
-      { term: 'Owner Type', keys: ['ownerType', 'owner_type', 'ownerTypeField'] },
+      { term: 'Owner Type', keys: ['ownerType', 'owner_type', 'ownerTypeField'], format: value => ownerKindLabel(value) },
       { term: 'Role', keys: ['role', 'ownershipRole', 'roleField'] },
     ],
   });
@@ -1881,7 +1881,7 @@ function renderOwnershipMeta(node: UiElement, childrenHtml = ''): string {
     defaultTitle: 'Ownership',
     metaType: 'ownership',
     fields: [
-      { term: 'Owner Type', keys: ['ownerType', 'owner_type', 'ownerTypeField'] },
+      { term: 'Owner Type', keys: ['ownerType', 'owner_type', 'ownerTypeField'], format: value => ownerKindLabel(value) },
       { term: 'Role', keys: ['role', 'ownershipRole', 'roleField'] },
     ],
   });
@@ -2492,7 +2492,9 @@ function renderSearchInput(node: UiElement): string {
   const clearBtn = clearable && value
     ? ' <button type="button" data-search-clear="true" aria-label="Clear search">&times;</button>'
     : '';
-  return `<div${attrs} role="search" aria-label="${escapeHtml(label)}"><label for="${escapeHtml(inputId)}">${escapeHtml(label)}</label><input id="${escapeHtml(inputId)}" type="search" placeholder="${escapeHtml(placeholder)}" value="${escapeHtml(value)}" />${clearBtn}</div>`;
+  // s250-m04 (next step 1887, item 3): the label sits above its box, in the field wrapper the Status and Sort selects beside
+  // it use, as React's SearchInput draws it; it sat flush beside the box.
+  return `<div${attrs} role="search" aria-label="${escapeHtml(label)}"><div class="oods-field"><label class="oods-field-label" for="${escapeHtml(inputId)}">${escapeHtml(label)}</label><input id="${escapeHtml(inputId)}" type="search" placeholder="${escapeHtml(placeholder)}" value="${escapeHtml(value)}" /></div>${clearBtn}</div>`;
 }
 
 function renderPaginationBar(node: UiElement): string {

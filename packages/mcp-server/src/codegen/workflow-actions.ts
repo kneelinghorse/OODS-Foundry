@@ -12,8 +12,9 @@
  * - For a grant (an object composing Mandate), Resume shows its rule: it gives the grant again, so it is for someone who
  *   may give grants for the party. The rule is shown, not checked.
  *
- * The confirmation's buttons are the design system's Buttons, in an element marked data-oods-adapter, which the app's own
- * plain button style leaves alone (its stylesheet's exemption), so Revoke reads as the danger action in every theme.
+ * The confirmation's buttons are the design system's Buttons, which the app's own plain button style leaves alone (s250-m04,
+ * next step 1885: its stylesheet exempts .oods-button, as it exempts a team's mapped adapters), so Revoke reads as the
+ * danger action in every theme.
  *
  * OODS Foundry models and renders these: a generated app changes its own records when a person asks, and stops nothing
  * outside them.
@@ -158,8 +159,8 @@ export function reactConfirmation(declared: WorkflowStateActions): string {
           <div className="workflow-confirm-part"><h3>{confirmation.who}</h3><p>{preview.actor ? preview.actor.name : confirmation.untold}</p></div>
         </div>
         <div className="workflow-field"><label htmlFor="workflow-confirm-note">{confirmation.note}</label><textarea id="workflow-confirm-note" name="workflow-confirm-note" ref={confirmNote} defaultValue={state.actionVia === 'form' && confirmation.reasonField ? String((state.draft as Record<string, unknown>)[confirmation.reasonField] ?? '') : ''} /></div>
-        ${declared.alternative ? `{state.actionVia === 'button' && confirmation.alternative.from.includes(String((state.draft as Record<string, unknown>).status)) && <p className="workflow-confirm-alternative" data-oods-adapter="Button">{confirmation.alternative.lead} <Button intent="secondary" onClick={() => app.actions.${stateActionHandler(declared.alternative)}()}>{confirmation.alternative.button}</Button></p>}` : ''}
-        <div className="workflow-confirm-buttons" data-oods-adapter="Button"><Button intent="danger" onClick={() => { void app.confirmAction(confirmNote.current?.value ?? ''); }}>{confirmation.button}</Button><Button intent="secondary" onClick={() => app.dismissAction()}>{confirmation.keep}</Button></div>
+        ${declared.alternative ? `{state.actionVia === 'button' && confirmation.alternative.from.includes(String((state.draft as Record<string, unknown>).status)) && <p className="workflow-confirm-alternative">{confirmation.alternative.lead} <Button intent="secondary" onClick={() => app.actions.${stateActionHandler(declared.alternative)}()}>{confirmation.alternative.button}</Button></p>}` : ''}
+        <div className="workflow-confirm-buttons"><Button intent="danger" onClick={() => { void app.confirmAction(confirmNote.current?.value ?? ''); }}>{confirmation.button}</Button><Button intent="secondary" onClick={() => app.dismissAction()}>{confirmation.keep}</Button></div>
       </section>}`;
 }
 
@@ -178,8 +179,8 @@ export function vueConfirmation(declared: WorkflowStateActions): string {
           <div class="workflow-confirm-part"><h3>{{ confirmation.who }}</h3><p>{{ preview.actor ? preview.actor.name : confirmation.untold }}</p></div>
         </div>
         <div class="workflow-field"><label for="workflow-confirm-note">{{ confirmation.note }}</label><textarea id="workflow-confirm-note" ref="confirmNote" name="workflow-confirm-note" :value="state.actionVia === 'form' && confirmation.reasonField ? String(values[confirmation.reasonField] ?? '') : ''"></textarea></div>
-        ${declared.alternative ? `<p v-if="state.actionVia === 'button' && confirmation.alternative.from.includes(String(values.status))" class="workflow-confirm-alternative" data-oods-adapter="Button">{{ confirmation.alternative.lead }} <Button intent="secondary" @activate="app.actions.${stateActionHandler(declared.alternative)}()">{{ confirmation.alternative.button }}</Button></p>` : ''}
-        <div class="workflow-confirm-buttons" data-oods-adapter="Button"><Button intent="danger" @activate="app.confirmAction(confirmNote?.value ?? '')">{{ confirmation.button }}</Button><Button intent="secondary" @activate="app.dismissAction()">{{ confirmation.keep }}</Button></div>
+        ${declared.alternative ? `<p v-if="state.actionVia === 'button' && confirmation.alternative.from.includes(String(values.status))" class="workflow-confirm-alternative">{{ confirmation.alternative.lead }} <Button intent="secondary" @activate="app.actions.${stateActionHandler(declared.alternative)}()">{{ confirmation.alternative.button }}</Button></p>` : ''}
+        <div class="workflow-confirm-buttons"><Button intent="danger" @activate="app.confirmAction(confirmNote?.value ?? '')">{{ confirmation.button }}</Button><Button intent="secondary" @activate="app.dismissAction()">{{ confirmation.keep }}</Button></div>
       </section>`;
 }
 
