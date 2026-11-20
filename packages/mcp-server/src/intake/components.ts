@@ -25,7 +25,7 @@ function incompatible(type:string, expected:string):boolean {
 }
 export function draftComponents(source:ComponentIntakeSource, externalSystem='team'):ComponentDraft {
   const files=new IntakeFiles(source.project), paths=intakePaths(files);
-  const manifest=files.has('package.json')?files.json('package.json'):{};
+  const rootManifest=files.has('package.json')?files.json('package.json'):{};
   const proposals:ComponentProposal[]=[], inventory:InventoryEntry[]=[], components:SourceComponent[]=[], warnings:string[]=[];
   const inspected=new Set<string>();
   const inspect=(file:string)=>{
@@ -107,9 +107,14 @@ export function draftComponents(source:ComponentIntakeSource, externalSystem='te
       }).filter(match=>match.structural);
       if(matches.length!==1)continue;
       const {contract,shared}=matches[0];
+      let packageDir = path.dirname(files.absolute(sourceComponent.file));
+      while (packageDir !== files.root && !files.has(path.join(packageDir, 'package.json'))) {
+        packageDir = path.dirname(packageDir);
+      }
+      const manifest = packageDir === files.root ? rootManifest : files.json(path.join(packageDir, 'package.json'));
       if(typeof manifest.name!=='string'||typeof manifest.version!=='string') {warnings.push(`${key(sourceComponent)}: matching structure but package.json lacks a package name and exact version for registration.`);continue;}
       const props=Object.fromEntries(shared.map(prop=>[prop,{name:prop}]));
-      const proposal=add({mapping:{externalSystem,externalComponent:sourceComponent.export,oodsTraits:[],substitution:{component:contract.id,[sourceComponent.file.endsWith('.vue')?'vue':'react']:{package:manifest.name,version:manifest.version,localPath:files.root,export:sourceComponent.export,passthrough:false,props}}},evidence:[{grade:'medium',source:key(sourceComponent),reason:`Unique shipped contract with required props and ${shared.length} typed prop matches plus rendered elements ${sourceComponent.elements.join(', ')}. Package exports are checked at apply.`}],files:[],sourceComponents:[key(sourceComponent)],translations:props,limitations:['Static matching does not prove runtime behavior; inspect the existing component contract report after generation.']});
+      const proposal=add({mapping:{externalSystem,externalComponent:sourceComponent.export,oodsTraits:[],substitution:{component:contract.id,[sourceComponent.file.endsWith('.vue')?'vue':'react']:{package:manifest.name,version:manifest.version,localPath:packageDir,export:sourceComponent.export,passthrough:false,props}}},evidence:[{grade:'medium',source:key(sourceComponent),reason:`Unique shipped contract with required props and ${shared.length} typed prop matches plus rendered elements ${sourceComponent.elements.join(', ')}. Package exports are checked at apply.`}],files:[],sourceComponents:[key(sourceComponent)],translations:props,limitations:['Static matching does not prove runtime behavior; inspect the existing component contract report after generation.']});
       for(const entry of inventory) {
         const doc=entries.find(value=>value.id===entry.id || entry.id===`manifest:${value.id}` || entry.id.startsWith(`manifest:${value.id}.`) || value.stories?.some((story:any)=>story.id===entry.id));
         if(doc && [doc.reactDocgen?.definedInFile,doc.vueDocgen?.filePath,doc.component?.definedInFile,doc.component?.path].some(file=>typeof file==='string' && path.resolve(files.root,file)===path.resolve(files.root,sourceComponent.file))){entry.status='proposed';entry.proposals.push(proposal.id);entry.reason='Manifest links this story to a structurally proposed component.';}

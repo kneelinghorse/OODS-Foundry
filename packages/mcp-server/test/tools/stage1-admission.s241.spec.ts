@@ -66,16 +66,65 @@ describe('Stage1 0.6.0 contracts retain facts without inventing scores (s241)', 
     expect(readComparisonView(zero(true)).admitted.resultState).toBe('measured');
     expect(() => readComparisonView(zero(false))).toThrow('result state contradicts');
   });
-  // s244-m04 (next step 1845): Stage1 0.7.0's drift_report 2.1.0 and fig_local_tokens 1.7.0 are admitted, so the next
-  // versions are the unknown ones.
+  it.each(['2.1.0', '2.2.0'])('preserves measured presence without value signals at drift %s', version => {
+    const zero = (presence: boolean) => fixture('analysis', (file, data) => {
+      if (file.endsWith('drift_report.json')) {
+        data.schema_version = version;
+        data.signals = [];
+        if (presence) data.declared_presence = { state: 'measured' };
+      }
+    });
+    expect(readComparisonView(zero(true)).admitted.resultState).toBe('measured');
+    expect(() => readComparisonView(zero(false))).toThrow('result state contradicts');
+  });
+
+  it('reports incomplete capture and skipped accessibility scans separately from measured pages', async () => {
+    const dir = fixture('run', (file, data) => {
+      if (file === 'manifest.json') {
+        data.schema_version = '1.9.0';
+        data.environment.identification = { mode: 'named' };
+        data.environment.capture.completeness = { state: 'incomplete', reason: 'Page limit reached', pages_not_captured: 2 };
+      } else if (file.endsWith('a11y_report.json')) {
+        data.schema_version = '3.1.0';
+        data.skipped_pages = [{ route: '/unmeasured', url: 'https://example.org/unmeasured', error: 'Page unavailable' }];
+      } else if (file.endsWith('a11y_manifest.json')) data.version = '1.5.0';
+    });
+    const view = await readRunView(dir);
+    expect(view.records.Run[0].page_count).toBe(1);
+    expect(view.records.Run[0].capture_note).toContain('Identification mode: named.');
+    expect(view.records.Run[0].capture_note).toContain('Capture incomplete. Pages not captured: 2 (Page limit reached).');
+    expect(view.records.Run[0].capture_note).toContain('Accessibility scans skipped: 1.');
+    expect((await fetchStructured({ kind: 'a11y_report', runPath: dir })).payload).toMatchObject({
+      skipped_pages: [{ route: '/unmeasured', error: 'Page unavailable' }],
+    });
+  });
+
+  it('reads a redrift of an older capture without attributing the analyzing build’s identification mode to it', () => {
+    const view = readComparisonView(fixture('analysis', (file, data) => {
+      if (file === 'manifest.json') {
+        data.schema_version = '1.9.0';
+        data.analysis.stage1_version = '0.8.0';
+        data.environment.identification = { mode: 'named' };
+      } else if (file.endsWith('source-manifest.json')) {
+        data.schema_version = '1.8.0';
+        data.environment.stage1_version = '0.7.0';
+      } else if (file.endsWith('drift_report.json')) data.schema_version = '2.2.0';
+      else if (file.endsWith('style_fingerprint.json')) data.schema_version = '1.5.0';
+      else if (file.endsWith('fig_local_tokens.json')) data.version = '1.7.0';
+    }));
+    expect(view.records.Comparison[0].provenance_method).toContain('Identification mode: not recorded.');
+    expect(view.records.Comparison[0].measurement_basis).toContain('raw values');
+    expect(view.records.Comparison[0].design_comparand).toContain('Token extract:');
+  });
+
   it.each([
-    ['drift_report.json', 'schema_version', '2.2.0'],
+    ['drift_report.json', 'schema_version', '2.3.0'],
     ['fig_local_tokens.json', 'version', '1.8.0'],
-    ['style_fingerprint.json', 'schema_version', '1.5.0'],
+    ['style_fingerprint.json', 'schema_version', '1.6.0'],
   ])('refuses unknown %s versions with the admitted versions named', (file, key, version) => {
     expect(() => readComparisonView(fixture('analysis', (name, data) => { if (name.endsWith(file)) data[key] = version; }))).toThrow(/accepted:/);
   });
   it('refuses an unknown capture version before opening the view', async () => {
-    await expect(fetchStructured({ kind: 'run_manifest', runPath: fixture('run', (file, data) => { if (file === 'manifest.json') data.schema_version = '1.9.0'; }) })).rejects.toThrow(/Accepted:/);
+    await expect(fetchStructured({ kind: 'run_manifest', runPath: fixture('run', (file, data) => { if (file === 'manifest.json') data.schema_version = '1.10.0'; }) })).rejects.toThrow(/Accepted:/);
   });
 });

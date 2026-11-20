@@ -1,4 +1,4 @@
-import { historyAttribution, recipeItemLabels, traitEventRows, type TraitEventKind, auditSummary, initialSort, ariaSort, assertStaticSvg, svgCarriesTitle, vizPreviewLayers, VIZ_THEME_SVG_PROPS, type VizPreviewLayer } from '@oods/component-contracts';
+import { enumOptionLabel, historyAttribution, recipeItemLabels, traitEventRows, type TraitEventKind, auditSummary, initialSort, ariaSort, assertStaticSvg, svgCarriesTitle, vizPreviewLayers, VIZ_THEME_SVG_PROPS, type VizPreviewLayer } from '@oods/component-contracts';
 import { getStatusPresentation, resolveStatusIcon, statusIconMarkup, RELATED_SHOWN_ROWS } from '@oods/component-contracts';
 import { currencyMinorUnits, dateTimeInputValue, formatDateTime, formatReadOnlyValue, summaryValue, formatReferenceLabel, formatPriceAmount, formatPriceCode, ownerKindLabel, ownershipPhrase } from '@oods/component-contracts';
 import { billingCycle, billingPaymentRows, billingPaymentSummary, BILLING_INTERVALS, BILLING_MINOR_UNITS, billingAmountMessage, billingAmountText, billingIntervalMessage, billingSummary, formatBillingAmount } from '@oods/component-contracts';
@@ -203,6 +203,7 @@ function truncateText(value: string, maxLength: unknown): string {
 }
 
 function renderButton(node: UiElement, childrenHtml = ''): string {
+  const facts = node.collectionControl === 'open' ? (node.children ?? []).filter(child => child.props?.caption && childrenHtml.includes(` id="${escapeHtml(child.id)}"`)).map(child => child.id) : [];
   const props = isRecord(node.props) ? node.props : {};
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: BUTTON_HTML_ATTRS,
@@ -215,7 +216,7 @@ function renderButton(node: UiElement, childrenHtml = ''): string {
       ...(asString(props.size) ? { 'data-size': asString(props.size) } : {}),
     },
     // Canonical button CSS includes forced-colors handling keyed to this class.
-    htmlOverrides: { type: asString(props.type) ?? 'button', class: ['oods-button', asString(props.className) ?? asString(props.class)].filter(Boolean).join(' ') },
+    htmlOverrides: { ...(facts.length ? { 'aria-describedby': facts.join(' ') } : {}), type: asString(props.type) ?? 'button', class: ['oods-button', asString(props.className) ?? asString(props.class)].filter(Boolean).join(' ') },
   });
   const label = firstSerialized(props, ['content', 'label', 'text']) ?? displayLabel(node) ?? 'Button';
   const content = hasChildrenHtml(childrenHtml) ? childrenHtml : escapeHtml(label);
@@ -1163,6 +1164,7 @@ function renderLabelCell(node: UiElement, childrenHtml = ''): string {
       'label',
       'text',
       'value',
+      'caption',
       'description',
       'subtitle',
       'sublabel',
@@ -1184,7 +1186,9 @@ function renderLabelCell(node: UiElement, childrenHtml = ''): string {
   const descriptionHtml = description
     ? `<span data-oods-label-cell-description="true">${escapeHtml(description)}</span>`
     : '';
-  return `<span${attrs}><span data-oods-label-cell-primary="true">${escapeHtml(label)}</span>${descriptionHtml}</span>`;
+  const caption = firstString(props, ['caption']);
+  const captionHtml = caption ? `<span data-oods-label-cell-caption="true">${escapeHtml(caption)} </span>` : '';
+  return `<span${attrs}>${captionHtml}<span data-oods-label-cell-primary="true">${escapeHtml(label)}</span>${descriptionHtml}</span>`;
 }
 
 type PanelOptions = {
@@ -1289,15 +1293,16 @@ function renderTextareaControl(label: string, name: string, value?: string): str
   }</textarea></label>`;
 }
 
-function renderSelectControl(label: string, name: string, optionsSource: unknown, selectedValue?: unknown): string {
+function renderSelectControl(label: string, name: string, optionsSource: unknown, selectedValue?: unknown, emptyLabel?: string): string {
   const options = normalizeSelectOptions(optionsSource, selectedValue);
+  const prompt = emptyLabel && !selectedValue ? `<option value="" disabled selected>${escapeHtml(emptyLabel)}</option>` : '';
   const optionsHtml =
     options.length > 0
       ? options
         .map((option) => `<option value="${escapeHtml(option.value)}"${option.selected ? ' selected' : ''}>${escapeHtml(option.label)}</option>`)
         .join('')
       : '<option value="">Select...</option>';
-  return `<label class="oods-field" data-form-control="select"><span class="oods-field-label">${escapeHtml(label)}</span><select class="oods-field-control" name="${escapeHtml(name)}">${optionsHtml}</select></label>`;
+  return `<label class="oods-field" data-form-control="select"><span class="oods-field-label">${escapeHtml(label)}</span><select class="oods-field-control" name="${escapeHtml(name)}">${prompt}${optionsHtml}</select></label>`;
 }
 
 function renderFormContainer(node: UiElement, childrenHtml: string, generatedBody: string, options: FormContainerOptions): string {
@@ -1384,7 +1389,7 @@ function renderCancellationForm(node: UiElement, childrenHtml = ''): string {
   const body = [
     Array.isArray(props.allowedReasons) && props.allowedReasons.length === 0
       ? renderInputControl('Reason Code', 'reasonCode', asString(props.reasonCode))
-      : renderSelectControl('Reason Code', 'reasonCode', reasons, props.reasonCode),
+      : renderSelectControl('Reason Code', 'reasonCode', reasons.filter(reason => reason.value !== ''), props.reasonCode, 'Choose a reason'),
     props.codeHelp ? `<p class="oods-field-help">${escapeHtml(String(props.codeHelp))}</p>` : '',
     renderTextareaControl('Reason', 'reason', firstSerialized(props, ['reason', 'cancellationReason'])),
     props.reasonHelp ? `<p class="oods-field-help">${escapeHtml(String(props.reasonHelp))}</p>` : '',
@@ -1482,16 +1487,16 @@ type TimelineOptions = {
   eventKeys?: string[];
 };
 
-function normalizeTimelineItems(raw: unknown, lifecycle = false): TimelineItem[] {
+function normalizeTimelineItems(raw: unknown, lifecycle: boolean, humanize: (value: string) => string): TimelineItem[] {
   if (!Array.isArray(raw)) return [];
   const items: TimelineItem[] = [];
   for (const entry of raw) {
     if (entry === undefined || entry === null) continue;
     if (isRecord(entry)) {
       const from = firstSerialized(entry, ['from']), to = firstSerialized(entry, ['to']);
-      const humanize = (value: string) => value.split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
-      const code = firstSerialized(entry, ['event', 'status', 'state']);
-      const label = firstSerialized(entry, ['label', 'title']) ?? (code ? humanize(code) : undefined) ?? firstSerialized(entry, ['text', 'name']) ?? (lifecycle && to ? (from ? `${humanize(from)} → ${humanize(to)}` : humanize(to)) : 'Event');
+      const event = firstSerialized(entry, ['event']);
+      const code = firstSerialized(entry, ['status', 'state']);
+      const label = firstSerialized(entry, ['label', 'title']) ?? (event ? formatReadOnlyValue(event, 'string', true) : undefined) ?? (code ? humanize(code) : undefined) ?? firstSerialized(entry, ['text', 'name']) ?? (lifecycle && to ? (from ? `${humanize(from)} → ${humanize(to)}` : humanize(to)) : 'Event');
       const timestamp = firstSerialized(entry, ['timestamp', 'datetime', 'time', 'at', 'createdAt', 'updatedAt']);
       const detail = lifecycle ? firstSerialized(entry, ['detail', 'description', 'message']) ?? (to ? (from ? `${humanize(from)} → ${humanize(to)}` : humanize(to)) : undefined) : firstSerialized(entry, ['detail', 'description', 'reason', 'message', 'from', 'to']);
       // s244-m01 (#2829): a named entry reads its attribution in place of its actor id, as in React and Vue.
@@ -1510,11 +1515,13 @@ function renderTimelineContainer(node: UiElement, childrenHtml: string, options:
   const keys = options.eventKeys ?? ['events', 'history', 'entries', 'items'];
   const rawEvents = keys.map((key) => props[key]).find((value) => Array.isArray(value));
   const lifecycle = ['status', 'audit'].includes(options.timelineType);
-  const allEvents = normalizeTimelineItems(rawEvents, lifecycle);
+  const labels = isRecord(props.enumLabels) ? props.enumLabels : undefined;
+  const stateLabel = (value: string) => enumOptionLabel(value, labels);
+  const allEvents = normalizeTimelineItems(rawEvents, lifecycle, stateLabel);
   const events = lifecycle && typeof props.maxVisible === 'number' && Number.isFinite(props.maxVisible) ? allEvents.slice(0, Math.max(0, Math.floor(props.maxVisible))) : allEvents;
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: GENERIC_HTML_ATTRS,
-    consumedProps: new Set(['title', 'label', 'heading', 'name', ...keys]),
+    consumedProps: new Set(['title', 'label', 'heading', 'name', 'enumLabels', ...keys]),
     dataOverrides: { 'data-timeline-type': options.timelineType },
     htmlOverrides: { role: 'log' },
   });
@@ -1536,8 +1543,8 @@ function renderTimelineContainer(node: UiElement, childrenHtml: string, options:
         .join('')
       : '<li data-timeline-empty="true">No events</li>';
 
-  const statusHtml = options.timelineType === 'status' && props.status ? `<p>Current status: ${escapeHtml(String(props.status).split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' '))}</p>` : '';
-  const transitionsHtml = lifecycle && Array.isArray(props.allowedTransitions) && props.allowedTransitions.length ? `<p>Allowed transitions: ${escapeHtml(props.allowedTransitions.join(', '))}</p>` : '';
+  const statusHtml = options.timelineType === 'status' && props.status ? `<p>Current status: ${escapeHtml(stateLabel(String(props.status)))}</p>` : '';
+  const transitionsHtml = lifecycle && Array.isArray(props.allowedTransitions) && props.allowedTransitions.length ? `<p>Allowed transitions: ${escapeHtml(props.allowedTransitions.map(value => stateLabel(String(value))).join(', '))}</p>` : '';
   return `<div${attrs}><h2 data-timeline-title="true">${escapeHtml(title)}</h2>${statusHtml}${transitionsHtml}<ol data-timeline-events="true">${eventHtml}</ol></div>`;
 }
 
@@ -1668,10 +1675,11 @@ function renderRelativeTimestamp(node: UiElement): string {
   const relative = firstSerialized(props, ['relative', 'label', 'text', 'value']) ?? (formatDateTime(datetime) || 'Unknown time');
   const attrs = buildAttributes(node, {
     allowedHtmlAttrs: new Set(['datetime', 'title']),
-    consumedProps: new Set(['datetime', 'timestamp', 'value', 'updatedAt', 'createdAt', 'relative', 'label', 'text', 'hideWhenEmpty']),
+    consumedProps: new Set(['datetime', 'timestamp', 'value', 'updatedAt', 'createdAt', 'relative', 'label', 'text', 'caption', 'hideWhenEmpty']),
     htmlOverrides: datetime ? { datetime } : undefined,
   });
-  return `<time${attrs}>${escapeHtml(relative)}</time>`;
+  const caption = firstString(props, ['caption']);
+  return `<time${attrs}>${caption ? escapeHtml(caption) + ': ' : ''}${escapeHtml(relative)}</time>`;
 }
 
 type SummaryField = {

@@ -25,7 +25,7 @@ export interface ApprovableTraitParameters {
     [k: string]: LevelName;
   };
   /**
-   * How many yeses each level needs, from different people, keyed by level. A level not named needs one.
+   * A map of required counts by level. For a level with no count, the rule calls for one eligible approver. Your product checks and counts the answers.
    */
   approvalsNeeded?: {
     [k: string]: number;

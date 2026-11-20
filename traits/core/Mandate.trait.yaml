@@ -1,6 +1,6 @@
 trait:
   name: Mandate
-  version: 1.1.0
+  version: 1.1.1
   description: |
     The record of a grant: a standing yes that one actor may act for a person or organization, on stated terms,
     until it ends. It keeps who asked for it, who gave it and in what capacity, who holds it and who it is for; what it
@@ -439,12 +439,16 @@ semantics:
     ui_hints:
       component: Text
       label: Asks first for
+      valueLabels:
+        None: No listed action needs a separate yes
   never_allowed:
     semantic_type: mandate.never_allowed
     token_mapping: tokenMap(text.body.*)
     ui_hints:
       component: Text
       label: Never allowed
+      valueLabels:
+        None: No additional exclusions listed
   amount_limit_minor:
     semantic_type: mandate.amount_limit_minor
     token_mapping: tokenMap(text.body.*)

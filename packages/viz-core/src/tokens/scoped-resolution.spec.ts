@@ -23,6 +23,21 @@ describe('scoped chrome follows CSS, with light/A as the default', () => {
       expect(resolveOodsVegaConfig(spec, scope).title.color).toBe(resolveOodsEchartsChrome(spec, scope).title);
     });
   }
+  it('resolves a Primer-style brand’s HSL and space-separated RGB in both chart engines', () => {
+    const brand = 'Primerfixture';
+    const base = tokensBundle.cssVariablesByScope.A;
+    tokensBundle.cssVariablesByScope[brand] = { ...base, light: {
+      ...base.light, '--oods-sys-surface-canvas': 'hsl(0 0% 100%)',
+      '--oods-sys-text-primary': 'rgb(31 35 40)', '--oods-sys-border-subtle': 'hsl(210 50% 40%)',
+    } };
+    try {
+      expect(resolveOodsVegaConfig(spec, { brand })).toMatchObject({ background: '#FFFFFF', title: { color: '#1F2328' } });
+      expect(resolveOodsEchartsChrome(spec, { brand })).toMatchObject({ background: '#FFFFFF', title: '#1F2328' });
+      expect(toHex(resolveTokenToColor('--oods-sys-border-subtle', { brand })!)).toBe('#336699');
+    } finally {
+      delete tokensBundle.cssVariablesByScope[brand];
+    }
+  });
   it('omission equals explicit light/A and never inherits a previous call', () => {
     const light = resolveOodsVegaConfig(spec, { theme: 'light', brand: 'A' });
     expect(resolveOodsVegaConfig(spec, { theme: 'dark', brand: 'B' })).not.toEqual(light);

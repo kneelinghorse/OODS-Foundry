@@ -1,6 +1,6 @@
 object:
   name: Approval
-  version: 1.1.1
+  version: 1.1.2
   domain: core.governance
   description: One ask to one person or agent for a yes, about one version of one thing, and the answer it became.
   tags:
@@ -73,12 +73,21 @@ schema:
   name:
     type: string
     required: true
+    readOnly: true
     description: What is asked, in a few words ("Approve the resend of PAY-2026-0429").
     validation:
       minLength: 1
       maxLength: 120
 
 semantics:
+  status:
+    semantic_type: status.state
+    token_mapping: tokenMap(status.state.*)
+    ui_hints:
+      component: StatusBadge
+      showIcon: true
+      label: Answer
+      help: This answer applies to what was shown above.
   approval_id:
     semantic_type: governance.approval.id
     token_mapping: tokenMap(identity.id.primary)
@@ -104,6 +113,9 @@ metadata:
   steward: Design team
   maturity: alpha
   changelog:
+    - version: 1.1.2
+      date: "2026-11-19"
+      description: The declined article review names Nadia Farouk as the person asked. The answer form keeps the ask fixed and labels its select Answer.
     - version: 1.1.1
       date: "2026-11-14"
       description: The resend approval's first line says why it was created, to ask for a yes before resending, and the Billing Agent's lines name the grant it acted under.
@@ -246,7 +258,7 @@ samples:
     status: not_needed
     state_history:
       - { title: Created, from: null, to: not_yet_asked, at: '2026-09-16T08:00:00Z', reason: Created to follow the finance review, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02, actor_name: Marcus Hale, actor_kind: person }
-      - { title: Not needed, from: not_yet_asked, to: not_needed, at: '2026-09-18T08:00:00Z', reason: 'Not needed: the finance team sent the article back', actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02, actor_name: Marcus Hale, actor_kind: person }
+      - { title: Not needed, from: not_yet_asked, to: not_needed, at: '2026-09-18T08:00:00Z', reason: 'Not needed: Nadia Farouk sent the article back', actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02, actor_name: Marcus Hale, actor_kind: person }
     created_at: '2026-09-16T08:00:00Z'
     updated_at: '2026-09-18T08:00:00Z'
     last_event: ended
@@ -262,21 +274,19 @@ samples:
     requested_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02
     requested_by_name: Marcus Hale
     requested_by_kind: person
-    asked_of_id: 4e2a6c8e-0b1d-4f3a-9c5e-7a9b1c3d5e01
-    asked_of_name: Finance team
+    asked_of_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e06
+    asked_of_name: Nadia Farouk
     answered_by_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e06
     answered_by_name: Nadia Farouk
     answered_by_kind: person
-    answered_for_id: 4e2a6c8e-0b1d-4f3a-9c5e-7a9b1c3d5e01
-    answered_for_name: Finance team
     asked_at: '2026-09-16T08:00:00Z'
     answered_at: '2026-09-18T08:00:00Z'
     comment: Needs the EU VAT section before it can go out
     status: declined
     state_history:
       - { title: Created, from: null, to: not_yet_asked, at: '2026-09-16T08:00:00Z', reason: Created when the article went to review, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02, actor_name: Marcus Hale, actor_kind: person }
-      - { title: Asked, from: not_yet_asked, to: waiting, at: '2026-09-16T08:00:00Z', reason: Asked the finance team, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02, actor_name: Marcus Hale, actor_kind: person }
-      - { title: Declined, from: waiting, to: declined, at: '2026-09-18T08:00:00Z', reason: Needs the EU VAT section, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e06, actor_name: Nadia Farouk, actor_kind: person, on_behalf_of_id: 4e2a6c8e-0b1d-4f3a-9c5e-7a9b1c3d5e01, on_behalf_of_name: Finance team }
+      - { title: Asked, from: not_yet_asked, to: waiting, at: '2026-09-16T08:00:00Z', reason: Asked Nadia Farouk to review the article, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e02, actor_name: Marcus Hale, actor_kind: person }
+      - { title: Declined, from: waiting, to: declined, at: '2026-09-18T08:00:00Z', reason: Needs the EU VAT section, actor_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0e06, actor_name: Nadia Farouk, actor_kind: person }
     created_at: '2026-09-16T08:00:00Z'
     updated_at: '2026-09-18T08:00:00Z'
     last_event: answered

@@ -74,7 +74,7 @@ export type MarkRectChartEncodingBinding =
        */
       currency?: string;
       /**
-       * Declared charts only: a field of the charted record whose text titles this axis, so each record's chart names its own unit (Usage's y axis reads the record's unit_label, "API calls"). Generation resolves it into title before viz.render; a record without that text takes title, and a chart with neither fails.
+       * Declared charts only: a field of the charted record whose text titles this axis, so each record's chart names its own unit (Usage's y axis reads the record's unit_label, "API calls"). Generation resolves it into title before viz_render; a record without that text takes title, and a chart with neither fails.
        */
       titleField?: string;
     };
@@ -109,11 +109,11 @@ export type MarkRectChartColorEncodingBinding =
 
 export interface MarkRectTraitParameters {
   /**
-   * JSON-encoded Cartesian viz.render input fragment; data rows are supplied by the consumer.
+   * JSON-encoded Cartesian viz_render input fragment; data rows are supplied by the consumer.
    */
   renderIntent?: string;
   /**
-   * Static SVG returned by viz.render for the authored sample.
+   * Static SVG returned by viz_render for the authored sample.
    */
   previewSvg?: string;
   chart?: MarkRectChartDeclaration;

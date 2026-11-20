@@ -71,7 +71,7 @@ export interface StatefulTraitParameters {
       }[]
     | null;
   /**
-   * When true, every state transition must include a human-readable reason.
+   * When true, your product requires a reason for each change of state. Your product checks the reason.
    */
   requireTransitionReason?: boolean;
 }

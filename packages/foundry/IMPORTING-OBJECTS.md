@@ -50,7 +50,7 @@ A person or other principal is a record whose name is user, account, organizatio
 
 ### Approval records
 
-An approval is a decision, not a status: one person's answer about one thing, kept as a record of its own (see [Approvals as decisions](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.14.0/docs/concepts/approvals-as-decisions.md)). Where another system keeps a table of approvals, one answer per row, the importer proposes `Decision` for it, graded on structure:
+An approval is a decision, not a status: one person's answer about one thing, kept as a record of its own (see [Approvals as decisions](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.18.0/docs/concepts/approvals-as-decisions.md)). Where another system keeps a table of approvals, one answer per row, the importer proposes `Decision` for it, graded on structure:
 
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|
@@ -62,7 +62,7 @@ The two structural facts decide; names only say where the rest goes. Beside them
 
 The record's lifecycle is its answer, even where another enum sorts first (Bitbucket's `participant` has `role`, then `state`); the other enum is reported as an alternative. A record does not start in an answer: where an enum's first value is one (Jira's `approved`, `declined`, `pending` is alphabetical), the first pending value in the source's order is the proposed initial state. The pending values are pending, waiting, awaiting, requested, not requested, request review, review requested, awaiting approval, pending approval and not yet asked. A default the schema names still wins, and a lifecycle that starts before it waits (new, open, pending) keeps its first value.
 
-Accepting `Decision` never fails for a fact the source lacks. The screen where an answer is given needs five facts beside the answer: the thing, exactly what was shown, the level, the meaning and who is asking, with who it is asked for when the record keeps it. A bound asker is read on the form as a fact, by its id when its name is not bound, and is not edited there. Where the record keeps none of some of them, the accepted object's form composes, and `design_compose`'s reply warns `OODS-V222`, naming them; the warning is not shown at acceptance, so compose the form to see it. If you bind a fact and a screen leaves it out, or puts it in another tab or on the other side of a dialog from the answer, `design_compose` refuses that screen (`OODS-V221`).
+Accepting `Decision` never fails for a fact the source lacks. The screen where an answer is given places the available facts on the answer screen. The shipped Approval form shows them above its Answer select. The five facts are the thing, exactly what was shown, the level, the meaning and who is asking, with who it is asked for when the record keeps it. A bound asker is read on the form as a fact, by its id when its name is not bound, and is not edited there. Where the record keeps none of some of them, the accepted object's form composes, and `design_compose`'s reply warns `OODS-V222`, naming them; the warning is not shown at acceptance, so compose the form to see it. If you bind a fact and a screen leaves it out, or puts it in another tab or on the other side of a dialog from the answer, `design_compose` refuses that screen (`OODS-V221`).
 
 Measured on three published schemas: Jira Service Management's `ApproverDTO` is proposed `Decision` with its approver and answer, keeping neither the thing, what was shown, the level, the meaning nor who asked; Gitea's `PullReview` with its reviewer, answer, submission time, body and commit; Bitbucket Cloud's `participant` with its user, answer and time of taking part. Jira's `ApprovalDTO`, the ask that holds its approvers and their final decision, has no person beside its outcome, so it gets no `Decision`; its two dates are links to `DateDTO`, a record of three text renderings and a number, not date fields.
 
@@ -70,7 +70,7 @@ The importer does not propose `Approvable`: an approval outcome kept as a field 
 
 ### Records of work
 
-A task is an ask, not a ticket: one ask to one person or agent to do one piece of work, and what became of it (see [Tasks as asks](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.14.0/docs/concepts/tasks-as-asks.md)). Where another system keeps a record of work, the importer proposes `Assignment` for it, graded on structure:
+A task is an ask, not a ticket: one ask to one person or agent to do one piece of work, and what became of it (see [Tasks as asks](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.18.0/docs/concepts/tasks-as-asks.md)). Where another system keeps a record of work, the importer proposes `Assignment` for it, graded on structure:
 
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|
@@ -118,7 +118,7 @@ Not placed, because their schemas say too little: Linear's `stale` and `stopping
 
 ### Records of a grant
 
-A grant is a standing yes, not a setting: one set of terms on which one actor may act for one person or organization, until it ends (see [Grants as standing yeses](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.15.0/docs/concepts/grants-as-standing-yeses.md)). Where another system keeps a record of a grant, a consent or a connection, the importer proposes `Mandate` for it, graded on structure:
+A grant is a standing yes, not a setting: one set of terms on which one actor may act for one person or organization, until it ends (see [Grants as standing yeses](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.18.0/docs/concepts/grants-as-standing-yeses.md)). Where another system keeps a record of a grant, a consent or a connection, the importer proposes `Mandate` for it, graded on structure:
 
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|
@@ -181,7 +181,7 @@ Converters cannot represent every transformation, refinement or runtime behavior
 
 Broken local JSON Pointers are preserved as `x-oods-unresolved-ref` with an unmapped link and source location; they never become invented relationships. Network and named-anchor references are reported and skipped. Outside-folder and escaping-symlink references refuse the whole import before an outside read. Traversal is bounded to 160 nesting levels and ten million values, including YAML alias expansion.
 
-Imported records use declared titles or natural keys, then identifiers. Samples are deterministic and checked against enum, pattern, format and bounds; unsatisfiable sample constraints are reported. Field help comes only from source descriptions. Date-only values display without a time. Declared relationships use related sample records in form pickers; applications supply their live choices. A relationship drawn from a foreign key makes no list on the other record's page: a team declares its lists in `metadata.relatedLists` on the object whose page shows them.
+Imported records use declared titles or natural keys, then identifiers. An email-address object can use its address as its reference label when the source supplies no title. Authored enum labels travel with the accepted definition and remain visible when you read it back. Samples are deterministic and checked against enum, pattern, format and bounds; unsatisfiable sample constraints are reported. Field help comes only from source descriptions. Date-only values display without a time. Declared relationships use related sample records in form pickers; applications supply their live choices. A relationship drawn from a foreign key makes no list on the other record's page: a team declares its lists in `metadata.relatedLists` on the object whose page shows them.
 
 ## Postgres DDL and migrations
 

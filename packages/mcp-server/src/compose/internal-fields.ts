@@ -27,14 +27,4 @@ export function isUnavailableField(name: string, fields: Record<string, FieldSch
   return fields[name]?.unavailable === true;
 }
 
-/**
- * Display wording never changes an enum's stored value; an authored label wins. s249-m04 (next step 1877): a code of two
- * or three capitals, such as a currency's ISO code ("GBP"), "UTC" or a contrast level ("AA"), keeps its capitals; it read
- * "Gbp". A longer word written in capitals is a word: an imported role's "OWNER" reads "Owner".
- */
-export function enumOptionLabel(value: string, labels?: Record<string, string>): string {
-  if (labels && Object.hasOwn(labels, value)) return labels[value]!;
-  if (/^[A-Z]{2,3}$/.test(value)) return value;
-  const words = value.replace(/([a-z0-9])([A-Z])/g, '$1 $2').split(/[_\-\s]+/).filter(Boolean).join(' ').toLowerCase();
-  return words.charAt(0).toUpperCase() + words.slice(1);
-}
+export { enumOptionLabel } from '@oods/component-contracts';

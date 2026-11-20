@@ -341,10 +341,10 @@
               "ui_hints": {
                 "type": "object",
                 "additionalProperties": {
-                  "type": [
-                    "string",
-                    "boolean",
-                    "number"
+                  "anyOf": [
+                    { "type": ["string", "boolean", "number"] },
+                    { "type": "object", "additionalProperties": { "type": "string" } },
+                    { "type": "array", "items": { "type": "string" } }
                   ]
                 }
               }

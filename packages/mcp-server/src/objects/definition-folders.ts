@@ -8,7 +8,7 @@
  * `object list`, `object validate` and `health` report with the file it came from.
  */
 
-import { load as parseYaml } from 'js-yaml';
+import { loadDefinitionYaml } from './definition-yaml.js';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
@@ -83,7 +83,7 @@ export function scanDefinitions(root: string, suffix: string, headerKey: 'object
       if (!entry.name.endsWith(suffix)) continue;
       let document: unknown;
       try {
-        document = parseYaml(fs.readFileSync(file, 'utf8'));
+        document = loadDefinitionYaml(fs.readFileSync(file, 'utf8'));
       } catch (error) {
         issues.push({ kind: 'malformed', severity: 'error', file: show(file), message: `${show(file)} is not valid YAML, so it is not used: ${parseProblem(error)}` });
         continue;

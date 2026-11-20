@@ -49,7 +49,7 @@ const analysisV11Schema = {
   },
 };
 const manifestSchema = object({
-  schema_version: { enum: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '1.5.0', '1.6.0', '1.7.0', '1.8.0'] }, run_id: string, mode: string, project_id: string,
+  schema_version: { enum: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '1.5.0', '1.6.0', '1.7.0', '1.8.0', '1.9.0'] }, run_id: string, mode: string, project_id: string,
   targets: { type: 'array', minItems: 1, items: object({ name: string, url: string }) },
   environment: object({ timestamp: date }),
   auth: object({ type: { const: 'none' }, redaction: object({ applied: { const: false } }) }),
@@ -79,7 +79,7 @@ const signalSchema = {
 const states = ['measured', 'measured_zero', 'not_measured', 'not_applicable', 'needs_review'];
 const validators = {
   manifest: getAjv().compile(manifestSchema),
-  report: getAjv().compile(object({ kind: { const: 'drift_report' }, schema_version: { enum: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0', '2.1.0'] }, generated_at: date, current_run: object({ id: string }), signals: { type: 'array', items: signalSchema } })),
+  report: getAjv().compile(object({ kind: { const: 'drift_report' }, schema_version: { enum: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0', '2.1.0', '2.2.0'] }, generated_at: date, current_run: object({ id: string }), signals: { type: 'array', items: signalSchema } })),
   index: getAjv().compile(object({ kind: { const: 'report_index' }, schema_version: { const: '1.1.0' }, run_id: string, generated_at: date, artifacts: { type: 'array', items: object({ type: string, path: relative, result_state: { enum: states }, result_note: string }, ['type', 'path']) } })),
   // 1.6.0 retains mode-aware references, collections, scopes and soft-deleted entries as source facts.
   // s244-m04 (next step 1845): 1.7.0 adds a text style's recorded fontWeight, fontLineHeight, lineHeight and letterSpacing.
@@ -154,7 +154,7 @@ export function readDerivedAnalysis(runPath: string): AdmittedAnalysis {
     }
     if (rerunFingerprint) {
       const fingerprint = JSON.parse(retained.get(fingerprintPath)!.toString('utf8'));
-      if (fingerprint.kind !== 'style_fingerprint' || !['1.3.0', '1.4.0'].includes(fingerprint.schema_version)) refuse(`unsupported recomputed style_fingerprint ${String(fingerprint.schema_version)}; accepted: 1.3.0, 1.4.0`);
+      if (fingerprint.kind !== 'style_fingerprint' || !['1.3.0', '1.4.0', '1.5.0'].includes(fingerprint.schema_version)) refuse(`unsupported recomputed style_fingerprint ${String(fingerprint.schema_version)}; accepted: 1.3.0, 1.4.0, 1.5.0`);
     }
     // Hash every declared retained file, not just the two comparands used by the current screen.
     for (const key of Object.keys(manifest.hashes)) readAttested(key);
@@ -193,8 +193,8 @@ export function readDerivedAnalysis(runPath: string): AdmittedAnalysis {
     const entries = index.artifacts.filter((entry: Doc) => entry.type === 'drift_report' && entry.path === 'drift_report.json');
     if (entries.length !== 1) refuse('missing or duplicate drift result');
     const resultState = entries[0].result_state ?? 'unknown';
-    // Stage1 2.0 can measure declared family presence while emitting no value-drift signals.
-    const measuredPresence = report.schema_version === '2.0.0' && report.declared_presence?.state === 'measured';
+    // These drift report versions can measure declared family presence while emitting no value-drift signals.
+    const measuredPresence = ['2.0.0', '2.1.0', '2.2.0'].includes(report.schema_version) && report.declared_presence?.state === 'measured';
     if ((resultState === 'measured' && report.signals.length === 0 && !measuredPresence) || (['measured_zero', 'not_measured', 'not_applicable'].includes(resultState) && report.signals.length !== 0)) refuse('result state contradicts signal count');
     if (hash(readConfined('manifest.json')) !== manifestSha256) refuse('manifest changed during admission');
     return { runPath: root, manifestSha256, manifest, analysis, sourceManifest, report, index, figTokens, comparands: Object.fromEntries(documents), resultState, resultNote: entries[0].result_note ?? 'No measurement state was recorded; absence is not evidence of conformance.',

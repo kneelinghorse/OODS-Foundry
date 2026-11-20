@@ -79,13 +79,24 @@ for (const record of fresh().list({ pageSize: 1000 }).records.concat(fresh().lis
 process.stdout.write(JSON.stringify(out));
 `;
 
+// Only a new history line at the comparison clock takes the revised multiword status label.
+// Every seeded line, actor, state code, reason and refusal still compares to the historical store.
+function expectedHistory<T>(results: T): T {
+  return JSON.parse(JSON.stringify(results, function (key, value) {
+    if (key !== 'title' || this.at !== '2026-11-20T09:00:00.000Z') return value;
+    if (this.to === 'past_due' && value === 'Past Due') return 'Past due';
+    if (this.to === 'pending_cancellation' && value === 'Pending Cancellation') return 'Pending cancellation';
+    return value;
+  }));
+}
+
 describe("Cancel's behaviour is unchanged for the three objects that cancel (s249-m03, Interface 6)", () => {
   for (const object of OBJECTS) {
-    it(`${object}: cancel() writes and says what 0.15.0's did, for every sample, and an actor only signs its line`, () => {
+    it(`${object}: cancel() preserves the historical result for every sample with current history titles and the acting person's signature`, () => {
       const code = schemas[object].workflow!.data.cancellationReasonCodes?.[0] ?? 'customer_request';
       const old = runGeneratedStore(beforeFiles(object), CANCEL_SCRIPT(code)) as Array<{ result: { record?: Record<string, unknown>; refused?: string } }>;
       const now = runGeneratedStore(apps[object].react.files, CANCEL_SCRIPT(code)) as typeof old;
-      expect(now).toEqual(old);
+      expect(now).toEqual(expectedHistory(old));
       // Both kinds of result are compared, so the check cannot pass on refusals alone, or on writes alone.
       expect(old.some(entry => entry.result.record), object).toBe(true);
       expect(old.some(entry => entry.result.refused), object).toBe(true);
@@ -96,18 +107,27 @@ describe("Cancel's behaviour is unchanged for the three objects that cancel (s24
         const history = record.state_history as Array<Record<string, unknown>>;
         const { actor_id, actor_name, actor_kind, ...line } = history.at(-1)!;
         expect({ actor_id, actor_name, actor_kind }, `${object} ${index}`).toEqual({ actor_id: ACTOR.id, actor_name: ACTOR.name, actor_kind: ACTOR.kind });
-        expect({ ...entry, result: { record: { ...record, state_history: [...history.slice(0, -1), line] } } }, `${object} ${index}`).toEqual(old[index]);
+        expect({ ...entry, result: { record: { ...record, state_history: [...history.slice(0, -1), line] } } }, `${object} ${index}`).toEqual(expectedHistory(old[index]));
       });
     });
 
-    it(`${object}: the Cancel bar and its gate, the CancellationForm and the app around them are 0.15.0's`, () => {
+    it(`${object}: the Cancel bar and its gate, the CancellationForm and its handlers preserve the historical contract after the notice moved`, () => {
       for (const framework of ['react', 'vue'] as const) {
         const detail = file(apps[object][framework], `src/screens/Detail.${framework === 'react' ? 'tsx' : 'vue'}`)!;
         expect(cancelLines(detail), `${object} ${framework}`).toEqual(lines[object][framework]);
       }
-      // The app's own files: the CancellationForm, its Confirm and Keep buttons, the handlers and every word around them.
-      expect(file(apps[object].react, 'src/App.tsx')).toBe(before(object, 'src/App.tsx'));
-      expect(file(apps[object].vue, 'src/App.vue')).toBe(before(object, 'src/App.vue'));
+      // Sprint 251 places the same notice immediately below navigation in every workflow.
+      for (const framework of ['react', 'vue'] as const) {
+        const name = framework === 'react' ? 'src/App.tsx' : 'src/App.vue';
+        const notice = framework === 'react'
+          ? '<p className="workflow-notice" role="status">{state.notice}</p>'
+          : '<p class="workflow-notice" role="status">{{ state.notice }}</p>';
+        const previous = before(object, name);
+        const withoutNotice = framework === 'react'
+          ? previous.replace('    ' + notice + '\n', '')
+          : previous.replace('</section>' + notice, '</section>');
+        expect(file(apps[object][framework], name)).toBe(withoutNotice.replace('</nav>', '</nav>\n    ' + notice));
+      }
       for (const name of ['src/actions.ts', 'src/sample-data.ts']) {
         for (const framework of ['react', 'vue'] as const) expect(file(apps[object][framework], name), `${object} ${framework} ${name}`).toBe(before(object, name));
       }
@@ -119,7 +139,13 @@ describe("Cancel's behaviour is unchanged for the three objects that cancel (s24
         const now = file(apps[object][framework], 'src/application.ts')!;
         const old = before(object, 'src/application.ts');
         const strip = (text: string) => text.replace(/^const fieldByNodeId: .*$/m, '');
-        expect(strip(now), `${object} ${framework} application.ts`).toBe(strip(old));
+        // The loading screen clears the notice. A successful save carries it to its destination.
+        const expected = old
+          .replace('navigate(screen: Screen, id = state.id)', "navigate(screen: Screen, id = state.id, notice = '')")
+          .replace('publish({ screen, id, cancelOpen:', "publish({ screen, id, notice: '', cancelOpen:")
+          .replace('publish({ records: list.records', 'publish({ notice, records: list.records')
+          .replace("publish({ notice: 'Changes saved in this session.' }); await navigate(destination)", "await navigate(destination, state.id, 'Changes saved in this session.')");
+        expect(strip(now), `${object} ${framework} application.ts`).toBe(strip(expected));
         const removed = Object.entries(fieldMap(old)).filter(([node]) => !Object.hasOwn(fieldMap(now), node));
         expect(Object.fromEntries(Object.entries(fieldMap(old)).filter(([node]) => Object.hasOwn(fieldMap(now), node))), `${object} ${framework}`).toEqual(fieldMap(now));
         expect(removed.length, object).toBeGreaterThan(0);
@@ -147,8 +173,8 @@ describe("Cancel's behaviour is unchanged for the three objects that cancel (s24
         expect.stringMatching(/^const entry: HistoryEntry = \{ title: target ===/),
       ]);
       const named: RegExp[] = [
-        ordered ? /^import \{ recordCollectionEvents, recordMatchesSearch, declaredMoveRefusal, isFinalState, type CollectionEvent, type DeclaredStateOrder \} from '@oods\/component-contracts';$/
-          : /^import \{ recordCollectionEvents, recordMatchesSearch, (?:restartedBillingPeriod, )?type CollectionEvent \} from '@oods\/component-contracts';$/,
+        ordered ? /^import \{ enumOptionLabel, recordCollectionEvents, recordMatchesSearch, declaredMoveRefusal, isFinalState, type CollectionEvent, type DeclaredStateOrder \} from '@oods\/component-contracts';$/
+          : /^import \{ enumOptionLabel, recordCollectionEvents, recordMatchesSearch, (?:restartedBillingPeriod, )?type CollectionEvent \} from '@oods\/component-contracts';$/,
         /^\/\*\* Who is acting, when the app is told: the store signs each line it writes with them\. Not a viewer: nothing is shown or hidden by it\. \*\/$/,
         /^export interface StoreActor \{ id: string; name: string; kind: 'person' \| 'agent' \| 'system' \}$/,
         /^export interface StoreOptions \{ empty\?: boolean; fail\?: boolean; latency\?: number; now\?: \(\) => string; seed\?: DomainRecord\[\]; actor\?: StoreActor \}$/,
@@ -161,7 +187,7 @@ describe("Cancel's behaviour is unchanged for the three objects that cancel (s24
         /^ {6}const entry: HistoryEntry = \{ title: moved .*, \.\.\.signature \};$/,
         /^ {6}\/\/ One search rule \(recordMatchesSearch\): any text or number at any depth, its history included; never a key name\.$/,
         /^ {10}&& recordMatchesSearch\(record, query\.search\);$/,
-        /^ {6}const entry: HistoryEntry = \{ title: target === .*atPeriodEnd: deferred, \.\.\.signature \};$/,
+        /^ {6}const entry: HistoryEntry = \{ title: enumOptionLabel\(target\).*atPeriodEnd: deferred, \.\.\.signature \};$/,
       ];
       expect(added).toHaveLength(named.length);
       added.forEach((line, index) => expect(line, `${object} line ${index}`).toMatch(named[index]!));
@@ -184,10 +210,10 @@ process.stdout.write(JSON.stringify(out));
 
 describe('an object that declares no order saves as before (s249-m03, Interface 10)', () => {
   for (const object of ['Subscription', 'Transaction'] as const) {
-    it(`${object}: an edit and every status move save exactly as 0.15.0's store saved them`, () => {
+    it(`${object}: an edit and every status move preserve the historical record with current history titles`, () => {
       const old = runGeneratedStore(beforeFiles(object), UPDATE_SCRIPT);
       const now = runGeneratedStore(apps[object].react.files, UPDATE_SCRIPT);
-      expect(now).toEqual(old);
+      expect(now).toEqual(expectedHistory(old));
       expect((old as unknown[]).length).toBeGreaterThan(10);
     });
   }

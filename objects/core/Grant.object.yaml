@@ -1,6 +1,6 @@
 object:
   name: Grant
-  version: 1.0.0
+  version: 1.0.1
   domain: core.governance
   description: A standing yes that one actor may act for a person or organization, on stated terms, until it ends.
   tags:
@@ -14,8 +14,7 @@ object:
 # it covers, its three lines for that party, its limits, its end, its use as the product counts it, and how it ended (the
 # Mandate trait's fields). Its terms are never edited in place: a change of terms is a new grant that names the one it
 # replaces, which ends as replaced and is kept whole, and "always allow" for one action is a new grant inside the first,
-# with its own bounds and end. Taking a grant back is its Revoke, which asks once first and ends the grants inside it
-# with it, or the same move of its status to revoked on its form. The one who answers for it is the owner, a person or a
+# with its own bounds and end. Taking a grant back is its Revoke, which asks once first and ends active or paused grants inside it, or the same move of its status to revoked on its form. The one who answers for it is the owner, a person or a
 # team, never an agent. OODS Foundry keeps and shows the record; it does not check a grant against what an actor does,
 # expire or renew one, or decide whether an action was allowed. A generated app's Revoke, Pause and Resume change the
 # app's own records when a person asks, and its store keeps the declared order; they stop nothing outside the app.
@@ -50,7 +49,7 @@ traits:
         declined: []
         withdrawn: []
       # s249-m03: the moves a person makes on a grant. Revoke ends it, asks once first, writes the note given (if any) as
-      # why it ended and who ended it when the app is told, and ends the grants inside it with it. Pause can be undone:
+      # why it ended and who ended it when the app is told, and ends active or paused grants inside it. A request stays open. Pause can be undone:
       # Resume gives it again, and only someone who may give grants for the party should resume it (shown, not checked).
       # A move to expired, replaced, declined or withdrawn has no action: it saves as an edit, from the form's status
       # select or from your product.
@@ -130,6 +129,9 @@ metadata:
   steward: Design team
   maturity: alpha
   changelog:
+    - version: 1.0.1
+      date: "2026-11-19"
+      description: Declares Revoke, Pause and Resume, related records under the grant and its closure. The closure row dates its last report, and the detail explains a stored None.
     - version: 1.0.0
       date: "2026-11-14"
       description: Initial Grant object, the fifteenth public reference object; a grant is a standing yes, not a setting.
@@ -178,7 +180,7 @@ metadata:
       empty: No closure here is of this grant.
       afterEnd: true
       sources:
-        - { from: Closure, via: closes_id, lines: true, row: { line: [summary], time: ended_at } }
+        - { from: Closure, via: closes_id, lines: true, row: { line: [summary], time: { field: updated_at, says: Last report } } }
     # Its seats' own records as they stand now, by forward lookup; a seat with no record here shows its kept name and kind.
     - id: parties
       label: Its parties now

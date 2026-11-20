@@ -3,7 +3,7 @@ import type { TraitDefinition } from '../../src/core/trait-definition.ts';
 const MarkLineTrait = {
   trait: {
     name: 'MarkLine',
-    version: '0.1.0',
+    version: '0.2.1',
     description: 'Canonical line mark for trends, rates, and progressions.',
     category: 'viz.mark',
     tags: ['viz', 'mark', 'line', 'trend'],
@@ -13,8 +13,8 @@ const MarkLineTrait = {
     {"name": "chart", "type": "object", "required": false, "description": "Optional read-only chart declaration binding existing domain fields; projects into supported detail and dashboard views."},
     {"name": "title", "type": "string", "required": false, "description": "Title for the bound chart and its accessible figure."},
     {"name": "description", "type": "string", "required": false, "description": "Description of the bound chart measurements and units."},
-    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
-    {"name": "previewSvg", "type": "string", "required": false, "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."},
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+    {"name": "previewSvg", "type": "string", "required": false, "description": "Static SVG returned by viz_render for the authored sample; omitted until a chart is rendered."},
 
     {
       name: 'curve',

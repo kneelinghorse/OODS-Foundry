@@ -319,7 +319,7 @@ describe('component map coverage', () => {
 
   it('writes ownership as one phrase when the owner label is bound', () => {
     const named = renderMappedComponent(makeNode('OwnershipMeta', { ownerLabel: 'Pricing and packaging', ownerType: 'team' }));
-    expect(named).toContain('>Owned by Pricing and packaging · team</span>');
+    expect(named).toContain('>Owned by Pricing and packaging · Team</span>');
     expect(named).not.toContain('Owner Type');
     expect(renderMappedComponent(makeNode('OwnershipMeta', { ownerLabel: 'Owner unavailable', ownerType: 'team' }))).toContain('>Team-owned</span>');
     expect(renderMappedComponent(makeNode('OwnershipMeta', { ownerType: 'team' }))).toContain('Owner Type:');
@@ -747,6 +747,13 @@ describe('component map coverage', () => {
     expect(html).toContain('role="log"');
     expect(html).toContain('<ol data-timeline-events="true">');
     expect(html).toContain(expectedLabel);
+  });
+
+  it('uses authored state names consistently for current, next and historical states', () => {
+    const html = renderMappedComponent(makeNode('StatusTimeline', { status: 'past_due', enumLabels: { past_due: 'Payment overdue' }, allowedTransitions: ['past_due'], history: [{ from: 'still_running', to: 'past_due' }] }));
+    expect(html).toContain('Current status: Payment overdue');
+    expect(html).toContain('Allowed transitions: Payment overdue');
+    expect(html).toContain('Still running → Payment overdue');
   });
 
   it('renders timeline children in ordered event slot', () => {

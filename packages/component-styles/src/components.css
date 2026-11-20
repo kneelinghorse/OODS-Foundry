@@ -2044,9 +2044,14 @@ div.oods-field[data-oods-component='Checkbox'] { display: grid; grid-template-co
 }
 [data-oods-collection='rows'] > .oods-collection .oods-collection-row > :first-child :is([data-size='sm'], [data-oods-component='Text'] + [data-oods-component='Text']) { color: var(--sys-text-muted, GrayText); font-weight: var(--sys-text-scale-body-sm-font-weight, 400); }
 [data-oods-collection='rows'] > .oods-collection .oods-collection-row :is(time, [data-oods-component='RelativeTimestamp']) { color: var(--sys-text-muted, GrayText); font-size: var(--sys-text-scale-body-sm-font-size, 14px); }
-/* The time reads last, after the status and meta. On a phone the title takes the first line and the status, meta and time
- * wrap together under it, instead of one line each. */
-[data-oods-collection='rows'] > .oods-collection .oods-collection-row > :is(time, [data-oods-component='RelativeTimestamp']) { order: 1; }
+/* Record facts use document order. A title and its summary still stack. */
+.oods-collection-row [data-oods-component='LabelCell']:has(> [data-oods-label-cell-caption]) {
+  display: block;
+  max-inline-size: 100%;
+  overflow-wrap: anywhere;
+}
+.oods-collection-row [data-oods-label-cell-caption] { color: var(--sys-text-secondary, GrayText); }
+[data-oods-collection='rows'] > .oods-collection .oods-collection-row > :is(time, [data-oods-component='RelativeTimestamp']) { flex-basis: 100%; }
 @media (max-width: 600px) {
   [data-oods-collection='rows'] > .oods-collection .oods-collection-row { flex-direction: row; align-items: center; column-gap: var(--sys-control-gap, 0.5rem); row-gap: var(--sys-control-gap-compact, 0.25rem); }
   [data-oods-collection='rows'] > .oods-collection .oods-collection-row > :first-child { flex: none; inline-size: 100%; }

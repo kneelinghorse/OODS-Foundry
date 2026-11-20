@@ -11,7 +11,7 @@ import { javascriptSingleQuotedString } from './emission-safety.js';
 import { fieldLabel } from '../compose/label-generator.js';
 import { enumOptionLabel } from '../compose/internal-fields.js';
 
-const displayMap = (labels: Record<string, string>): string => `{${Object.entries(labels).map(([key, value]) => `${javascriptSingleQuotedString(key)}:${javascriptSingleQuotedString(value)}`).join(',')}}`;
+const displayMap = (labels: Record<string, string>): string => `{${Object.entries(labels).map(([key, value]) => `${key === '__proto__' ? "['__proto__']" : javascriptSingleQuotedString(key)}:${javascriptSingleQuotedString(value)}`).join(',')}}`;
 
 // ---------------------------------------------------------------------------
 // Field type mapping (object schema → TypeScript types)
@@ -61,6 +61,13 @@ export function snakeToCamel(name: string): string {
   return name.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase());
 }
 
+export function readOnlyScalarExpression(value: string, entry: FieldSchemaEntry): string {
+  const code = Boolean(entry.enum?.length || /(?:status|state|event\.type|collection_method|pricing_model|interval)$/.test(entry.semanticType ?? ''));
+  const format = entry.format || entry.valueLabels ? `, ${JSON.stringify(entry.format) ?? 'undefined'}` : '';
+  const labels = entry.valueLabels ? `, ${displayMap(entry.valueLabels)}` : '';
+  return `formatReadOnlyValue(${value}, ${JSON.stringify(entry.type.replace(/\?$/, ''))}, ${code}${format}${labels})`;
+}
+
 /** A field-authored display fallback never changes its editor or stored value. */
 export function displayFieldExpression(
   field: string,
@@ -74,6 +81,10 @@ export function displayFieldExpression(
   if (entry?.enum?.length) {
     const labels = Object.fromEntries(entry.enum.map(value => [value, enumOptionLabel(value, entry.enumLabels)]));
     primary = `(Object.entries(${displayMap(labels)}).find(([key]) => key === String(${primaryValue}))?.[1] ?? ${primaryValue})`;
+  }
+  if (entry?.valueLabels) {
+    const label = `Object.entries(${displayMap(entry.valueLabels)}).find(([key]) => key === String(${primaryValue}))?.[1]`;
+    primary = `((${primaryValue} != null && typeof ${primaryValue} !== 'object' ? ${label} : undefined) ?? ${primary})`;
   }
   if (entry?.titleReferences?.length) {
     const labels = entry.titleReferences.filter(name => ownFieldSchemaEntry(fields, name)).map(name => {
@@ -1533,6 +1544,14 @@ export function resolveFrameworkRecipeProps(
   // expression and must not survive as an unsupported string-valued prop.
   if (node.component === 'RelativeTimestamp' && Object.hasOwn(props, 'fallbackField')) {
     consumedProps.add('fallbackField');
+    const { field, fallbackField, caption } = props;
+    if (typeof caption === 'string' && typeof field === 'string' && typeof fallbackField === 'string'
+      && ownFieldSchemaEntry(objectSchema, field) && ownFieldSchemaEntry(objectSchema, fallbackField)) {
+      const fallbackLabel = objectSchema![fallbackField]!.displayLabel ?? fieldLabel(fallbackField);
+      consumedProps.add('caption');
+      bindings.push({ sourceProp: 'caption', targetProp: 'caption', expression:
+        `${snakeToCamel(field)} == null && ${snakeToCamel(fallbackField)} != null ? ${javascriptSingleQuotedString(fallbackLabel)} : ${javascriptSingleQuotedString(caption)}` });
+    }
   }
 
   return {

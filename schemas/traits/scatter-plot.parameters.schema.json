@@ -6,12 +6,12 @@
   "properties": {
     "renderIntent": {
       "type": "string",
-      "description": "JSON-encoded Cartesian viz.render input fragment; data rows are supplied by the consumer.",
+      "description": "JSON-encoded Cartesian viz_render input fragment; data rows are supplied by the consumer.",
       "default": "{}"
     },
     "previewSvg": {
       "type": "string",
-      "description": "Static SVG returned by viz.render for the authored sample."
+      "description": "Static SVG returned by viz_render for the authored sample."
     }
   },
   "required": [],

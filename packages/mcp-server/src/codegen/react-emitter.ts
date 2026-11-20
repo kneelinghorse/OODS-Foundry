@@ -24,6 +24,7 @@ import {
   fieldValuePropTarget,
   resolveFrameworkChildContent,
   resolveFrameworkRecipeProps,
+  readOnlyScalarExpression,
   ownFieldSchemaEntry,
   resolveFieldProps,
   isReferenceField,
@@ -422,10 +423,8 @@ function reactFieldExpression(
     if (isReferenceField(entry)) return referenceFieldExpression(sourceField as string, objectSchema);
     if (entry.enum?.length) return fieldName;
     // A labelled identifier row keeps its ID; the join projection belongs to record titles.
-    if (entry.titleReferences?.length) fieldName = snakeToCamel(sourceField as string);
-    const code = Boolean(entry.enum?.length || /(?:status|state|event\.type|collection_method|pricing_model|interval)$/.test(entry.semanticType ?? ''));
-    // s223-m01 (#2527 ruling 4): a declared number format (percent, quantity) travels with the field.
-    return `formatReadOnlyValue(${fieldName}, ${JSON.stringify(entry.type.replace(/\?$/, ''))}, ${code}${entry.format ? `, ${JSON.stringify(entry.format)}` : ''})`;
+    if (entry.titleReferences?.length || entry.valueLabels) fieldName = snakeToCamel(sourceField as string);
+    return readOnlyScalarExpression(fieldName, entry);
   }
   // A heading standing in for a record with no title shows the record's first line only.
   if (node.component === 'Text' && isChildren && node.meta?.headingExcerpt === true) {

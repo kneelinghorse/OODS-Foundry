@@ -79,7 +79,7 @@ try {
   );
 
   const consumerSource = `
-import { readFileSync } from 'node:fs';
+import { readFileSync, realpathSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import React from 'react';
@@ -91,14 +91,13 @@ import { getStatusPresentation } from '@oods/components-react/status';
 import * as tableFamily from '@oods/components-react/table';
 
 // Nucleus membership comes from the packed @oods/component-contracts tarball,
-// resolved per specifier and rejected if it resolves under the repository root.
-const repositoryRoot = ${JSON.stringify(repositoryRoot)};
+// Each real path must stay inside this consumer's installed packages. The consumer may itself live inside a worktree.
+const installed = realpathSync(process.cwd() + '/node_modules') + '/';
 const contractsPath = fileURLToPath(import.meta.resolve('@oods/component-contracts'));
-if (!contractsPath.startsWith(process.cwd())) throw new Error('Contracts resolved outside the isolated consumer: ' + contractsPath);
-if (contractsPath.startsWith(repositoryRoot + '/')) throw new Error('Contracts resolved to repository source: ' + contractsPath);
+if (!realpathSync(contractsPath).startsWith(installed)) throw new Error('Contracts resolved outside the isolated consumer: ' + contractsPath);
 const resolvedSpecifiers = Object.fromEntries(['@oods/component-contracts', '@oods/components-react', '@oods/components-react/readiness', '@oods/components-react/status', '@oods/components-react/table', '@oods/component-styles/css', '@oods/tokens/css', 'react', 'react-dom/server'].map((specifier) => {
   const resolved = fileURLToPath(import.meta.resolve(specifier));
-  if (!resolved.startsWith(process.cwd() + '/') || resolved.startsWith(repositoryRoot + '/')) throw new Error('Specifier escaped isolated consumer: ' + specifier);
+  if (!realpathSync(resolved).startsWith(installed)) throw new Error('Specifier escaped isolated consumer: ' + specifier);
   return [specifier, resolved];
 }));
 const canonicalIds = [...NUCLEUS_COMPONENT_IDS];
@@ -134,7 +133,7 @@ for (const id of breadthIds) {
   if (id === 'AddressEditor' && (!markup.includes('data-form-type="address-editor"') || !markup.includes('<h2>Shipping address</h2>') || !markup.includes('name="street"') || !markup.includes('name="postalCode"'))) throw new Error('Packed AddressEditor lost form/input semantics.');
   if (id === 'PreferenceEditor' && (!markup.includes('data-form-type="preference-editor"') || !markup.includes('name="namespace"') || !markup.includes('<textarea') || !markup.includes('billing'))) throw new Error('Packed PreferenceEditor lost select/textarea semantics.');
   if (id === 'RoleAssignmentForm' && (!markup.includes('data-form-type="role-assignment"') || !markup.includes('name="role"') || !markup.includes('>Owner</option>') || !markup.includes('name="assignee"'))) throw new Error('Packed RoleAssignmentForm lost select/input semantics.');
-  if (id === 'StatusSelector' && (!markup.includes('data-summary-type="status-selector"') || !markup.includes('name="status"') || !markup.includes('selected') || !markup.includes('>active</option>'))) throw new Error('Packed StatusSelector lost labelled select semantics.');
+  if (id === 'StatusSelector' && (!markup.includes('data-summary-type="status-selector"') || !markup.includes('name="status"') || !markup.includes('selected') || !markup.includes('value="active" selected="">Active</option>'))) throw new Error('Packed StatusSelector lost labelled select semantics.');
   if (id === 'TagInput' && (!markup.includes('data-form-type="tag-input"') || !markup.includes('<legend>Tags</legend>') || !markup.includes('name="tag"') || !markup.includes('placeholder="Add a tag"') || !markup.includes('data-tag-item'))) throw new Error('Packed TagInput lost fieldset/input/tag semantics.');
   if (id === 'TemplatePicker' && (!markup.includes('data-form-type="template-picker"') || !markup.includes('name="template"') || !markup.includes('>Welcome</option>') || !markup.includes('name="channel"'))) throw new Error('Packed TemplatePicker lost select semantics.');
   breadthProof.push({ componentId: id, markup });
@@ -143,7 +142,7 @@ const emptyPreview = renderToString(React.createElement(components.VizAreaPrevie
 if (!emptyPreview.includes('data-viz-preview-placeholder') || !emptyPreview.replace(/<!--.*?-->/g, '').includes('Area preview (640 x 360)')) throw new Error('Packed empty preview placeholder missing.');
 
 const presentation = getStatusPresentation('subscription', 'past_due');
-if (presentation.tone !== 'critical' || presentation.label !== 'Past Due') throw new Error('Packed status registry failed.');
+if (presentation.tone !== 'critical' || presentation.label !== 'Past due') throw new Error('Packed status registry failed.');
 const tableKeys = Object.keys(tableFamily).sort();
 const expectedTableKeys = ['Table', 'TableBody', 'TableCaption', 'TableCell', 'TableHead', 'TableHeaderCell', 'TableRow'].sort();
 if (JSON.stringify(tableKeys) !== JSON.stringify(expectedTableKeys)) throw new Error('Packed Table family differs: ' + JSON.stringify(tableKeys));

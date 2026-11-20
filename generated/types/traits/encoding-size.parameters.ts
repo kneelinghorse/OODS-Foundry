@@ -22,7 +22,7 @@ export interface EncodingSizeTraitParameters {
    */
   maxPixelArea?: number;
   /**
-   * JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.
+   * JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand.
    */
   renderIntent?: string;
 }

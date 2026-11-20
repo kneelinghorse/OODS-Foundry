@@ -3,14 +3,14 @@ import type { TraitDefinition } from '../../src/core/trait-definition.ts';
 const ScaleLinearTrait = {
   trait: {
     name: 'ScaleLinear',
-    version: '0.1.0',
+    version: '0.2.1',
     description: 'Shared linear/continuous scale definition.',
     category: 'viz.scale',
     tags: ['viz', 'scale', 'linear'],
   },
 
   parameters: [
-    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
 
     {
       name: 'domainMin',

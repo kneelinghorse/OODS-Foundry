@@ -95,7 +95,7 @@ describe('@oods/components-vue shared ported scenarios', () => {
           break;
         }
         case 'status-badge-mapped': {
-          expect(component.text()).toContain('Past Due');
+          expect(component.text()).toContain('Past due');
           expect(component.attributes('data-tone')).toBe('critical');
           expect(component.attributes('title')).toContain('Renewal payment failed');
           // s222-m02 (#2502 ruling 11): the status mark is the shared SVG alert icon, not the ⚠︎ glyph.
@@ -105,7 +105,7 @@ describe('@oods/components-vue shared ported scenarios', () => {
         }
         case 'status-timeline-history': {
           expect(component.get('[data-timeline-current="true"]').text()).toContain('Current status: Active');
-          expect(component.get('[data-timeline-transitions="true"]').text()).toContain('past_due, cancelled');
+          expect(component.get('[data-timeline-transitions="true"]').text()).toContain('Past due, Cancelled');
           expect(component.get('[data-timeline-empty="true"]').text()).toBe('No events');
           break;
         }

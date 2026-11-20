@@ -1,6 +1,6 @@
 trait:
   name: Actor
-  version: 1.0.1
+  version: 1.0.2
   description: |
     The ability to act: an object that composes Actor can be assigned work, hold a role, own a record and appear in
     a record's history as the one who made a change. User composes it as a person; Agent composes it as an agent.
@@ -16,7 +16,7 @@ trait:
       an owner          Ownerable's owner_id with owner_type
 
     The kind is a parameter, never a record field: every record of an object is the same kind of actor, so a User's
-    records and screens are unchanged by composing it. An actor of kind agent is marked "Agent" beside its name in
+    records and screens are unchanged by composing it. An actor of kind agent is marked "Agent" in
     list, card and detail views, so no one reads an agent's record as a person's. actor_kind on a history entry or a
     membership uses the same three words.
   category: core
@@ -34,7 +34,7 @@ parameters:
     description: |
       What every record of this object is when it acts: person (someone's own account), agent (software that acts,
       on its own behalf or for someone) or system (the product itself, such as a scheduled job). An agent is marked
-      "Agent" beside its name.
+      "Agent" in lists, cards and its own page.
     default: person
     validation:
       enum:
@@ -56,7 +56,7 @@ metadata:
   maturity: alpha
   accessibility:
     keyboard: Actor adds no interactive control.
-    screenreader: An agent's "Agent" badge is text beside its name, so it is read with the name.
+    screenreader: The badge exposes the word "Agent" as text.
   # Actor declares no recipe of its own: an agent's badge in list, card and detail is placed by the composer, since no
   # view extension can depend on the kind parameter.
   regionsUsed: []

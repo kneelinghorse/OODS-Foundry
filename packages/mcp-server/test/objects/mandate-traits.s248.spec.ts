@@ -73,7 +73,7 @@ describe('core/Mandate is a shipped trait', () => {
   it('holds the record\'s fields, every id a plain string so an imported reference can bind, none required', () => {
     expect(listTraits()).toContain('Mandate');
     const trait = loadTrait('core/Mandate');
-    expect(trait.trait).toMatchObject({ name: 'Mandate', version: '1.1.0', category: 'core' });
+    expect(trait.trait).toMatchObject({ name: 'Mandate', version: '1.1.1', category: 'core' });
     expect(Object.keys(trait.schema)).toEqual(FIELDS);
     for (const field of FIELDS.filter(name => name.endsWith('_id'))) expect(trait.schema[field]!.type, field).toBe('string');
     expect(Object.entries(trait.schema).filter(([, field]) => field.required)).toEqual([]);
@@ -349,8 +349,8 @@ describe('the record trait composed onto test objects, in every context where it
 
   it('places its facts on the detail page as labelled rows in the order it declares them, the money as money and the end in the party\'s words then UTC', async () => {
     const order = ['Covers', 'Resend returned transfers', 'For', 'Tidewater Co-op', 'Held by', 'Billing Agent', 'Kind of holder', 'Agent', 'Given by', 'Ruth Adeyemi', 'Kind of giver', 'Person',
-      'Given as', 'Finance manager, Tidewater Co-op', 'Asked for by', 'Billing Agent', 'Kind of asker', 'Agent', 'Allowed actions', 'Resend a payment', 'Asks first for', 'None',
-      'Never allowed', 'None', 'Most per use', '$12,000.00', 'Most per period', '$30,000.00', 'Period', 'Month', 'Uses per period', '3', 'Conditions', 'Only a payment the bank returned',
+      'Given as', 'Finance manager, Tidewater Co-op', 'Asked for by', 'Billing Agent', 'Kind of asker', 'Agent', 'Allowed actions', 'Resend a payment', 'Asks first for', 'No listed action needs a separate yes',
+      'Never allowed', 'No additional exclusions listed', 'Most per use', '$12,000.00', 'Most per period', '$30,000.00', 'Period', 'Month', 'Uses per period', '3', 'Conditions', 'Only a payment the bank returned',
       // s249-m04 (Interface 13): an instant names its zone, so its label no longer does; s249-m05's fresh read names the
       // instants apart from the party's words and the last use's line ("End time", "Last used", "Last used for").
       'Ends', 'At the end of 31 Dec 2026, Tauranga time', 'End time', 'Dec 31, 2026, 10:59 AM UTC', 'Time zone', 'Pacific/Auckland', 'Uses', '1', 'Last used', 'Oct 20, 2026',
@@ -370,7 +370,10 @@ describe('the record trait composed onto test objects, in every context where it
   it('places the holder, the party and the end on a list row and a card, under the grant\'s name and what it covers', async () => {
     for (const context of ['list', 'card'] as const) {
       const page = await pages('Consent', context, [full]);
-      for (const renderer of RENDERERS) inOrder(shown(page[renderer]), ['Resend returned transfers', 'Billing Agent', 'Held by', 'Tidewater Co-op', 'For', 'At the end of 31 Dec 2026, Tauranga time', 'Ends'], `${renderer} ${context}`);
+      const facts = context === 'list'
+        ? ['Held by', 'Billing Agent', 'For', 'Tidewater Co-op', 'Ends', 'At the end of 31 Dec 2026, Tauranga time']
+        : ['Billing Agent', 'Held by', 'Tidewater Co-op', 'For', 'At the end of 31 Dec 2026, Tauranga time', 'Ends'];
+      for (const renderer of RENDERERS) inOrder(shown(page[renderer]), ['Resend returned transfers', ...facts], `${renderer} ${context}`);
     }
     // The list's summary line is what the grant covers.
     const list = await pages('Consent', 'list', [sparse]);

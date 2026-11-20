@@ -1,6 +1,6 @@
 trait:
   name: Approvable
-  version: 1.1.0
+  version: 1.1.1
   description: |
     The ability to be approved: the thing's own rule for which change needs which level of yes, from how many and from
     whom, and its outcome, worked out from the approvals that still stand. The approvals themselves are records of
@@ -57,33 +57,33 @@ parameters:
     required: false
     description: |
       Which change needs which level: each key is a change (a lifecycle state the thing moves to, such as published,
-      or a named action, such as resend), each value a declared level. A change not named needs no approval.
+      or a named action, such as resend), each value a declared level. Under this rule your product requires no approval for an unlisted change.
     default: {}
 
   - name: approvalsNeeded
     type: "Record<string, number>"
     required: false
     description: |
-      How many yeses each level needs, from different people, keyed by level. A level not named needs one. Counting
-      rules beyond a declared number are not modelled.
+      How many eligible approvers your product requires at each named level. The map starts empty.
+      For a level with no count, the rule calls for one eligible approver. Your product checks and counts the answers.
     default: {}
 
   - name: askerMayAnswer
     type: boolean
     required: false
-    description: Whether the one who asked may also give the yes. Off by default, so no one approves their own ask.
+    description: Whether your product permits the asker to give the yes. The default is false. Your product checks who answered.
     default: false
 
   - name: agentLevels
     type: string[]
     required: false
-    description: The levels an agent's yes may satisfy. Empty by default, so only a person's yes counts.
+    description: The levels for which your product accepts an agent’s yes. The default list is empty. Your product checks who answered.
     default: []
 
   - name: lapsesOnChange
     type: boolean
     required: false
-    description: Whether a yes stops standing when the thing changes after it was given (it becomes out of date).
+    description: Whether your product marks an earlier yes out of date when the thing changes. OODS Foundry keeps the setting.
     default: true
 
   - name: inAdvance
@@ -101,7 +101,8 @@ parameters:
     required: true
     description: |
       The outcomes `approval_state` can hold, as the product works them out: not required, waiting, approved,
-      declined, out of date by default. A rule that opens changes in advance may add allowed in advance
+      declined, out of date by default. Not required means the rule asks for no approval for this change.
+      Not needed is the ending of a particular Approval that is no longer needed. A rule that opens changes in advance may add allowed in advance
       (`allowed_in_advance`): the change needed a yes, and a grant's standing yes gave it, with no one asked this time.
     default:
       - not_required

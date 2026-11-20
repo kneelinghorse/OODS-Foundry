@@ -129,6 +129,16 @@ describe('@oods/components-react ported scenarios', () => {
     expect(badge?.getAttribute('aria-label')).toBe('Status: Active');
   });
 
+  it('uses the authored state name for badge speech, current status, next states and history', () => {
+    const enumLabels = { past_due: 'Payment overdue' };
+    render(<><StatusBadge status="past_due" content="Payment overdue" /><StatusTimeline status="past_due" enumLabels={enumLabels} allowedTransitions={['past_due']} history={[{ from: 'still_running', to: 'past_due' }]} /></>);
+    expect(screen.getByLabelText('Status: Payment overdue').textContent).toContain('Payment overdue');
+    const timeline = screen.getByRole('log').textContent;
+    expect(timeline).toContain('Current status: Payment overdue');
+    expect(timeline).toContain('Allowed transitions: Payment overdue');
+    expect(timeline).toContain('Still running → Payment overdue');
+  });
+
   it('status-timeline-history renders current status and transition count', () => {
     render(
       <StatusTimeline
@@ -140,7 +150,7 @@ describe('@oods/components-react ported scenarios', () => {
     const timeline = screen.getByRole('log', { name: 'Status Timeline' });
     expect(timeline.getAttribute('data-oods-component')).toBe('StatusTimeline');
     expect(timeline.textContent).toContain('Current status: Active');
-    expect(timeline.textContent).toContain('Allowed transitions: paused, canceled');
+    expect(timeline.textContent).toContain('Allowed transitions: Paused, Canceled');
     // s191-m03 A2: transition titles are human-readable; stored state codes stay unchanged.
     expect(timeline.textContent).toContain('Trialing → Active');
   });

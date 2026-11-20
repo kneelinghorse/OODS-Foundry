@@ -34,7 +34,7 @@ An approval passes both. People say "three approvals waiting", and an ask can wa
 
 ![One approval's page: the Billing Agent's resend, asked of Ruth Adeyemi at the Approval level, approved and used](approvals-as-decisions/approval-detail-light.png)
 
-The thing approved composes `Approvable`. Its parameters are the rule: the levels it declares, what each level is, which change needs which level (a state it moves to, such as published, or a named action, such as resend), how many yeses a level needs, whether the asker may answer, which levels an agent's yes may satisfy, whether a yes lapses when the thing changes, and which changes a standing yes may allow in advance (`inAdvance`, empty by default). Its two fields are the outcome: `approval_state` (not required, waiting, approved, declined, out of date, and allowed in advance where a rule opens a change to a yes given in advance) and `approval_summary`, one line it rests on. Both are read-only: your product works the outcome out from the approvals that still stand and writes it; OODS Foundry shows it on the thing's page and keeps it off the thing's form.
+The thing approved composes `Approvable`. Its parameters are the rule: the levels it declares, what each level is, which change needs which level (a state it moves to, such as published, or a named action, such as resend), how many yeses a level needs, whether the asker may answer, which levels an agent's yes may satisfy, whether a yes lapses when the thing changes, and which changes a standing yes may allow in advance (`inAdvance`, empty by default). Its two fields are the outcome: `approval_state` (not required, waiting, approved, declined, out of date, and allowed in advance where a rule opens a change to a yes given in advance) and `approval_summary`, one line it rests on. “Not required” is an outcome on the thing being changed. Its rule asks for no approval for this change. “Not needed” ends a particular approval that the product no longer needs. The thing’s `approval_state` and `approval_summary` are read-only. Your product works the outcome out from the approvals that still stand and writes it; OODS Foundry shows it on the thing's page and keeps it off the thing's form.
 
 In the reference objects, `Transaction` and `Article` compose `Approvable`: a resend of a payment needs a yes, asked each time unless a standing yes under the payer's grant allows it in advance, and publishing a guide or an announcement needs an approval.
 
@@ -42,7 +42,7 @@ In the reference objects, `Transaction` and `Article` compose `Approvable`: a re
 
 ## Levels, and the meaning kept on each record
 
-A level is a name your product declares, the way it declares a lifecycle's states. Sources do not agree on one ladder, so OODS gives no universal one. Each name is a noun for the kind of yes asked for, so it reads beside any answer: "Sign off, declined". The examples in OODS Foundry come from working systems:
+A level is a name your product declares, the way it declares a lifecycle's states. Sources do not agree on one ladder, so OODS gives no universal one. Each name is a noun for the kind of yes asked for, so it reads beside any answer: "Sign-off, declined". The examples in OODS Foundry come from working systems:
 
 - **Acknowledgement**: "I have seen this." It permits nothing.
 - **Review**: "I read it and it looks right." It counts, but decides nothing.
@@ -51,7 +51,7 @@ A level is a name your product declares, the way it declares a lifecycle's state
 
 `Approvable`'s level definitions say, for each level, who may give it, what it permits, what must be in front of the person, what a wrong one costs, how deliberate the act is and when it lapses.
 
-Each approval keeps its level, and one line saying what this yes means and permits, in words, written by your product when it asks: "Sign-off: you answer for its tax and legal content". A signed record must show "the meaning (such as review, approval, responsibility, or authorship) associated with the signature" (21 CFR 11.50), so the meaning belongs on the record itself.
+Each approval keeps its level, and one line saying what this yes means and permits, in words, written by your product when it asks: "Sign-off: you answer for its tax and legal content". A signed record must show "the meaning (such as review, approval, responsibility, or authorship) associated with the signature" (21 CFR 11.50), so the meaning belongs on the record itself. Keeping that meaning alone does not establish Part 11 compliance. Your product handles signatures and verifies the signer’s identity. [Signature manifestations](https://www.ecfr.gov/current/title-21/chapter-I/subchapter-A/part-11/subpart-B/section-11.50) and [identity verification](https://www.ecfr.gov/current/title-21/chapter-I/subchapter-A/part-11/subpart-C/section-11.100).
 
 ## The history line
 
@@ -82,13 +82,13 @@ Every history in OODS Foundry prints the level in its line, then the grant and t
 
 ## The screen where an answer is given
 
-On an approval's form, the screen where the answer is chosen, five facts are read beside the answer: the thing, exactly what was shown, the level, the meaning, and who is asking, with who it is asked for. They cannot be edited there, on the composed screen or in a generated app.
+On an approval's form, the screen where the answer is chosen, five facts appear above the Answer select: the thing, exactly what was shown, the level, the meaning, and who is asking, with who it is asked for. They cannot be edited there, on the composed screen or in a generated app.
 
 ![The answer screen for the Billing Agent's resend: the five facts read as text above the answer and the comment](approvals-as-decisions/approval-form-light.png)
 
 `design_compose` holds every such screen to those facts. A screen is one where an answer can be given when it has a control that edits the approval's lifecycle; a list's filter, sort and search are not answer controls, so a list never is.
 
-- **Presence and placement are the rule.** Each fact the record keeps must sit beside the answer: on the same screen, not in another tab, and not on the other side of a dialog. If one is missing or placed elsewhere, the composer **refuses** the screen (`OODS-V221`), naming the fact and where it is. Who it is asked for is held to the screen only when the record keeps it: a person who asks for themselves names no one else.
+- **Presence and placement are the rule.** The composer checks that each fact the record keeps is on the same screen as the answer, visible without opening another tab or dialog. On the shipped form, the facts appear above the answer. If one is missing or placed elsewhere, the composer **refuses** the screen (`OODS-V221`), naming the fact and where it is. Who it is asked for is held to the screen only when the record keeps it: a person who asks for themselves names no one else.
 - If the record does not keep a fact at all, as when an imported table has no field for it, the screen **composes** and `design_compose`'s reply **warns** (`OODS-V222`), naming the fact.
 
 **What the rule cannot check.** It reads the composed screen's structure, not its pixels, so it cannot see whether a fact is above the fold, scrolled out of a panel or hidden by styling. It never reads a record's values, so it cannot tell whether the words are true, current or enough, or whether the meaning suits the level. It cannot see who is looking, or whether they may answer. And it runs only where a screen is composed, in `design_compose` and the tools that compose through it (`pipeline_run`, `design_preview` and `object_import`): a schema passed straight to `code_generate`, `schema_render` or `schema_store` is not checked, nor is anything a team changes in generated code afterwards, or an app generated by an earlier release.

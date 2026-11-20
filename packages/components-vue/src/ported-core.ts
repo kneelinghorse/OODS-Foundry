@@ -1,4 +1,4 @@
-import { getStatusPresentation, historyAttribution, resolveStatusIcon, type StatusIconName } from '@oods/component-contracts';
+import { enumOptionLabel, formatReadOnlyValue, getStatusPresentation, historyAttribution, resolveStatusIcon, type StatusIconName } from '@oods/component-contracts';
 import type { ComponentTone } from './types.js';
 
 export type TimelineEvent = {
@@ -43,21 +43,13 @@ function firstText(record: Readonly<Record<string, unknown>>, keys: readonly str
   return undefined;
 }
 
-export function statusLabel(status: string): string {
-  return status
-    .split(/[_-]/)
-    .filter(Boolean)
-    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
-    .join(' ');
-}
-
 // s222-m03 (#2502 ruling 13): Vue reads the shared status registry, as React and the HTML renderer do. Its own copy of the
 // subscription and invoice tables matched the registry entry for entry and is gone; a status neither table knows reads
 // the lifecycle table there, so a settled payment is a success in every renderer.
 export function getPortedStatusPresentation(domain: string, status: string): StatusPresentation {
   const presentation = getStatusPresentation(domain.toLowerCase(), status);
   return {
-    label: statusLabel(status || 'Unknown'),
+    label: presentation.label,
     description: presentation.description,
     tone: presentation.tone as ComponentTone,
     icon: resolveStatusIcon(presentation.iconName),
@@ -77,7 +69,8 @@ export function formatPrice(
   return currency ? `${currency.toUpperCase()} ${formatted}` : formatted;
 }
 
-export function normalizeTimelineEvents(raw: unknown): TimelineEvent[] {
+export function normalizeTimelineEvents(raw: unknown, labels?: Record<string, string>): TimelineEvent[] {
+  const statusLabel = (state: string) => enumOptionLabel(state, labels);
   if (!Array.isArray(raw)) return [];
   const events: TimelineEvent[] = [];
   for (const entry of raw) {
@@ -86,13 +79,16 @@ export function normalizeTimelineEvents(raw: unknown): TimelineEvent[] {
       events.push({ label: String(entry) });
       continue;
     }
+    const event = firstText(entry, ['event']);
+    const state = firstText(entry, ['status', 'state']);
     const from = firstText(entry, ['from']);
     const to = firstText(entry, ['to']);
     // s244-m01 (#2829): a named entry reads its attribution in place of its actor id, as in React and HTML.
     const attribution = historyAttribution(entry);
     events.push({
       label: firstText(entry, ['label', 'title'])
-        ?? (firstText(entry, ['event', 'status', 'state']) ? statusLabel(firstText(entry, ['event', 'status', 'state'])!) : undefined)
+        ?? (event ? formatReadOnlyValue(event, 'string', true) : undefined)
+        ?? (state ? statusLabel(state) : undefined)
         ?? firstText(entry, ['text', 'name'])
         ?? (to ? (from ? `${statusLabel(from)} → ${statusLabel(to)}` : statusLabel(to)) : undefined)
         ?? 'Event',

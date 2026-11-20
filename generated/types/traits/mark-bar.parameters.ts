@@ -87,7 +87,7 @@ export type MarkBarChartEncodingBinding =
        */
       currency?: string;
       /**
-       * Declared charts only: a field of the charted record whose text titles this axis, so each record's chart names its own unit (Usage's y axis reads the record's unit_label, "API calls"). Generation resolves it into title before viz.render; a record without that text takes title, and a chart with neither fails.
+       * Declared charts only: a field of the charted record whose text titles this axis, so each record's chart names its own unit (Usage's y axis reads the record's unit_label, "API calls"). Generation resolves it into title before viz_render; a record without that text takes title, and a chart with neither fails.
        */
       titleField?: string;
     };
@@ -138,11 +138,11 @@ export interface MarkBarTraitParameters {
    */
   stacking?: 'auto' | 'normalize' | 'none';
   /**
-   * JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand.
+   * JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand.
    */
   renderIntent?: string;
   /**
-   * Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered.
+   * Static SVG returned by viz_render for the authored sample; omitted until a chart is rendered.
    */
   previewSvg?: string;
   chart?: MarkBarChartDeclaration;

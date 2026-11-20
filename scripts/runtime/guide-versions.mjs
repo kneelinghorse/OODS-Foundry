@@ -10,17 +10,19 @@ export function markdownFiles(root) {
     return entry.isDirectory() ? (['node_modules', 'runtime'].includes(entry.name) ? [] : markdownFiles(file)) : entry.isFile() && /\.md$/i.test(entry.name) ? [file] : [];
   });
 }
+// Release tags also occur in fenced installation commands. Only this product's repository is a package pin.
+const releasePin = /(@oods\/[\w-]+@|OODS Foundry\s+(?:version\s+)?v?|(?:github\.com\/kneelinghorse\/OODS-Foundry\/(?:blob|tree|releases\/tag)|raw\.githubusercontent\.com\/kneelinghorse\/OODS-Foundry)\/v)(\d+\.\d+\.\d+(?:-[\w.-]+)?)/gi;
 export function staleGuideVersions(markdown, version) {
   // All explicit OODS package pins count, including commands and CDN links. In prose, a bare
   // release in the product's current major line counts too. Other named tools and definition
   // versions inside fenced examples are not product release claims.
   markdown = markdown.split('\n').filter(line => !line.includes('<!-- history -->')).join('\n');
-  const named = [...markdown.matchAll(/(?:@oods\/[\w-]+@|OODS Foundry\s+(?:version\s+)?)(\d+\.\d+\.\d+(?:-[\w.-]+)?)/g)].map(match => match[1]);
+  const named = [...markdown.matchAll(releasePin)].map(match => match[2]);
   const prose = markdown.replace(/```[^\n]*\n[\s\S]*?```/g, '')
     .replace(/(?:Stage1|MCP Apps SDK reference host)\s+v?\d+\.\d+\.\d+/g, '')
     .replace(/`(?!@oods\/)[\w@/.-]+`\s+\d+\.\d+\.\d+/g, '');
   const major = version.split('.')[0];
-  const bare = [...prose.matchAll(/(?<![\w.])\d+\.\d+\.\d+(?:-[\w.-]+)?(?!\w|\.\w)/g)].map(match => match[0]).filter(found => found.split('.')[0] === major);
+  const bare = [...prose.matchAll(/(?<![\w.])v?\d+\.\d+\.\d+(?:-[\w.-]+)?(?!\w|\.\w)/g)].map(match => match[0].replace(/^v/, '')).filter(found => found.split('.')[0] === major);
   return [...new Set([...named, ...bare])].filter(found => found !== version);
 }
 export function checkGuideVersions(root, version = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version) {
@@ -32,10 +34,10 @@ export function updateGuideMarkdown(markdown, version) {
   const history = new Map();
   markdown = markdown.split('\n').map((line, index) => { if (!line.includes('<!-- history -->')) return line; const key = `HISTORY_LINE_${index}`; history.set(key, line); return key; }).join('\n');
   const updated = markdown.split(/(```[^\n]*\n[\s\S]*?```)/g).map((part, index) => {
-    part = part.replace(/((?:@oods\/[\w-]+@|OODS Foundry\s+(?:version\s+)?))\d+\.\d+\.\d+(?:-[\w.-]+)?/g, `$1${version}`);
+    part = part.replace(releasePin, (_pin, prefix) => prefix + version);
     if (index % 2) return part;
-    return part.replace(/(?:Stage1|MCP Apps SDK reference host)\s+v?\d+\.\d+\.\d+|`(?!@oods\/)[\w@/.-]+`\s+\d+\.\d+\.\d+|(?<![\w.])\d+\.\d+\.\d+(?:-[\w.-]+)?(?!\w|\.\w)/g,
-      found => /^\d/.test(found) && found.split('.')[0] === major ? version : found);
+    return part.replace(/(?:Stage1|MCP Apps SDK reference host)\s+v?\d+\.\d+\.\d+|`(?!@oods\/)[\w@/.-]+`\s+\d+\.\d+\.\d+|(?<![\w.])v?\d+\.\d+\.\d+(?:-[\w.-]+)?(?!\w|\.\w)/g,
+      found => /^v?\d/.test(found) && found.replace(/^v/, '').split('.')[0] === major ? (found.startsWith('v') ? 'v' : '') + version : found);
   }).join('');
   return updated.split('\n').map(line => history.get(line) ?? line).join('\n');
 }
@@ -51,10 +53,16 @@ export function writeGuideVersions(root, version = JSON.parse(fs.readFileSync(pa
   return changed;
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const args = process.argv.slice(2), root = path.resolve(args.find(arg => arg !== '--write') ?? 'packages/foundry');
-  if (args.includes('--write')) console.log(JSON.stringify({ status: 'written', changed: writeGuideVersions(root), generatedReadme: 'Regenerate separately with scripts/runtime/client-configs.mjs, then run this check without --write.' }, null, 2));
-  else {
-    const findings = checkGuideVersions(root);
+  const args = process.argv.slice(2);
+  const target = args.find(arg => arg !== '--write');
+  const roots = target ? [path.resolve(target)] : ['packages/foundry', 'plugins/oods-foundry'];
+  const manifest = target && fs.existsSync(path.join(target, 'package.json')) ? path.join(target, 'package.json') : 'packages/foundry/package.json';
+  const version = JSON.parse(fs.readFileSync(manifest, 'utf8')).version;
+  if (args.includes('--write')) {
+    const changed = roots.flatMap(root => writeGuideVersions(root, version).map(file => path.join(root, file)));
+    console.log(JSON.stringify({ status: 'written', changed }, null, 2));
+  } else {
+    const findings = roots.flatMap(root => checkGuideVersions(root, version).map(row => ({ ...row, file: path.join(root, row.file) })));
     console.log(JSON.stringify({ status: findings.length ? 'fail' : 'pass', findings }, null, 2));
     if (findings.length) process.exitCode = 1;
   }

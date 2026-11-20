@@ -104,7 +104,7 @@ describe('a grant\'s page shows its closure once it has ended', () => {
     const drawn = pages(sample('Grant', 'name', 'Marlow Yoga class bookings'));
     for (const renderer of RENDERERS) {
       expect(drawn[renderer], renderer).toEqual(drawn.html);
-      expect(drawn[renderer]!.text, renderer).toBe('Its closure (1) Closure of Marlow Yoga class bookings Not known Not known; the booking service did not answer by the deadline. Jul 10, 2026, 8:55 AM UTC 3 lines'
+      expect(drawn[renderer]!.text, renderer).toBe('Its closure (1) Closure of Marlow Yoga class bookings Not known Not known; the booking service did not answer by the deadline. Last report: Jul 17, 2026, 8:55 AM UTC 3 lines'
         + ' Opened · Jul 10, 2026, 8:55 AM UTC · Marlow Yoga front desk · Opened when Jonah Marlow revoked the grant: the studio closed'
         + ' Booking service told · Jul 10, 2026, 9:00 AM UTC · Marlow Yoga front desk · Asked the booking service to stop the Scheduling Agent\'s waitlist offers'
         + ' No answer by the deadline · Jul 17, 2026, 8:55 AM UTC · Marlow Yoga front desk · The booking service did not answer by the deadline, so nothing is known');
@@ -153,13 +153,13 @@ process.stdout.write(JSON.stringify({ before: { applies: before.applies }, after
 describe('the party\'s and the answerer\'s pages list their closures', () => {
   const rowsOf = (object: string, field: string, value: string, id: string) => listOf(object, sample(object, field, value), id).rows;
 
-  it('lists two closures on Dana Whitfield\'s and Northwind Traders\' pages and one on Jonah Marlow\'s and Marlow Yoga\'s, each with its name, state, line, the grant\'s end and its lines', () => {
+  it('lists two closures on Dana Whitfield\'s and Northwind Traders\' pages and one on Jonah Marlow\'s and Marlow Yoga\'s, each with its name, state, line, its latest report and its lines', () => {
     expect(rowsOf('User', 'name', 'Dana Whitfield', 'closures').map(row => row.title)).toEqual(['Closure of Northwind spring order replies', 'Closure of Northwind customer replies']);
     expect(rowsOf('Organization', 'label', 'Northwind Traders', 'closures').map(row => row.title)).toEqual(['Closure of Northwind spring order replies', 'Closure of Northwind customer replies']);
     expect(rowsOf('User', 'name', 'Jonah Marlow', 'closures').map(row => row.title)).toEqual(['Closure of Marlow Yoga class bookings']);
     expect(rowsOf('Organization', 'label', 'Marlow Yoga', 'closures').map(row => row.title)).toEqual(['Closure of Marlow Yoga class bookings']);
     const [, replies] = rowsOf('User', 'name', 'Dana Whitfield', 'closures');
-    expect(replies).toMatchObject({ stateLabel: 'Still running', lineText: 'Still running; the reply about order NW-2207 waits on Dana Whitfield\'s answer.', timeText: 'Oct 8, 2026, 4:00 PM UTC', linesText: '3 lines' });
+    expect(replies).toMatchObject({ stateLabel: 'Still running', lineText: 'Still running; the reply about order NW-2207 waits on Dana Whitfield\'s answer.', timeText: 'Last report: Oct 8, 2026, 4:10 PM UTC', linesText: '3 lines' });
     // No shipped grant is for a person, so every person's "Closures of grants for" reads its empty sentence.
     for (const user of samplesOf('User')) expect(listOf('User', user, 'closures-for')).toMatchObject({ rows: [], empty: `No closure here is of a grant for ${user.name}.` });
   });
@@ -183,9 +183,14 @@ describe('the party\'s and the answerer\'s pages list their closures', () => {
 describe('next step 1888: the person\'s page inputs', () => {
   it('shows the last use on a grant\'s own list row, and nothing where a grant holds none', async () => {
     const html = String(((await pipeline({ object: 'Grant', context: 'list', framework: 'html', options: { skipValidation: true } } as never)) as { render?: { html?: string } }).render?.html ?? '');
-    const rows = Object.fromEntries([...new JSDOM(html).window.document.querySelectorAll('[data-oods-collection="rows"] [data-oods-row]')].map(row => [JSON.parse((row as HTMLElement).dataset.oodsRow!).name, textOf(row)]));
-    expect(rows['Tidewater invoices and payments']).toContain('28 Sep: asked for a standing yes to resend returned transfers Last used for');
-    expect(rows['Northwind customer replies']).toContain('6 Oct: asked Dana Whitfield a question about order NW-2207 Last used for');
+    const doc = new JSDOM(html).window.document;
+    const button = doc.querySelector('button[aria-label="Tidewater invoices and payments"]')!;
+    const described = button.getAttribute('aria-describedby')!.split(' ').map(id => textOf(doc.getElementById(id)!));
+    expect(described).toContain('Held by Billing Agent');
+    expect(described.at(-1)).toMatch(/^Updated at:/);
+    const rows = Object.fromEntries([...doc.querySelectorAll('[data-oods-collection="rows"] [data-oods-row]')].map(row => [JSON.parse((row as HTMLElement).dataset.oodsRow!).name, textOf(row)]));
+    expect(rows['Tidewater invoices and payments']).toContain('Last used for 28 Sep: asked for a standing yes to resend returned transfers');
+    expect(rows['Northwind customer replies']).toContain('Last used for 6 Oct: asked Dana Whitfield a question about order NW-2207');
     for (const name of ['Marlow Yoga class bookings', 'Northwind spring order replies', 'Resend returned transfers']) expect(rows[name], name).not.toContain('Last used for');
   });
 

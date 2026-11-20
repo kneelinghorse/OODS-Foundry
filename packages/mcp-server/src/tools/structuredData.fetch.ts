@@ -52,7 +52,7 @@ const ROLLUP_ALLOWED_SCHEMA_VERSIONS: Record<RollupKind, string[]> = {
   object_rollup: ['1.0.0', '1.1.0', '1.2.0'],
   // Reviewed through Stage1's 2.0.0 raw-value contract; ratios across versions are different measurements.
   // s244-m04 (next step 1845): Stage1 0.7.0's 2.1.0 adds value_join.left_out.soft_deleted counts; signals are unchanged.
-  drift_report: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0', '2.1.0'],
+  drift_report: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '2.0.0', '2.1.0', '2.2.0'],
 };
 
 /**
@@ -69,14 +69,15 @@ const ROLLUP_ALLOWED_SCHEMA_VERSIONS: Record<RollupKind, string[]> = {
  * complete axe targets and pass/inapplicable rule IDs; 1.4.0 adds capture tier and first-party health. Existing
  * finding, review and score fields are unchanged. Review: artifacts/product-reality/sprint-225/m03/review.md.
  * s241: Stage1 0.6.0 removes scores from a11y 3.0 and manifest 1.8; missing scores stay absent.
+ * Stage1 0.8.0 records capture identification and completeness in manifest 1.9, with a11y 3.1 and evidence 1.5.
  * Every artifact and per-page evidence file read still requires the run manifest's sha256 attestation.
  * Other artifact kinds are not admitted by this run-view contract; index metadata is descriptive only.
  */
 const RUN_VIEW_KINDS = {
-  a11y_report: { file: 'artifacts/a11y_report.json', payloadKind: 'a11y_report', versionField: 'schema_version', accepted: ['2.2.0', '2.3.0', '2.4.0', '2.5.0', '3.0.0'] },
+  a11y_report: { file: 'artifacts/a11y_report.json', payloadKind: 'a11y_report', versionField: 'schema_version', accepted: ['2.2.0', '2.3.0', '2.4.0', '2.5.0', '3.0.0', '3.1.0'] },
   report_index: { file: 'artifacts/report-index.json', payloadKind: 'report_index', versionField: 'schema_version', accepted: ['1.0.0', '1.1.0'] },
-  a11y_evidence: { file: 'evidence/a11y/a11y_manifest.json', payloadKind: 'a11y_evidence_manifest', versionField: 'version', accepted: ['1.1.0', '1.2.0', '1.3.0', '1.4.0'] },
-  run_manifest: { file: 'manifest.json', payloadKind: null, versionField: 'schema_version', accepted: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '1.5.0', '1.6.0', '1.7.0', '1.8.0'] },
+  a11y_evidence: { file: 'evidence/a11y/a11y_manifest.json', payloadKind: 'a11y_evidence_manifest', versionField: 'version', accepted: ['1.1.0', '1.2.0', '1.3.0', '1.4.0', '1.5.0'] },
+  run_manifest: { file: 'manifest.json', payloadKind: null, versionField: 'schema_version', accepted: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', '1.5.0', '1.6.0', '1.7.0', '1.8.0', '1.9.0'] },
 } as const;
 export type RunViewKind = keyof typeof RUN_VIEW_KINDS;
 export const RUN_VIEW_ADMITTED: Readonly<Record<RunViewKind, readonly string[]>> = {

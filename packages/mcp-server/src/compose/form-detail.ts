@@ -68,7 +68,12 @@ export const FORM_FACT = 'form-fact';
  * means what it meant in 0.12.0, and no 0.12.0 form view carries the mark.
  */
 export function formFactFields(composed: ComposedObject | undefined): Set<string> {
-  return new Set((composed?.viewExtensions?.form ?? []).filter(extension => extension.fact === true).flatMap(extension => boundFields(extension.props)));
+  const facts = new Set((composed?.viewExtensions?.form ?? []).filter(extension => extension.fact === true).flatMap(extension => boundFields(extension.props)));
+  for (const field of [...facts]) {
+    const hints = composed?.semantics?.[field]?.ui_hints;
+    if (hints?.component === 'CurrencyAmount' && typeof hints.currencyField === 'string' && composed?.schema[hints.currencyField]) facts.add(hints.currencyField);
+  }
+  return facts;
 }
 
 /**
@@ -100,6 +105,10 @@ const boundFields = (props: Record<string, unknown> | undefined): string[] => Ob
  */
 export function reconcileFormDetail(schema: UiSchema, context: string, composed: ComposedObject, tabLabels?: string[], readTab = 'Details', viewState: ReadonlySet<string> = new Set()): void {
   const fields = schema.objectSchema ?? {};
+  const declaredHelp = (name: string) => {
+    const hint = composed.semantics[name]?.ui_hints?.help;
+    return typeof hint === 'string' && hint.trim() ? hint : undefined;
+  };
   let relationships: NonNullable<ReturnType<typeof loadObject>['relationships']> = [];
   try { relationships = loadObject(composed.object.name).relationships ?? []; } catch { /* Inline composition has no registry entry. */ }
   if (context !== 'form') for (const relationship of relationships) {
@@ -178,7 +187,7 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         for (const field of boundFields(node.props)) edited.add(field);
       }
     });
-    const missing = Object.entries(fields).filter(([name, entry]) => entry.required && !edited.has(name) && !viewState.has(name)
+    const missing = Object.entries(fields).filter(([name, entry]) => entry.required && !composed.schema[name]?.readOnly && !edited.has(name) && !viewState.has(name)
       && /^(?:string|uuid|email|url|integer|number|boolean|date|datetime)\??$/.test(entry.type)
       && !isInternalField(name, fields) && !isUnavailableField(name, fields) && !notEditedOnForm(name, fields, composed.object.name));
     const fieldStack = schema.screens.map(screen => findNode(screen, node => /^form-fields-/.test(node.id))).find(Boolean);
@@ -250,13 +259,16 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         // A Labelled object's `label` is its display name; the form calls it that.
         const declaredLabel = composed.semantics?.[field as string]?.ui_hints?.label;
         const defaultLabel = entry.displayLabel ?? (typeof declaredLabel === 'string' ? declaredLabel : field === 'label' && !fields.name && !fields.title && !fields.display_name ? 'Name' : fieldLabel(field as string));
+        const hint = declaredHelp(field as string);
+        const help = hint ?? (entry.description && fieldHelp(field as string, entry.description));
         // s223-m02: the description is help only where the control's contract has help (a SegmentedControl has none).
-        node.props = { ...node.props, label: node.props?.label === entry.description || !node.props?.label || node.props.label === field || node.props.label === fieldLabel(field as string) ? defaultLabel : node.props.label, ...(entry.description && contractHas(node.component, 'help') ? { help: fieldHelp(field as string, entry.description) } : {}) };
+        node.props = { ...node.props, label: node.props?.label === entry.description || !node.props?.label || node.props.label === field || node.props.label === fieldLabel(field as string) ? defaultLabel : node.props.label, ...(help && contractHas(node.component, 'help') ? { help } : {}) };
         const relationship = relationships.find(edge => edge.via === field);
         if (relationship && !type.endsWith('[]')) {
           const options = relationshipOptions(relationship, composed.semantics[field as string]);
           node.component = 'Select';
-          node.props = { field, label: entry.displayLabel ?? defaultLabel, options, ...(entry.description ? { help: entry.description } : {}) };
+          const relationshipHelp = hint ?? entry.description;
+          node.props = { field, label: entry.displayLabel ?? defaultLabel, options, ...(relationshipHelp ? { help: relationshipHelp } : {}) };
           node.bindings = { onChange: `handleChange_${field}` };
         }
         if (entry.type.replace(/\?$/, '') === 'datetime' && ['Input', 'DatePicker'].includes(node.component)) {
@@ -272,7 +284,8 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
         for (const directive of fields) {
           const name = node.props[directive];
           const description = typeof name === 'string' ? schema.objectSchema?.[name]?.description : undefined;
-          if (description) node.props[node.component === 'CancellationForm' ? directive === 'codeField' ? 'codeHelp' : 'reasonHelp' : 'help'] = fieldHelp(String(name), description);
+          const help = typeof name === 'string' ? declaredHelp(name) ?? (description && fieldHelp(name, description)) : undefined;
+          if (help) node.props[node.component === 'CancellationForm' ? directive === 'codeField' ? 'codeHelp' : 'reasonHelp' : 'help'] = help;
         }
       }
       if (node.component === 'BillingAmountInput') {

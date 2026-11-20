@@ -36,7 +36,7 @@ export type MarkGraphChartDeclaration = {
 
 export interface MarkGraphTraitParameters {
   /**
-   * Static SVG returned by public viz.render.
+   * Static SVG returned by public viz_render.
    */
   previewSvg?: string;
   chart?: MarkGraphChartDeclaration;

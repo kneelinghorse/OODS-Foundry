@@ -285,7 +285,11 @@ describe('the eight Task samples tell true stories about the shipped samples the
       // (next step 1876); the Billing Agent's activation says twelve days, as its dates do (next step 1880) (0.15.0:
       // f54bc01fdd86743e). s249-m05 (the fresh read): the Support Agent's last event is that 8 October update, where it
       // read its March activation (s249-m01: d15b318f0b15b758).
-      Usage: 'c54a4d96226e4e98', Agent: '35c65a8178353b29', Approval: 'f94c44459cde9683',
+      Usage: 'c54a4d96226e4e98',
+      // The Order Agent acts only for the organization that granted it authority.
+      Agent: '531646cea5071cbf',
+      // Sprint 251 names Nadia Farouk as the individual asked to review the article.
+      Approval: 'ffbe9d5f90d90031',
     };
     for (const [name, digest] of Object.entries(SHIPPED)) {
       expect(crypto.createHash('sha256').update(JSON.stringify(strip(name, loadObject(name).samples as Sample[] ?? []))).digest('hex').slice(0, 16), name).toBe(digest);

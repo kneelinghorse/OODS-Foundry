@@ -842,7 +842,7 @@ describe('@oods/components-vue shared scenarios', () => {
             break;
           }
           case 'status-badge-mapped': {
-            expect(component.text()).toContain('Past Due');
+            expect(component.text()).toContain('Past due');
             expect(component.attributes('data-tone')).toBe('critical');
             expect(component.attributes('title')).toContain('Renewal payment failed');
             // s222-m02 (#2502 ruling 11): the status mark is the shared SVG alert icon, not the ⚠︎ glyph.
@@ -852,7 +852,7 @@ describe('@oods/components-vue shared scenarios', () => {
           }
           case 'status-timeline-history': {
             expect(component.get('[data-timeline-current="true"]').text()).toContain('Current status: Active');
-            expect(component.get('[data-timeline-transitions="true"]').text()).toContain('past_due, cancelled');
+            expect(component.get('[data-timeline-transitions="true"]').text()).toContain('Past due, Cancelled');
             expect(component.get('[data-timeline-empty="true"]').text()).toBe('No events');
             break;
           }
@@ -904,7 +904,7 @@ describe('@oods/components-vue shared scenarios', () => {
           expect(component.element?.hasAttribute('role')).toBe(false);
           // s223-m01 (#2527 ruling 6): a card binds the owner's label and reads one phrase, as React writes it.
           const named = mount(implementation, { props: { ...scenario.props, ownerLabel: 'Northwind' } });
-          expect(named.text()).toBe('Owned by Northwind · organization · custodian');
+          expect(named.text()).toBe('Owned by Northwind · Organization · custodian');
           expect(named.find('[data-meta-title]').exists()).toBe(false);
           named.unmount();
           const unnamed = mount(implementation, { props: { ...scenario.props, ownerLabel: 'Owner unavailable' } });

@@ -14,14 +14,14 @@ const traitDir = join(__dirname, '..', '..', '..', 'traits', 'viz');
 const yamlPath = join(traitDir, 'scale-temporal.trait.yaml');
 
 describe('ScaleTemporal trait', () => {
-  it('parses the breaking 0.3.0 YAML definition with UTC semantics', async () => {
+  it('parses the versioned YAML definition with UTC semantics', async () => {
     const result = await parseTrait(yamlPath);
 
     expect(result.success).toBe(true);
     const def = result.data!;
 
     expect(def.trait.name).toBe('ScaleTemporal');
-    expect(def.trait.version).toBe('0.3.0');
+    expect(def.trait.version).toBe('0.3.1');
     expect(def.semantics).not.toHaveProperty('viz_scale_temporal_timezone');
     expect(def.view_extensions?.detail?.[0]?.props?.type).toBe('temporal');
   });
@@ -64,7 +64,7 @@ describe('ScaleTemporal trait', () => {
     const yaml = (await parseTrait(yamlPath)).data!;
     expect(parameterSchema.properties).not.toHaveProperty('timezone');
     for (const trait of [ScaleTemporalTrait, yaml]) {
-      expect(trait.trait.version).toBe('0.3.0');
+      expect(trait.trait.version).toBe('0.3.1');
       expect(trait.parameters?.some(parameter => parameter.name === 'timezone')).toBe(false);
       expect(trait.schema).not.toHaveProperty('viz_scale_temporal_timezone');
       expect(JSON.stringify(trait.view_extensions)).not.toContain('timezoneField');

@@ -931,7 +931,7 @@ export const InlineLabel = defineComponent({
 });
 
 export const LabelCell = defineComponent({
-  name: 'OodsLabelCell', props: { label: String, text: String, value: String, description: String, subtitle: String, sublabel: String, supporting: String, truncate: Boolean, maxLength: [Number, String] },
+  name: 'OodsLabelCell', props: { caption: String, label: String, text: String, value: String, description: String, subtitle: String, sublabel: String, supporting: String, truncate: Boolean, maxLength: [Number, String] },
   setup(props, { slots }) {
     return () => {
       const content = authoredContent(slots.default?.());
@@ -940,6 +940,7 @@ export const LabelCell = defineComponent({
       const description = notEcho(firstText(props.description, props.subtitle, props.sublabel, props.supporting), firstText(props.label, props.text, props.value));
       return h('span', { class: 'oods-label-cell', 'data-oods-component': 'LabelCell' },
         content.length ? content : [
+          props.caption ? h('span', { 'data-oods-label-cell-caption': 'true' }, props.caption + ' ') : null,
           h('span', { 'data-oods-label-cell-primary': 'true' }, truncateLabel(firstText(props.label, props.text, props.value) ?? '', limit)),
           description ? h('span', { 'data-oods-label-cell-description': 'true' }, truncateLabel(description, limit)) : null,
         ]);
@@ -1109,7 +1110,10 @@ export const CancellationForm = defineComponent({
       return h(props.embedded ? 'fieldset' : 'form', { class: 'oods-cancellation-form', 'data-oods-component': 'CancellationForm', 'data-form-type': 'cancellation', onSubmit: props.embedded ? undefined : (event: Event) => event.preventDefault() }, [
         formHeader(firstText(props.title, props.label, props.heading, props.name) ?? 'Cancellation Form', firstText(props.description, props.subtitle, props.hint)),
         h('div', { 'data-form-content': 'true' }, content.length ? content : [
-          h('label', { 'data-form-control': 'select' }, [h('span', 'Reason Code'), props.allowedReasons?.length === 0 ? h('input', { name: 'reasonCode', value: props.reasonCode ?? '' }) : h('select', { name: 'reasonCode', value: props.reasonCode }, selectOptionNodes(choices, props.reasonCode))]),
+          h('label', { 'data-form-control': 'select' }, [h('span', 'Reason Code'), props.allowedReasons?.length === 0 ? h('input', { name: 'reasonCode', value: props.reasonCode ?? '' }) : h('select', { name: 'reasonCode', value: props.reasonCode ?? '' }, [
+            !props.reasonCode ? h('option', { value: '', disabled: true, selected: true }, 'Choose a reason') : null,
+            ...selectOptionNodes(choices.filter(choice => choice.value !== ''), props.reasonCode),
+          ])]),
           props.codeHelp ? h('p', { class: 'oods-field-help' }, props.codeHelp) : null,
           h('label', { 'data-form-control': 'textarea' }, [h('span', 'Reason'), h('textarea', { name: 'reason', rows: 4, value: firstText(props.reason, props.cancellationReason) ?? '' })]),
           props.reasonHelp ? h('p', { class: 'oods-field-help' }, props.reasonHelp) : null,

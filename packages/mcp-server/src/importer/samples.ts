@@ -32,6 +32,11 @@ export function validSample(schema: MapValue, value: unknown): boolean {
 function words(field: string): string[] {
   return field.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2').toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
 }
+// A mailbox record's address is an email. An ordinary contact's or organization's address can be a street.
+export function isMailboxAddress(objectName: string, field: string): boolean {
+  return field.toLowerCase() === 'address' && words(objectName).slice(-2).join('') === 'emailaddress';
+}
+
 const pick = <T>(list: readonly T[], index: number): T => list[index % list.length]!;
 const FIRST_NAMES = ['Ava', 'Ben', 'Chloe', 'Dev', 'Elena'];
 const LAST_NAMES = ['Martin', 'Okafor', 'Chen', 'Silva', 'Novak'];
@@ -153,7 +158,7 @@ export function sampleValue(schema: MapValue, field: string, index: number, obje
       const kindField = /^(user|person|shopper|customer|agent|member|employee|contact)s?$/i.test(kind) ? 'fullName'
         : /^(team|department|organization|organisation|company|agency|role|category)s?$/i.test(kind) ? kind.replace(/s$/, '')
         : /^(product|item)s?$/i.test(kind) ? 'productName' : field;
-      const candidateField = isName ? kindField : /^id$/i.test(field) && objectName ? `${objectName}Id` : field;
+      const candidateField = objectName && isMailboxAddress(objectName, field) ? 'email' : isName ? kindField : /^id$/i.test(field) && objectName ? `${objectName}Id` : field;
       const named = isName && kindField === 'productName' ? pick(['Studio desk', 'Task lamp', 'Notebook set', 'Monitor stand', 'Travel mug'], index)
         : namedString(schema, candidateField, index);
       if (named !== undefined && validSample(schema, named)) return named;

@@ -52,7 +52,7 @@ async function fetchKind(kind: 'run_manifest' | 'a11y_report' | 'report_index' |
 }
 
 /** Record only capture facts the manifest carries; older runs cannot acquire a newer build's provenance. */
-function captureNote(manifest: Record<string, any>): string {
+function captureNote(manifest: Record<string, any>, skippedPages: number): string {
   const environment = manifest.environment;
   const passes = Object.entries(environment.capture?.passes ?? {}) as Array<[string, Record<string, any>]>;
   const browsers = new Map<string, string[]>();
@@ -63,7 +63,12 @@ function captureNote(manifest: Record<string, any>): string {
   }
   const browser = browsers.size === 1 ? [...browsers.keys()][0] : [...browsers].map(([label, names]) => `${label} for ${names.join(', ')}`).join('; ');
   const tiers = [...new Set(passes.map(([, record]) => record.tier).filter(Boolean))];
-  return `Stage: ${environment.stage ?? 'unknown'}; sampling: ${environment.sampling ?? 'unknown'}; Stage1 build: ${environment.stage1_version ?? 'unknown'}. Browser: ${browser || 'unknown'}. Capture tiers: ${tiers.join(', ') || 'unknown'}. Authentication is shown as recorded.`;
+  const completeness = environment.capture?.completeness;
+  const coverage = completeness?.state === 'incomplete'
+    ? ` Capture incomplete. Pages not captured: ${completeness.pages_not_captured} (${completeness.reason}).`
+    : completeness?.state === 'complete' ? ' Capture complete.' : '';
+  const skipped = skippedPages ? ` Accessibility scans skipped: ${skippedPages}.` : '';
+  return `Stage: ${environment.stage ?? 'unknown'}; sampling: ${environment.sampling ?? 'unknown'}; Stage1 build: ${environment.stage1_version ?? 'unknown'}. Browser: ${browser || 'unknown'}. Capture tiers: ${tiers.join(', ') || 'unknown'}. Identification mode: ${environment.identification?.mode ?? 'not recorded'}.${coverage}${skipped} Authentication is shown as recorded.`;
 }
 
 export async function readRunView(runPath: string): Promise<RunView> {
@@ -81,13 +86,14 @@ export async function readRunView(runPath: string): Promise<RunView> {
 
   const target = manifest.targets[0] as { name: string; url: string };
   const severity = a11y.rollup?.by_severity ?? {};
+  const note = captureNote(manifest, a11y.skipped_pages?.length ?? 0);
   const run: Row = {
     run_id: manifest.run_id, target_name: target.name, target_url: target.url, mode: manifest.mode, auth_type: manifest.auth?.type ?? 'unknown',
     auth_mechanisms: manifest.auth?.mechanisms?.join(', '), auth_api_kind: manifest.auth?.api_auth_kind,
     auth_redaction_applied: manifest.auth?.redaction?.applied,
     // Keep the historical record key for existing readers; the unavailable field is never placed in a view.
-    auth_provenance_note: captureNote(manifest),
-    capture_note: captureNote(manifest),
+    auth_provenance_note: note,
+    capture_note: note,
     page_count: a11y.pages.length, finding_count: a11y.rollup?.violation_count,
     needs_review_count: a11y.rollup?.needs_review_count, accessibility_score: a11y.rollup?.accessibility_score,
     critical_count: severity.critical, serious_count: severity.serious, moderate_count: severity.moderate, minor_count: severity.minor, unknown_count: severity.unknown,

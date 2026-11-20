@@ -3,14 +3,14 @@ import type { TraitDefinition } from '../../src/core/trait-definition.ts';
 const EncodingColorTrait = {
   trait: {
     name: 'EncodingColor',
-    version: '0.1.0',
+    version: '0.2.1',
     description: 'Maps a data field to governed chromatic encodings.',
     category: 'viz.encoding',
     tags: ['viz', 'encoding', 'color'],
   },
 
   parameters: [
-    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
 
     {
       name: 'supportedSchemes',

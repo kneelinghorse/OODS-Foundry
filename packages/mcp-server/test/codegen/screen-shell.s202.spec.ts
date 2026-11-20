@@ -16,9 +16,17 @@ const code = async (schema: UiSchema, framework: 'react' | 'vue') => {
 };
 
 describe('the generated shell is a page: one main landmark and one level-one heading (s202-m01)', () => {
+  it.each(['react', 'vue'] as const)('keeps the Media heading in the generated %s workflow', async framework => {
+    const result = await generate({ schema: await composed('Media', 'workflow'), framework, profile: 'build' });
+    const app = result.artifact?.files.find(file => /src\/App\.(tsx|vue)$/.test(file.path));
+    expect(app?.contents).toContain("state.screen === 'list' ? 'Media'");
+  });
+
   it('names the screen after its object and context and titles a list by the plural', () => {
     expect(objectLabel('Subscription')).toBe('Subscription');
     expect(objectLabel('AddressEntry')).toBe('Address Entry');
+    expect(screenTitle('Media', 'list')).toBe('Media');
+    expect(pluralLabel('Research data')).toBe('Research data');
     expect(pluralLabel('Subscription')).toBe('Subscriptions');
     expect(pluralLabel('Address')).toBe('Addresses');
     expect(pluralLabel('Policy')).toBe('Policies');

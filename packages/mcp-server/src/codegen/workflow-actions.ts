@@ -6,7 +6,7 @@
  * - An action that asks first (`confirm`, a grant's Revoke) opens one screen of facts: what ends with it, what is under
  *   way, what it does not recall, what it leaves running and who is ending it, with an optional note. A saved move on
  *   the form that makes the same action opens the same confirmation, so nothing inside the record is ended unannounced;
- *   there it offers no other action instead, which would leave the form's other edits unsaved.
+ *   an alternative chosen there stays in the draft with the form's other edits until Save.
  * - Any other action (Pause, Resume) is written at once. Its result, a status message that stays until the person moves
  *   on, says how to undo it where another action does (Pause names Resume).
  * - For a grant (an object composing Mandate), Resume shows its rule: it gives the grant again, so it is for someone who
@@ -100,11 +100,28 @@ export const confirmation = ${JSON.stringify({
 }
 
 /** createWorkflow: opening a confirmation, writing an action with its result, and what the open confirmation lists. */
-export function workflowActionFunctions(): string {
+export function workflowActionFunctions(declared: WorkflowStateActions): string {
   return `
   // s249-m03 (Interface 6): an action that asks first opens its confirmation, from its button or from a saved move on the
   // form; any other is written at once. The result is a status message that stays until the person moves on.
-  function openAction(id: string, via: 'button' | 'form') { publish({ actionOpen: id, actionVia: via, notice: '' }); }
+  function openAction(id: string, via: 'button' | 'form') { publish({ actionOpen: id, actionVia: via, notice: via === 'form' ? 'Unsaved changes' : '' }); }
+  function returnToForm(status: DomainRecord['status']) {
+    const saved = store.get(state.id);
+    const draft = { ...state.draft, status };
+    ${declared.confirm?.reasonField ? `const reason = ${JSON.stringify(declared.confirm.reasonField)} as keyof DomainRecord;
+    if (Object.hasOwn(saved, reason)) Object.assign(draft, { [reason]: saved[reason] });
+    else delete draft[reason];` : ''}
+    const changed = (Object.keys(fieldTypes) as (keyof DomainRecord)[]).some(field => JSON.stringify(draft[field]) !== JSON.stringify(saved[field]));
+    publish({ actionOpen: '', draft, notice: changed ? 'Unsaved changes' : '', revision: state.revision + 1 });
+  }${declared.alternative ? `
+  function canOfferAlternative() {
+    return Boolean(state.actionOpen && confirmation.alternative.from.includes(String(store.get(state.id).status)));
+  }
+  function chooseAlternative() {
+    if (!canOfferAlternative()) return;
+    if (state.actionVia === 'form') returnToForm(${JSON.stringify(declared.alternative.to)});
+    else actions.${stateActionHandler(declared.alternative)}();
+  }` : ''}
   async function act(id: string, operation: () => DomainRecord) {
     const shown = store.preview(state.id, id);
     publish({ uiState: 'loading', error: '', actionOpen: '' });
@@ -112,21 +129,24 @@ export function workflowActionFunctions(): string {
       await store.ready();
       operation();
       const ended = shown.endsWith.length ? ' ' + (shown.endsWith.length === 1 ? shown.endsWith[0] : shown.endsWith.slice(0, -1).join(', ') + ' and ' + shown.endsWith[shown.endsWith.length - 1]) + ' ended with it.' : '';
-      publish({ notice: (actionResults[id] ?? '{name} is changed.').replace('{name}', shown.name) + ended });
-      await navigate('detail');
+      await navigate('detail', state.id, (actionResults[id] ?? '{name} is changed.').replace('{name}', shown.name) + ended);
     } catch (error) { publish({ uiState: 'error', error: error instanceof Error ? error.message : String(error) }); }
   }`;
 }
 
 /** createWorkflow's returned API: the confirmation's facts, confirming it and keeping the record. */
-export function workflowActionApi(): string {
+export function workflowActionApi(declared: WorkflowStateActions): string {
   return `
     /** What the open confirmation lists, worked out from the records here; undefined when none is open. */
     actionPreview() { return state.actionOpen ? store.preview(state.id, state.actionOpen) : undefined; },
     /** Writes the open confirmation's action with its note: from the form, the saved draft through update; else transition. */
     confirmAction(note: string) { const id = state.actionOpen; if (!id) return Promise.resolve(); return act(id, () => state.actionVia === 'form' ? store.update(state.draft, note) : store.transition(state.id, id, note)); },
     /** Keeps the record as it is, closing the confirmation (its Keep button, or Escape). */
-    dismissAction() { publish({ actionOpen: '' }); },
+    dismissAction() {
+      if (!state.actionOpen) return;
+      if (state.actionVia === 'form') returnToForm(store.get(state.id).status);
+      else publish({ actionOpen: '' });
+    },${declared.alternative ? '\n    canOfferAlternative, chooseAlternative,' : ''}
     /** The rule an offered action shows (Resume's), for the shown record, if any. */
     actionRule() { const record = state.draft as Record<string, unknown>; const action = stateActions.find((entry) => actionRules[entry.id] && entry.from.includes(String(record.status))); return action ? actionRules[action.id]!.replace('{party}', String(record.granted_for_name ?? record.granted_for_id ?? '')) : ''; },`;
 }
@@ -159,7 +179,7 @@ export function reactConfirmation(declared: WorkflowStateActions): string {
           <div className="workflow-confirm-part"><h3>{confirmation.who}</h3><p>{preview.actor ? preview.actor.name : confirmation.untold}</p></div>
         </div>
         <div className="workflow-field"><label htmlFor="workflow-confirm-note">{confirmation.note}</label><textarea id="workflow-confirm-note" name="workflow-confirm-note" ref={confirmNote} defaultValue={state.actionVia === 'form' && confirmation.reasonField ? String((state.draft as Record<string, unknown>)[confirmation.reasonField] ?? '') : ''} /></div>
-        ${declared.alternative ? `{state.actionVia === 'button' && confirmation.alternative.from.includes(String((state.draft as Record<string, unknown>).status)) && <p className="workflow-confirm-alternative">{confirmation.alternative.lead} <Button intent="secondary" onClick={() => app.actions.${stateActionHandler(declared.alternative)}()}>{confirmation.alternative.button}</Button></p>}` : ''}
+        ${declared.alternative ? `{app.canOfferAlternative() && <p className="workflow-confirm-alternative">{confirmation.alternative.lead} <Button intent="secondary" onClick={() => app.chooseAlternative()}>{confirmation.alternative.button}</Button></p>}` : ''}
         <div className="workflow-confirm-buttons"><Button intent="danger" onClick={() => { void app.confirmAction(confirmNote.current?.value ?? ''); }}>{confirmation.button}</Button><Button intent="secondary" onClick={() => app.dismissAction()}>{confirmation.keep}</Button></div>
       </section>}`;
 }
@@ -179,7 +199,7 @@ export function vueConfirmation(declared: WorkflowStateActions): string {
           <div class="workflow-confirm-part"><h3>{{ confirmation.who }}</h3><p>{{ preview.actor ? preview.actor.name : confirmation.untold }}</p></div>
         </div>
         <div class="workflow-field"><label for="workflow-confirm-note">{{ confirmation.note }}</label><textarea id="workflow-confirm-note" ref="confirmNote" name="workflow-confirm-note" :value="state.actionVia === 'form' && confirmation.reasonField ? String(values[confirmation.reasonField] ?? '') : ''"></textarea></div>
-        ${declared.alternative ? `<p v-if="state.actionVia === 'button' && confirmation.alternative.from.includes(String(values.status))" class="workflow-confirm-alternative">{{ confirmation.alternative.lead }} <Button intent="secondary" @activate="app.actions.${stateActionHandler(declared.alternative)}()">{{ confirmation.alternative.button }}</Button></p>` : ''}
+        ${declared.alternative ? `<p v-if="app.canOfferAlternative()" class="workflow-confirm-alternative">{{ confirmation.alternative.lead }} <Button intent="secondary" @activate="app.chooseAlternative()">{{ confirmation.alternative.button }}</Button></p>` : ''}
         <div class="workflow-confirm-buttons"><Button intent="danger" @activate="app.confirmAction(confirmNote?.value ?? '')">{{ confirmation.button }}</Button><Button intent="secondary" @activate="app.dismissAction()">{{ confirmation.keep }}</Button></div>
       </section>`;
 }

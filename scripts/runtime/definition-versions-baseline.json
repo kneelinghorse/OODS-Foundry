@@ -1,0 +1,385 @@
+{
+  "source": "0.18.0",
+  "definitions": {
+    "domains/saas-billing/objects/Invoice.object.yaml": {
+      "name": "Invoice",
+      "version": "1.0.0",
+      "digest": "7f085d218e46175dbfbb2e528fa7c845700fadfa580e1810f5f3d16e8cf7eeb8"
+    },
+    "domains/saas-billing/objects/Plan.object.yaml": {
+      "name": "Plan",
+      "version": "1.0.0",
+      "digest": "de24062217dd41c3a9cd1fb4a04c6e3a2b447d7cee8d479ce090f0ec050dbf18"
+    },
+    "domains/saas-billing/objects/Usage.object.yaml": {
+      "name": "Usage",
+      "version": "1.0.0",
+      "digest": "46931715fb466a395a0a4c6d7e49b451f9308e6cf42b3fc9b497f2aded1e3dbb"
+    },
+    "domains/saas-billing/traits/billable.trait.yaml": {
+      "name": "SaaSBillingBillable",
+      "version": "1.0.0",
+      "digest": "cfac4244a67d7e07c57e8d2e06eca11476b9f18c96a3e3c8abc2d72928cfac17"
+    },
+    "domains/saas-billing/traits/metered.trait.yaml": {
+      "name": "SaaSBillingMetered",
+      "version": "1.0.0",
+      "digest": "f4b04d03346f6ec54d5ca3f9ec9602ff180ca8b35466560e3e76a5b8bbd3ddbd"
+    },
+    "domains/saas-billing/traits/payable.trait.yaml": {
+      "name": "SaaSBillingPayable",
+      "version": "1.0.0",
+      "digest": "1593da68c15d77c64410b1a493a85fd5f94f13eeae7b1106c3ed30959f5a18a0"
+    },
+    "domains/saas-billing/traits/refundable.trait.yaml": {
+      "name": "SaaSBillingRefundable",
+      "version": "1.0.0",
+      "digest": "a839bede02a46addabfe8270c706b386b06fb6b12a2a1e3e8c82f82faf48d6e7"
+    },
+    "objects/capture/CapturedArtifact.object.yaml": {
+      "name": "CapturedArtifact",
+      "version": "0.3.0",
+      "digest": "f3a1473c776c190dbc0bc6cb4e14ef77cf66626ece62f62c738169795b2f0cba"
+    },
+    "objects/capture/Comparison.object.yaml": {
+      "name": "Comparison",
+      "version": "0.3.0",
+      "digest": "51c062be2b720a36d6127f5361f16090ebb7885a73df12746402dc3414d01016"
+    },
+    "objects/capture/ComparisonSignal.object.yaml": {
+      "name": "ComparisonSignal",
+      "version": "0.3.0",
+      "digest": "36a85e5ea731eb5281a6872bf274509e1686a5701387a22caaa507c0680bb7a0"
+    },
+    "objects/capture/Finding.object.yaml": {
+      "name": "Finding",
+      "version": "0.3.0",
+      "digest": "dcb5261cfc04451d20b837a0e1830f68718ddcd07a5e878db3979a297f4602f8"
+    },
+    "objects/capture/Run.object.yaml": {
+      "name": "Run",
+      "version": "0.3.0",
+      "digest": "4555926f84266e7ae0d9c90b819f83c139501b0a3f5b918c846e86e2e6d2dfab"
+    },
+    "objects/content/Article.object.yaml": {
+      "name": "Article",
+      "version": "1.1.0",
+      "digest": "33f664e65fd291c2edd2f698421fabcf0f5b9b63ec43fe497cf9b0fb84acd4c2"
+    },
+    "objects/content/Media.object.yaml": {
+      "name": "Media",
+      "version": "1.0.0",
+      "digest": "147fcfac53335f6f9b2514edf6879e3f3b809e0abbb006bd4cbb9002e007ed33"
+    },
+    "objects/core/Agent.object.yaml": {
+      "name": "Agent",
+      "version": "1.1.1",
+      "digest": "0bc08175d9ccdfff74fd9274b9dcb20a6440d822da579272f81d33aecab3e680"
+    },
+    "objects/core/Approval.object.yaml": {
+      "name": "Approval",
+      "version": "1.1.2",
+      "digest": "aee3cdde2021e871a371ecc66d797d5bd326aaa3ab4e4c3967c5cd6076458b16"
+    },
+    "objects/core/Closure.object.yaml": {
+      "name": "Closure",
+      "version": "1.0.0",
+      "digest": "67b8c16288f0796cc10dd1c7041c0f9d16d50c639ac12a6d1437b6625d543b22"
+    },
+    "objects/core/Grant.object.yaml": {
+      "name": "Grant",
+      "version": "1.0.1",
+      "digest": "ef66db7b0f3db06cb9561297fab6885467d63e6fa5ccbb7e60c4e26f2469739c"
+    },
+    "objects/core/Organization.object.yaml": {
+      "name": "Organization",
+      "version": "1.2.1",
+      "digest": "9d3117d6ae34a9e61f9405406d3bbe17a77e4d228e366893f8fd27d802a74051"
+    },
+    "objects/core/Product.object.yaml": {
+      "name": "Product",
+      "version": "1.1.0",
+      "digest": "9f0fd0eee2cdf2d04342a5a3b6c66cf312fd3706e25a416c2f3cfe38bb270e44"
+    },
+    "objects/core/Relationship.object.yaml": {
+      "name": "Relationship",
+      "version": "1.3.0",
+      "digest": "0ab533d3de522fcc4a9d3c99354e594235920fcd89ad37de2ca219c5adbc8a78"
+    },
+    "objects/core/Subscription.object.yaml": {
+      "name": "Subscription",
+      "version": "2.0.0",
+      "digest": "b3a545b71b1806d1c7c8fdd33597b5d228cf4098ae95a3854feb68479851f583"
+    },
+    "objects/core/Task.object.yaml": {
+      "name": "Task",
+      "version": "1.0.1",
+      "digest": "67dc0c51d507b8741b5ee0c20a83c67322c58b2df0675afcfb1cdf90b4d76206"
+    },
+    "objects/core/Transaction.object.yaml": {
+      "name": "Transaction",
+      "version": "1.3.0",
+      "digest": "992bea4d4ddcfc380330430e39b29f2f94b49e723a58f75400b61cf67a7c2652"
+    },
+    "objects/core/User.object.yaml": {
+      "name": "User",
+      "version": "1.5.1",
+      "digest": "1339988d2e947d1ac31d5576840ed14f464d45b26474ad34cf32ee8d44c72503"
+    },
+    "traits/behavioral/Filterable.trait.yaml": {
+      "name": "Filterable",
+      "version": "1.0.0",
+      "digest": "3216bd46089a3324ec75c1b9858d082b54d2ce8bebe84f6f084ed1af11ac0f8b"
+    },
+    "traits/behavioral/Pageable.trait.yaml": {
+      "name": "Pageable",
+      "version": "1.0.0",
+      "digest": "1dabb112f5f73e83cf3d242bcc7d45c73836cd0b4db67b98dfefbc26693ac6e4"
+    },
+    "traits/behavioral/Searchable.trait.yaml": {
+      "name": "Searchable",
+      "version": "1.0.0",
+      "digest": "98822c5e67f6698c7910c8e7d8a845ffdeab4a6bfd1eb35d1c35a2320df516b9"
+    },
+    "traits/behavioral/Sortable.trait.yaml": {
+      "name": "Sortable",
+      "version": "1.0.0",
+      "digest": "53f3f7f6a62c0ccd52379d0c76f3d777ccf8105fc804bfcaa473f5f62e898fc9"
+    },
+    "traits/behavioral/Taggable.trait.yaml": {
+      "name": "Taggable",
+      "version": "2.0.0",
+      "digest": "ca7be39833d67d18fd03460bee574e6fc6feba37bcab9800db96c9d3d462c6fd"
+    },
+    "traits/content/Labelled.trait.yaml": {
+      "name": "Labelled",
+      "version": "2.0.0",
+      "digest": "6f4f89f27f540ca87bed975af91051022b514d8536d948df88112ab05cbeb91b"
+    },
+    "traits/core/Actor.trait.yaml": {
+      "name": "Actor",
+      "version": "1.0.2",
+      "digest": "fccf906ce5dc97f1b2857aecb362ab63ab5c59ed942d3c1f3bcff7568f5104ae"
+    },
+    "traits/core/Addressable.trait.yaml": {
+      "name": "Addressable",
+      "version": "1.0.0",
+      "digest": "d102e94e8282048cf6ed878c27f19a2173771e5a7bf7e39820986812b1e176a4"
+    },
+    "traits/core/Approvable.trait.yaml": {
+      "name": "Approvable",
+      "version": "1.1.1",
+      "digest": "2a6a5acec07c2082712d81c8686842257693d46d0e8afd38e54e7e39f590a7fc"
+    },
+    "traits/core/Assessable.trait.yaml": {
+      "name": "Assessable",
+      "version": "1.1.0",
+      "digest": "a4e1d19474ec57dbc0a2b59af3f2327bad46258e50f1301b3152a4146775b242"
+    },
+    "traits/core/Assignment.trait.yaml": {
+      "name": "Assignment",
+      "version": "1.0.0",
+      "digest": "6fffe0ea6f21e3d2db3d09dfd9951bdd2c198396786cd149bc51282eaad42375"
+    },
+    "traits/core/Authable.trait.yaml": {
+      "name": "Authable",
+      "version": "1.1.0",
+      "digest": "92c22ec6c4df5a75a78b3f0d79418fb205c301b745073fc24a1234b14a3b52ce"
+    },
+    "traits/core/Classifiable.trait.yaml": {
+      "name": "Classifiable",
+      "version": "1.0.0",
+      "digest": "e18630cfa6b11c39f5ec9c62ea2fe4b5d5554499f6a3c138f2bcd358fc3cb897"
+    },
+    "traits/core/Closeout.trait.yaml": {
+      "name": "Closeout",
+      "version": "1.0.0",
+      "digest": "34a9dec153eb9d5353657dacc6aeda01b5bc10ff59cbc3865fd328dee5b76317"
+    },
+    "traits/core/Communicable.trait.yaml": {
+      "name": "Communicable",
+      "version": "1.0.0",
+      "digest": "d5d1c54dd772d36364e259e07f7c5919c040ceb9c694f662a59e7e6ceb30c02f"
+    },
+    "traits/core/Decision.trait.yaml": {
+      "name": "Decision",
+      "version": "1.1.1",
+      "digest": "0a2aa49ce3e30964c4f56615183ce1b9bca75945c9ee35df7b60e76fbbfb6a6a"
+    },
+    "traits/core/Mandate.trait.yaml": {
+      "name": "Mandate",
+      "version": "1.1.1",
+      "digest": "aded9c1e67b42e7e53939a0f8a60d7866f826ff43759254eb176d346abbb0604"
+    },
+    "traits/core/Preferenceable.trait.yaml": {
+      "name": "Preferenceable",
+      "version": "1.0.0",
+      "digest": "6f6fa63d2e3b150a352c3c8c75d94e61459c27f430412177bf735e02856b7dd0"
+    },
+    "traits/core/Provenanced.trait.yaml": {
+      "name": "Provenanced",
+      "version": "1.0.0",
+      "digest": "11d1ce391473240c30c2db09129b59f48c1ac61751ef5d7c322c3517afdff496"
+    },
+    "traits/financial/Billable.trait.yaml": {
+      "name": "Billable",
+      "version": "2.1.0",
+      "digest": "fc37b7a3001a942488aab92a500c73ea0bf4e9a5477c7a09c0ee3834d4c67d33"
+    },
+    "traits/financial/Priceable.trait.yaml": {
+      "name": "Priceable",
+      "version": "1.0.0",
+      "digest": "5191f1c3a689f1a3e3e8e3027443230b3d42f224abc016a4cac901ffecd3c3bd"
+    },
+    "traits/lifecycle/Archivable.trait.yaml": {
+      "name": "Archivable",
+      "version": "2.0.0",
+      "digest": "11f0ef44c61b023ec2b207d7d92bf3f5b9cb754b11c74f37d7027703a1c71a41"
+    },
+    "traits/lifecycle/Auditable.trait.yaml": {
+      "name": "Auditable",
+      "version": "1.4.0",
+      "digest": "330ce74327aa2f9f62f52b7edbc0294e51d9b5974ab12238873c86137fd5ff30"
+    },
+    "traits/lifecycle/Cancellable.trait.yaml": {
+      "name": "Cancellable",
+      "version": "1.0.0",
+      "digest": "9ec5e90520a0da5434cbc8cee8ce1e82f8dd958057bf5ddad6ad286ae98e8e36"
+    },
+    "traits/lifecycle/Stateful.trait.yaml": {
+      "name": "Stateful",
+      "version": "2.5.1",
+      "digest": "84e59510eddb852e9cfd3de9dd587b7db55403d2c097f5c33dcaedb1952d5fd3"
+    },
+    "traits/lifecycle/Supersedable.trait.yaml": {
+      "name": "Supersedable",
+      "version": "1.0.0",
+      "digest": "488ffe84a50406f9011780b2a98e0cba28a5058368581965e6e5209fc435d317"
+    },
+    "traits/lifecycle/Timestampable.trait.yaml": {
+      "name": "Timestampable",
+      "version": "1.0.1",
+      "digest": "bb49a58a7e1730f72df667d2ed49ba3e4c7a9fad15e5c0289867529f9fa2fd42"
+    },
+    "traits/structural/Ownerable.trait.yaml": {
+      "name": "Ownerable",
+      "version": "1.0.0",
+      "digest": "3de0c9b133d6604617eb1bf10e92b905cbac5d8d2507dc3fa0a2c295aee2b926"
+    },
+    "traits/visual/Colorized.trait.yaml": {
+      "name": "Colorized",
+      "version": "2.0.0",
+      "digest": "f62700593763778fe665276815fad008a25701aa6cd216dbc964aecf37b9aa34"
+    },
+    "traits/visual/Statusable.trait.yaml": {
+      "name": "Statusable",
+      "version": "1.0.0",
+      "digest": "ca6b5fa3a3143240c8d4b549d5bd5e24df81f3dae21c634a71a99c5103d5ec7e"
+    },
+    "traits/viz/encoding-color.trait.yaml": {
+      "name": "EncodingColor",
+      "version": "0.2.1",
+      "digest": "e2129dbc7c3b89d20a4b87137f4dd20014c440dfc8c4720986e7022894bdc173"
+    },
+    "traits/viz/encoding-opacity.trait.yaml": {
+      "name": "EncodingOpacity",
+      "version": "0.1.1",
+      "digest": "4df0766bc416977512009523cf7aa3649ecbb16187dd0943636e63821fde0a2a"
+    },
+    "traits/viz/encoding-position-x.trait.yaml": {
+      "name": "EncodingPositionX",
+      "version": "0.2.1",
+      "digest": "dfd8eb6725ba10b49690b08739777d5d50130e349d30fc84f488b8600eb09486"
+    },
+    "traits/viz/encoding-position-y.trait.yaml": {
+      "name": "EncodingPositionY",
+      "version": "0.2.1",
+      "digest": "92902dcadeb58f1cc158033dfaa7196b7a6cdc838e559cb33f93bd7937294aeb"
+    },
+    "traits/viz/encoding-shape.trait.yaml": {
+      "name": "EncodingShape",
+      "version": "0.1.1",
+      "digest": "b0d75c24b1248f0ecfd894bb299069ea347a6f257054323bcb26e26a02e27925"
+    },
+    "traits/viz/encoding-size.trait.yaml": {
+      "name": "EncodingSize",
+      "version": "0.2.1",
+      "digest": "8d1ae5f9c3c668a11b8dee4bae292189ef02edb6dc80aa9f2cc2df27b730b058"
+    },
+    "traits/viz/interaction-highlight.trait.yaml": {
+      "name": "InteractionHighlight",
+      "version": "0.2.0",
+      "digest": "bfea5cc04e233a0c12d2dfa0bfbb35a62a314fee8e6adc5b04937bfbecfca5a8"
+    },
+    "traits/viz/interaction-tooltip.trait.yaml": {
+      "name": "InteractionTooltip",
+      "version": "0.2.0",
+      "digest": "5f89bb5652b3c17ef7fe4fa68cf3a913c50943f728863f5a5b72fb0b66d7d54b"
+    },
+    "traits/viz/layout-concat.trait.yaml": {
+      "name": "LayoutConcat",
+      "version": "0.2.0",
+      "digest": "dd283070c1b4d98a09a807a69312e6bba1c3c9e0fd3a294cc0e824e42c780ebb"
+    },
+    "traits/viz/layout-facet.trait.yaml": {
+      "name": "LayoutFacet",
+      "version": "0.2.0",
+      "digest": "fb4eac1c415237e4b2faeb83a99c2d8906921d136454377755be9fcbad8ab66b"
+    },
+    "traits/viz/layout-layer.trait.yaml": {
+      "name": "LayoutLayer",
+      "version": "0.2.0",
+      "digest": "1a0261d89cb4912e6b245e12a0edc4995d80d649b2d9a0b3a71ba600bdc6bee4"
+    },
+    "traits/viz/mark-area.trait.yaml": {
+      "name": "MarkArea",
+      "version": "0.2.1",
+      "digest": "d677ce29ad5f3029edf87ae576f52ddf7db6e3ed36593a891c31e1af3a9c812b"
+    },
+    "traits/viz/mark-bar.trait.yaml": {
+      "name": "MarkBar",
+      "version": "0.2.1",
+      "digest": "9739f618aa6b5316f717a6e89a4cb5855d3b1c3763a3230e5e51f0827c8933b5"
+    },
+    "traits/viz/mark-graph.trait.yaml": {
+      "name": "MarkGraph",
+      "version": "0.1.1",
+      "digest": "13cf8e20a90029bf1714e6448a423d3de9ce4fae19f7cba1ed3f7bfada1a659a"
+    },
+    "traits/viz/mark-line.trait.yaml": {
+      "name": "MarkLine",
+      "version": "0.2.1",
+      "digest": "ace43e5088cffcd0d6d37f84aeadf1d721cbb34b12b0e60d288906493693f853"
+    },
+    "traits/viz/mark-point.trait.yaml": {
+      "name": "MarkPoint",
+      "version": "0.2.1",
+      "digest": "9650e62bdacb38535701f2c2adb5f6d91c44d76074e6a5ea8aa879a13bd4260b"
+    },
+    "traits/viz/mark-rect.trait.yaml": {
+      "name": "MarkRect",
+      "version": "0.1.1",
+      "digest": "b9eb5360358c5c5640d03482a8a3b67b7e398a52d06ed44a9ee2b4561cc74f17"
+    },
+    "traits/viz/scale-linear.trait.yaml": {
+      "name": "ScaleLinear",
+      "version": "0.2.1",
+      "digest": "9e98670ba50b85d22c4dce2d7204e392b704b2ec5bbdd7e059fa66ffad2f9a16"
+    },
+    "traits/viz/scale-temporal.trait.yaml": {
+      "name": "ScaleTemporal",
+      "version": "0.3.1",
+      "digest": "6121e89f95fe0b46b7010f350849b3d7935ce8d76f0edda9d12c6794ff9af417"
+    },
+    "traits/viz/scatter-plot.trait.yaml": {
+      "name": "ScatterPlot",
+      "version": "0.1.1",
+      "digest": "651dafa5941a13776c982189f97a6eb9d55d91e37553f108c9e6436dd4b9ddc7"
+    },
+    "traits/viz/spatial/geocodable.trait.yaml": {
+      "name": "Geocodable",
+      "version": "1.0.1",
+      "digest": "be213a41c69909da0bdda105415db6a5c9ee938589074cbca4dbc0aea0c4ea38"
+    }
+  }
+}

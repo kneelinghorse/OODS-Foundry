@@ -3,14 +3,14 @@ import type { TraitDefinition } from '../../src/core/trait-definition.ts';
 const ScaleTemporalTrait = {
   trait: {
     name: 'ScaleTemporal',
-    version: '0.3.0',
+    version: '0.3.1',
     description: 'Temporal scale metadata with UTC rendering. Version 0.3.0 removes the unused timezone parameter (breaking).',
     category: 'viz.scale',
     tags: ['viz', 'scale', 'temporal'],
   },
 
   parameters: [
-    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
 
     {
       name: 'domainStart',

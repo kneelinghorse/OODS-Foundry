@@ -39,8 +39,9 @@ describe('a related row reads its own object\'s status table', () => {
 
   it('reads a state\'s words from the lifecycle table unless told another, in sentence case as a record\'s own list does', () => {
     expect(relatedStateLabel('active')).toBe('Active');
+    expect(getStatusPresentation('lifecycle', 'OK').label).toBe('OK');
     expect(relatedStateLabel('needs_input')).toBe('Needs input');
-    expect(getStatusPresentation('lifecycle', 'needs_input').label).toBe('Needs Input');
+    expect(getStatusPresentation('lifecycle', 'needs_input').label).toBe('Needs input');
     expect(relatedStateLabel('pending_cancellation', 'subscription')).toBe('Pending cancellation');
   });
 });

@@ -1,6 +1,6 @@
 trait:
   name: Stateful
-  version: 2.5.0
+  version: 2.5.1
   description: |
     Normalizes lifecycle state transitions, exposes canonical status semantics, and provides
     optional transition governance for production workflows. Many objects compose Stateful
@@ -96,9 +96,8 @@ parameters:
     type: boolean
     required: false
     description: |
-      When true, every state transition must include a human-readable reason in the
-      state_history entry. Enforced at the application layer — transitions without a
-      reason field are rejected. Useful for compliance and audit trails.
+      When true, your product requires a human-readable reason in the state_history entry for each change of state.
+      OODS Foundry keeps the setting. Your product checks the reason.
     default: false
 
 schema:

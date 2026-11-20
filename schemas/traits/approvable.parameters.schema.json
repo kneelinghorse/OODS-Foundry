@@ -48,7 +48,7 @@
     },
     "approvalsNeeded": {
       "type": "object",
-      "description": "How many yeses each level needs, from different people, keyed by level. A level not named needs one.",
+      "description": "A map of required counts by level. For a level with no count, the rule calls for one eligible approver. Your product checks and counts the answers.",
       "propertyNames": { "$ref": "#/definitions/levelName" },
       "additionalProperties": { "type": "integer", "minimum": 1, "maximum": 20 }
     },

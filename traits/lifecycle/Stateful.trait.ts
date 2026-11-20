@@ -9,7 +9,7 @@ export type TransitionRules = Record<string, string[]>;
 const StatefulTrait = {
   trait: {
     name: 'Stateful',
-    version: '2.5.0',
+    version: '2.5.1',
     description:
       'Normalizes lifecycle state transitions, exposes canonical status semantics, and provides ' +
       'optional transition governance for production workflows. Most-composed trait (18 objects).',
@@ -61,7 +61,7 @@ const StatefulTrait = {
       type: 'boolean' as const,
       required: false,
       description:
-        'When true, every state transition must include a reason. Enforced at the application layer.',
+        'When true, your product requires a reason for each change of state. Your product checks the reason.',
       default: false,
     },
   ] as const,

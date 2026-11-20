@@ -287,7 +287,7 @@ describe('Approval declares the order of its states, and the product enforces it
     // s248-m01: 2.4.0 adds the optional grant pointer and name to state_history; these lines are unchanged.
     // s249-m03 (Interface 11): 2.5.0 adds actions, and a generated app keeps the order, so the select offers the record's
     // state and its allowed moves where it offered every state; the product still enforces the order on its own records.
-    expect(stateful.trait.version).toBe('2.5.0');
+    expect(stateful.trait.version).toBe('2.5.1');
     // s249-m05 (the fresh read): "your product", so "the product" cannot read as OODS Foundry enforcing it.
     expect(stateful.trait.description).toContain('Your product enforces that order on its own records');
     expect(stateful.trait.description).toContain("a generated StatusSelector offers the record's state and the moves the order allows");

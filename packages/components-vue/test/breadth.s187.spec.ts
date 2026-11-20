@@ -177,7 +177,11 @@ describe('Sprint 187 lifecycle and financial semantics', () => {
     const event = new Event('submit', { cancelable: true, bubbles: true }); root.dispatchEvent(event);
     expect(event.defaultPrevented).toBe(true); expect(root.querySelector('button')).toBeNull();
     const defaults = mountFamily('CancellationForm', { cancellationReason: 'Alias' });
-    expect([...defaults.querySelectorAll('option')].map((node) => node.value)).toEqual(['no_longer_needed', 'budget', 'duplicate']);
+    const initial = defaults.querySelector('select')!;
+    expect(initial.value).toBe('');
+    expect(initial.selectedOptions[0]?.textContent).toBe('Choose a reason');
+    expect(initial.options[0].disabled).toBe(true);
+    expect([...initial.options].map(option => option.value)).toEqual(['', 'no_longer_needed', 'budget', 'duplicate']);
     expect(defaults.querySelector<HTMLTextAreaElement>('textarea')?.value).toBe('Alias');
     const freeCode = mountFamily('CancellationForm', { allowedReasons: [] }).querySelector<HTMLInputElement>('input[name="reasonCode"]')!;
     expect(freeCode.value).toBe('');

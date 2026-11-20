@@ -3,7 +3,7 @@ import type { TraitDefinition } from '../../src/core/trait-definition.ts';
 const ScatterPlotTrait = {
   "trait": {
     "name": "ScatterPlot",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Scatter authoring over the existing MarkPoint renderer",
     "category": "viz.pattern",
     "tags": [
@@ -17,13 +17,13 @@ const ScatterPlotTrait = {
       "type": "string",
       "required": false,
       "default": "{}",
-      "description": "JSON-encoded Cartesian viz.render input fragment; data rows are supplied by the consumer."
+      "description": "JSON-encoded Cartesian viz_render input fragment; data rows are supplied by the consumer."
     },
     {
       "name": "previewSvg",
       "type": "string",
       "required": false,
-      "description": "Static SVG returned by viz.render for the authored sample."
+      "description": "Static SVG returned by viz_render for the authored sample."
     }
   ],
   "schema": {},

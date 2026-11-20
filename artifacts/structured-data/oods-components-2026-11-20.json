@@ -8,7 +8,7 @@
     "approvedRuntimeCensus": null,
     "classificationStatus": "proposed-awaiting-approval"
   },
-  "generatedAt": "2026-11-17T11:23:14Z",
+  "generatedAt": "2026-11-20T05:13:51Z",
   "stats": {
     "componentCount": 114,
     "traitCount": 55,
@@ -5954,10 +5954,6 @@
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/5",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/12",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/13",
-              "packages/mcp-server/registry/runtime-cells.v1.json#/rows/18",
-              "packages/mcp-server/registry/runtime-cells.v1.json#/rows/19",
-              "packages/mcp-server/registry/runtime-cells.v1.json#/rows/26",
-              "packages/mcp-server/registry/runtime-cells.v1.json#/rows/27",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/32",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/33",
               "packages/mcp-server/registry/runtime-cells.v1.json#/rows/40",
@@ -12938,7 +12934,8 @@
           "position": "main",
           "priority": 71,
           "props": {
-            "field": "requested_for_id"
+            "field": "requested_for_id",
+            "data-oods-omit-empty": true
           },
           "source": "traits/core/Decision.trait.yaml"
         },
@@ -18122,8 +18119,8 @@
   "traits": [
     {
       "name": "Actor",
-      "version": "1.0.1",
-      "description": "The ability to act: an object that composes Actor can be assigned work, hold a role, own a record and appear in\na record's history as the one who made a change. User composes it as a person; Agent composes it as an agent.\n\nAn agent is an actor, not a user. In OODS an object is what its traits make it, so an AI agent that acts\ninside a product is an object of its own, and what it shares with a person's account is this trait. Platforms that\nstored their agents as users did so because their roles and audit logs could point only at users; here the places\nthat name an actor accept any object that composes Actor:\n\n  a history entry   actor_id and actor_kind name who acted (Stateful's state_history, Auditable's audit_log)\n  a membership      actor_id with actor_kind holds a role in an organization (Authable's membership_records)\n  a grant           a Grant's seats (the Mandate trait): who asked for it, gave it, holds it and ended it\n  an owner          Ownerable's owner_id with owner_type\n\nThe kind is a parameter, never a record field: every record of an object is the same kind of actor, so a User's\nrecords and screens are unchanged by composing it. An actor of kind agent is marked \"Agent\" beside its name in\nlist, card and detail views, so no one reads an agent's record as a person's. actor_kind on a history entry or a\nmembership uses the same three words.",
+      "version": "1.0.2",
+      "description": "The ability to act: an object that composes Actor can be assigned work, hold a role, own a record and appear in\na record's history as the one who made a change. User composes it as a person; Agent composes it as an agent.\n\nAn agent is an actor, not a user. In OODS an object is what its traits make it, so an AI agent that acts\ninside a product is an object of its own, and what it shares with a person's account is this trait. Platforms that\nstored their agents as users did so because their roles and audit logs could point only at users; here the places\nthat name an actor accept any object that composes Actor:\n\n  a history entry   actor_id and actor_kind name who acted (Stateful's state_history, Auditable's audit_log)\n  a membership      actor_id with actor_kind holds a role in an organization (Authable's membership_records)\n  a grant           a Grant's seats (the Mandate trait): who asked for it, gave it, holds it and ended it\n  an owner          Ownerable's owner_id with owner_type\n\nThe kind is a parameter, never a record field: every record of an object is the same kind of actor, so a User's\nrecords and screens are unchanged by composing it. An actor of kind agent is marked \"Agent\" in\nlist, card and detail views, so no one reads an agent's record as a person's. actor_kind on a history entry or a\nmembership uses the same three words.",
       "category": "core",
       "tags": [
         "actor",
@@ -18139,7 +18136,7 @@
           "name": "kind",
           "type": "string",
           "required": true,
-          "description": "What every record of this object is when it acts: person (someone's own account), agent (software that acts,\non its own behalf or for someone) or system (the product itself, such as a scheduled job). An agent is marked\n\"Agent\" beside its name.\n",
+          "description": "What every record of this object is when it acts: person (someone's own account), agent (software that acts,\non its own behalf or for someone) or system (the product itself, such as a scheduled job). An agent is marked\n\"Agent\" in lists, cards and its own page.\n",
           "default": "person",
           "validation": {
             "enum": [
@@ -18164,7 +18161,7 @@
         "maturity": "alpha",
         "accessibility": {
           "keyboard": "Actor adds no interactive control.",
-          "screenreader": "An agent's \"Agent\" badge is text beside its name, so it is read with the name."
+          "screenreader": "The badge exposes the word \"Agent\" as text."
         },
         "regionsUsed": [],
         "examples": [
@@ -18359,7 +18356,7 @@
     },
     {
       "name": "Approvable",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "description": "The ability to be approved: the thing's own rule for which change needs which level of yes, from how many and from\nwhom, and its outcome, worked out from the approvals that still stand. The approvals themselves are records of\ntheir own (the Approval object, through the Decision trait): one ask to one actor that becomes their answer.\n\nThe rule is the parameters. `levels` names the levels of yes the product declares, least deliberate first, as Decision does on\nthe Approval; `levelDefinitions` says what each one is, in six short texts; `requiredLevels` says which change (a\nstate the thing moves to, or a named action) needs which level; `approvalsNeeded`, `askerMayAnswer`,\n`agentLevels` and `lapsesOnChange` say how many, whether the asker may answer, which levels an agent's yes may\nsatisfy, and whether a yes lapses when the thing changes. `inAdvance` names the changes a grant's standing yes may\nallow in advance, where the product lets a yes given earlier stand for one asked now; it is empty by default, so\nevery change the rule names is asked each time. The definitions are kept with the rule; no screen changes by level.\n\nThe outcome is two read-only fields: `approval_state`, under a name of its own so it never collides with the\nlifecycle's `status`, and `approval_summary`, one kept line (\"Approved by Ruth Adeyemi · version 3 · 2 Nov\").\nThe product's own code works the outcome out from the approvals and writes both fields; they are kept off the\nthing's form and shown on its detail page. The summary restates the Approval records, since a thing's own page lists\nits approvals only where the thing declares that list (metadata.relatedLists), and no shipped object does.\n\nOODS Foundry shows the outcome; it does not work it out. It does not count approvals, check who may approve,\nexpire an ask, lock the thing or stop a change.",
       "category": "core",
       "tags": [
@@ -18416,35 +18413,35 @@
           "name": "requiredLevels",
           "type": "Record<string, string>",
           "required": false,
-          "description": "Which change needs which level: each key is a change (a lifecycle state the thing moves to, such as published,\nor a named action, such as resend), each value a declared level. A change not named needs no approval.\n",
+          "description": "Which change needs which level: each key is a change (a lifecycle state the thing moves to, such as published,\nor a named action, such as resend), each value a declared level. Under this rule your product requires no approval for an unlisted change.\n",
           "default": {}
         },
         {
           "name": "approvalsNeeded",
           "type": "Record<string, number>",
           "required": false,
-          "description": "How many yeses each level needs, from different people, keyed by level. A level not named needs one. Counting\nrules beyond a declared number are not modelled.\n",
+          "description": "How many eligible approvers your product requires at each named level. The map starts empty.\nFor a level with no count, the rule calls for one eligible approver. Your product checks and counts the answers.\n",
           "default": {}
         },
         {
           "name": "askerMayAnswer",
           "type": "boolean",
           "required": false,
-          "description": "Whether the one who asked may also give the yes. Off by default, so no one approves their own ask.",
+          "description": "Whether your product permits the asker to give the yes. The default is false. Your product checks who answered.",
           "default": false
         },
         {
           "name": "agentLevels",
           "type": "string[]",
           "required": false,
-          "description": "The levels an agent's yes may satisfy. Empty by default, so only a person's yes counts.",
+          "description": "The levels for which your product accepts an agent’s yes. The default list is empty. Your product checks who answered.",
           "default": []
         },
         {
           "name": "lapsesOnChange",
           "type": "boolean",
           "required": false,
-          "description": "Whether a yes stops standing when the thing changes after it was given (it becomes out of date).",
+          "description": "Whether your product marks an earlier yes out of date when the thing changes. OODS Foundry keeps the setting.",
           "default": true
         },
         {
@@ -18458,7 +18455,7 @@
           "name": "outcomes",
           "type": "string[]",
           "required": true,
-          "description": "The outcomes `approval_state` can hold, as the product works them out: not required, waiting, approved,\ndeclined, out of date by default. A rule that opens changes in advance may add allowed in advance\n(`allowed_in_advance`): the change needed a yes, and a grant's standing yes gave it, with no one asked this time.\n",
+          "description": "The outcomes `approval_state` can hold, as the product works them out: not required, waiting, approved,\ndeclined, out of date by default. Not required means the rule asks for no approval for this change.\nNot needed is the ending of a particular Approval that is no longer needed. A rule that opens changes in advance may add allowed in advance\n(`allowed_in_advance`): the change needed a yes, and a grant's standing yes gave it, with no one asked this time.\n",
           "default": [
             "not_required",
             "waiting",
@@ -22255,8 +22252,8 @@
     },
     {
       "name": "Decision",
-      "version": "1.1.0",
-      "description": "The record of one ask to one actor and the answer it became: who asked, and for whom; who was asked; who answered,\nand for whom when a delegate or an agent answered; about exactly what, at what level of yes, and what that yes\nmeans. An approval is a decision, not a status. The Approval object composes this trait, and the importer\nproposes it for another system's table of approvals, so every field lives here and a proposal can bind what the\nsource has.\n\nThe answer itself is not a field of this trait. It is the record's own lifecycle, through Stateful: not yet asked,\nwaiting, approved, declined, and the ways a yes ends (out of date, taken back, expired, withdrawn, not needed,\nused). A refusal changes nothing on the thing, so it is kept here and not as a line in the thing's history.\n\nA reference to a person, an agent or a thing is an id and a kept name. The name is kept on the record, so it still\nreads after the person leaves or the thing is deleted, and it is shown wherever the id is. The kinds are the Actor\ntrait's three words: person, agent or system.\n\nThe level is one of the names the product declares in `levels`, in order, the way it declares a lifecycle's states;\nthe thing approved declares the same names through Approvable. The meaning is one kept line saying what this yes\nmeans and permits, in words, written by the product when it asks (\"Sign-off: you answer for this release\"): 21 CFR\n11.50 requires a signed record to show \"the meaning (such as review, approval, responsibility, or authorship)\nassociated with the signature\".\n\nOODS Foundry keeps and shows this record. It does not ask anyone, check who may answer, count answers, expire an\nask or stop a change.",
+      "version": "1.1.1",
+      "description": "The record of one ask to one actor and the answer it became: who asked, and for whom; who was asked; who answered,\nand for whom when a delegate or an agent answered; about exactly what, at what level of yes, and what that yes\nmeans. An approval is a decision, not a status. The Approval object composes this trait, and the importer\nproposes it for another system's table of approvals, so every field lives here and a proposal can bind what the\nsource has.\n\nThe answer itself is not a field of this trait. It is the record's own lifecycle, through Stateful: not yet asked,\nwaiting, approved, declined, and the ways a yes ends (out of date, taken back, expired, withdrawn, not needed,\nused). A refusal changes nothing on the thing, so it is kept here and not as a line in the thing's history.\n\nA reference to a person, an agent or a thing is an id and a kept name. The name is kept on the record, so it still\nreads after the person leaves or the thing is deleted, and it is shown wherever the id is. The kinds are the Actor\ntrait's three words: person, agent or system.\n\nThe level is one of the names the product declares in `levels`, in order, the way it declares a lifecycle's states;\nthe thing approved declares the same names through Approvable. The meaning is one kept line saying what this yes\nmeans and permits, in words, written by the product when it asks (\"Sign-off: you answer for this release\"): 21 CFR\n11.50 requires a signed record to show \"the meaning (such as review, approval, responsibility, or authorship)\nassociated with the signature\". Keeping that meaning alone does not establish Part 11 compliance. Your product handles signatures and verifies the signer’s identity.\n\nOODS Foundry keeps and shows this record. It does not ask anyone, check who may answer, count answers, expire an\nask or stop a change.",
       "category": "core",
       "tags": [
         "approval-record",
@@ -22396,7 +22393,8 @@
           "position": "main",
           "priority": 71,
           "props": {
-            "field": "requested_for_id"
+            "field": "requested_for_id",
+            "data-oods-omit-empty": true
           }
         },
         {
@@ -22911,7 +22909,10 @@
           "token_mapping": "tokenMap(text.body.*)",
           "ui_hints": {
             "component": "Text",
-            "label": "Level"
+            "label": "Level",
+            "enumLabels": {
+              "sign_off": "Sign-off"
+            }
           }
         },
         "meaning": {
@@ -22992,7 +22993,7 @@
     },
     {
       "name": "EncodingColor",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "description": "Maps a data field to chromatic encodings using governed palettes and\nredundant channels to fulfill RDV.4 accessibility equivalence rules.",
       "category": "viz.encoding",
       "tags": [
@@ -23057,7 +23058,7 @@
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
+          "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
         },
         {
           "name": "supportedSchemes",
@@ -23256,7 +23257,7 @@
     },
     {
       "name": "EncodingOpacity",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "description": "Constant Cartesian mark opacity",
       "category": "viz.encoding",
       "tags": [
@@ -23293,7 +23294,7 @@
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment; data rows are supplied by the consumer."
+          "description": "JSON-encoded Cartesian viz_render input fragment; data rows are supplied by the consumer."
         }
       ],
       "schema": {},
@@ -23311,7 +23312,7 @@
     },
     {
       "name": "EncodingPositionX",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "description": "Binds a data field to the horizontal axis. Declares allowed data types,\nscale defaults, and accessibility metadata to satisfy Normalized Viz Spec\nrequirements.",
       "category": "viz.encoding",
       "tags": [
@@ -23376,7 +23377,7 @@
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
+          "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
         },
         {
           "name": "fieldKinds",
@@ -23565,7 +23566,7 @@
     },
     {
       "name": "EncodingPositionY",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "description": "Binds a data field to the vertical axis. Provides normalization, default\nscale hints, and a11y metadata for describing quantitative measures.",
       "category": "viz.encoding",
       "tags": [
@@ -23630,7 +23631,7 @@
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
+          "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
         },
         {
           "name": "fieldKinds",
@@ -23820,7 +23821,7 @@
     },
     {
       "name": "EncodingShape",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "description": "Categorical shape encoding",
       "category": "viz.encoding",
       "tags": [
@@ -23856,7 +23857,7 @@
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment; data rows are supplied by the consumer."
+          "description": "JSON-encoded Cartesian viz_render input fragment; data rows are supplied by the consumer."
         }
       ],
       "schema": {},
@@ -23873,7 +23874,7 @@
     },
     {
       "name": "EncodingSize",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "description": "Maps a quantitative field to glyph size (radius or area) with governed\nranges that can be validated for perceptual correctness and accessibility.",
       "category": "viz.encoding",
       "tags": [
@@ -23933,7 +23934,7 @@
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
+          "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
         },
         {
           "name": "rangeMin",
@@ -25778,7 +25779,7 @@
     },
     {
       "name": "Mandate",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "description": "The record of a grant: a standing yes that one actor may act for a person or organization, on stated terms,\nuntil it ends. It keeps who asked for it, who gave it and in what capacity, who holds it and who it is for; what it\ncovers in words, its three lines for that party, its limits and its end; its use as the product counts it; the\ngrant it sits inside or replaced; and who ended it and why. The Grant object composes this trait, and the importer\ncan propose it for another system's grant or consent record that keeps a state, an end and the agent or app that\nholds it, so every field lives here and a proposal can bind what the source has.\n\nThe state of the grant is not a field of this trait. It is the record's own lifecycle, through Stateful: for a\nGrant, requested, then active (or paused), declined or withdrawn, or expired when no one answers in time; a grant\nonce given ends revoked, expired or replaced. Its terms are not\nedited in place. A change of terms is a new grant that names the one it replaces, and a standing yes for one\naction is a new grant inside the first, with its own bounds and end.\n\nA reference to a person, an agent, an organization or another grant is an id and a kept name, so it still reads\nafter the person leaves or the grant ends. The kinds are the Actor trait's three words: person, agent or system.\nThe three lines follow the Agent's own: items separated by \"; \", and \"None\" when there are none. The money limits\nare whole numbers in the currency's minor units at two decimal places, so a currency with other decimals reads\nwrong. The end is kept three ways: the exact instant a product checks, the party's time zone, and one line in the\nparty's own words and zone, which is what people read.\n\nOODS Foundry keeps and shows this record. It does not check a grant against what an actor does, count its uses or\nspend, expire or renew one, stop a token or decide whether an action was allowed. A generated app's Revoke, Pause\nand Resume change the record when a person asks, and stop nothing outside it.",
       "category": "core",
       "tags": [
@@ -27040,7 +27041,10 @@
           "token_mapping": "tokenMap(text.body.*)",
           "ui_hints": {
             "component": "Text",
-            "label": "Asks first for"
+            "label": "Asks first for",
+            "valueLabels": {
+              "None": "No listed action needs a separate yes"
+            }
           }
         },
         "never_allowed": {
@@ -27048,7 +27052,10 @@
           "token_mapping": "tokenMap(text.body.*)",
           "ui_hints": {
             "component": "Text",
-            "label": "Never allowed"
+            "label": "Never allowed",
+            "valueLabels": {
+              "None": "No additional exclusions listed"
+            }
           }
         },
         "amount_limit_minor": {
@@ -27292,7 +27299,7 @@
     },
     {
       "name": "MarkArea",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "description": "Canonical area mark for cumulative totals and ranges. Fills the region\nbetween the series baseline and value curve with configurable opacity and\ninterpolation.",
       "category": "viz.mark",
       "tags": [
@@ -27368,14 +27375,14 @@
           "name": "previewSvg",
           "type": "string",
           "required": false,
-          "description": "Static SVG returned by viz.render for the authored sample."
+          "description": "Static SVG returned by viz_render for the authored sample."
         },
         {
           "name": "renderIntent",
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
+          "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
         },
         {
           "name": "curve",
@@ -27579,7 +27586,7 @@
     },
     {
       "name": "MarkBar",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "description": "Canonical rectangular mark for magnitude comparisons. Supports stacked\nor grouped categories and enforces RDS.7 accessibility requirements for\nredundant encodings.",
       "category": "viz.mark",
       "tags": [
@@ -27667,13 +27674,13 @@
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
+          "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
         },
         {
           "name": "previewSvg",
           "type": "string",
           "required": false,
-          "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."
+          "description": "Static SVG returned by viz_render for the authored sample; omitted until a chart is rendered."
         },
         {
           "name": "orientation",
@@ -27889,8 +27896,8 @@
     },
     {
       "name": "MarkGraph",
-      "version": "0.1.0",
-      "description": "Read-only force graph over a declared neighborhood edge array, rendered by public viz.render.",
+      "version": "0.1.1",
+      "description": "Read-only force graph over a declared neighborhood edge array, rendered by public viz_render.",
       "category": "viz.mark",
       "tags": [
         "viz",
@@ -27935,7 +27942,7 @@
           "name": "previewSvg",
           "type": "string",
           "required": false,
-          "description": "Static SVG returned by public viz.render."
+          "description": "Static SVG returned by public viz_render."
         }
       ],
       "schema": {
@@ -27975,7 +27982,7 @@
     },
     {
       "name": "MarkLine",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "description": "Canonical line mark for trends, rates, and progressions. Encodes values as\nconnected segments with configurable curve smoothing and join policies.",
       "category": "viz.mark",
       "tags": [
@@ -28063,13 +28070,13 @@
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
+          "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
         },
         {
           "name": "previewSvg",
           "type": "string",
           "required": false,
-          "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."
+          "description": "Static SVG returned by viz_render for the authored sample; omitted until a chart is rendered."
         },
         {
           "name": "curve",
@@ -28277,7 +28284,7 @@
     },
     {
       "name": "MarkPoint",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "description": "Canonical point mark for scatterplots and overlays. Encodes each datum as a\ndiscrete glyph with configurable shape, size, and fill semantics.",
       "category": "viz.mark",
       "tags": [
@@ -28352,13 +28359,13 @@
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
+          "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
         },
         {
           "name": "previewSvg",
           "type": "string",
           "required": false,
-          "description": "Static SVG returned by viz.render for the authored sample; omitted until a chart is rendered."
+          "description": "Static SVG returned by viz_render for the authored sample; omitted until a chart is rendered."
         },
         {
           "name": "shape",
@@ -28593,7 +28600,7 @@
     },
     {
       "name": "MarkRect",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "description": "Heatmap authoring over the existing MarkRect renderer",
       "category": "viz.mark",
       "tags": [
@@ -28648,13 +28655,13 @@
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment; data rows are supplied by the consumer."
+          "description": "JSON-encoded Cartesian viz_render input fragment; data rows are supplied by the consumer."
         },
         {
           "name": "previewSvg",
           "type": "string",
           "required": false,
-          "description": "Static SVG returned by viz.render for the authored sample."
+          "description": "Static SVG returned by viz_render for the authored sample."
         }
       ],
       "schema": {},
@@ -30522,7 +30529,7 @@
     },
     {
       "name": "ScaleLinear",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "description": "Shared linear/continuous scale definition used by positional, color, and\nsize encodings. Provides normalized domain/range metadata plus zero baseline\nenforcement per RDV.3 findings.",
       "category": "viz.scale",
       "tags": [
@@ -30572,7 +30579,7 @@
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
+          "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
         },
         {
           "name": "domainMin",
@@ -30753,7 +30760,7 @@
     },
     {
       "name": "ScaleTemporal",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "description": "Temporal scale metadata with UTC rendering. Version 0.3.0 removes the unused\ntimezone parameter (breaking); axes and tooltips continue to render in UTC.",
       "category": "viz.scale",
       "tags": [
@@ -30802,7 +30809,7 @@
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
+          "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."
         },
         {
           "name": "domainStart",
@@ -30966,7 +30973,7 @@
     },
     {
       "name": "ScatterPlot",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "description": "Scatter authoring over the existing MarkPoint renderer",
       "category": "viz.pattern",
       "tags": [
@@ -31003,13 +31010,13 @@
           "type": "string",
           "required": false,
           "default": "{}",
-          "description": "JSON-encoded Cartesian viz.render input fragment; data rows are supplied by the consumer."
+          "description": "JSON-encoded Cartesian viz_render input fragment; data rows are supplied by the consumer."
         },
         {
           "name": "previewSvg",
           "type": "string",
           "required": false,
-          "description": "Static SVG returned by viz.render for the authored sample."
+          "description": "Static SVG returned by viz_render for the authored sample."
         }
       ],
       "schema": {},
@@ -31341,7 +31348,7 @@
     },
     {
       "name": "Stateful",
-      "version": "2.5.0",
+      "version": "2.5.1",
       "description": "Normalizes lifecycle state transitions, exposes canonical status semantics, and provides\noptional transition governance for production workflows. Many objects compose Stateful\n(User, Subscription and Product among them), and it serves as the data source for the\nColorized visual trait.\n\nAt its simplest, Stateful defines an ordered list of valid states and tracks the current\nstatus. With transitionRules, a product also declares which moves between states are allowed,\nfor auditable workflows where arbitrary state jumps are not permitted.\nYour product enforces that order on its own records: it checks each change against it and writes\nallowed_transitions. OODS Foundry keeps the order as data, refuses an order that names a state the\nlifecycle lacks and holds its own shipped samples to it. A generated app keeps the order in its own\nstore: a generated StatusSelector offers the record's state and the moves the order allows from it,\nand the store refuses any other move and any move out of a final state. In generated React and Vue\nscreens, Cancel is offered, and the store accepts it, only from a state the order lets move to where\ncancelling goes. With actions, a lifecycle also names the moves a person makes, such as a grant's\nRevoke, Pause and Resume: each is offered only from the states it moves from, is written as one\nchange to the app's own records, and stops nothing. Every recorded change, with an order or without one,\ncan name who made it and why.",
       "category": "lifecycle",
       "tags": [
@@ -31447,7 +31454,7 @@
           "name": "requireTransitionReason",
           "type": "boolean",
           "required": false,
-          "description": "When true, every state transition must include a human-readable reason in the\nstate_history entry. Enforced at the application layer — transitions without a\nreason field are rejected. Useful for compliance and audit trails.\n",
+          "description": "When true, your product requires a human-readable reason in the state_history entry for each change of state.\nOODS Foundry keeps the setting. Your product checks the reason.\n",
           "default": false
         }
       ],
@@ -32386,7 +32393,7 @@
     },
     {
       "name": "Timestampable",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "description": "Captures creation and update timestamps with configurable audit metadata for lifecycle tracking.",
       "category": "lifecycle",
       "tags": [
@@ -32572,7 +32579,7 @@
   "objects": [
     {
       "name": "Agent",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "domain": "core.identity",
       "description": "An AI agent that acts inside a product, for the people and organizations it is granted to act for.",
       "tags": [
@@ -32671,7 +32678,12 @@
         },
         "acts_for": {
           "semantic_type": "identity.agent.acts_for",
-          "token_mapping": "tokenMap(text.body.*)"
+          "token_mapping": "tokenMap(text.body.*)",
+          "ui_hints": {
+            "valueLabels": {
+              "None": "No party listed"
+            }
+          }
         },
         "allowed_actions": {
           "semantic_type": "identity.agent.approval.allowed",
@@ -32708,6 +32720,11 @@
         "steward": "Design team",
         "maturity": "alpha",
         "changelog": [
+          {
+            "version": "1.1.1",
+            "date": "2026-11-19",
+            "description": "Lists the grants the agent holds and those under its standing grants. The Order Agent’s parties match its grant, and a stored None has an explanation on the page."
+          },
           {
             "version": "1.1.0",
             "date": "2026-11-14",
@@ -32811,7 +32828,7 @@
     },
     {
       "name": "Approval",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "domain": "core.governance",
       "description": "One ask to one person or agent for a yes, about one version of one thing, and the answer it became.",
       "tags": [
@@ -32901,6 +32918,16 @@
         "name"
       ],
       "semantics": {
+        "status": {
+          "semantic_type": "status.state",
+          "token_mapping": "tokenMap(status.state.*)",
+          "ui_hints": {
+            "component": "StatusBadge",
+            "showIcon": true,
+            "label": "Answer",
+            "help": "This answer applies to what was shown above."
+          }
+        },
         "approval_id": {
           "semantic_type": "governance.approval.id",
           "token_mapping": "tokenMap(identity.id.primary)"
@@ -32930,6 +32957,11 @@
         "steward": "Design team",
         "maturity": "alpha",
         "changelog": [
+          {
+            "version": "1.1.2",
+            "date": "2026-11-19",
+            "description": "The declined article review names Nadia Farouk as the person asked. The answer form keeps the ask fixed and labels its select Answer."
+          },
           {
             "version": "1.1.1",
             "date": "2026-11-14",
@@ -34238,7 +34270,7 @@
     },
     {
       "name": "Grant",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "domain": "core.governance",
       "description": "A standing yes that one actor may act for a person or organization, on stated terms, until it ends.",
       "tags": [
@@ -34397,6 +34429,11 @@
         "maturity": "alpha",
         "changelog": [
           {
+            "version": "1.0.1",
+            "date": "2026-11-19",
+            "description": "Declares Revoke, Pause and Resume, related records under the grant and its closure. The closure row dates its last report, and the detail explains a stored None."
+          },
+          {
             "version": "1.0.0",
             "date": "2026-11-14",
             "description": "Initial Grant object, the fifteenth public reference object; a grant is a standing yes, not a setting."
@@ -34513,7 +34550,10 @@
                   "line": [
                     "summary"
                   ],
-                  "time": "ended_at"
+                  "time": {
+                    "field": "updated_at",
+                    "says": "Last report"
+                  }
                 }
               }
             ]
@@ -34875,7 +34915,7 @@
     },
     {
       "name": "Organization",
-      "version": "1.2.0",
+      "version": "1.2.1",
       "domain": "core.account",
       "description": "Canonical account record for tenant and workspace governance across the platform.",
       "tags": [
@@ -34995,6 +35035,18 @@
         "owner_name"
       ],
       "semantics": {
+        "data_residency": {
+          "semantic_type": "organization.data_residency",
+          "token_mapping": "tokenMap(text.body.*)",
+          "ui_hints": {
+            "enumLabels": {
+              "us": "US",
+              "eu": "EU",
+              "apac": "APAC",
+              "latam": "LATAM"
+            }
+          }
+        },
         "description": {
           "semantic_type": "text.summary",
           "token_mapping": "tokenMap(text.body.*)",
@@ -35046,6 +35098,11 @@
         ],
         "steward": "Platform team",
         "changelog": [
+          {
+            "version": "1.2.1",
+            "date": "2026-11-19",
+            "description": "Shows grants and closures for the organization, dates each closure by its last report and displays residency codes in capitals."
+          },
           {
             "version": "1.2.0",
             "date": "2025-11-20",
@@ -35229,7 +35286,10 @@
                   "line": [
                     "summary"
                   ],
-                  "time": "ended_at"
+                  "time": {
+                    "field": "updated_at",
+                    "says": "Last report"
+                  }
                 }
               }
             ]
@@ -36726,7 +36786,7 @@
     },
     {
       "name": "User",
-      "version": "1.5.0",
+      "version": "1.5.1",
       "domain": "core.identity",
       "description": "Canonical identity record representing a platform user across lifecycle contexts.",
       "tags": [
@@ -36878,6 +36938,11 @@
         "steward": "Design team",
         "maturity": "stable",
         "changelog": [
+          {
+            "version": "1.5.1",
+            "date": "2026-11-19",
+            "description": "Shows approvals, tasks and grants by the person’s seat and closures they answer for. A closure row shows the time of its last report."
+          },
           {
             "version": "1.5.0",
             "date": "2026-11-07",
@@ -37242,7 +37307,10 @@
                   "line": [
                     "summary"
                   ],
-                  "time": "ended_at"
+                  "time": {
+                    "field": "updated_at",
+                    "says": "Last report"
+                  }
                 }
               }
             ]
@@ -37261,7 +37329,10 @@
                   "line": [
                     "summary"
                   ],
-                  "time": "ended_at"
+                  "time": {
+                    "field": "updated_at",
+                    "says": "Last report"
+                  }
                 }
               }
             ]

@@ -269,7 +269,7 @@ describe('the eight Grant samples tell true stories about the shipped samples th
 describe('Grant is the fifteenth public object', () => {
   it('composes the record trait, its lifecycle, its times and the one who answers, and no Cancel', () => {
     const grant = loadObject('Grant');
-    expect(grant.object).toMatchObject({ name: 'Grant', version: '1.0.0', domain: 'core.governance' });
+    expect(grant.object).toMatchObject({ name: 'Grant', version: '1.0.1', domain: 'core.governance' });
     expect(grant.object).not.toHaveProperty('visibility');
     expect(grant.traits.map(trait => trait.name)).toEqual(['core/Mandate', 'lifecycle/Stateful', 'lifecycle/Timestampable', 'structural/Ownerable']);
     const lifecycle = grant.traits[1]!.parameters!;
@@ -482,7 +482,7 @@ describe('what Grant changes elsewhere, and only that', () => {
 
   it('Agent\'s four rule fields read their new descriptions and stay one-line inputs on its form; its samples do not move', async () => {
     const agent = loadObject('Agent');
-    expect(agent.object.version).toBe('1.1.0');
+    expect(agent.object.version).toBe('1.1.1');
     expect(agent.schema.acts_for!.description).toContain('restating the grant it holds for that party');
     expect(agent.schema.asks_first_for!.description).toContain('asked each time or given in advance by a standing yes under a grant');
     const { schema } = await compose({ object: 'Agent', context: 'form', options: { transient: true } } as never) as { schema: UiSchema };

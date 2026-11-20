@@ -3770,6 +3770,10 @@
     },
     "LabelCell": {
       "react": {
+        "caption": {
+          "type": "string",
+          "optional": true
+        },
         "description": {
           "type": "string",
           "optional": true
@@ -3808,6 +3812,10 @@
         }
       },
       "vue": {
+        "caption": {
+          "type": "string",
+          "optional": true
+        },
         "description": {
           "type": "string",
           "optional": true
@@ -5418,6 +5426,10 @@
     },
     "RelativeTimestamp": {
       "react": {
+        "caption": {
+          "type": "string",
+          "optional": true
+        },
         "children": {
           "type": "ReactNode",
           "optional": true
@@ -5480,6 +5492,10 @@
         }
       },
       "vue": {
+        "caption": {
+          "type": "string",
+          "optional": true
+        },
         "createdAt": {
           "type": "string",
           "optional": true
@@ -6602,6 +6618,10 @@
           "type": "readonly unknown[]",
           "optional": true
         },
+        "enumLabels": {
+          "type": "Record<string, string>",
+          "optional": true
+        },
         "eventField": {
           "type": "string",
           "optional": true
@@ -6686,6 +6706,10 @@
         },
         "entries": {
           "type": "unknown[]",
+          "optional": true
+        },
+        "enumLabels": {
+          "type": "Record<string, string>",
           "optional": true
         },
         "eventField": {

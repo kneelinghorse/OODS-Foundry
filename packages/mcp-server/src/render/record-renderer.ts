@@ -61,6 +61,10 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
       const field = authored[binding.sourceProp];
       let value = binding.literal ? authored[binding.sourceProp] : raw(field, row);
       if (binding.sourceProp === 'minorUnitsParameter' && binding.targetProp === 'minorUnits') value = fields[String(authored.amountField)]?.money?.minorUnits;
+      if (node.component === 'RelativeTimestamp' && binding.targetProp === 'caption') {
+        const fallback = String(authored.fallbackField);
+        value = raw(authored.field, row) == null && raw(fallback, row) != null ? fields[fallback]?.displayLabel ?? fieldLabel(fallback) : authored.caption;
+      }
       if (binding.sourceProp === 'statesParameter') value = row.allowedTransitions;
       if (node.component === 'PreferenceEditor' && binding.sourceProp === 'documentField') value = JSON.stringify(value ?? {}, null, 2);
       if (typeof field === 'string' && (['titleField', 'labelField'].includes(binding.sourceProp) || binding.targetProp === 'content' && node.component === 'StatusBadge')) value = display(field, row);
@@ -78,7 +82,7 @@ export function bindRecordSchema(schema: UiSchema, model: Record<string, unknown
         if (content.isChildren || ['label', 'title'].includes(content.propName ?? '')) value = display(field, row);
         if (source.meta?.intent === 'read-only-field') value = isReferenceField(fields[field])
           ? formatReferenceLabel(raw(field, row), raw(fields[field]?.displayLabelField, row) ?? fields[field]?.referenceLabels?.[String(raw(field, row))], fieldLabel(field.replace(/_ids?$/, '')))
-          : fields[field]!.enum?.length ? display(field, row) : formatReadOnlyValue(raw(field, row), fields[field]!.type, false, fields[field]!.format);
+          : fields[field]!.enum?.length ? display(field, row) : formatReadOnlyValue(raw(field, row), fields[field]!.type, false, fields[field]!.format, fields[field]!.valueLabels);
         else if (content.isChildren) {
           if (/date|time/.test(fields[field]!.type) && value) value = formatDateTime(String(value), { dateOnly: fields[field]!.type.replace(/\?$/, '') === 'date' });
           else if (typeof value === 'boolean') value = value ? 'Yes' : 'No';

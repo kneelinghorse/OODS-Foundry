@@ -5,7 +5,7 @@
  */
 export interface ActorTraitParameters {
   /**
-   * person (someone's own account), agent (software that acts, on its own behalf or for someone) or system (the product itself). An agent is marked "Agent" beside its name.
+   * person (someone's own account), agent (software that acts, on its own behalf or for someone) or system (the product itself). An agent is marked "Agent" in lists, cards and its own page.
    */
   kind: 'person' | 'agent' | 'system';
 }

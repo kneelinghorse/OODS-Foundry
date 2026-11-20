@@ -212,7 +212,7 @@ describe('the four pages say what Interface 4 says', () => {
       'Tasks for Tidewater Co-op (1)', 'Approvals for Tidewater Co-op (1)', 'Payments for Tidewater Co-op (1)', 'Ended grants for Tidewater Co-op (0)',
       // s250-m03: the closures of grants for the organization (the third part of the Grant story).
       'Closures of grants for Tidewater Co-op (0)']);
-    expect(tidewater.text).toContain('Tidewater invoices and payments Active Billing Agent · Invoices and payments · 28 Sep: asked for a standing yes to resend returned transfers At the end of 31 Dec 2026, Tauranga time 1 grant inside it Resend returned transfers Active Billing Agent · Resend a payment the bank returned · No uses counted');
+    expect(tidewater.text).toContain('Tidewater invoices and payments Active Billing Agent · Invoices and payments · 28 Sep: asked for a standing yes to resend returned transfers Ends: At the end of 31 Dec 2026, Tauranga time 1 grant inside it Resend returned transfers Active Billing Agent · Resend a payment the bank returned · No uses counted');
     expect(tidewater.text).toContain('Subscriptions, usage and invoices name their customer in words, so they are not listed here.');
     expect(tidewater.notes).toEqual(['These lists show only records here that name Tidewater Co-op by id; records that name Tidewater Co-op only in words, or that another product keeps, are not listed.']);
     // An empty list names the seat it read; a standing list emptied by ended grants says so.
@@ -221,7 +221,7 @@ describe('the four pages say what Interface 4 says', () => {
   });
 
   it('a person sees what waits for their answer, and an agent the grants it holds, or why none now', () => {
-    expect(page('User', 'Dana Whitfield').text).toContain('Waiting for Dana Whitfield\'s answer (1) Reply about order NW-2207 Needs input Support Agent Oct 7, 2026, 5:00 PM');
+    expect(page('User', 'Dana Whitfield').text).toContain('Waiting for Dana Whitfield\'s answer (1) Reply about order NW-2207 Needs input Support Agent Due: Oct 7, 2026, 5:00 PM');
     // s250-m03: the list holds only grants that stand; the ended ones are kept apart in their own list.
     expect(page('User', 'Ruth Adeyemi').text).toContain('Given for Ruth Adeyemi by someone else (0) No grant given for Ruth Adeyemi by someone else stands now.');
     expect(page('Agent', 'Support Agent').text).toContain('Grants Support Agent holds (0) Support Agent holds no grant now. 2 other grants to Support Agent are asked for or have ended.');

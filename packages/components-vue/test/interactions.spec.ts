@@ -246,7 +246,7 @@ describe('@oods/components-vue interactions', () => {
     const badge = mount(Badge, {
       props: { domain: 'invoice', status: 'past_due', emphasis: 'solid' },
     });
-    expect(badge.text()).toBe('Past Due');
+    expect(badge.text()).toBe('Past due');
     expect(badge.attributes()).toMatchObject({
       'data-domain': 'invoice',
       'data-status': 'past_due',

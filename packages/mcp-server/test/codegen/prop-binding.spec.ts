@@ -100,6 +100,7 @@ describe('codegen prop binding', () => {
             props: {
               field: 'updated_at',
               fallbackField: 'created_at',
+              caption: 'Updated at',
               timezoneParameter: 'timezone',
             },
           },
@@ -126,6 +127,7 @@ describe('codegen prop binding', () => {
           'reason={cancellationReason}',
           'code={cancellationReasonCode}',
           'datetime={updatedAt ?? createdAt}',
+          "caption={updatedAt == null && createdAt != null ? 'Created at' : 'Updated at'}",
         ],
       },
       {
@@ -146,6 +148,7 @@ describe('codegen prop binding', () => {
           ':reason="cancellationReason"',
           ':code="cancellationReasonCode"',
           ':datetime="updatedAt ?? createdAt"',
+          ":caption=\"updatedAt == null && createdAt != null ? 'Created at' : 'Updated at'\"",
         ],
       },
     ])('turns declarative field recipes into executable $framework props', ({

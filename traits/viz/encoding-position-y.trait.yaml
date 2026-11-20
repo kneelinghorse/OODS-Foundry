@@ -1,6 +1,6 @@
 trait:
   name: EncodingPositionY
-  version: 0.2.0
+  version: 0.2.1
   description: |
     Binds a data field to the vertical axis. Provides normalization, default
     scale hints, and a11y metadata for describing quantitative measures.
@@ -12,7 +12,7 @@ trait:
     - position
 
 parameters:
-  - {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."}
+  - {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."}
   - name: fieldKinds
     type: string[]
     required: true

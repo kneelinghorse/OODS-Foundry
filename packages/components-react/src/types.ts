@@ -701,6 +701,7 @@ export interface InlineLabelProps extends React.HTMLAttributes<HTMLSpanElement> 
   readonly label?: string; readonly text?: string; readonly value?: string; readonly maxLength?: number | string;
 }
 export interface LabelCellProps extends InlineLabelProps {
+  readonly caption?: string;
   readonly description?: string; readonly subtitle?: string; readonly sublabel?: string; readonly supporting?: string;
   readonly truncate?: boolean;
 }

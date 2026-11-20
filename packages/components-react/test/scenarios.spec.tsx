@@ -672,7 +672,7 @@ describe('@oods/components-react shared scenarios', () => {
           break;
         }
         case 'status-badge-mapped': {
-          expect(component?.textContent).toContain('Past Due');
+          expect(component?.textContent).toContain('Past due');
           expect(component?.getAttribute('data-tone')).toBe('critical');
           expect(component?.getAttribute('title')).toContain('Renewal payment failed');
           break;
@@ -732,7 +732,7 @@ describe('@oods/components-react shared scenarios', () => {
           // s223-m01 (#2527 ruling 6): a card binds the owner's label and reads one phrase, never "Ownership Owner Type: team".
           rerender(renderSharedScenario({ ...scenario, props: { ...scenario.props, ownerLabel: 'Northwind' } }));
           const named = container.querySelector('[data-oods-component="OwnershipMeta"]');
-          expect(named?.textContent).toBe('Owned by Northwind · organization · custodian');
+          expect(named?.textContent).toBe('Owned by Northwind · Organization · custodian');
           expect(named?.querySelector('[data-meta-title]')).toBeNull();
           rerender(renderSharedScenario({ ...scenario, props: { ...scenario.props, ownerLabel: 'Owner unavailable' } }));
           expect(container.querySelector('[data-oods-component="OwnershipMeta"]')?.textContent).toBe('Organization-owned · custodian');

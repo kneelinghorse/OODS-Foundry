@@ -124,6 +124,14 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       }
       for (const node of content) {
         if (['RelativeTimestamp', 'StatusBadge'].includes(node.component) && node.props) delete node.props.label;
+        if (node.component === 'RelativeTimestamp' && typeof node.props?.field === 'string') {
+          const field = node.props.field;
+          node.props.caption = fields[field]?.displayLabel ?? fieldLabel(field);
+        }
+        if (node.component === 'LabelCell' && typeof node.props?.description === 'string' && !node.props.descriptionField) {
+          node.props.caption = node.props.description;
+          delete node.props.description;
+        }
         if (node.component === 'StatusBadge' && typeof node.props?.field === 'string') { node.props.statusField = node.props.field; delete node.props.field; }
       }
       // s222-m03 (#2502 ruling 13): a row shows the record's status. An object whose status no trait's row recipe shows (an
@@ -131,7 +139,7 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       if (fields.status?.enum?.length && !content.some(node => node.props?.statusField === 'status' || node.props?.field === 'status')) {
         content.splice(1, 0, { id: `${items.id}-status`, component: 'StatusBadge', props: { statusField: 'status', tone: 'lifecycle' } });
       }
-      const row: UiElement = { id: `${items.id}-row`, component: 'Button', collectionControl: 'open', props: { field: keyField }, layout: { type: 'inline', gapToken: 'cluster-default' }, children: content };
+      const row: UiElement = { id: `${items.id}-row`, component: 'Button', collectionControl: 'open', props: { field: keyField }, layout: { type: 'inline', gapToken: 'cluster-default' }, children: [...content.filter(node => node.component !== 'RelativeTimestamp'), ...content.filter(node => node.component === 'RelativeTimestamp')] };
       if (overlay) { overlay.children = [row]; overlay.props = { ...overlay.props, labelField }; }
       items.collection = { source: 'rows', keyField, labelField };
       // The collection's own banner is the screen's empty branch: it renders inside the list, under the toolbar, when the store has no rows.

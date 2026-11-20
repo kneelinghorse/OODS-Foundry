@@ -1,6 +1,6 @@
 trait:
   name: Decision
-  version: 1.1.0
+  version: 1.1.1
   description: |
     The record of one ask to one actor and the answer it became: who asked, and for whom; who was asked; who answered,
     and for whom when a delegate or an agent answered; about exactly what, at what level of yes, and what that yes
@@ -20,7 +20,7 @@ trait:
     the thing approved declares the same names through Approvable. The meaning is one kept line saying what this yes
     means and permits, in words, written by the product when it asks ("Sign-off: you answer for this release"): 21 CFR
     11.50 requires a signed record to show "the meaning (such as review, approval, responsibility, or authorship)
-    associated with the signature".
+    associated with the signature". Keeping that meaning alone does not establish Part 11 compliance. Your product handles signatures and verifies the signer’s identity.
 
     OODS Foundry keeps and shows this record. It does not ask anyone, check who may answer, count answers, expire an
     ask or stop a change.
@@ -300,6 +300,8 @@ semantics:
     ui_hints:
       component: Text
       label: Level
+      enumLabels:
+        sign_off: Sign-off
   meaning:
     semantic_type: decision.meaning
     token_mapping: tokenMap(text.body.*)
@@ -408,6 +410,7 @@ view_extensions:
       priority: 71
       props:
         field: requested_for_id
+        data-oods-omit-empty: true
     - component: Text
       position: main
       priority: 70

@@ -1,3 +1,4 @@
+import { pluralLabel } from './screen-shell.js';
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenOptions, CodegenResult, Emitter, GeneratedArtifactAction } from './types.js';
 import { GENERATED_APP_NODE_FLOOR, GENERATED_DEPENDENCY_CATALOG, generatedActionContractDigest, generatedActionSourceDigest, generatedActionTypeSignature } from './artifact-envelope.js';
@@ -39,7 +40,7 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
     // their resolved lifecycle values; ordinary single-screen output is unchanged.
     const states = schema.workflow!.data.lifecycleStates;
     if (node.component === 'StatusSelector' && node.props?.optionsParameter === 'states' && node.props.options === undefined && !schema.objectSchema![String(node.props.field)]?.enum?.length) node.props.options = states;
-    if (node.collectionControl === 'filter' && schema.objectSchema!.status && Array.isArray(node.props?.options) && node.props.options.length === 1 && states.length) node.props.options = [{ value: '', label: 'All states' }, ...states.map(value => ({ value, label: enumOptionLabel(value) }))];
+    if (node.collectionControl === 'filter' && schema.objectSchema!.status && Array.isArray(node.props?.options) && node.props.options.length === 1 && states.length) node.props.options = [{ value: '', label: 'All states' }, ...states.map(value => ({ value, label: enumOptionLabel(value, schema.objectSchema!.status?.enumLabels) }))];
     // The app's header names the record; a screen's own level-one record title becomes level two inside it.
     if (node.component === 'DetailHeader' && node.props?.headingLevel === 1) node.props = { ...node.props, headingLevel: 2 };
     if (context === 'list' && node.component === 'ArchivedRowOverlay') archiveOverlay = node;
@@ -129,7 +130,7 @@ export function emitWorkflow(schema: UiSchema, options: CodegenOptions, framewor
   ].join('\n')).join('\n')}\n}\n` });
   files.push(...workflowDataFiles(schema));
   const titleField = recordTitleField(schema.workflow.object, schema.objectSchema!, schema.workflow.data.idField);
-  const supplemental = Object.entries(schema.objectSchema).filter(([name, field]) => name !== schema.workflow!.data.idField && !formFields.has(name) && !isInternalField(name, schema.objectSchema!) && !isUnavailableField(name, schema.objectSchema!) && field.required && field.type === 'string' && !field.enum);
+  const supplemental = Object.entries(schema.objectSchema).filter(([name, field]) => name !== schema.workflow!.data.idField && !formFields.has(name) && !isInternalField(name, schema.objectSchema!) && !isUnavailableField(name, schema.objectSchema!) && field.required && !field.readOnly && field.type === 'string' && !field.enum);
   // s249-m02: an object that declares related lists gives its app's screens each record's lists (store.ts relatedRows).
   const related = files.some(file => file.path === 'src/related-data.ts');
   files.push({ path: 'src/application.ts', contents: `import { parseBillingAmount } from '@oods/component-contracts';
@@ -158,16 +159,16 @@ export function createWorkflow(options: StoreOptions = {}) {
   const listeners = new Set<(state: AppState) => void>();
   const publish = (patch: Partial<AppState>) => { state = { ...state, ...patch }; listeners.forEach((listener) => listener(state)); };
   const value = (field: string) => (state.draft as Record<string, unknown>)[field];
-  async function navigate(screen: Screen, id = state.id) {
+  async function navigate(screen: Screen, id = state.id, notice = '') {
     const ticket = ++request;
-    publish({ screen, id, cancelOpen: false, ${declared ? "actionOpen: '', " : ''}uiState: 'loading', error: '', revision: state.revision + 1 });
+    publish({ screen, id, notice: '', cancelOpen: false, ${declared ? "actionOpen: '', " : ''}uiState: 'loading', error: '', revision: state.revision + 1 });
     try {
       await store.ready();
       if (ticket !== request) return;
       const list = store.list(query);
       const selected = screen === 'list' ? list.records[0] : store.list({ archived: query.archived, pageSize: 10000 }).records.find((record) => String(record[idField]) === id);
       const draft = selected ?? sampleData[0]!;
-      publish({ records: list.records, total: list.total, page: list.page, pageSize: list.pageSize, search: query.search ?? '', status: query.status ?? '', descending: query.descending ?? false, archived: query.archived ?? false, draft: structuredClone(draft), id: selected ? String(selected[idField]) : id, uiState: selected ? 'success' : 'empty' });
+      publish({ notice, records: list.records, total: list.total, page: list.page, pageSize: list.pageSize, search: query.search ?? '', status: query.status ?? '', descending: query.descending ?? false, archived: query.archived ?? false, draft: structuredClone(draft), id: selected ? String(selected[idField]) : id, uiState: selected ? 'success' : 'empty' });
     } catch (error) { if (ticket === request) publish({ uiState: 'error', error: error instanceof Error ? error.message : String(error) }); }
   }
   function refreshList() {
@@ -177,9 +178,9 @@ export function createWorkflow(options: StoreOptions = {}) {
   }
   async function change(operation: () => DomainRecord, destination: Screen) {
     publish({ uiState: 'loading', error: '' });
-    try { await store.ready(); operation(); publish({ notice: 'Changes saved in this session.' }); await navigate(destination); }
+    try { await store.ready(); operation(); await navigate(destination, state.id, 'Changes saved in this session.'); }
     catch (error) { publish({ uiState: 'error', error: error instanceof Error ? error.message : String(error) }); }
-  }${declared ? workflowActionFunctions() : ''}
+  }${declared ? workflowActionFunctions(declared) : ''}
   const actions: WorkflowActions = {
 ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`).join('\n')}
   };
@@ -242,7 +243,7 @@ ${collectionEditors.size ? "    // Collection editors dispatch whole domain valu
     subscribe(listener: (state: AppState) => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },
     navigate, actions, edit, choose,
     confirmCancellation() { return change(() => store.cancel(state.id, String(value("cancellation_reason") ?? ""), String(value("cancellation_reason_code") ?? ""), Boolean(value("cancel_at_period_end"))), 'detail'); },
-    dismissCancellation() { publish({ cancelOpen: false }); },${declared ? workflowActionApi() : ''}
+    dismissCancellation() { publish({ cancelOpen: false }); },${declared ? workflowActionApi(declared) : ''}
     filter(search: string, status = query.status ?? '') { query = { ...query, search, status, page: 1 }; return refreshList(); },
     sort(descending: boolean) { query = { ...query, sort: sortField, descending }; return refreshList(); },
     page(page: number) { query = { ...query, page }; return refreshList(); },
@@ -314,8 +315,9 @@ export default function App(options: StoreOptions) {
   }, [state.actionOpen]);` : ''}` : ''}
   const props = { ...screenProps(state.draft), rows: state.records.map(screenProps), events: collectionEvents(state.draft), ${related ? 'related: app.related(state.draft), ' : ''}collectionQuery: state, actions: app.actions, uiState: state.uiState };
   return <main className="workflow-app" data-oods-workflow="${object}" data-screen={state.screen} data-selected-id={state.id} data-route={routes[state.screen]} data-ui-state={state.uiState}>
-    <header className="workflow-heading"><div><p className="workflow-eyebrow">${object.toUpperCase()} WORKSPACE</p><h1>{state.screen === 'list' ? '${object}s' : String(${titleExpression})}</h1></div><span className="workflow-mode">Local workspace</span></header>
+    <header className="workflow-heading"><div><p className="workflow-eyebrow">${object.toUpperCase()} WORKSPACE</p><h1>{state.screen === 'list' ? '${pluralLabel(object)}' : String(${titleExpression})}</h1></div><span className="workflow-mode">Local workspace</span></header>
     <nav aria-label="Workflow screens">{(['list', 'detail', 'form', 'timeline'] as Screen[]).map((screen) => <button type="button" key={screen} aria-current={state.screen === screen ? 'page' : undefined} onClick={() => { void app.navigate(screen); }}>{screen === 'form' ? 'Edit' : screen[0].toUpperCase() + screen.slice(1)}</button>)}</nav>
+    <p className="workflow-notice" role="status">{state.notice}</p>
     {state.error && <p role="alert">{state.error}</p>}
     {state.uiState === 'error' && <button type="button" onClick={() => { void app.retry(); }}>Try again</button>}
     <section aria-label="${object} screen" className="workflow-content" onChangeCapture={(event) => app.edit(event.nativeEvent)} onClickCapture={(event) => app.choose(event.nativeEvent)} onKeyDownCapture={(event) => app.choose(event.nativeEvent)}>
@@ -332,7 +334,6 @@ export default function App(options: StoreOptions) {
       </div>` : ''}
       {state.uiState === 'success' && state.screen === 'detail' && Boolean((state.draft as Record<string, unknown>).is_archived) && <button onClick={() => { void app.restore(); }}>Restore record</button>}
     </section>
-    <p className="workflow-notice" role="status">{state.notice}</p>
   </main>;
 }
 `;
@@ -371,8 +372,9 @@ watch(() => state.value.actionOpen, async (open) => {
 </script>
 <template>
   <main class="workflow-app" data-oods-workflow="${object}" :data-screen="state.screen" :data-selected-id="state.id" :data-route="routes[state.screen]" :data-ui-state="state.uiState">
-    <header class="workflow-heading"><div><p class="workflow-eyebrow">${object.toUpperCase()} WORKSPACE</p><h1>{{ state.screen === 'list' ? '${object}s' : ${titleExpression} }}</h1></div><span class="workflow-mode">Local workspace</span></header>
+    <header class="workflow-heading"><div><p class="workflow-eyebrow">${object.toUpperCase()} WORKSPACE</p><h1>{{ state.screen === 'list' ? '${pluralLabel(object)}' : ${titleExpression} }}</h1></div><span class="workflow-mode">Local workspace</span></header>
     <nav aria-label="Workflow screens"><button v-for="screen in screens" :key="screen" type="button" :aria-current="state.screen === screen ? 'page' : undefined" @click="app.navigate(screen)">{{ screen === 'form' ? 'Edit' : screen[0].toUpperCase() + screen.slice(1) }}</button></nav>
+    <p class="workflow-notice" role="status">{{ state.notice }}</p>
     <p v-if="state.error" role="alert">{{ state.error }}</p><button v-if="state.uiState === 'error'" type="button" @click="app.retry()">Try again</button>
     <section aria-label="${object} screen" class="workflow-content" @input.capture="app.edit" @change="app.edit" @click.capture="app.choose" @keydown.capture="app.choose">
       <template v-if="state.uiState === 'success' && state.screen === 'form'"><div v-for="field in supplementalFields" :key="field.name" class="workflow-field"><label :for="field.name">{{ field.label }}</label><input :id="field.name" :name="field.name" :aria-describedby="field.name + '-help'" :value="values[field.name]" /><small :id="field.name + '-help'" class="oods-field-help">{{ field.help }}</small></div></template>
@@ -385,7 +387,7 @@ watch(() => state.value.actionOpen, async (open) => {
       <p v-if="state.uiState === 'success' && state.screen === 'detail' && rule" class="workflow-rule">{{ rule }}</p>` : ''}
       ${declared?.confirm ? '<div class="workflow-screen" :hidden="Boolean(state.actionOpen)">' : ''}<${hasCollectionEditor ? 'div data-oods-submit-host="true" @click="(event: MouseEvent) => { if ((event.target as HTMLElement).closest(\'button[type=submit]\') && !(event.currentTarget as HTMLElement).querySelector(\':invalid\')) app.actions.handleSubmit(); }"' : 'form'} v-if="state.screen === 'form'" @submit.prevent="app.actions.handleSubmit"><Form :key="state.revision + ':' + state.uiState" v-bind="props" /></${hasCollectionEditor ? 'div' : 'form'}><component v-else :is="view" :key="state.screen === 'list' ? 'list' : state.revision + ':' + state.uiState" v-bind="props" />${declared?.confirm ? '</div>' : ''}
       <button v-if="state.uiState === 'success' && state.screen === 'detail' && values.is_archived" @click="app.restore()">Restore record</button>
-    </section><p class="workflow-notice" role="status">{{ state.notice }}</p>
+    </section>
   </main>
 </template>
 `;

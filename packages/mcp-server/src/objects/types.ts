@@ -41,7 +41,7 @@ export interface FieldDefinition {
 export interface SemanticMapping {
   semantic_type: string;
   token_mapping: string;
-  ui_hints?: Record<string, string | boolean | number>;
+  ui_hints?: Record<string, string | boolean | number | Record<string, string> | string[]>;
 }
 
 // ---- Object Types ----
@@ -107,7 +107,7 @@ export interface RelatedListSource {
   inner?: string;
   seat?: string;
   kept?: { name: string; kind?: string };
-  row?: { line?: RelatedLineItem[]; time?: string };
+  row?: { line?: RelatedLineItem[]; time?: string | { field: string; says: string } };
   /** s250-m01: on a source matched by a top-level field, each row carries its record's whole history. */
   lines?: boolean;
 }

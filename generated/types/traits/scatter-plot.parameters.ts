@@ -2,11 +2,11 @@
 
 export interface ScatterPlotTraitParameters {
   /**
-   * JSON-encoded Cartesian viz.render input fragment; data rows are supplied by the consumer.
+   * JSON-encoded Cartesian viz_render input fragment; data rows are supplied by the consumer.
    */
   renderIntent?: string;
   /**
-   * Static SVG returned by viz.render for the authored sample.
+   * Static SVG returned by viz_render for the authored sample.
    */
   previewSvg?: string;
 }

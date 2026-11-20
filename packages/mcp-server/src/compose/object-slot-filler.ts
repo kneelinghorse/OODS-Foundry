@@ -546,6 +546,7 @@ export function populateObjectSchema(
     const entry: FieldSchemaEntry = {
       type: fieldDef.type,
       required: fieldDef.required,
+      ...(fieldDef.readOnly ? { readOnly: true } : {}),
     };
 
     const owner = traits.find(trait => trait.definition.schema[fieldName] === fieldDef);
@@ -583,9 +584,11 @@ export function populateObjectSchema(
     }
     const displayLabel = semantics?.[fieldName]?.ui_hints?.label;
     if (typeof displayLabel === 'string') entry.displayLabel = displayLabel;
-    const enumLabels = semantics?.[fieldName]?.ui_hints?.enumLabels;
-    if (enumLabels && typeof enumLabels === 'object' && !Array.isArray(enumLabels)) {
-      entry.enumLabels = Object.fromEntries(Object.entries(enumLabels).filter((pair): pair is [string, string] => typeof pair[1] === 'string'));
+    for (const kind of ['enumLabels', 'valueLabels'] as const) {
+      const labels = semantics?.[fieldName]?.ui_hints?.[kind];
+      if (labels && typeof labels === 'object' && !Array.isArray(labels)) {
+        entry[kind] = Object.fromEntries(Object.entries(labels).filter((pair): pair is [string, string] => typeof pair[1] === 'string'));
+      }
     }
 
     const fallback = semantics?.[fieldName]?.ui_hints?.displayFallbackField;
@@ -940,6 +943,8 @@ function applyBoundFieldProps(
     ...(node.props ?? {}),
     field: fieldName,
   };
+
+  if (node.component === 'StatusTimeline' && fieldEntry.enumLabels) nextProps.enumLabels = fieldEntry.enumLabels;
 
   // Keep value badges free of synthetic labels that would shadow their bound state.
   // Other supported components retain field-description labels.

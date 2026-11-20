@@ -31,14 +31,22 @@ const AccessibilityShowcase = defineComponent({
 });
 
 describe('@oods/components-vue ported accessibility outcomes', () => {
+  it('uses the authored state name in badge speech and history', () => {
+    const badge = mount(StatusBadge, { props: { status: 'past_due' }, slots: { default: 'Payment overdue' } });
+    expect(badge.attributes('aria-label')).toBe('Status: Payment overdue');
+    const timeline = mount(StatusTimeline, { props: { status: 'past_due', enumLabels: { past_due: 'Payment overdue' }, history: [{ from: 'still_running', to: 'past_due' }] } });
+    expect(timeline.text()).toContain('Current status: Payment overdue');
+    expect(timeline.text()).toContain('Still running → Payment overdue');
+  });
+
   it('names search, pagination, status, and timeline semantics without color-only signals', () => {
     const wrapper = mount(AccessibilityShowcase);
     expect(wrapper.get('[data-oods-component="SearchInput"] label').attributes('for')).toBe('subscriptions-search');
     expect(wrapper.get('[data-oods-component="SearchInput"] input').attributes('type')).toBe('search');
     expect(wrapper.get('[data-oods-component="PaginationBar"]').attributes('aria-label')).toBe('Pagination');
     expect(wrapper.get('[data-oods-component="PaginationBar"] [aria-current="page"]').text()).toBe('2');
-    expect(wrapper.get('[data-oods-component="StatusBadge"]').attributes('aria-label')).toBe('Status: Past Due');
-    expect(wrapper.get('[data-oods-component="StatusBadge"]').text()).toContain('Past Due');
+    expect(wrapper.get('[data-oods-component="StatusBadge"]').attributes('aria-label')).toBe('Status: Past due');
+    expect(wrapper.get('[data-oods-component="StatusBadge"]').text()).toContain('Past due');
     expect(wrapper.get('[data-oods-component="AuditTimeline"]').attributes('role')).toBe('log');
     expect(wrapper.get('[data-oods-component="RelativeTimestamp"]').attributes('datetime')).toBe('2026-09-05T12:00:00Z');
   });

@@ -1,6 +1,6 @@
 object:
   name: Organization
-  version: 1.2.0
+  version: 1.2.1
   domain: core.account
   description: Canonical account record for tenant and workspace governance across the platform.
   tags:
@@ -136,6 +136,15 @@ schema:
     description: Display name of the owning principal (parent organization, reseller or platform team).
 
 semantics:
+  data_residency:
+    semantic_type: organization.data_residency
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      enumLabels:
+        us: US
+        eu: EU
+        apac: APAC
+        latam: LATAM
   # The one-line summary under the organization's name in lists (content/Labelled's description, marked as the summary).
   description:
     semantic_type: text.summary
@@ -179,6 +188,9 @@ metadata:
     - Billing team
   steward: Platform team
   changelog:
+    - version: 1.2.1
+      date: "2026-11-19"
+      description: Shows grants and closures for the organization, dates each closure by its last report and displays residency codes in capitals.
     - version: 1.2.0
       date: "2025-11-20"
       description: Added Authable trait to expose membership and entitlement exports for tenant governance.
@@ -245,7 +257,7 @@ metadata:
       label: "Closures of grants for {name}"
       empty: "No closure here is of a grant for {name}."
       sources:
-        - { from: Closure, via: for_id, order: ended_at, lines: true, row: { line: [summary], time: ended_at } }
+        - { from: Closure, via: for_id, order: ended_at, lines: true, row: { line: [summary], time: { field: updated_at, says: Last report } } }
 
 # Eight authored sample organizations. Each is one coherent account: the same names appear as the customers on the
 # Subscription, Invoice, Transaction and Usage samples. Its lifecycle follows its plan: a prospect is on Free, an

@@ -9,7 +9,7 @@
 
 import { readFileSync, readdirSync, statSync } from 'fs';
 import { join, extname, relative } from 'path';
-import { load } from 'js-yaml';
+import { loadDefinitionYaml } from '../../packages/mcp-server/src/objects/definition-yaml.js';
 import {
   ValidationPipeline,
   ValidationResult,
@@ -328,7 +328,7 @@ function validateTraits(options: CLIOptions = {}): ValidationResult {
     const relativePath = relative(process.cwd(), file);
     try {
       const content = readFileSync(file, 'utf-8');
-      const parsed = load(content);
+      const parsed = loadDefinitionYaml(content);
 
       if (parsed === undefined) {
         return createParseErrorResult(relativePath, new Error('Trait file parsed as undefined'));

@@ -3,7 +3,7 @@ import type { TraitDefinition } from '../../src/core/trait-definition.ts';
 const EncodingShapeTrait = {
   "trait": {
     "name": "EncodingShape",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Categorical shape encoding",
     "category": "viz.encoding",
     "tags": [
@@ -17,7 +17,7 @@ const EncodingShapeTrait = {
       "type": "string",
       "required": false,
       "default": "{}",
-      "description": "JSON-encoded Cartesian viz.render input fragment; data rows are supplied by the consumer."
+      "description": "JSON-encoded Cartesian viz_render input fragment; data rows are supplied by the consumer."
     }
   ],
   "schema": {},

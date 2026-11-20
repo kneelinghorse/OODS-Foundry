@@ -1,3 +1,4 @@
+import { storedValueLabel } from '@oods/component-contracts';
 import type { FieldSchemaEntry, UiSchema } from '../schemas/generated.js';
 import type { ComposedObject } from '../objects/trait-composer.js';
 import { loadObject } from '../objects/object-loader.js';
@@ -19,6 +20,8 @@ export function recordDisplayValue(field: string, fields: Record<string, FieldSc
     return typeof label === 'string' && label.trim() ? [label] : [];
   });
   if (labels?.length) return labels.join(' · ');
+  const authored = storedValueLabel(value, entry?.valueLabels);
+  if (authored !== undefined) return authored;
   if (entry?.enum?.includes(String(value))) return enumOptionLabel(String(value), entry.enumLabels);
   const shown = String(value ?? '').trim() || !entry?.displayFallbackField ? value : read(entry.displayFallbackField);
   const numberedObject = entry?.semanticType?.match(/^object\.([^.]+)\.number$/)?.[1];

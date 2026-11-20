@@ -163,7 +163,13 @@
               "token_mapping": { "type": "string" },
               "ui_hints": {
                 "type": "object",
-                "additionalProperties": { "type": ["string", "boolean", "number"] }
+                "additionalProperties": {
+                  "anyOf": [
+                    { "type": ["string", "boolean", "number"] },
+                    { "type": "object", "additionalProperties": { "type": "string" } },
+                    { "type": "array", "items": { "type": "string" } }
+                  ]
+                }
               }
             },
             "required": ["semantic_type", "token_mapping"],

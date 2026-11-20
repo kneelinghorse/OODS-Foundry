@@ -87,9 +87,10 @@ export function readComparisonView(analysisPath: string): ComparisonView {
   const { analysis, report, figTokens, manifest } = admitted;
   const target = manifest.targets[0].name;
   // s244-m04: 2.1.0 is the same raw-value contract, with deleted .fig tokens counted apart (value_join.left_out).
-  const rawContract = ['1.4.0', '2.0.0', '2.1.0'].includes(report.schema_version);
+  const rawContract = ['1.4.0', '2.0.0', '2.1.0', '2.2.0'].includes(report.schema_version);
   const rerunFingerprint = (analysis.passes_rerun as readonly string[]).includes('style.fingerprint');
-  const provenance = { provenance_source: 'Stage1', provenance_record: analysis.analysis_run_id, provenance_method: `${analysis.passes_rerun.join(', ')}; ${rerunFingerprint ? 'fingerprint recomputed from retained evidence' : 'retained capture inputs copied, not rerun'}`, provenance_at: analysis.analyzed_at };
+  const captureMode = admitted.sourceManifest.environment.identification?.mode ?? 'not recorded';
+  const provenance = { provenance_source: 'Stage1', provenance_record: analysis.analysis_run_id, provenance_method: `${analysis.passes_rerun.join(', ')}; ${rerunFingerprint ? 'fingerprint recomputed from retained evidence' : 'retained capture inputs copied, not rerun'}. Identification mode: ${captureMode}.`, provenance_at: analysis.analyzed_at };
   const families: Family[] = Array.isArray(report.value_join?.families) ? report.value_join.families : [];
   const join = (family: string) => families.find(entry => entry.family === family);
   const signalsOf = (family: string) => (report.signals as any[]).filter(signal => signal.value_family === family);
@@ -108,7 +109,7 @@ export function readComparisonView(analysisPath: string): ComparisonView {
     return { count, families: sizes === count ? candidates.map(({ entry }: any) => String(entry.family)) : [] };
   };
   const kit = figTokens?.source.file_label;
-  const tokenNote = figTokens?.version === '1.6.0'
+  const tokenNote = figTokens && ['1.6.0', '1.7.0'].includes(figTokens.version)
     ? ` Token extract: ${figTokens.tokens.length} tokens, ${figTokens.tokens.filter((token: any) => token.soft_deleted).length} marked deleted; ${figTokens.collections?.length ?? 0} collections; ${figTokens.tokens.flatMap((token: any) => token.values ?? []).filter((value: any) => value.reference).length} values carry references in their recorded modes. Scopes: ${[...new Set(figTokens.tokens.flatMap((token: any) => token.scopes ?? []))].join(', ') || 'none recorded'}. Deleted entries and collection defaults remain source metadata.` : '';
   const designSource = analysis.inputs.some(input => input.path === 'artifacts/design_source_tokens.json');
   const joined = ['color', 'radius', 'font_size'].map(family => ({ family, row: join(family) })).filter((entry): entry is { family: string; row: Family } => entry.row?.verdict === 'joined');

@@ -24,8 +24,8 @@ was given. A request that was declined, withdrawn or left to expire was never gi
 with its outer grant gets none of its own: your product may name it, in words, in a line of the outer grant's closure.
 
 A closure is read-only in OODS Foundry. It composes a list, a detail page, a timeline, a card and an inline view, and
-no form, so its page offers no Edit, no Delete and no move, and no app is generated for it. A product writes its
-closures from reports.
+no form. Its page offers no editing or state changes. Use `code_generate` with `options.output: "application"` to build a single-screen app from any of
+its five contexts. Closure has no workflow app. A product writes its closures from reports.
 
 ## Five states, and their order
 
@@ -102,9 +102,11 @@ Support Agent's access to the order system may still work until it runs out, at 
 Beside what was reported, the records here show the same task, "When the grant ended: needs input. Now: needs input.",
 and nothing recorded under the grant after it ended.
 
+A closure row on its grant’s, owner’s or organization’s page shows “Last report” using the same time as the Closure list.
+
 The other two closures rest in reported closed (Northwind spring order replies: nothing was recorded under it, and the
 support desk reports nothing more can start under it) and not known (Marlow Yoga class bookings: the booking service
-was told and did not answer by the front desk's deadline).
+was told and did not answer by the front desk's deadline). Taken together, the three samples show Reported closed, Still running and Not known as the current state. Closing appears in their histories. A product can also record Failed.
 
 ![Dana Whitfield's page lists the two closures she answers for, and no closure of a grant for her](what-became-of-the-work/person-closures-light.png)
 

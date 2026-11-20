@@ -6,7 +6,7 @@
  * place only components Forge ships: a team's own components come in Sprint 214 (substitution). Nothing is written.
  */
 
-import { load as parseYaml } from 'js-yaml';
+import { loadDefinitionYaml } from '../objects/definition-yaml.js';
 import { parseProblem } from '../objects/definition-folders.js';
 import { listObjects, normalizeObjectDocument, objectEntry, objectRefusal, userObjectsFolder } from '../objects/object-loader.js';
 import { hasTrait, listTraits, loadTrait, traitEntry, traitRefusal, userTraitsFolder } from '../objects/trait-loader.js';
@@ -347,7 +347,7 @@ export function validateDefinition(yaml: string, available: readonly string[] = 
   const result: Checked = { kind: null, name: null, valid: false, errors: [], warnings: [], contexts: [], folder: null };
   let document: unknown;
   try {
-    document = parseYaml(yaml);
+    document = loadDefinitionYaml(yaml);
   } catch (error) {
     result.errors.push({ kind: 'malformed', message: `The definition is not valid YAML: ${parseProblem(error)}` });
     return result;

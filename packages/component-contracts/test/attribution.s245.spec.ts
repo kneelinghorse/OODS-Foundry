@@ -27,8 +27,8 @@ describe('historyAttribution names the level of yes', () => {
   });
 
   it('names the level in sentence case, as every screen shows a level', () => {
-    expect(historyAttribution({ approved_by_name: 'Ruth Adeyemi', approval_level: 'sign_off' })?.text).toBe('Approved by Ruth Adeyemi (level: Sign off)');
-    expect(historyAttribution({ approved_by_name: 'Ruth Adeyemi', approval_level: 'Sign-off' })?.text).toBe('Approved by Ruth Adeyemi (level: Sign off)');
+    expect(historyAttribution({ approved_by_name: 'Ruth Adeyemi', approval_level: 'sign_off' })?.text).toBe('Approved by Ruth Adeyemi (level: Sign-off)');
+    expect(historyAttribution({ approved_by_name: 'Ruth Adeyemi', approval_level: 'Sign-off' })?.text).toBe('Approved by Ruth Adeyemi (level: Sign-off)');
     expect(historyAttribution({ approved_by_name: 'Ruth Adeyemi', approval_level: 'managerReview' })?.text).toBe('Approved by Ruth Adeyemi (level: Manager review)');
   });
 

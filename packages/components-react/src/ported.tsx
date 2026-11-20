@@ -1,4 +1,4 @@
-import { currencyMinorUnits, formatDateTime, formatReadOnlyValue, historyAttribution } from '@oods/component-contracts';
+import { currencyMinorUnits, enumOptionLabel, formatDateTime, formatReadOnlyValue, historyAttribution } from '@oods/component-contracts';
 import * as React from 'react';
 
 import { Input } from './fields.js';
@@ -9,13 +9,6 @@ import type { BadgeProps, ComponentEmphasis, ComponentTone } from './types.js';
 
 const classes = (...values: Array<string | false | null | undefined>): string =>
   values.filter(Boolean).join(' ');
-
-const humanize = (value: string): string =>
-  value
-    .split(/[_-]/)
-    .filter(Boolean)
-    .map(segment => segment.charAt(0).toUpperCase() + segment.slice(1))
-    .join(' ');
 
 export interface StatusBadgeProps
   extends Omit<BadgeProps, 'children' | 'content' | 'status' | 'tone'> {
@@ -61,6 +54,7 @@ export const StatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(
     void [field, statusField, domainField, readOnly, compact];
     const resolvedStatus = status ?? value ?? 'unknown';
     const presentation = getStatusPresentation(domain, resolvedStatus);
+    const visibleLabel = children ?? content;
     return (
       <Badge
         ref={ref}
@@ -69,9 +63,9 @@ export const StatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(
         tone={tone === 'lifecycle' ? undefined : tone}
         emphasis={variant === 'solid' ? 'solid' : emphasis}
         showIcon={showIcon}
-        content={children ?? content}
+        content={visibleLabel}
         title={title ?? presentation.description}
-        aria-label={ariaLabel ?? label ?? `Status: ${presentation.label}`}
+        aria-label={ariaLabel ?? label ?? `Status: ${typeof visibleLabel === 'string' ? visibleLabel : presentation.label}`}
         className={classes('oods-status-badge', className)}
         data-oods-component="StatusBadge"
         {...rest}
@@ -200,11 +194,13 @@ function eventText(
   return undefined;
 }
 
-function normalizeTimelineEvents(values: readonly unknown[]): TimelineEvent[] {
+function normalizeTimelineEvents(values: readonly unknown[], humanize: (value: string) => string): TimelineEvent[] {
   return values.flatMap<TimelineEvent>((value, index) => {
     if (!isRecord(value)) {
       return value === undefined || value === null ? [] : [{ label: String(value) }];
     }
+    const event = eventText(value, ['event']);
+    const state = eventText(value, ['status', 'state']);
     const from = eventText(value, ['from']);
     const to = eventText(value, ['to']);
     // s244-m01 (#2829): a named entry reads "Billing Agent for Tidewater Co-op · approved by Ruth Adeyemi" in place of its
@@ -213,7 +209,8 @@ function normalizeTimelineEvents(values: readonly unknown[]): TimelineEvent[] {
     return [{
       id: eventText(value, ['id']) ?? `event-${index}`,
       label: eventText(value, ['label', 'title'])
-        ?? (eventText(value, ['event', 'status', 'state']) ? humanize(eventText(value, ['event', 'status', 'state'])!) : undefined)
+        ?? (event ? formatReadOnlyValue(event, 'string', true) : undefined)
+        ?? (state ? humanize(state) : undefined)
         ?? eventText(value, ['text', 'name'])
         ?? (to ? (from ? `${humanize(from)} → ${humanize(to)}` : humanize(to)) : undefined)
         ?? 'Event',
@@ -256,6 +253,7 @@ interface TimelineBaseProps
 
 export interface StatusTimelineProps extends TimelineBaseProps {
   readonly status?: string;
+  readonly enumLabels?: Record<string, string>;
   readonly allowedTransitions?: readonly string[];
 }
 
@@ -269,6 +267,7 @@ type TimelinePrimitiveProps = TimelineBaseProps & {
   readonly kind: 'audit' | 'status';
   readonly source?: readonly unknown[];
   readonly status?: string;
+  readonly enumLabels?: Record<string, string>;
   readonly allowedTransitions?: readonly string[];
 };
 
@@ -285,6 +284,7 @@ const TimelinePrimitive = React.forwardRef<HTMLDivElement, TimelinePrimitiveProp
       entries,
       stateHistory,
       status,
+      enumLabels,
       allowedTransitions,
       showActorId = true,
       showReason = true,
@@ -317,7 +317,8 @@ const TimelinePrimitive = React.forwardRef<HTMLDivElement, TimelinePrimitiveProp
       eventOptionsParameter,
       showFromState,
     ];
-    const allEvents = normalizeTimelineEvents(source ?? events ?? history ?? entries ?? stateHistory ?? []);
+    const humanize = (value: string) => enumOptionLabel(value, enumLabels);
+    const allEvents = normalizeTimelineEvents(source ?? events ?? history ?? entries ?? stateHistory ?? [], humanize);
     const visibleEvents = Number.isFinite(maxVisible)
       ? allEvents.slice(0, Math.max(0, Math.floor(maxVisible ?? 0)))
       : allEvents;
@@ -339,7 +340,7 @@ const TimelinePrimitive = React.forwardRef<HTMLDivElement, TimelinePrimitiveProp
             Current status: {humanize(status)}
           </p>
         ) : null}
-        {transitionCount > 0 ? <p data-timeline-transitions="true">Allowed transitions: {allowedTransitions?.join(', ')}</p> : null}
+        {transitionCount > 0 ? <p data-timeline-transitions="true">Allowed transitions: {allowedTransitions?.map(humanize).join(', ')}</p> : null}
         {children ?? (
           <ol className="oods-timeline__events" data-timeline-events="true">
             {visibleEvents.length === 0 ? (
@@ -814,6 +815,7 @@ export interface RelativeTimestampProps
   readonly label?: React.ReactNode;
   readonly text?: React.ReactNode;
   readonly timezone?: string;
+  readonly caption?: string;
   readonly hideWhenEmpty?: boolean;
   readonly now?: string | number | Date;
   readonly field?: string;
@@ -855,6 +857,7 @@ export const RelativeTimestamp = React.forwardRef<HTMLTimeElement, RelativeTimes
       label,
       text,
       timezone = 'UTC',
+      caption,
       hideWhenEmpty,
       now,
       children,
@@ -890,7 +893,7 @@ export const RelativeTimestamp = React.forwardRef<HTMLTimeElement, RelativeTimes
         suppressHydrationWarning
         {...rest}
       >
-        {content}
+        {caption && `${caption}: `}{content}
       </time>
     );
   }

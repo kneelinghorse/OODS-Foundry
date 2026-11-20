@@ -1,5 +1,5 @@
 import { identifierField, recordKeyField } from '../objects/record-identity.js';
-import { sampleValue } from './samples.js';
+import { isMailboxAddress, sampleValue } from './samples.js';
 import { approvalRecord, grantRecord, initialStateOf, namedForEnd, namedForState, suggestTraits, workRecord } from './proposals.js';
 import { dump } from 'js-yaml';
 import { validateDefinition } from '../tools/object.validate.js';
@@ -352,7 +352,8 @@ export function draftSource(input: SourceInput): ImportResult {
       && !sampleSchemas[field]?.enum && !sampleSchemas[field]?.pattern && !/^(currency|currency_?code|ccy|locale|language|status|state)$/i.test(field) && !identifierField(field) && !relationships.some(edge => edge.via === field) && !prose(field);
     const declaredTitle = typeof annotations?.titleField === 'string' && fields[annotations.titleField] ? annotations.titleField : undefined;
     const title = declaredTitle && !prose(declaredTitle) ? declaredTitle
-      : Object.keys(fields).find(field => plain(field) && /^(name|title|label|display_?name|subject|headline|handle)$/i.test(field))
+      : Object.keys(fields).find(field => isMailboxAddress(name, field) && ['string', 'email'].includes(fields[field].type.replace(/\?$/, '')))
+        ?? Object.keys(fields).find(field => plain(field) && /^(name|title|label|display_?name|subject|headline|handle)$/i.test(field))
         ?? Object.keys(fields).find(field => plain(field) && [name.toLowerCase(), name.toLowerCase().replace(/s$/, '')].some(prefix => ['name', 'title', 'label'].some(suffix => field.replace(/_/g, '').toLowerCase() === prefix + suffix)))
         ?? Object.keys(fields).find(field => plain(field) && sampleSchemas[field]?.['x-oods']?.unique)
         ?? Object.keys(fields).find(field => plain(field) && fields[field].required)

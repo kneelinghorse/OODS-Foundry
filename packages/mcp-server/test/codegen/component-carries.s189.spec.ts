@@ -27,7 +27,7 @@ describe('component carries preserve the same meaning in every target', () => {
       expect(text(renderToStaticMarkup(createElement(ReactComponents[component], values)))).toBe(html);
       expect(text(await renderToString(h(VueComponents[component], values)))).toBe(html);
       // Human-facing fallback labels change; the event's raw domain values must not.
-      if (!Object.keys(options).length) { expect(html).toContain('Active → Pending Cancellation'); expect(html).not.toContain('active → pending_cancellation'); expect(html).toContain('Reason: Budget'); }
+      if (!Object.keys(options).length) { expect(html).toContain('Active → Pending cancellation'); expect(html).not.toContain('active → pending_cancellation'); expect(html).toContain('Reason: Budget'); }
       expect(JSON.stringify(props)).toBe(before);
     }
   });

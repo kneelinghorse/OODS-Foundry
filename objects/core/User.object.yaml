@@ -1,6 +1,6 @@
 object:
   name: User
-  version: 1.5.0
+  version: 1.5.1
   domain: core.identity
   description: Canonical identity record representing a platform user across lifecycle contexts.
   tags:
@@ -150,6 +150,9 @@ metadata:
   steward: Design team
   maturity: stable
   changelog:
+    - version: 1.5.1
+      date: "2026-11-19"
+      description: Shows approvals, tasks and grants by the person’s seat and closures they answer for. A closure row shows the time of its last report.
     - version: 1.5.0
       date: "2026-11-07"
       description: Composed the Actor trait as a person, so a user is named where an actor is (history, memberships, delegations); no field or screen changed.
@@ -269,12 +272,12 @@ metadata:
       label: "Closures {name} answers for"
       empty: "No closure here names {name} as the one who answers for it."
       sources:
-        - { from: Closure, via: owner_id, when: { owner_type: user }, order: ended_at, lines: true, row: { line: [summary], time: ended_at } }
+        - { from: Closure, via: owner_id, when: { owner_type: user }, order: ended_at, lines: true, row: { line: [summary], time: { field: updated_at, says: Last report } } }
     - id: closures-for
       label: "Closures of grants for {name}"
       empty: "No closure here is of a grant for {name}."
       sources:
-        - { from: Closure, via: for_id, order: ended_at, lines: true, row: { line: [summary], time: ended_at } }
+        - { from: Closure, via: for_id, order: ended_at, lines: true, row: { line: [summary], time: { field: updated_at, says: Last report } } }
 
 # Eight authored sample users, each a person at one of the sample organizations. A user is created active (the
 # lifecycle's initial state), so an invited user is one invited back after leaving; each history ends in the user's

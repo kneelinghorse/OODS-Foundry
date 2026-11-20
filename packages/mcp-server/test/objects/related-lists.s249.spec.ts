@@ -74,6 +74,8 @@ describe('metadata.relatedLists validates as declared', () => {
     ['a history read on an object that keeps none', { ...tasksFor, sources: [{ from: 'Plan', via: 'state_history[].actor_id' }] }, 'metadata.relatedLists[0].sources[0].via', /Plan keeps none/],
     ['a state not in the lifecycle', { ...tasksFor, sources: [{ from: 'Grant', via: 'granted_for_id', states: ['active', 'archived'] }] }, 'metadata.relatedLists[0].sources[0].states[1]', /"archived" is not one of Grant's states/],
     ['a filter on a missing field', { ...tasksFor, sources: [{ from: 'Grant', via: 'granted_for_id', when: { holder_kind: 'agent' } }] }, 'metadata.relatedLists[0].sources[0].when.holder_kind', /"holder_kind" is not a field of Grant/],
+    ['a caption without its time field', { ...tasksFor, sources: [{ from: 'Task', via: 'requested_for_id', row: { time: { field: 'missing', says: 'Due' } } }] }, 'metadata.relatedLists[0].sources[0].row.time.field', /"missing" is not a field of Task/],
+    ['a time field without its caption', { ...tasksFor, sources: [{ from: 'Task', via: 'requested_for_id', row: { time: { field: 'due_at', says: '' } } }] }, 'metadata.relatedLists[0].sources[0].row.time.says', /must name the time shown/],
     ['a row line field the source lacks', { ...tasksFor, sources: [{ from: 'Task', via: 'requested_for_id', row: { line: ['owner_email'] } }] }, 'metadata.relatedLists[0].sources[0].row.line[0]', /"owner_email" is not a field of Task/],
     ['a key the subject lacks', { ...tasksFor, sources: [{ from: 'Task', via: 'requested_for_id', key: 'store_code' }] }, 'metadata.relatedLists[0].sources[0].key', /must name a field of Branch/],
     ['no label', { ...tasksFor, label: '' }, 'metadata.relatedLists[0].label', /the list's heading/],

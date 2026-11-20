@@ -2,7 +2,7 @@
 
 An AI agent that acts inside a product is an **actor, not a user**. In OODS Foundry it is an object of its own, `Agent`, that shares one trait with `User`: the ability to act. It answers to a sponsor, holds roles, has a lifecycle, and acts for people and organizations only under a grant. Every change it makes is recorded with both names: who acted, and who it acted for.
 
-![The Agent list: each agent with its status, its sponsor and an Agent mark beside its name](agents-as-actors/agent-list-light.png)
+![The Agent list: each agent with its status, its sponsor and an Agent mark among its row labels](agents-as-actors/agent-list-light.png)
 
 ## Why not a kind of user
 
@@ -16,7 +16,7 @@ OODS composes objects from traits, so the fix is in the traits: everything that 
 
 | Trait | What it gives an agent |
 |---|---|
-| `Actor` (kind `agent`) | The ability to act: to be named in history, hold a role, own a record. An agent is marked **Agent** beside its name in lists, cards and its own page. |
+| `Actor` (kind `agent`) | The ability to act: to be named in history, hold a role, own a record. An agent is marked **Agent** in lists, cards and its own page. |
 | `Ownerable` | A required **sponsor**: a person or a team the agent answers to. |
 | `Authable` | Roles, through the same memberships people have. A membership names a user (`user_id`) or any other actor (`actor_id` with `actor_kind`). |
 | `Stateful` | A lifecycle: draft, active, paused, retired. |

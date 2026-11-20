@@ -38,7 +38,7 @@ type Row = Record<string, unknown>;
 
 const short = (name: unknown) => String(name).split('/').pop();
 const bare = (type: unknown) => String(type ?? '').replace(/\?$/, '');
-type Described = { definition: ObjectDefinition; shape: RelatedShape; object: RelatedObject };
+type Described = { definition: ObjectDefinition; shape: RelatedShape; object: RelatedObject; labels: Record<string, string> };
 const cache = new WeakMap<ObjectDefinition, Omit<Described, 'definition'>>();
 
 /** The shape related-list checks read: the composed fields, the lifecycle's states and declared order, and the own id. */
@@ -73,8 +73,14 @@ function described(name: string): Described | undefined {
     // The table its rows' badges read, as its own record's badge reads it (compose/status-table.ts); the lifecycle table is
     // the core's default, so it is named only when it is another.
     const statusDomain = statusTableOf(fields.status?.semanticType);
-    known = { shape, object: {
+    const statusLabels = composed.semantics.status?.ui_hints?.enumLabels;
+    const labels = Object.fromEntries(Object.keys(fields).map(field => {
+      const label = composed.semantics[field]?.ui_hints?.label;
+      return [field, typeof label === 'string' ? label : fieldLabel(field)];
+    }));
+    known = { shape, labels, object: {
       name: definition.object.name, ...(shape.key ? { key: shape.key } : {}), ...(titleField ? { titleField } : {}), ...(shape.order ? { order: shape.order } : {}),
+      ...(statusLabels && typeof statusLabels === 'object' && !Array.isArray(statusLabels) ? { statusLabels } : {}),
       instantFields, dateOnlyFields, noun: { one: noun, other: `${noun}s` }, ...(statusDomain !== 'lifecycle' ? { statusDomain } : {}),
     } };
     cache.set(definition, known);
@@ -118,6 +124,16 @@ function usable(subjectName: string, subject: Described, list: RelatedList, inde
   return { list: { ...list, sources }, warnings };
 }
 
+/* Keep only labels a related row reads in the generated app's data. */
+function withTimeLabels(target: Described, lists: readonly RelatedList[]): RelatedObject {
+  const timeLabels: Record<string, string> = {};
+  for (const list of lists) for (const source of list.sources) {
+    const time = source.row?.time;
+    if (typeof time === 'string' && sourceNames(source.from).includes(target.object.name)) timeLabels[time] = target.labels[time]!;
+  }
+  return Object.keys(timeLabels).length ? { ...target.object, timeLabels } : target.object;
+}
+
 /** Resolve one declared list for one record of the subject object. */
 export function resolveRelatedList(subjectName: string, record: Row, list: RelatedList, index = 0): ResolvedRelatedList {
   const subject = described(subjectName);
@@ -129,7 +145,7 @@ export function resolveRelatedList(subjectName: string, record: Row, list: Relat
   const objects: Record<string, RelatedObject> = {};
   for (const source of fit?.sources ?? []) for (const from of sourceNames(source.from)) {
     const found = described(from);
-    if (found) objects[from] = { ...found.object, records: (found.definition.samples ?? []) as Row[] };
+    if (found) objects[from] = { ...withTimeLabels(found, [fit!]), records: (found.definition.samples ?? []) as Row[] };
   }
   const resolved = resolveRelatedListRows((fit ?? { ...list, sources: [] }) as CoreList, subject.object, record, objects);
   return { ...resolved, warnings };
@@ -157,7 +173,7 @@ function copiedFields(object: RelatedObject, lists: readonly RelatedList[], from
     if (source.via && !historyKey(source.via)) fields.add(source.via);
     // s250-m01: a source that carries its records' whole history (lines) copies it too.
     if ((source.via && historyKey(source.via)) || source.lines || list.finality || list.afterEnd) fields.add('state_history');
-    for (const field of [...Object.keys(source.when ?? {}), ...(source.exclude ?? []), source.order, source.inner, source.row?.time]) if (field) fields.add(field);
+    for (const field of [...Object.keys(source.when ?? {}), ...(source.exclude ?? []), source.order, source.inner, typeof source.row?.time === 'string' ? source.row.time : source.row?.time?.field]) if (field) fields.add(field);
     for (const item of source.row?.line ?? []) {
       if (typeof item === 'string') fields.add(item);
       else if ('field' in item) fields.add(item.field);
@@ -189,8 +205,8 @@ export function relatedAppData(subjectName: string): { lists: RelatedList[]; own
       if (!found) continue;
       const fields = copiedFields(found.object, lists, from);
       const records = ((found.definition.samples ?? []) as Row[]).map(sample => Object.fromEntries(fields.filter(field => Object.hasOwn(sample, field)).map(field => [field, structuredClone(sample[field])])));
-      objects[from] = { ...found.object, records };
+      objects[from] = { ...withTimeLabels(found, lists), records };
     }
   }
-  return { lists, own: subject.object, objects, copied };
+  return { lists, own: withTimeLabels(subject, lists), objects, copied };
 }

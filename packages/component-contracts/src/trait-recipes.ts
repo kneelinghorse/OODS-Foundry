@@ -1,3 +1,4 @@
+import { enumOptionLabel } from './status-registry.js';
 import { historyAttribution } from './attribution.js';
 import { formatDateTime, formatReadOnlyValue } from './date-time.js';
 
@@ -19,7 +20,7 @@ export function traitEventRows(kind: TraitEventKind, values: TraitEventValues) {
       : (values.history ?? []).map(value => {
         const row = record(value);
         const from = text(row.from_state ?? row.from); const to = text(row.to_state ?? row.to) ?? values.status ?? 'State changed';
-        const transition = from ? `${formatReadOnlyValue(from, 'string', true)} → ${formatReadOnlyValue(to, 'string', true)}` : formatReadOnlyValue(to, 'string', true);
+        const transition = from ? `${enumOptionLabel(from)} → ${enumOptionLabel(to)}` : enumOptionLabel(to);
         const title = text(row.title ?? row.label);
         // s244-m01 (#2829): a named entry says who acted, for whom and who approved; its actor id is not printed beside the name.
         const attribution = historyAttribution(row);

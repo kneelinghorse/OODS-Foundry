@@ -184,6 +184,7 @@ describe('s200-m02 geometry contract: one scale, consumed', () => {
       [/inline-size: min\(100%, var\(--oods-viz-width, 640px\)\)|min-block-size: var\(--oods-viz-height, 360px\)/, 'empty preview frame dimensions from the component props'],
       [/inline-size: 100%|max-inline-size: 100%|width: 100%|flex-basis: auto; width: 100%/, 'fluid widths'],
       [/minmax\(min\(100%, (?:14rem|240px)\), 1fr\)|flex: 1 1 (?:180|140)px|min-width: min\(180px, 100%\)/, 'layout minimum widths'],
+      [/\.oods-collection-row > :is\(time, .*flex-basis: 100%;/, "a record's captioned time occupies its own last line"],
       [/@media \(max-width: (?:40rem|600px)\)/, 'phone breakpoints'],
       [/caption\[data-visually-hidden='true'\] \{ position: absolute; inline-size: 1px; block-size: 1px; margin: -1px;/, 'the visually hidden caption: a 1px box that keeps the accessible name (Sprint 222 m02, #2502 ruling 11)'],
       [/--oods-dialog-max-inline-size: (?:25|32|40)rem;/, "a dialog's largest width from its size prop: sm 400px, md 512px, lg 640px (Sprint 222 m02, #2502 ruling 11)"],

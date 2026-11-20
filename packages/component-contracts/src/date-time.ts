@@ -1,3 +1,4 @@
+import { enumOptionLabel } from './status-registry.js';
 import { historyAttribution } from './attribution.js';
 import { billingSummary, formatBillingAmount } from './billing.js';
 
@@ -78,8 +79,16 @@ export function formatDeclaredNumber(value: unknown, format: NumberDisplayFormat
     : new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(number);
 }
 
+export function storedValueLabel(value: unknown, labels?: Readonly<Record<string, string>>): string | undefined {
+  if (!labels || value == null || typeof value === 'object') return undefined;
+  const key = String(value);
+  return Object.hasOwn(labels, key) ? labels[key] : undefined;
+}
+
 /** Format declared scalar display fields without changing the underlying record. */
-export function formatReadOnlyValue(value: unknown, type: string, code = false, format?: NumberDisplayFormat): string {
+export function formatReadOnlyValue(value: unknown, type: string, code = false, format?: NumberDisplayFormat, labels?: Readonly<Record<string, string>>): string {
+  const label = storedValueLabel(value, labels);
+  if (label !== undefined) return label;
   if (value == null || value === '') return 'Not recorded';
   type = type.replace(/\?$/, '');
   if (type === 'date' || type === 'datetime') return formatDateTime(value as string | number | Date, { dateOnly: type === 'date' }) || 'Invalid date';
@@ -105,7 +114,7 @@ export function recordCollectionEvents(record: Record<string, unknown>, options:
     const state = entry.to ?? entry.to_state;
     if (typeof at !== 'string' || typeof state !== 'string') return [];
     const attribution = historyAttribution(entry)?.text;
-    return [{ id: 'state-' + index, title: String(entry.title ?? state.split(/[_-]/).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ')), at, description: String(entry.reason ?? ''), kind: 'state' as const, ...(attribution ? { attribution } : {}) }];
+    return [{ id: 'state-' + index, title: String(entry.title ?? enumOptionLabel(state)), at, description: String(entry.reason ?? ''), kind: 'state' as const, ...(attribution ? { attribution } : {}) }];
   }) : [];
   // s220-m01 (#2461): a payment the record has recorded is described by its own amount, never the current price. After an
   // edit to the price, "Last payment Sep 3" read the new "€19.99 · yearly" beside a chart of the €149.00 actually paid.
@@ -191,14 +200,14 @@ export function ownerKindLabel(value: unknown): string | undefined {
 }
 
 /**
- * s223-m01 (#2527 ruling 6): ownership on a card as one phrase, "Owned by Pricing and packaging · team", or by its type
+ * s223-m01 (#2527 ruling 6): ownership on a card as one phrase, "Owned by Pricing and packaging · Team", or by its type
  * alone when the owner has no name to show ("Team-owned"). Undefined when there is nothing to say.
  */
 export function ownershipPhrase(ownerLabel?: unknown, ownerType?: unknown, role?: unknown): string | undefined {
   const text = (value: unknown): string | undefined => typeof value === 'string' && value.trim() ? value.trim() : undefined;
   const name = text(ownerLabel) && !UNRESOLVED_REFERENCE_LABEL.test(text(ownerLabel)!) ? text(ownerLabel) : undefined;
-  const type = text(ownerType)?.replace(/[_-]+/g, ' ');
-  const parts = name ? [`Owned by ${name}`, type, text(role)] : type ? [`${type.charAt(0).toUpperCase()}${type.slice(1)}-owned`, text(role)] : [];
+  const type = ownerKindLabel(ownerType);
+  const parts = name ? [`Owned by ${name}`, type, text(role)] : type ? [`${type}-owned`, text(role)] : [];
   return parts.filter(Boolean).join(' · ') || undefined;
 }
 

@@ -3,7 +3,7 @@ import type { TraitDefinition } from '../../src/core/trait-definition.ts';
 const MarkAreaTrait = {
   trait: {
     name: 'MarkArea',
-    version: '0.1.0',
+    version: '0.2.1',
     description: 'Canonical area mark for cumulative totals and ranges.',
     category: 'viz.mark',
     tags: ['viz', 'mark', 'area', 'band'],
@@ -13,8 +13,8 @@ const MarkAreaTrait = {
     {"name": "chart", "type": "object", "required": false, "description": "Optional read-only chart declaration binding existing domain fields; projects into supported detail and dashboard views."},
     {"name": "title", "type": "string", "required": false, "description": "Title for the bound chart and its accessible figure.", "default": "Payment amounts"},
     {"name": "description", "type": "string", "required": false, "description": "Description of the bound chart measurements and units.", "default": "Values recorded for this record."},
-    { name: 'previewSvg', type: 'string', required: false, description: 'Static SVG returned by viz.render for the authored sample.' },
-    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
+    { name: 'previewSvg', type: 'string', required: false, description: 'Static SVG returned by viz_render for the authored sample.' },
+    {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."},
 
     {
       name: 'curve',

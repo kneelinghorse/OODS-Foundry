@@ -71,12 +71,18 @@ const TONE_ALIASES: Record<string, StatusTone> = {
   pending: 'info',
 };
 
-const toLabel = (status: string): string =>
-  status
-    .split(/[_-]/)
-    .filter(Boolean)
-    .map(segment => segment.charAt(0).toUpperCase() + segment.slice(1))
-    .join(' ');
+/**
+ * Display wording never changes an enum's stored value; an authored label wins. s249-m04 (next step 1877): a code of two
+ * or three capitals, such as a currency's ISO code ("GBP"), "UTC" or a contrast level ("AA"), keeps its capitals; it read
+ * "Gbp". A longer word written in capitals is a word: an imported role's "OWNER" reads "Owner".
+ */
+export function enumOptionLabel(value: string, labels?: Readonly<Record<string, unknown>>): string {
+  const authored = labels && Object.hasOwn(labels, value) ? labels[value] : undefined;
+  if (typeof authored === 'string') return authored;
+  if (/^[A-Z]{2,3}$/.test(value)) return value;
+  const words = value.replace(/([a-z0-9])([A-Z])/g, '$1 $2').split(/[_\-\s]+/).filter(Boolean).join(' ').toLowerCase();
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
 
 const inferTone = (entry?: RawStatusTokenSet): StatusTone => {
   if (!entry) return 'neutral';
@@ -120,7 +126,7 @@ const fallback = (
 ): StatusPresentation => ({
   domain,
   status,
-  label: toLabel(status || 'Unknown'),
+  label: enumOptionLabel(status || 'Unknown'),
   description: 'Status not found in registry; falling back to the requested token set.',
   tone,
   badge: { subtle: componentTokenSet(tone), solid: componentTokenSet(tone) },
@@ -136,7 +142,7 @@ for (const [domain, entries] of Object.entries((rawStatusMap as RawStatusMap).do
     domainEntries.set(status.toLowerCase(), {
       domain,
       status,
-      label: toLabel(status),
+      label: enumOptionLabel(status),
       description: entry.description,
       tone,
       iconName: entry.chip.icon ?? entry.banner?.icon,
@@ -155,7 +161,7 @@ for (const [status, entry] of Object.entries((lifecycleTones as { states: Record
   lifecycleEntries.set(status, {
     domain: 'lifecycle',
     status,
-    label: toLabel(status),
+    label: enumOptionLabel(status),
     description: entry.description,
     tone: entry.tone,
     iconName: entry.icon,
@@ -175,12 +181,15 @@ export function getStatusPresentation(domain: StatusDomain, status: string): Sta
   const entries = registry.get(domain);
   const normalized = status.toLowerCase();
   const direct = entries?.get(normalized);
-  if (direct) return direct;
+  if (direct) {
+    const label = enumOptionLabel(status);
+    return direct.label === label ? direct : { ...direct, label };
+  }
   const alias = LEGACY_STATUS_ALIASES[domain]?.[normalized];
   const aliased = alias ? entries?.get(alias) : undefined;
-  if (aliased) return { ...aliased, status, label: toLabel(status) };
+  if (aliased) return { ...aliased, status, label: enumOptionLabel(status) };
   const shared = lifecycleEntries.get(normalized);
-  return shared ? { ...shared, status, label: toLabel(status) } : fallback(domain, status);
+  return shared ? { ...shared, status, label: enumOptionLabel(status) } : fallback(domain, status);
 }
 
 export function listStatuses(domain: StatusDomain): readonly StatusPresentation[] {

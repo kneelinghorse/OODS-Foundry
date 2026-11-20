@@ -1749,7 +1749,7 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   // read-only, so the fact can be read beside the answer; it is never a field slot's candidate, so it gets no control.
   // s248-m01: a fact that reads as money keeps its currency field in the form's record too, so the amount reads in its
   // currency ("$12,000.00") beside the status, not as the stored number; like the fact, the currency gets no control.
-  const formFacts = layoutType === 'form' ? withMoneyCurrencies(formFactFields(composed), composed) : new Set<string>();
+  const formFacts = layoutType === 'form' ? formFactFields(composed) : new Set<string>();
   // s248-m01 (next step 1861): a reference's kept name joins the form's record once its slots are chosen (below), so the
   // form's select can name the record's own reference where it does not list it ("Elena Park", not the first option). It
   // takes no slot and no control, and the slots are chosen as before.
@@ -2631,16 +2631,6 @@ export function annotateWithActionInstances(
   }
 
   return resolved;
-}
-
-/** s248-m01: the form facts with the currency field of each fact that declares money (ui_hints CurrencyAmount). */
-function withMoneyCurrencies(facts: Set<string>, composed: ComposedObject | undefined): Set<string> {
-  const kept = new Set(facts);
-  for (const field of facts) {
-    const hints = composed?.semantics?.[field]?.ui_hints;
-    if (hints?.component === 'CurrencyAmount' && typeof hints.currencyField === 'string' && composed?.schema[hints.currencyField]) kept.add(hints.currencyField);
-  }
-  return kept;
 }
 
 /** s248-m01 (next step 1861): the kept name of each reference the object declares a relationship for (Article's author_name). */

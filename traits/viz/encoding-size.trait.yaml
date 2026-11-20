@@ -1,6 +1,6 @@
 trait:
   name: EncodingSize
-  version: 0.2.0
+  version: 0.2.1
   description: |
     Maps a quantitative field to glyph size (radius or area) with governed
     ranges that can be validated for perceptual correctness and accessibility.
@@ -11,7 +11,7 @@ trait:
     - size
 
 parameters:
-  - {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."}
+  - {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."}
   - name: rangeMin
     type: number
     required: true

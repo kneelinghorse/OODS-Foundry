@@ -202,7 +202,14 @@ export function relatedListProblems(raw: unknown, subject: RelatedShape, shape: 
         const row = source.row;
         if (!isMap(row)) { problem(`${where}.row`, `${where}.row must be a map with line, time or both.`); return; }
         for (const key of Object.keys(row)) if (!['line', 'time'].includes(key)) problem(`${where}.row.${key}`, `${where}.row takes line and time.`);
-        if (row.time !== undefined) field(`${where}.row.time`, row.time, 'a field');
+        if (row.time !== undefined) {
+          const place = `${where}.row.time`;
+          if (isMap(row.time)) {
+            for (const key of Object.keys(row.time)) if (!['field', 'says'].includes(key)) problem(`${place}.${key}`, `${place} takes field and says.`);
+            field(`${place}.field`, row.time.field, 'a field');
+            if (!text(row.time.says)) problem(`${place}.says`, `${place}.says must name the time shown on the row.`);
+          } else field(place, row.time, 'a field');
+        }
         if (row.line !== undefined) {
           if (!Array.isArray(row.line)) problem(`${where}.row.line`, `${where}.row.line must be a list of fields, fields left out for given values ({ field, except }) and fixed words ({ says, when }).`);
           else row.line.forEach((item, position) => {

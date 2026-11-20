@@ -70,13 +70,16 @@ metadata:
 Field types are `string`, `number`, `integer`, `boolean`, `date`, `datetime`, `uuid`, `email`, `url`, arrays such as
 `string[]`, and structured types.
 
-The sample records the preview and generated apps show are the object's `samples:`, in order, as the shipped business
-objects show their eight. A sample names values for any of the object's fields, its traits' included (`status` above
+Previews and generated apps show the object's `samples:` in order. Most shipped business objects have eight.
+A generated app seeds exactly the records given when there are one to four samples. Each record keeps its authored
+id when every sample supplies a distinct one. A sample names values for any of the object's fields, its traits' included (`status` above
 comes from `lifecycle/Stateful`). A field a sample leaves out shows that field's own example at the same position, or
 else an empty value of its type (empty text, 0 or false): never another sample's value or a default, which would state
 a fact the sample did not record. `validate` refuses a sample that names a field the object does not have or an enum
 value the field does not allow. An object with no `samples:` cycles through each field's `examples`, so give one per
 distinct row you want to see: a preview list shows ten.
+
+In YAML definitions a quoted or unquoted timestamp keeps its spelling, including the offset and fractional seconds. You can reuse fields with YAML merge keys.
 
 ### Money
 
@@ -160,7 +163,7 @@ view_extensions:             # what the trait places on each screen: list, card,
       props: { field: units_on_hand }
 ```
 
-A trait of yours can place only the components OODS Foundry ships; `catalog_list` names them. Your own components can replace those ids through substitution; see [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.17.0/COMPONENTS.md).
+A trait of yours can place only the components OODS Foundry ships; `catalog_list` names them. Your own components can replace those ids through substitution; see [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.18.0/COMPONENTS.md).
 
 ## Checking and registering
 
@@ -263,7 +266,7 @@ up the record one of this record's fields names (`key`, with `seat`, the words b
 that name a party who is no record here), and say `when` (field values a record must have: `null` for no value,
 `{ present: true }` for any), `exclude` (a field that must not hold this record's id), `inner` (records shown under a
 row), `order` and `lines: true` (each row carries its record's whole history; for a source matched by a top-level field
-or by `key`). A list about another record's end says `endedAt: { field, noun }`: `afterEnd` and `finality` then read the
+or by `key`). A row can caption its time with `time: { field: updated_at, says: Last report }`. A field name alone uses the field’s display label. List rows show each caption before its value and place the time on its own line. A list about another record's end says `endedAt: { field, noun }`: `afterEnd` and `finality` then read the
 instant that date-time field holds, whatever the record's own state, and a row says "When the grant ended: …". The note
 under a page's lists names this record, unless one of its lists reads another of this record's fields through `key`:
 then it says the rows were matched by id. Validation

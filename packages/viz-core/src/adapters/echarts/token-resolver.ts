@@ -14,6 +14,7 @@
 // `count`), so the palette is intentionally NOT centralised here.
 
 import tokensBundle from '@oods/tokens';
+import Color from 'colorjs.io';
 
 /**
  * Scope is explicit so concurrent renders never share mutable theme state. A brand is any brand the token build
@@ -80,6 +81,15 @@ function formatColorValue(value: string): string {
   const trimmed = value.trim();
   if (trimmed.toLowerCase().startsWith('oklch(')) {
     return convertOklchToRgb(trimmed) ?? trimmed;
+  }
+  // DTCG intake serializes the authored color space. The chart engines consume numeric sRGB.
+  if (/^hsla?\(/i.test(trimmed) || (/^rgba?\(/i.test(trimmed) && !trimmed.includes(','))) {
+    try {
+      const color = new Color(trimmed).to('srgb');
+      return color.toString({ format: color.alpha === 1 ? 'rgb_number' : 'rgba_number' });
+    } catch {
+      return trimmed;
+    }
   }
   return trimmed;
 }

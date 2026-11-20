@@ -49,7 +49,7 @@ describe('the four states of a closure join the shared table, and none reads as 
       expect(shown.description, state).not.toMatch(/grant|closure|foundry|oods/i);
     }
     // A closure's state is never called closed without "reported".
-    expect(getStatusPresentation('lifecycle', 'reported_closed').label).toBe('Reported Closed');
+    expect(getStatusPresentation('lifecycle', 'reported_closed').label).toBe('Reported closed');
   });
 
   it('gives closed and unknown no entry, so a status-less badge and the quickstart\'s Warehouse read as before', () => {

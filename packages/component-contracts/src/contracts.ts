@@ -293,7 +293,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
   },
   LabelCell: {
     id: 'LabelCell', version: COMPONENT_CONTRACT_VERSION,
-    props: ['label', 'text', 'value', 'description', 'subtitle', 'sublabel', 'supporting', 'truncate', 'maxLength'], slots: ['default'], events: [],
+    props: ['label', 'text', 'value', 'description', 'subtitle', 'sublabel', 'supporting', 'caption', 'truncate', 'maxLength'], slots: ['default'], events: [],
     states: ['populated', 'empty'], tokenRoles: ['text.primary', 'text.secondary'],
     accessibility: ['primary and description are truncated with the HTML suffix', 'no editor is implied'],
     compatibility: 'Mirrors renderLabelCell: label/text/value precedence, description/subtitle/sublabel/supporting precedence, truncate defaults the limit to 40, and maxLength accepts a number or numeric string. Truncation uses the HTML three-dot suffix. Authored children replace the entire body. field binds label and descriptionField binds description; maxLengthParameter is consumed without a runtime value.',
@@ -435,7 +435,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
     id: 'RelativeTimestamp', version: COMPONENT_CONTRACT_VERSION,
     props: [
       'datetime', 'timestamp', 'value', 'updatedAt', 'createdAt', 'relative', 'label', 'text',
-      'timezone', 'now', 'hideWhenEmpty',
+      'timezone', 'now', 'hideWhenEmpty', 'caption',
     ],
     directives: ['field', 'fallbackField', 'timezoneParameter'],
     slots: ['default'], events: [], states: ['relative', 'absolute', 'empty'],
@@ -518,7 +518,7 @@ const authoredContracts: Readonly<Record<NucleusComponentId, ComponentContract>>
   StatusTimeline: {
     id: 'StatusTimeline', version: COMPONENT_CONTRACT_VERSION,
     props: [
-      'title', 'events', 'history', 'entries', 'stateHistory', 'status', 'allowedTransitions',
+      'title', 'events', 'history', 'entries', 'stateHistory', 'status', 'enumLabels', 'allowedTransitions',
       'showActorId', 'showReason', 'maxVisible',
     ],
     directives: [

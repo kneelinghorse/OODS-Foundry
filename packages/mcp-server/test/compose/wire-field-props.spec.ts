@@ -21,6 +21,16 @@ function findAllElements(schema: UiSchema, predicate: (el: UiElement) => boolean
 }
 
 describe('wireFieldProps', () => {
+  it('gives a status timeline the same authored labels as a state select', () => {
+    const schema = makeSchema([
+      { id: 'history', component: 'StatusTimeline', props: { field: 'state' } },
+      { id: 'picker', component: 'Select', props: { field: 'state' } },
+    ], { state: { type: 'string', required: true, enum: ['past_due'], enumLabels: { past_due: 'Payment overdue' } } });
+    wireFieldProps(schema);
+    expect(schema.screens[0].props?.enumLabels).toEqual({ past_due: 'Payment overdue' });
+    expect(schema.screens[1].props?.options).toEqual([{ value: 'past_due', label: 'Payment overdue' }]);
+  });
+
   it('sets props.field on leaf components matching objectSchema fields', () => {
     const schema = makeSchema(
       [{

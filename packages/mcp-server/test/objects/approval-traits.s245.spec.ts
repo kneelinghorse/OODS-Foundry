@@ -50,7 +50,7 @@ describe('core/Decision and core/Approvable are shipped traits', () => {
   it('Decision holds the record\'s fields, every id a plain string so an imported reference can bind', () => {
     expect(listTraits()).toEqual(expect.arrayContaining(['Decision', 'Approvable']));
     const decision = loadTrait('core/Decision');
-    expect(decision.trait).toMatchObject({ name: 'Decision', version: '1.1.0', category: 'core' });
+    expect(decision.trait).toMatchObject({ name: 'Decision', version: '1.1.1', category: 'core' });
     expect(Object.keys(decision.schema)).toEqual(DECISION_FIELDS);
     for (const field of DECISION_FIELDS.filter(name => name.endsWith('_id'))) expect(decision.schema[field]!.type, field).toBe('string');
     expect(Object.entries(decision.schema).filter(([, field]) => field.required).map(([name]) => name)).toEqual(['subject_name', 'shown', 'level', 'meaning']);
@@ -65,7 +65,7 @@ describe('core/Decision and core/Approvable are shipped traits', () => {
     const approvable = loadTrait('core/Approvable');
     // s248-m01: 1.1.0 adds inAdvance, the changes a grant's standing yes may allow in advance, empty by default; the rest
     // of the rule and both outcome fields are unchanged, and the default outcomes do not move.
-    expect(approvable.trait).toMatchObject({ name: 'Approvable', version: '1.1.0', category: 'core' });
+    expect(approvable.trait).toMatchObject({ name: 'Approvable', version: '1.1.1', category: 'core' });
     expect(approvable.parameters.map(parameter => parameter.name)).toEqual(['levels', 'levelDefinitions', 'requiredLevels', 'approvalsNeeded', 'askerMayAnswer', 'agentLevels', 'lapsesOnChange', 'inAdvance', 'outcomes']);
     expect(Object.keys(approvable.schema)).toEqual(['approval_state', 'approval_summary']);
     for (const field of Object.values(approvable.schema)) expect(field).toMatchObject({ required: false, readOnly: true });
@@ -414,8 +414,9 @@ describe('the HTML history components name the level, and an entry without the f
   });
 
   it('the level is printed in the words every screen shows a level in (the composer\'s enum label)', () => {
+    const labels = loadTrait('core/Decision').semantics!.level.ui_hints!.enumLabels as Record<string, string>;
     for (const level of [...LEVELS, 'Sign-off', 'managerReview', 'L2']) {
-      expect(historyAttribution({ approval_level: level })?.text, level).toBe(`Approved (level: ${enumOptionLabel(level)})`);
+      expect(historyAttribution({ approval_level: level })?.text, level).toBe(`Approved (level: ${enumOptionLabel(level === 'Sign-off' ? 'sign_off' : level, labels)})`);
     }
   });
 });

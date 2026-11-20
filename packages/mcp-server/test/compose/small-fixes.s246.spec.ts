@@ -160,10 +160,10 @@ describe('Article\'s body and Approval\'s comment are edited in text areas, so t
     }
   });
 
-  it('gives Approval\'s comment a text area, and keeps a one-line input for its name and Article\'s title', async () => {
+  it('gives Approval\'s comment a text area, keeps its name read-only and gives Article\'s title a one-line input', async () => {
     const approval = schemaNodes((await composeIn('Approval', 'form')).schema);
     expect(approval.find(node => node.props?.field === 'comment' && node.component !== 'Text')?.component).toBe('Textarea');
-    expect(approval.find(node => node.props?.field === 'name' && node.component !== 'Text')?.component).toBe('Input');
+    expect(approval.find(node => node.props?.field === 'name' && node.component !== 'Text')).toBeUndefined();
     const article = schemaNodes((await composeIn('Article', 'form')).schema);
     expect(article.find(node => node.props?.field === 'label' && node.component !== 'Text')?.component).toBe('Input');
     for (const [renderer, page] of Object.entries(await formPages('Approval'))) {

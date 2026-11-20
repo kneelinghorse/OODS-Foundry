@@ -23,6 +23,7 @@ import {
   fieldValuePropTarget,
   resolveFrameworkChildContent,
   resolveFrameworkRecipeProps,
+  readOnlyScalarExpression,
   ownFieldSchemaEntry,
   resolveFieldProps,
   isReferenceField,
@@ -399,10 +400,8 @@ function vueFieldExpression(
     if (isReferenceField(entry)) return referenceFieldExpression(sourceField as string, objectSchema);
     if (entry.enum?.length) return fieldName;
     // A labelled identifier row keeps its ID; the join projection belongs to record titles.
-    if (entry.titleReferences?.length) fieldName = snakeToCamel(sourceField as string);
-    const code = Boolean(entry.enum?.length || /(?:status|state|event\.type|collection_method|pricing_model|interval)$/.test(entry.semanticType ?? ''));
-    // s223-m01 (#2527 ruling 4): a declared number format (percent, quantity) travels with the field.
-    return `formatReadOnlyValue(${fieldName}, ${JSON.stringify(entry.type.replace(/\?$/, ''))}, ${code}${entry.format ? `, ${JSON.stringify(entry.format)}` : ''})`;
+    if (entry.titleReferences?.length || entry.valueLabels) fieldName = snakeToCamel(sourceField as string);
+    return readOnlyScalarExpression(fieldName, entry);
   }
   // A heading standing in for a record with no title shows the record's first line only.
   if (node.component === 'Text' && isChildren && node.meta?.headingExcerpt === true) {
@@ -929,11 +928,14 @@ function fieldRefDefault(entry: FieldSchemaEntry): string {
  * s248-m02: and every other field whose starting value would read as a fact the record does not hold: a choice's first
  * option ("Period: Day" on a grant with no period) or a yes/no's false. A text field starts empty, which reads as nothing.
  */
-function formFactValues(screens: readonly UiElement[], objectSchema: Record<string, FieldSchemaEntry>): Set<string> {
+function unseededFormFields(screens: readonly UiElement[], objectSchema: Record<string, FieldSchemaEntry>): Set<string> {
+  const unseeded = new Set<string>();
   const read = new Set<string>();
   const edited = new Set<string>();
   const visit = (node: UiElement, inFact: boolean): void => {
     const fact = inFact || node.meta?.intent === 'form-fact';
+    // Cancellation is a choice the user makes. Seeding its first enum member records a reason they never selected.
+    if (node.component === 'CancellationForm' && typeof node.props?.codeField === 'string' && objectSchema[node.props.codeField]?.enum?.length) unseeded.add(node.props.codeField);
     for (const [key, value] of Object.entries(node.props ?? {})) {
       if ((key === 'field' || key.endsWith('Field')) && typeof value === 'string') (fact ? read : edited).add(value);
     }
@@ -942,7 +944,8 @@ function formFactValues(screens: readonly UiElement[], objectSchema: Record<stri
   screens.forEach(screen => visit(screen, false));
   const startsAsValue = (entry: FieldSchemaEntry | undefined): boolean => Boolean(entry && !entry.type.endsWith('?')
     && (/^(?:integer|number|boolean)$/.test(entry.type) || (entry.enum?.length ?? 0) > 0));
-  return new Set([...read].filter(field => !edited.has(field) && startsAsValue(objectSchema[field])));
+  for (const field of read) if (!edited.has(field) && startsAsValue(objectSchema[field])) unseeded.add(field);
+  return unseeded;
 }
 
 function nodesById(screens: readonly UiElement[]): Map<string, UiElement> {
@@ -1284,12 +1287,12 @@ function buildScriptSetup(
     // s248-m01: a number a form only reads as a fact starts with no value, never 0: a grant with no limit per use shows no
     // "Most per use" row, where an editable number's input still starts at 0. No 0.14.0 form reads a number as a fact.
     // s248-m02: so does a choice or a yes/no read only as a fact: a grant with no period shows no "Period" row, never "Day".
-    const readOnlyFacts = formFactValues(screens, objectSchema!);
+    const unseeded = unseededFormFields(screens, objectSchema!);
     for (const [fieldName, entry] of sortedFields) {
       const camelName = snakeToCamel(fieldName);
-      const readOnlyFact = readOnlyFacts.has(fieldName);
-      const defaultValue = readOnlyFact ? 'undefined' : fieldRefDefault(entry);
-      const tsType = options.typescript ? `${mapFieldType(entry)}${readOnlyFact ? ' | undefined' : ''}` : null;
+      const startsEmpty = unseeded.has(fieldName);
+      const defaultValue = startsEmpty ? 'undefined' : fieldRefDefault(entry);
+      const tsType = options.typescript ? `${mapFieldType(entry)}${startsEmpty ? ' | undefined' : ''}` : null;
 
       if (entry.description) {
         lines.push(`/** ${escapeVueScriptComment(entry.description)} */`);

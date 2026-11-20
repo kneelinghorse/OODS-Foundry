@@ -1,6 +1,6 @@
 object:
   name: Agent
-  version: 1.1.0
+  version: 1.1.1
   domain: core.identity
   description: An AI agent that acts inside a product, for the people and organizations it is granted to act for.
   tags:
@@ -118,6 +118,9 @@ semantics:
   acts_for:
     semantic_type: identity.agent.acts_for
     token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      valueLabels:
+        None: No party listed
   allowed_actions:
     semantic_type: identity.agent.approval.allowed
     token_mapping: tokenMap(text.body.*)
@@ -148,6 +151,9 @@ metadata:
   steward: Design team
   maturity: alpha
   changelog:
+    - version: 1.1.1
+      date: "2026-11-19"
+      description: Lists the grants the agent holds and those under its standing grants. The Order Agent’s parties match its grant, and a stored None has an explanation on the page.
     - version: 1.1.0
       date: "2026-11-14"
       description: The four rule fields say what they mean beside a grant; acts_for restates the grant held for each party, and asks first means a yes, asked each time or given in advance.
@@ -190,8 +196,8 @@ metadata:
 
 # Seven authored sample agents, one at each of seven sample organizations, each sponsored by a person or team there. Six
 # have held a grant to act for it, and each acts_for restates the grants its agent holds now, one phrase per party, or
-# None. The Grant samples hold all but one of them: the Order Agent's reseller grant for Harbor Channel Partners, which
-# owns Summit's account and is not a sample organization. Two hold none now: the Scheduling Agent's grant was revoked when
+# None. The Grant samples include each grant named here. Two agents whose grants ended hold none now:
+# the Scheduling Agent's grant was revoked when
 # Marlow Yoga closed, and the Support Agent's on 8 October, when its acts_for was restated as None. The Inventory Agent
 # holds none: its one task is its sponsor's own, and its lines name no party. An agent is created as a draft
 # (the lifecycle's initial state); each history ends in the agent's status, names who made each change, and its last
@@ -243,10 +249,10 @@ samples:
     last_event_at: '2026-10-08T16:00:00Z'
   - agent_id: 6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a03
     name: Order Agent
-    description: Reserves stock for Summit Outfitters and its reseller
+    description: Reserves stock for Summit Outfitters
     provider: Built by Summit's e-commerce team
     skills: Check stock; Reserve items; Update orders
-    acts_for: Summit Outfitters · online orders · until 31 Mar 2027; Harbor Channel Partners · reseller orders · until 31 Dec 2026
+    acts_for: Summit Outfitters · online orders · until 31 Mar 2027
     allowed_actions: Check stock; Reserve items for 24 hours
     asks_first_for: Split a shipment; Upgrade shipping
     never_allowed: Issue a refund; Delete an order

@@ -183,3 +183,12 @@ export function s250Field<T extends Record<string, unknown>>(object: string, nam
 export function s245AddedFields(object: string, context: string): string[] {
   return ['Transaction', 'Article'].includes(object) && context !== 'form' ? ['approval_state', 'approval_summary'] : [];
 }
+
+/** Sprint 251 shows the authored region abbreviations on Organization screens. */
+export function s251Field<T extends Record<string, unknown>>(object: string, name: string, field: T): T {
+  const declared = s250Field(object, name, field);
+  if (object === 'Organization' && name === 'data_residency') {
+    return { ...declared, semanticType: 'organization.data_residency', enumLabels: { us: 'US', eu: 'EU', apac: 'APAC', latam: 'LATAM' } };
+  }
+  return declared;
+}

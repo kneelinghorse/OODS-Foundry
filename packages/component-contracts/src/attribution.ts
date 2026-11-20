@@ -1,3 +1,5 @@
+import { enumOptionLabel } from './status-registry.js';
+
 /**
  * s244-m01 (#2829): every recorded change can name three parties, and every place history is printed says who in one
  * phrase built here.
@@ -47,13 +49,10 @@ const named = (row: Record<string, unknown>, key: string): string | undefined =>
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 };
 
-/**
- * A level's name as every screen shows an enum's value (the composer's enumOptionLabel, held to this by a spec): words
- * split at case changes, underscores and hyphens, in sentence case. "sign_off" reads "Sign off".
- */
+// Decision authors “Sign-off” for sign_off. History also accepts an already displayed level.
 const levelWords = (level: string): string => {
-  const words = level.replace(/([a-z0-9])([A-Z])/g, '$1 $2').split(/[_\-\s]+/).filter(Boolean).join(' ').toLowerCase();
-  return words.charAt(0).toUpperCase() + words.slice(1);
+  const label = enumOptionLabel(level);
+  return label === 'Sign off' ? 'Sign-off' : label;
 };
 
 /** The phrase for an entry's named parties, its level of yes, its grant and its task, or undefined when it names none of them. */

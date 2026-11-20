@@ -22,6 +22,8 @@ Each page ends with its lists, after the record's own panels. A list reads the r
 | An agent (`Agent`) | Grants {name} holds. Work {name} did. Ended grants {name} held. |
 | A grant (`Grant`) | Grants inside it. Replaced by. Recorded under it, beside your product's own count of uses. Still under way. Recorded after it ended, and Its closure, each shown once it has ended. Its parties now. |
 
+All eight shipped Grant examples are for organizations. The “Given for {name} by someone else” list on a person’s page shows a row for an active or paused outer grant for that person, given by another actor. Its inner grants appear beneath it.
+
 A row is read-only and never a link. It shows the record's title and state, a one-line summary and a time, and under a grant, the grants inside it; the record's history lines open in a disclosure. A list shows its first five rows and counts the rest ("2 more not shown"). On a person's page, "Agents holding a grant for {name}" and "Grants {name} gave" say under their rows where to end a grant: "This list does not change grants: revoke one on the grant's own page." "Given for {name} by someone else" also says who should: "This list does not change grants. Only someone who may give grants for {name} should end one, on the grant's own page; this app does not check who is asking." A grant's own page is its detail screen, opened from the Grant list.
 
 **What each page cannot see.** Under its lists, every page has one note. A person's, an organization's and an agent's page say: "These lists show only records here that name {name} by id; records that name {name} only in words, or that another product keeps, are not listed." A grant's page, whose "Its parties now" looks its parties up by the ids the grant holds, says: "These lists show only records here, matched by id; records named only in words, or that another product keeps, are not listed." An organization's page adds: "Subscriptions, usage and invoices name their customer in words, so they are not listed here." In a generated app, the records of other objects are copied from the samples when the app was made, and the page says so once; the app's own records are its store's, so a change made there shows at once. Replace `relatedRows` in the generated `src/store.ts` with your own query.
@@ -40,14 +42,14 @@ A grant's page offers each only from the states it moves from, alike in React, V
 
 **In a generated app, Revoke asks once.** Moving the status to revoked on the grant's form is the same Revoke, asked the same way. The question's heading and its button name the act: "Revoke Tidewater invoices and payments?", with "Revoke grant" and "Keep it". One screen says, from the records:
 
-- **Ends with it:** the grants inside it, by name.
+- **Ends with it:** the active or paused grants inside it, by name.
 - **Not ended with it:** a grant inside it that is still only asked for, named with "Asked for and not yet answered, so it does not end with this one. Answer it on its own page."
 - **Still under way, not changed by this:** the records whose own lines name the grant and that are not final, or not known, each with its state, leaving out what ends with it.
 - **Not recalled:** "Revoking changes this app's records and nothing else. Credentials issued under the grant may still work, and payments already sent are not recalled." Your product may replace this sentence with its own.
 - **Other grants still held for this party:** the other grants its holder holds for the same party, shown only when there are some.
 - **Who is ending it:** the person the app was told of, or "This app was not told who is ending it."
 
-A note for the record is optional. Asked from an active grant's Revoke button, the question also offers a pause, which Resume undoes: "Not sure? Pause it instead." Asked from the form, it does not, since the form's other changes would go unsaved. Focus moves to the heading when the question opens, Escape keeps the grant, the Revoke button is never focused first, and nothing times out. The result stays as a status message until the person moves on.
+A note for the record is optional. Asked from an active grant's Revoke button, the question also offers a pause, which Resume undoes: "Not sure? Pause it instead." On the Edit form of an active grant, “Pause it instead” selects Paused and keeps the other edits until Save. “Keep it” restores the saved status and returns to the unsaved draft. Focus moves to the heading when the question opens, Escape keeps the grant, the Revoke button is never focused first, and nothing times out. The result appears beneath the navigation and clears on the next screen.
 
 **Pause asks nothing,** and its result says how to resume. **Resume gives the grant again,** so a paused grant's page says who should: "Only someone who may give grants for Tidewater Co-op should resume this grant; this app does not check."
 
@@ -59,7 +61,7 @@ A move the lifecycle declares no action for (to expired, replaced, declined or w
 
 - **The grant:** its state, revoked; the note, if one is given, as why it ended; one line titled "Revoked" with the note as its reason; and its last event, ended, with the time.
 - **Who acted:** a generated app is told who is acting by your product, `createWorkflow({ actor: { id, name, kind } })`. Then every line the app writes names them, including a Cancel's and an edit's on objects that have them, and Revoke writes them as who ended it. Told no one, a line names no one, and the grant's page says "Ended by: This app was not told who ended it." The app never asks anyone to type their own name, and never writes the capacity they ended it in (`ended_as`): your product does, where the one who ended it holds none of the grant's seats.
-- **The grants inside it** end with it at the same instant, each with its own line: "Ended with Tidewater invoices and payments".
+- **Active or paused grants inside it** end with it at the same instant, each with its own line: "Ended with Tidewater invoices and payments".
 - **Once a grant has ended,** why and by whom it ended stay as they were recorded: the app refuses a change to either, and the form shows why it ended as a fact. Its name still saves.
 
 ## The declared order is kept

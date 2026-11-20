@@ -1,6 +1,6 @@
 trait:
   name: ScaleLinear
-  version: 0.2.0
+  version: 0.2.1
   description: |
     Shared linear/continuous scale definition used by positional, color, and
     size encodings. Provides normalized domain/range metadata plus zero baseline
@@ -12,7 +12,7 @@ trait:
     - linear
 
 parameters:
-  - {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz.render input fragment for the governed authoring recipes. Data rows remain a consumer operand."}
+  - {"name": "renderIntent", "type": "string", "required": false, "default": "{}", "description": "JSON-encoded Cartesian viz_render input fragment for the governed authoring recipes. Data rows remain a consumer operand."}
   - name: domainMin
     type: number
     required: true

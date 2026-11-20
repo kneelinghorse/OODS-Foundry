@@ -36,3 +36,15 @@ test('explicit historical library pins stay historical when tool releases advanc
   assert.deepEqual(staleGuideVersions(line, '0.8.0'), []);
   assert.equal(updateGuideMarkdown(line, '0.8.0'), line);
 });
+
+test('checks and rewrites product tags in release links, prose and fenced install commands', () => {
+  const source = [
+    'Tagged v0.14.0. Stage1 v0.8.0.',
+    'https://github.com/kneelinghorse/OODS-Foundry/blob/v0.14.0/docs',
+    'https://github.com/kneelinghorse/OODS-Foundry/tree/v0.14.0',
+    'https://github.com/kneelinghorse/OODS-Foundry/releases/tag/v0.14.0',
+    '```sh\ninstall https://raw.githubusercontent.com/kneelinghorse/OODS-Foundry/v0.14.0/button.json\n```',
+  ].join('\n');
+  assert.deepEqual(staleGuideVersions(source, '0.17.0'), ['0.14.0']);
+  assert.equal(updateGuideMarkdown(source, '0.17.0'), source.replaceAll('v0.14.0', 'v0.17.0'));
+});

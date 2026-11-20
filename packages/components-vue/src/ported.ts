@@ -1,4 +1,4 @@
-import { currencyMinorUnits, formatDateTime, formatReadOnlyValue } from '@oods/component-contracts';
+import { currencyMinorUnits, enumOptionLabel, formatDateTime, formatReadOnlyValue } from '@oods/component-contracts';
 import {
   computed,
   defineComponent,
@@ -7,6 +7,7 @@ import {
   ref,
   useId,
   type PropType,
+  Text,
   type Slots,
   type VNode,
   type VNodeChild,
@@ -21,7 +22,6 @@ import {
   getPortedStatusPresentation,
   normalizeTimelineEvents,
   relativeTimestampLabel,
-  statusLabel,
   type TimelineEvent,
 } from './ported-core.js';
 import type { ComponentEmphasis, ComponentTone } from './types.js';
@@ -69,6 +69,7 @@ export type TimelineProps = {
   stateHistory?: readonly unknown[];
   auditLog?: readonly unknown[];
   status?: string;
+  enumLabels?: Record<string, string>;
   allowedTransitions?: readonly string[];
   showActorId?: boolean;
   showReason?: boolean;
@@ -147,6 +148,7 @@ export type RelativeTimestampProps = {
   label?: string;
   text?: string;
   timezone?: string;
+  caption?: string;
   hideWhenEmpty?: boolean;
   now?: string | number | Date;
   field?: string;
@@ -196,7 +198,10 @@ export const StatusBadge = defineComponent({
       const status = props.status ?? props.value ?? 'unknown';
       const presentation = getPortedStatusPresentation(props.domain, status);
       const tone = props.tone === 'lifecycle' ? presentation.tone : props.tone ?? presentation.tone;
-      const ariaLabel = stringValue(attrs['aria-label']) ?? props.label ?? `Status: ${presentation.label}`;
+      const children = slots.default?.();
+      const slotLabel = children?.length && children.every(node => node.type === Text) ? children.map(node => node.children).join('') : undefined;
+      const badgeSlots = children ? { ...slots, default: () => children } : slots;
+      const ariaLabel = stringValue(attrs['aria-label']) ?? props.label ?? `Status: ${slotLabel ?? props.content ?? presentation.label}`;
       return h(Badge, {
         ...attrs,
         class: mergedClass('oods-status-badge', attrs.class),
@@ -209,8 +214,8 @@ export const StatusBadge = defineComponent({
         'aria-label': ariaLabel,
         'data-oods-component': 'StatusBadge',
       }, props.showIcon && presentation.icon && !slots.icon
-        ? { ...slots, icon: () => statusIcon(presentation.icon!) }
-        : slots);
+        ? { ...badgeSlots, icon: () => statusIcon(presentation.icon!) }
+        : badgeSlots);
     };
   },
 });
@@ -284,6 +289,8 @@ type TimelineConfiguration = {
   timelineType: 'status' | 'audit';
 };
 
+const statusLabelProps = { enumLabels: Object as PropType<Record<string, string>> };
+
 const timelineProps = {
   title: String,
   source: Array as PropType<unknown[]>,
@@ -339,13 +346,16 @@ function timelineComponent(configuration: TimelineConfiguration) {
   return defineComponent({
     name: `Oods${configuration.componentId}`,
     inheritAttrs: false,
-    props: timelineProps,
+    props: {
+      ...timelineProps,
+      ...(configuration.componentId === 'StatusTimeline' ? statusLabelProps : {}),
+    } as typeof timelineProps & typeof statusLabelProps,
     setup(props, { attrs, slots }) {
       return () => {
         const rawEvents = configuration.componentId === 'StatusTimeline'
           ? firstArray(props.source, props.events, props.history, props.entries, props.stateHistory)
           : firstArray(props.source, props.events, props.history, props.entries, props.auditLog);
-        const normalized = normalizeTimelineEvents(rawEvents);
+        const normalized = normalizeTimelineEvents(rawEvents, props.enumLabels);
         const events = props.maxVisible === undefined
           ? normalized
           : normalized.slice(0, Math.max(0, Math.floor(props.maxVisible)));
@@ -361,10 +371,10 @@ function timelineComponent(configuration: TimelineConfiguration) {
         }, [
           h('h2', { class: 'oods-timeline__title', 'data-timeline-title': 'true' }, title),
           props.status
-            ? h('p', { class: 'oods-timeline__current', 'data-timeline-current': 'true' }, `Current status: ${statusLabel(props.status)}`)
+            ? h('p', { class: 'oods-timeline__current', 'data-timeline-current': 'true' }, `Current status: ${enumOptionLabel(props.status, props.enumLabels)}`)
             : null,
           props.allowedTransitions?.length
-            ? h('p', { 'data-timeline-transitions': 'true' }, `Allowed transitions: ${props.allowedTransitions.join(', ')}`)
+            ? h('p', { 'data-timeline-transitions': 'true' }, `Allowed transitions: ${props.allowedTransitions.map(value => enumOptionLabel(value, props.enumLabels)).join(', ')}`)
             : null,
           h('ol', { class: 'oods-timeline__events', 'data-timeline-events': 'true' }, slottedEvents?.length
             ? slottedEvents
@@ -732,6 +742,7 @@ export const RelativeTimestamp = defineComponent({
     label: String,
     text: String,
     timezone: String,
+    caption: String,
     hideWhenEmpty: Boolean,
     now: [String, Number, Date] as PropType<string | number | Date>,
     field: String,
@@ -762,7 +773,7 @@ export const RelativeTimestamp = defineComponent({
         datetime: datetime || undefined,
         title: stringValue(attrs.title) ?? absolute,
         'data-oods-component': 'RelativeTimestamp',
-      }, content);
+      }, props.caption ? `${props.caption}: ${content}` : content);
     };
   },
 });

@@ -2,6 +2,40 @@
 
 What changed in each version of OODS Foundry, in the terms you use it in.
 
+## 0.18.0
+
+On Grant’s Edit form, “Keep it” and “Pause it instead” restore the saved ending reason and keep unrelated edits. The form shows “Unsaved changes” when the draft differs from the saved grant. A saved result appears below the navigation and clears on the next screen. Task and Transaction start cancellation at “Choose a reason”. A read-only currency beside a money fact has no editor. Approval’s form labels the choice “Answer” and keeps the name of the ask read-only. Its facts appear above the answer.
+
+Owner captions use the same kind labels on cards and dashboards as on detail. Media’s list is labelled “Media”. Organization’s residency codes read US, EU, APAC and LATAM. Approval displays “Sign-off”, its declined article review names Nadia Farouk as the person asked, and its dashboard omits “Asked for” when the requester acts for themselves. The Order Agent’s “Acts for” matches the grant it holds. A related name ending in punctuation keeps that punctuation.
+
+Correction to 0.17.0. Closure has five read-only contexts. Each can generate a single-screen app. Closure has no workflow app.
+
+List rows place each fact’s caption before its value and show the date on a separate line. Closure rows on Grant, User and Organization show the last report, the same instant shown in the Closure list. A team can caption a related row’s time with `time: { field, says }`.
+
+Object and trait definitions keep the exact text of YAML timestamps, including unquoted dates and offsets. YAML merge keys still work. An ended grant with unquoted history dates now shows “Recorded after it ended” and “Its closure”. Classifiable’s created and updated dates in the full `registry_snapshot` reply and the npm runtime’s live `structured_data_fetch` components dataset read `2025-11-18`. The components dataset’s ETag and byte count change with those values.
+
+Correction to 0.17.0. The button rule shipped in generated workflow apps. List rows lost their outlines, and Save took the small button size. Single-screen apps use their component styles.
+
+Charts now draw with a brand whose token intake emits HSL or space-separated RGB. This also fixes generating a Subscription detail screen that includes a chart in that brand.
+
+Storybook component intake locates the package that owns each defining source file. A workspace component can now map from its own package name, exact version and local directory even when the monorepo root has no package identity.
+
+Stage1 0.8.0 captures and redrifts open in the Run and Comparison views. The Run view shows the recorded identification mode and capture completeness, and counts skipped accessibility scans separately. Comparisons read identification mode from the source capture. An older capture can show “not recorded” even when a newer build performed the redrift. A measured declared-presence result can carry zero value-drift signals in drift reports 2.0.0 through 2.2.0. The full `structured_data_fetch` input schema names the new versions. Its advertised tool entry has the same bytes as before.
+
+The runtime dependency update clears 12 npm advisory matches across eight advisories. Both shipped branches of `fast-uri` move past GHSA-333x-w4r6-6crp, GHSA-w74x-v6f9-j3xg, GHSA-wjr9-j795-jxcr and GHSA-xhq7-xmqj-769h. The other four are GHSA-389g-gv7q-r4x8 in `fastify`, GHSA-6pq8-jhm2-2vcw in `qs`, GHSA-rxp7-6hxx-x8q5 in `ip-address` and GHSA-rmxm-3fg6-px4f in `@hono/node-server`. The [security note](SECURITY.md) lists the versions and the two moderate matches still present.
+
+Object definitions returned by the registry can carry display labels as string maps in their field hints. A team object imported with an authored enum label now keeps that label through the adapter’s show reply.
+
+State badges, filters and timelines use the same words. The default label for `still_running` is “Still running”. A field’s own enum label takes precedence, including in timeline transitions and a badge’s accessible name.
+
+A field can supply `ui_hints.valueLabels` for the words shown for a stored value. Agent and Grant use it to explain what “None” means on their detail screens. Their records keep the original value.
+
+New imports of email-address records use the address to label a related record by default. An imported Microsoft Graph contact now shows an illustrative email address in Email Addresses. Source examples and explicitly chosen titles take precedence.
+
+Objects with revised definitions are `Agent` 1.1.1, `Approval` 1.1.2, `Grant` 1.0.1, `Organization` 1.2.1, `User` 1.5.1. Each has a matching entry in its own change history.
+
+Traits with revised definitions are `Actor` 1.0.2, `Approvable` 1.1.1, `Decision` 1.1.1, `Mandate` 1.1.1, `Stateful` 2.5.1, `Timestampable` 1.0.1, `EncodingColor` 0.2.1, `EncodingOpacity` 0.1.1, `EncodingPositionX` 0.2.1, `EncodingPositionY` 0.2.1, `EncodingShape` 0.1.1, `EncodingSize` 0.2.1, `MarkArea` 0.2.1, `MarkBar` 0.2.1, `MarkGraph` 0.1.1, `MarkLine` 0.2.1, `MarkPoint` 0.2.1, `MarkRect` 0.1.1, `ScaleLinear` 0.2.1, `ScaleTemporal` 0.3.1, `ScatterPlot` 0.1.1. The visualization traits now name the chart tool `viz_render`. Closure and its Closeout trait retain their initial versions from 0.17.0.
+
 ## 0.17.0
 
 The third part of the Grant story: what became of the work after a grant ended. A grant is a standing yes (0.15.0), a person sees their grants and takes one back (0.16.0), and now a product can record what became of the work after a grant ended, as a record of its own: a closure. Taking a grant back ends the yes, not the work. Only a report should move a closure, a rule your product keeps, and none reads "Closed": the nearest it comes is "Reported closed". OODS Foundry models and shows the record; it writes no closure, tells no one and stops nothing. See [What became of the work](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.17.0/docs/concepts/what-became-of-the-work.md).
@@ -34,7 +68,7 @@ Changed: in HTML, a list's search label sits above its box, as the Status and So
 
 Changed: an open grant's form labels its note "Why it is ending, if you end it here"; an ended grant's page keeps "Why it ended".
 
-Fixed: the dashboard layout leaves out an empty place the trait asked to leave out, so a grant's and a task's dashboards no longer read "<seat> unavailable" for a seat nobody holds.
+Fixed: the dashboard layout leaves out an empty place the trait asked to leave out, so a grant's and a task's dashboards no longer read "`<seat> unavailable`" for a seat nobody holds.
 
 Fixed: `object_registry` (action `validate`) writes every path one way: a trait parameter's problem reads `traits[1].parameters.actions[2].from[0]`, where it read `traits[1].parameters/actions/2/from/0`, and its message opens with that path.
 
@@ -102,7 +136,7 @@ Changed: a money fact on a form now reads as money ("$12,000.00", not 1200000) i
 
 Fixed: on a Vue form, a choice or a yes/no that is read only as a fact starts with no value, so a record that holds none shows none, where Vue showed the first choice. This moves the generated Vue of Approval's form and workflow, whose level every shipped sample holds; nothing visible moves there.
 
-Fixed: a reference select never shows another record than the one the record holds. Where the select's options do not list the record's own value, it shows that value first, by the record's kept name ("Elena Park" on Article's form, "Helen Rowe" on PAY-2026-0404's), in React, Vue, HTML and the generated app; a UUID with no kept name reads "<label> reference not resolved", and a readable id reads as itself. This moves the generated code of every object with a reference select (Article, Decision, Document, Evidence, Invoice, Transaction, Usage), and Article's form.
+Fixed: a reference select never shows another record than the one the record holds. Where the select's options do not list the record's own value, it shows that value first, by the record's kept name ("Elena Park" on Article's form, "Helen Rowe" on PAY-2026-0404's), in React, Vue, HTML and the generated app; a UUID with no kept name reads "`<label> reference not resolved`", and a readable id reads as itself. This moves the generated code of every object with a reference select (Article, Decision, Document, Evidence, Invoice, Transaction, Usage), and Article's form.
 
 Fixed: every text area is four rows in all three renderers: HTML's two paths drew about two, and Vue's Textarea three. This moves the HTML form of most objects.
 

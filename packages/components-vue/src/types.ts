@@ -291,6 +291,7 @@ export type PriceSummaryProps = {
 
 export type InlineLabelProps = { label?: string; text?: string; value?: string; maxLength?: number | string };
 export type LabelCellProps = InlineLabelProps & {
+  caption?: string;
   description?: string; subtitle?: string; sublabel?: string; supporting?: string; truncate?: boolean;
 };
 export type FormLabelGroupProps = { label?: string; text?: string; title?: string; placeholder?: string; hint?: string; description?: string; htmlFor?: string; for?: string; inputId?: string };

@@ -162,7 +162,7 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
   const definition = (() => { try { return loadObject(workflow.object); } catch { return undefined; } })();
   const order = definition ? declaredOrder(definition) : undefined;
   const stateActions = order && definition ? declaredActions(definition) : [];
-  const stateWords = { object: workflow.object.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase(), labels: Object.fromEntries(Object.keys(order ?? {}).map(state => [state, enumOptionLabel(state)])) };
+  const stateWords = { object: workflow.object.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase(), labels: Object.fromEntries(Object.keys(order ?? {}).map(state => [state, enumOptionLabel(state, fields[statusField]?.enumLabels)])) };
   const seatFields = (seat: string | undefined) => seat ? ['_id', '_name', '_kind'].map(suffix => seat + suffix).filter(name => Object.hasOwn(fields, name)) : [];
   const locked = order ? [...new Set(stateActions.filter(action => endsRecord(action, order)).flatMap(action => [...(action.reasonField && Object.hasOwn(fields, action.reasonField) ? [action.reasonField] : []), ...seatFields(action.bySeat)]))] : [];
   const mandate = workflow.data.traits.some(trait => trait.split('/').pop() === 'Mandate');
@@ -171,7 +171,7 @@ export function workflowDataFiles(schema: UiSchema): Array<{ path: string; conte
   return [
     { path: 'src/sample-data.ts', contents: `import type { DomainRecord } from './store';\n\nexport const sampleData: DomainRecord[] = ${JSON.stringify(records, null, 2)};\n` },
     ...(related ? [{ path: 'src/related-data.ts', contents: relatedDataFile(related) }] : []),
-    { path: 'src/store.ts', contents: `import { recordCollectionEvents, recordMatchesSearch, ${billingCycle ? 'restartedBillingPeriod, ' : ''}${order ? `${stateActions.length ? 'declaredActionRefusal, ' : ''}declaredMoveRefusal, isFinalState, ` : ''}type CollectionEvent${order ? ', type DeclaredStateOrder' : ''} } from '@oods/component-contracts';
+    { path: 'src/store.ts', contents: `import { enumOptionLabel, recordCollectionEvents, recordMatchesSearch, ${billingCycle ? 'restartedBillingPeriod, ' : ''}${order ? `${stateActions.length ? 'declaredActionRefusal, ' : ''}declaredMoveRefusal, isFinalState, ` : ''}type CollectionEvent${order ? ', type DeclaredStateOrder' : ''} } from '@oods/component-contracts';
 import { sampleData } from './sample-data';${related ? `
 import { resolveRelatedListRows, type ResolvedRelatedList } from '@oods/component-contracts';
 import { relatedCopied, relatedLists, relatedObjects, relatedOwn } from './related-data';` : ''}
@@ -288,7 +288,7 @@ export function createStore(options: StoreOptions = {}) {
     if (Object.hasOwn(fieldTypes, 'state_history')) {
       const status = String(target${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? before${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? '');
       const moved = changed.includes(${JSON.stringify(statusField)});
-      const entry: HistoryEntry = { title: moved ? String(status).split(/[_-]/).filter(Boolean).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(' ') : 'Updated', from: moved ? String(before${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? '') : null, to: status, at, reason: 'Edited ' + changed.map((name) => fieldLabels[name] ?? name).join(', ')${billingCycle ? " + (restarted ? '; a new billing period started' : '')" : ''}, ...signature };
+      const entry: HistoryEntry = { title: moved ? enumOptionLabel(status${fields[statusField]?.enumLabels ? ', ' + JSON.stringify(fields[statusField]!.enumLabels) : ''}) : 'Updated', from: moved ? String(before${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? '') : null, to: status, at, reason: 'Edited ' + changed.map((name) => fieldLabels[name] ?? name).join(', ')${billingCycle ? " + (restarted ? '; a new billing period started' : '')" : ''}, ...signature };
       target.state_history = [...history(next), entry];
     }
     const events: readonly string[] = ${JSON.stringify(eventNames)};
@@ -425,7 +425,7 @@ export function createStore(options: StoreOptions = {}) {
       const deferred = target === 'pending_cancellation' && atPeriodEnd;${billingCycle ? `
       // Ending at the period's end cancels the renewal: a payment due at or after that end will not be taken.
       if (deferred && typeof values.next_payment_due_at === 'string' && typeof values.current_period_end === 'string' && Date.parse(values.next_payment_due_at) >= Date.parse(values.current_period_end)) values.next_payment_due_at = undefined;` : ''}
-      const entry: HistoryEntry = { title: target === 'cancelled' ? 'Cancelled' : 'Pending Cancellation', from: String(values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`}), to: target, at, reason: reason.trim(), code, atPeriodEnd: deferred, ...signature };
+      const entry: HistoryEntry = { title: enumOptionLabel(target${fields[statusField]?.enumLabels ? ', ' + JSON.stringify(fields[statusField]!.enumLabels) : ''}), from: String(values${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`}), to: target, at, reason: reason.trim(), code, atPeriodEnd: deferred, ...signature };
       Object.assign(record, { [${JSON.stringify(statusField)}]: target, cancellation_reason: reason.trim(), cancellation_reason_code: code, ${fields.cancel_at_period_end && !fields.cancel_at_period_end.unavailable ? 'cancel_at_period_end: deferred, ' : ''}cancellation_requested_at: at, ${cancelEvent ? `last_event: ${JSON.stringify(cancelEvent)}, ${fields.last_event_at && !fields.last_event_at.unavailable ? 'last_event_at: at, ' : ''}` : ''}state_history: [...history(record), entry], [${JSON.stringify(updatedField)}]: at });
       return save(record);
     },

@@ -349,6 +349,27 @@ process.stdout.write(JSON.stringify({ preview, after: [beside.grant_id, asked.gr
     expect(out.after).toEqual(['active', 'requested', 'revoked']);
   });
 
+  it('choosing Pause on the Edit confirmation preserves the draft until Save and leaves its result on the destination only', () => {
+    const out = grantApp(`
+const flow = workflow();
+await flow.navigate('form', ${JSON.stringify(TIDEWATER)});
+Object.assign(flow.snapshot().draft, { status: 'revoked', ended_reason: 'A note still being edited', name: 'Renamed Tidewater grant' });
+flow.actions.handleSubmit();
+const offered = flow.canOfferAlternative();
+flow.chooseAlternative();
+const draft = { screen: flow.snapshot().screen, open: flow.snapshot().actionOpen, status: flow.snapshot().draft.status, notice: flow.snapshot().notice, note: flow.snapshot().draft.ended_reason };
+flow.actions.handleSubmit(); await new Promise(resolve => setTimeout(resolve, 50));
+const saved = { screen: flow.snapshot().screen, status: flow.snapshot().draft.status, notice: flow.snapshot().notice, note: flow.snapshot().draft.ended_reason, name: flow.snapshot().draft.name };
+await flow.navigate('list');
+process.stdout.write(JSON.stringify({ offered, draft, saved, left: flow.snapshot().notice }));`) as Record_;
+    expect(out.offered).toBe(true);
+    expect(out.draft).toEqual({ screen: 'form', open: '', status: 'paused', notice: 'Unsaved changes', note: '' });
+    expect(out.saved).toMatchObject({ screen: 'detail', status: 'paused', name: 'Renamed Tidewater grant' });
+    expect(out.saved.note).toBe('');
+    expect(out.saved.notice).toBeTruthy();
+    expect(out.left).toBe('');
+  });
+
   it('Pause is written at once and its result says how to resume; a paused grant shows the rule Resume follows', () => {
     const out = grantApp(`
 const settle = () => new Promise((resolve) => setTimeout(resolve, 50));
@@ -375,13 +396,18 @@ Object.assign(flow.snapshot().draft, { status: 'revoked', ended_reason: 'Moved t
 flow.actions.handleSubmit();
 const opened = { open: flow.snapshot().actionOpen, via: flow.snapshot().actionVia, ends: flow.actionPreview().endsWith };
 flow.dismissAction();
-const kept = { open: flow.snapshot().actionOpen, screen: flow.snapshot().screen };
+const kept = { open: flow.snapshot().actionOpen, screen: flow.snapshot().screen, status: flow.snapshot().draft.status, notice: flow.snapshot().notice, note: flow.snapshot().draft.ended_reason };
+Object.assign(flow.snapshot().draft, { status: 'revoked', name: 'Changed name', ended_reason: 'Discard me' });
+flow.actions.handleSubmit(); flow.dismissAction();
+const otherEdits = { notice: flow.snapshot().notice, name: flow.snapshot().draft.name, reasonPresent: Object.hasOwn(flow.snapshot().draft, 'ended_reason') };
+flow.snapshot().draft.status = 'revoked';
 flow.actions.handleSubmit();
 await flow.confirmAction('Moved to the new bank');
 const done = flow.snapshot();
-process.stdout.write(JSON.stringify({ opened, kept, done: { notice: done.notice, screen: done.screen, status: done.draft.status, line: done.draft.state_history.at(-1), inner: done.records.length } }));`) as Record_;
+process.stdout.write(JSON.stringify({ opened, kept, otherEdits, done: { notice: done.notice, screen: done.screen, status: done.draft.status, line: done.draft.state_history.at(-1), inner: done.records.length } }));`) as Record_;
     expect(out.opened).toEqual({ open: 'revoke', via: 'form', ends: ['Resend returned transfers'] });
-    expect(out.kept).toEqual({ open: '', screen: 'form' });
+    expect(out.kept).toEqual({ open: '', screen: 'form', status: 'active', notice: '', note: '' });
+    expect(out.otherEdits).toEqual({ notice: 'Unsaved changes', name: 'Changed name', reasonPresent: true });
     expect(out.done).toMatchObject({ notice: 'Tidewater invoices and payments is revoked. Resend returned transfers ended with it.', screen: 'detail', status: 'revoked', line: { title: 'Revoked', from: 'active', to: 'revoked', reason: 'Moved to the new bank' } });
   });
 });

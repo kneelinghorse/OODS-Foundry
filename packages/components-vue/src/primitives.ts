@@ -1,3 +1,4 @@
+import { enumOptionLabel } from '@oods/component-contracts';
 import { computed, defineComponent, h, onBeforeUnmount, onMounted, ref, useId, watch, type PropType, type VNodeChild } from 'vue';
 import { statusIcon } from './status-icon.js';
 
@@ -74,14 +75,6 @@ function tokenTone(tone: ComponentTone): ComponentTone {
   return tone;
 }
 
-function statusLabel(status?: string): string {
-  return normalizeStatus(status)
-    .split('_')
-    .filter(Boolean)
-    .map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`)
-    .join(' ');
-}
-
 function slotOrValue(slot: (() => VNodeChild) | undefined, value: VNodeChild): VNodeChild {
   return slot ? slot() : value;
 }
@@ -116,7 +109,7 @@ export const Badge = defineComponent({
         props.icon || slots.icon
           ? h('span', { class: 'oods-badge__icon', 'aria-hidden': 'true' }, [slotOrValue(slots.icon, props.icon)])
           : null,
-        h('span', { class: 'oods-badge__label' }, [slotOrValue(slots.default, props.content ?? statusLabel(props.status))]),
+        h('span', { class: 'oods-badge__label' }, [slotOrValue(slots.default, props.content ?? enumOptionLabel(props.status ?? ''))]),
       ]);
     };
   },
@@ -159,7 +152,7 @@ export const Banner = defineComponent({
         h('div', { class: 'oods-banner__content' }, [
           props.title || props.status || slots.title
             ? h('strong', { class: 'oods-banner__title' }, [
-                slotOrValue(slots.title, props.title || statusLabel(props.status)),
+                slotOrValue(slots.title, props.title || enumOptionLabel(props.status ?? '')),
               ])
             : null,
           props.detail ? h('p', { class: 'oods-banner__detail' }, props.detail) : null,

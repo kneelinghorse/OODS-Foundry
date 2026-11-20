@@ -1,6 +1,6 @@
 # Security
 
-This note describes OODS Foundry 0.17.0. It does not claim a completed network audit.
+This note describes OODS Foundry 0.18.0. It does not claim a completed network audit.
 
 ## What runs on your machine
 
@@ -34,11 +34,12 @@ These are source-qualified configuration statements, not a claim that every exec
 Before a release is published, every package in its runtime archive is checked, name and version, against npm's
 advisory data. The package's own manifest declares no dependencies because the runtime travels inside it, so the check
 reads the archive itself. A high or critical advisory stops the release unless an exception names that package,
-version and advisory with a reason and a decision. 0.17.0 has no exception.
+version and advisory with a reason and a decision. 0.18.0 has no exception.
 
 Releases up to this one fixed these advisories by upgrading or removing the affected dependency. The
 [CHANGELOG](CHANGELOG.md) names the release that made each change.
 
+- OODS Foundry 0.15.0 shipped `@hono/node-server` 1.19.19, clearing GHSA-jpvv-r467-5p4w, and `hono` 4.13.18, clearing GHSA-3gg2-335m-rxc6, GHSA-46wx-v44x-9hh2, GHSA-4h7h-rv7c-7m2v, GHSA-4m76-xfj5-7975 and GHSA-h7mg-cq63-vhpq. <!-- history -->
 - `brace-expansion` 5.0.9: GHSA-6j4f-fj2g-mc7p and GHSA-qhr7-859c-m2p7 (high, denial of service through
   uncontrolled recursion) and GHSA-q2hr-2g5m-vwhr (moderate, quadratic-time expansion). Upgraded to 5.0.12.
 - `style-dictionary` 4.4.0: GHSA-vj5c-m527-mpff (high, prototype pollution in a token-conversion utility). The token
@@ -58,6 +59,17 @@ Releases up to this one fixed these advisories by upgrading or removing the affe
 - Apache ECharts 6.0.0: GHSA-fgmj-fm8m-jvvx (moderate, cross-site scripting). Upgraded to 6.1.0.
 - `fast-xml-parser` 5.11.2: GHSA-474x-hrwr-fgx4 (low, quadratic CPU use when scanning unterminated stop-node tags; the
   OData reader sets no stop nodes). Upgraded to 5.12.0 in 0.13.1. <!-- history -->
+
+The runtime dependency update covers these packages.
+
+- `fast-uri` 3.1.8 and 4.2.1 move to 3.1.9 and 4.2.3. Both branches clear GHSA-333x-w4r6-6crp, GHSA-w74x-v6f9-j3xg, GHSA-wjr9-j795-jxcr and GHSA-xhq7-xmqj-769h.
+- `fastify` 5.12.5 moves to 5.12.6 for GHSA-389g-gv7q-r4x8.
+- `qs` 6.16.0 moves to 6.16.1 for GHSA-6pq8-jhm2-2vcw.
+- `ip-address` 10.7.2 moves to 10.7.4 for GHSA-rxp7-6hxx-x8q5.
+- `@hono/node-server` 1.19.19 moves to 2.1.9 for GHSA-rmxm-3fg6-px4f.
+
+Two moderate advisories remain in the token build's dependencies. Fixing `glob` (GHSA-3g3m-2fjr-6pw4) and
+`minimatch` (GHSA-g3hv-75wg-m249) would require overriding their declared major versions. OODS Foundry supplies fixed glob patterns.
 
 These were matches by package name and version; they did not establish that an OODS Foundry tool reached the
 affected code. The current token build requires Node.js 22 or later.

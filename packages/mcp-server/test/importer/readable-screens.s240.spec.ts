@@ -26,6 +26,16 @@ it('headings identify a record, while a declared prose title stays whole as its 
   expect(bindRecordSchema(schema, { id: 3 }).screens[0].props!.title).toBe('Trip 3');
   expect(bindRecordSchema(schema, { id: 'TRIP-003' }).screens[0].props!.title).toBe('Trip 3');
 });
+it('labels an email-address reference by its address and respects an explicitly declared title', () => {
+  const mailbox = { type: 'object', title: 'EmailAddress', properties: {
+    name: { type: 'string' }, address: { type: 'string', examples: ['office@example.com'] },
+  } };
+  const result = draft(mailbox).drafts[0].definition;
+  expect(result.semantics.address.semantic_type).toBe('text.label');
+  expect(result.samples![0].address).toBe('office@example.com');
+  expect(draft({ ...mailbox, 'x-oods': { titleField: 'name' } }).drafts[0].definition.semantics.name.semantic_type).toBe('text.label');
+});
+
 it('related records are people or teams, with distinct identities and no row-for-row pairing', () => {
   const result = draft({ $defs: { Shopper: { properties: { id: { type: 'string' }, name: { type: 'string' } } }, Order: { properties: { id: { type: 'string' }, shopper: { $ref: '#/$defs/Shopper' } } } } });
   const shopper = result.drafts.find(d => d.name === 'Shopper')!.definition, order = result.drafts.find(d => d.name === 'Order')!.definition;

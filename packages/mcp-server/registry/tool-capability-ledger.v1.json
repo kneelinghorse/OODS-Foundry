@@ -60,7 +60,7 @@
       ]
     }
   ],
-  "head": "f125b9fef1009affc221de4da49d7ae9c71b6d05",
+  "head": "9510a511bd38dc3ebac9e5acc339caa1825ed327",
   "builderSelfCertified": false,
   "methodology": {
     "testImportLocation": "Where a spec that imports the tool's handler module lives: packages/mcp-server/test/product-reality, then test/contracts, then any other mcp-server spec. A literal runtime import is source evidence that a test reaches the handler, not proof of invocation, passing execution or browser certification. Grouped action imports roll up to their registered family. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not count.",
@@ -223,7 +223,7 @@
       },
       "claimHash": "sha256:40c7e3ab6f548e2b002b28c1aa639123aec411f0d475b452171f73b60a3ba0d0",
       "inputSchemaPath": "packages/mcp-server/src/schemas/structuredData.fetch.input.json",
-      "inputSchemaHash": "sha256:81d4b41ec207f65c9a615237a8c7dfe0917484457a481f5e74685c4f45a5900d",
+      "inputSchemaHash": "sha256:0e79400a0fc5091f4b52d6ba48f99238c2ef247e3852ccb5f3a6aafcadc8f8e7",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -867,7 +867,7 @@
       },
       "claimHash": "sha256:5a832a64a3ee5262787057bad42e7f3f70018daa1f3c4c999d92d120340aa585",
       "inputSchemaPath": "packages/mcp-server/src/schemas/code.generate.input.json",
-      "inputSchemaHash": "sha256:d31f06c39dddec13583fa20dc97644011caa0b3ee8f15d8b13b9d9a60825d301",
+      "inputSchemaHash": "sha256:eb0c069f1ddd92ab81eaf98e37620b11889cd5f2ca70da3426770cbba418c754",
       "testImportLocation": "test/product-reality",
       "testImports": {
         "test/product-reality": [
@@ -1542,7 +1542,7 @@
           },
           {
             "path": "packages/mcp-server/test/objects/team-definitions.s213.spec.ts",
-            "line": 20,
+            "line": 22,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -1959,6 +1959,11 @@
           {
             "path": "packages/mcp-server/test/product-reality/unused-imports.s213.spec.ts",
             "line": 12,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/value-labels.s251.spec.ts",
+            "line": 3,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2452,7 +2457,7 @@
           },
           {
             "path": "packages/mcp-server/test/objects/team-definitions.s213.spec.ts",
-            "line": 19,
+            "line": 21,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -3016,6 +3021,11 @@
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
           },
           {
+            "path": "packages/mcp-server/test/objects/team-definitions.s213.spec.ts",
+            "line": 19,
+            "handler": "packages/mcp-server/src/tools/pipeline.ts"
+          },
+          {
             "path": "packages/mcp-server/test/render/html-notice.s249.spec.ts",
             "line": 16,
             "handler": "packages/mcp-server/src/tools/pipeline.ts"
@@ -3172,7 +3182,7 @@
           },
           {
             "path": "packages/mcp-server/test/objects/team-definitions.s213.spec.ts",
-            "line": 21,
+            "line": 23,
             "handler": "packages/mcp-server/src/tools/health.ts"
           },
           {
@@ -4480,7 +4490,7 @@
           "kind": "documented-limit",
           "file": "packages/foundry/TOOL-REFERENCE.md",
           "reason": "Compose records substitutions and React/Vue codegen emits team imports, translated props and exact dependencies. Preview bundles installed or localPath packages and freezes them per version. Shared-scenario checks execute through the generated adapters when the preview host has a browser. Unavailable and unimplemented probes remain not-checked, and unmet obligations warn without refusing generation. Legacy Stage1 coercion labels remain annotations.",
-          "line": 110
+          "line": 112
         },
         {
           "kind": "documented-limit",

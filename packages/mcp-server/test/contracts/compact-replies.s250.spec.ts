@@ -37,13 +37,15 @@ beforeAll(async () => {
   expect(fs.existsSync(path.join(root, 'packages/mcp-server/dist/index.js')), 'build the server first: the adapter serves its dist').toBe(true);
   home = fs.mkdtempSync(path.join(os.tmpdir(), 'oods-s250-compact-'));
   const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => !/^(?:MCP_|OODS_|FORGE_)/.test(key)));
-  Object.assign(env, { HOME: home, MCP_TOOLSET: 'default', MCP_HEALTH_PORT: '0', OODS_NODE_PATH: process.execPath });
+  Object.assign(env, { OODS_FOUNDRY_HOME: home, OODS_OBJECTS_DIR: path.join(home, 'objects'), HOME: home, MCP_TOOLSET: 'default', MCP_HEALTH_PORT: '0', OODS_NODE_PATH: process.execPath });
+  vi.stubEnv('OODS_OBJECTS_DIR', env.OODS_OBJECTS_DIR);
   client = new McpClient({ adapterPath: path.join(root, 'packages/mcp-adapter/index.js'), cwd: root, env });
   await client.request('initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 's250-compact-replies', version: '1' } });
   client.notify('notifications/initialized');
 });
 afterAll(async () => {
   if (client) { const closed = await client.closeStdinAndObserve(); if (!closed.exited) await client.terminate(); }
+  vi.unstubAllEnvs();
   fs.rmSync(home, { recursive: true, force: true });
 });
 
@@ -78,4 +80,38 @@ describe('registry_snapshot and object_registry leave the adapter compact, measu
       expect(sent, name).toBe(JSON.stringify(JSON.parse(sent), null, 2));
     }
   });
+  it('shows an imported object’s authored enum labels through server output validation', async () => {
+    const name = 'ImportedLabels';
+    const schema = { title: name, type: 'object', properties: {
+      role: { type: 'string', enum: ['OWNER'], 'x-oods': { enumLabels: { OWNER: 'Team lead' } } },
+    } };
+    const draft = JSON.parse(await text('object_import', { action: 'draft', source: { name: 'roles.json', content: JSON.stringify(schema) } }));
+    await text('object_import', { action: 'apply', importId: draft.importId, objects: [{ name }] });
+    const shown = JSON.parse(await text('object_registry', { action: 'show', name }));
+    expect(shown.semantics.role.ui_hints.enumLabels).toEqual({ OWNER: 'Team lead' });
+  });
+
+  it('returns the maps for the stored None value in Grant and Agent', async () => {
+    for (const [name, fields] of Object.entries({
+      Grant: { asks_first_for: 'No listed action needs a separate yes', never_allowed: 'No additional exclusions listed' },
+      Agent: { acts_for: 'No party listed' },
+    })) {
+      const shown = JSON.parse(await text('object_registry', { action: 'show', name }));
+      for (const [field, label] of Object.entries(fields)) {
+        expect(shown.semantics[field].ui_hints.valueLabels).toEqual({ None: label });
+      }
+    }
+  });
+
+  it('shows all four residency labels while retaining the stored region codes', async () => {
+    const shown = JSON.parse(await text('object_registry', { action: 'show', name: 'Organization' }));
+    expect(shown.schema.data_residency.validation.enum).toEqual(['us', 'eu', 'apac', 'latam']);
+    expect(shown.semantics.data_residency.ui_hints.enumLabels).toEqual({ us: 'US', eu: 'EU', apac: 'APAC', latam: 'LATAM' });
+  });
+
+  it('returns the Decision level label on an Approval that composes it', async () => {
+    const shown = JSON.parse(await text('object_registry', { action: 'show', name: 'Approval' }));
+    expect(shown.semantics.level.ui_hints.enumLabels).toEqual({ sign_off: 'Sign-off' });
+  });
+
 });

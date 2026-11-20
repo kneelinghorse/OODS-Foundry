@@ -474,10 +474,19 @@
           "type": "string",
           "description": "Human-readable field label, shared by read screens and controls."
         },
+        "readOnly": {
+          "type": "boolean",
+          "description": "A field the object declares read-only. The workflow form must preserve that declaration when adding a required field."
+        },
         "enumLabels": {
           "type": "object",
           "additionalProperties": { "type": "string" },
           "description": "Authored enum display labels; keys remain the stored values."
+        },
+        "valueLabels": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Display labels keyed by a stored value. Forms and records keep the stored value."
         },
         "titleReferences": {
           "type": "array",

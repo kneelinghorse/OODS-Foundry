@@ -2,15 +2,15 @@ import type { TraitDefinition } from '../../src/core/trait-definition.ts';
 
 const MarkGraphTrait = {
   trait: {
-    name: 'MarkGraph', version: '0.1.0',
-    description: 'Read-only force graph over a declared neighborhood edge array, rendered by public viz.render.',
+    name: 'MarkGraph', version: '0.1.1',
+    description: 'Read-only force graph over a declared neighborhood edge array, rendered by public viz_render.',
     category: 'viz.mark', tags: ['viz', 'mark', 'graph', 'relationship'],
   },
   parameters: [
     { name: 'chart', type: 'object', required: false, description: "Declared edge-array chart source for the host object's neighborhood." },
     { name: 'title', type: 'string', required: false, description: 'Title for the chart and its accessible figure.' },
     { name: 'description', type: 'string', required: false, description: 'Accessible description including the provenance of example edges.' },
-    { name: 'previewSvg', type: 'string', required: false, description: 'Static SVG returned by public viz.render.' },
+    { name: 'previewSvg', type: 'string', required: false, description: 'Static SVG returned by public viz_render.' },
   ],
   schema: {
     viz_mark_type: { type: 'string', required: true, default: 'graph', description: 'Normalized graph mark identifier.', validation: { enum: ['graph'] } },

@@ -1,6 +1,6 @@
 import { reactBindingReads } from './react-binding-reads.js';
 import type { FieldSchemaEntry, UiElement } from '../schemas/generated.js';
-import { displayFieldExpression, mapFieldType, snakeToCamel } from './binding-utils.js';
+import { displayFieldExpression, mapFieldType, omitEmptyCondition, snakeToCamel } from './binding-utils.js';
 import { escapeDoubleQuotedAttribute, javascriptSingleQuotedString } from './emission-safety.js';
 import type { CodegenIssue } from './types.js';
 import { readableCode, reads, templateExpressions } from './vue-unread-declarations.js';
@@ -174,7 +174,14 @@ export function emitCollectionNode(
       // s222-m03 (#2502 ruling 16): the row's accessible name is the record's title (its key when the title is empty).
       const labelField = rowLabelField ? displayFieldExpression(rowLabelField, fields) : undefined;
       const name = labelField ? `String(${labelField} || ${key})` : key;
-      return `<Button ${id} type="button" ${react ? 'className' : 'class'}="oods-collection-row" ${attr('aria-label', name)} ${attr('data-record-id', key)} ${on('Click', react ? `() => handleRowClick(${key})` : `handleRowClick(${key})`)}>${children()}</Button>`;
+      // Keep the record title as the button name. Its captioned facts and time are read in row order.
+      const facts = (node.children ?? []).filter(child => child.props?.caption).map(child => {
+        const id = `${literal(child.id + '-')} + collectionIndex`;
+        const condition = omitEmptyCondition(child, fields);
+        return condition ? `(${condition} ? ${id} : '')` : id;
+      });
+      const description = facts.length ? ' ' + attr('aria-describedby', `[${facts.join(', ')}].filter(Boolean).join(' ') || undefined`) : '';
+      return `<Button ${id} type="button" ${react ? 'className' : 'class'}="oods-collection-row" ${attr('aria-label', name)}${description} ${attr('data-record-id', key)} ${on('Click', react ? `() => handleRowClick(${key})` : `handleRowClick(${key})`)}>${children()}</Button>`;
     }
     case 'event': {
       const payment = node.children?.find(child => child.collectionControl === 'payment-event');

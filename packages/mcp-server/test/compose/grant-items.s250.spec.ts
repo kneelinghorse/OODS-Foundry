@@ -60,8 +60,11 @@ describe('1884: the dashboard layout leaves out an empty place the trait asked t
     for (const object of ['Grant', 'Task']) expect((await dashboard(object)).match(/\b[A-Z][A-Za-z ]* unavailable\b/g), object).toBeNull();
   });
 
-  it('keeps Approval\'s one row for an approval asked for no one: Decision\'s own detail view asks to draw that seat, which its page shows as "Not recorded"', async () => {
-    expect((await dashboard('Approval')).match(/\b[A-Z][a-z]+(?: [a-z]+)* unavailable\b/g)).toEqual(['Requested for unavailable']);
+  it('leaves out an empty Requested for seat on the dashboard and shows the named party when supplied', async () => {
+    expect(await dashboard('Approval')).not.toContain('Requested for unavailable');
+    const { schema } = await compose({ object: 'Approval', context: 'detail', layout: 'dashboard', options: { transient: true } });
+    const populated = renderRecordBody(schema!, { objectName: 'Approval', sampleModel: { requestedForId: 'org-1', requestedForName: 'Tidewater Co-op' } });
+    expect(textOf(populated)).toContain('Asked for Tidewater Co-op');
   });
 });
 
@@ -188,7 +191,7 @@ describe('1887, item 4: a row line can leave a field out for one value', () => {
       'Support Agent': null, 'Inventory Agent': null, 'Scheduling Agent': null,
       'Billing Agent': 'Tidewater Co-op · invoices and payments · until 31 Dec 2026',
       'Booking Agent': 'Blue Harbor Studio · session bookings · until 31 Jan 2027',
-      'Order Agent': 'Summit Outfitters · online orders · until 31 Mar 2027; Harbor Channel Partners · reseller orders · until 31 Dec 2026',
+      'Order Agent': 'Summit Outfitters · online orders · until 31 Mar 2027',
     });
     // The agents keep their own words: only the row leaves them out.
     expect((loadObject('Agent').samples as Array<Record<string, any>>).find(agent => agent.name === 'Support Agent')!.acts_for).toBe('None');

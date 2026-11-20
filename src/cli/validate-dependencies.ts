@@ -8,7 +8,7 @@
 
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
-import { load } from 'js-yaml';
+import { loadDefinitionYaml } from '../../packages/mcp-server/src/objects/definition-yaml.js';
 import { DependencyGraph } from '../core/dependency-graph.js';
 import { DependencyValidator } from '../core/dependency-validator.js';
 import { validateAndSort } from '../core/topological-sort.js';
@@ -45,7 +45,7 @@ function loadTraitsFromDirectory(dir: string): TraitDefinition[] {
       } else if (extname(entry) === '.yaml' || extname(entry) === '.yml') {
         try {
           const content = readFileSync(fullPath, 'utf-8');
-          const parsed = load(content) as TraitDefinition;
+          const parsed = loadDefinitionYaml(content) as TraitDefinition;
 
           if (parsed && parsed.trait && parsed.schema) {
             traits.push(parsed);

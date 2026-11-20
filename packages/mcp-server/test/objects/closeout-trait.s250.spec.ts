@@ -211,7 +211,10 @@ describe('the record trait composed onto a team\'s own revocation record, in eve
       const page = await pages(context, [full]);
       for (const renderer of RENDERERS) {
         const body = shown(page[renderer]);
-        inOrder(body, ['Take-back of Northwind customer replies', 'Northwind customer replies', 'What ended', 'Northwind Traders', 'For'], `${renderer} ${context}`);
+        const facts = context === 'list'
+          ? ['What ended', 'Northwind customer replies', 'For', 'Northwind Traders']
+          : ['Northwind customer replies', 'What ended', 'Northwind Traders', 'For'];
+        inOrder(body, ['Take-back of Northwind customer replies', ...facts], `${renderer} ${context}`);
         expect(body, `${renderer} ${context}`).not.toMatch(RAW_INSTANT);
       }
     }

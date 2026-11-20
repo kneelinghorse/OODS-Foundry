@@ -29,7 +29,7 @@ const samplesOf = (object: string) => (loadObject(object).samples ?? []) as Samp
 describe('Mandate 1.1.0: who a request waits on, and the capacity a grant was ended in', () => {
   it('adds four read-only seats the product writes, placed only where a record holds them', () => {
     const mandate = loadTrait('core/Mandate');
-    expect(mandate.trait.version).toBe('1.1.0');
+    expect(mandate.trait.version).toBe('1.1.1');
     for (const field of ['asked_of_id', 'asked_of_name', 'asked_of_kind', 'ended_as']) {
       expect(mandate.schema[field], field).toMatchObject({ type: 'string', required: false, readOnly: true });
     }

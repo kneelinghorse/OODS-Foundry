@@ -64,7 +64,7 @@ describe('Approval is the thirteenth public object', () => {
   it('composes Decision, Stateful and Timestampable, with a lifecycle that starts before anyone is asked', () => {
     const approval = loadObject('Approval');
     // s248-m02: 1.1.1, the resend approval's first line says why it was created, and its agent lines name the grant.
-    expect(approval.object).toMatchObject({ name: 'Approval', version: '1.1.1' });
+    expect(approval.object).toMatchObject({ name: 'Approval', version: '1.1.2' });
     expect(approval.object).not.toHaveProperty('visibility');
     expect(approval.traits.map(trait => trait.name)).toEqual(['core/Decision', 'lifecycle/Stateful', 'lifecycle/Timestampable']);
     const lifecycle = approval.traits[1]!.parameters!;
@@ -130,14 +130,13 @@ describe('Approval is the thirteenth public object', () => {
     const found = runGeneratedStore(app.artifact.files, [
       'const s = store.createStore();',
       'const names = query => s.list({ pageSize: 100, ...query }).records.map(record => record.name).sort();',
-      "process.stdout.write(JSON.stringify({ waiting: names({ status: 'waiting' }), ruth: names({ search: 'ruth adeyemi' }), prorations: names({ search: 'prorations' }), finance: names({ search: 'Finance team' }) }));",
+      "process.stdout.write(JSON.stringify({ waiting: names({ status: 'waiting' }), ruth: names({ search: 'ruth adeyemi' }), prorations: names({ search: 'prorations' }), nadia: names({ search: 'Nadia Farouk' }) }));",
     ].join('\n')) as Record<string, string[]>;
     expect(found.waiting).toEqual(['Approve publishing Refund a duplicate charge']);
     expect(found.ruth).toEqual(['Approve the resend of PAY-2026-0429']);
     expect(found.prorations).toEqual(['Approve publishing How prorations work when plans change']);
-    // s249-m04 (Interface 12): one search rule reads history too, and the sign-off approval's line says "the finance team
-    // sent the article back", so a search for the Finance team finds it beside the review it was asked of.
-    expect(found.finance).toEqual(['Review Invoice numbers, tax IDs and legal names', 'Sign off Invoice numbers, tax IDs and legal names']);
+    // Search finds the person asked for the review and the later sign-off record that names her in its history.
+    expect(found.nadia).toEqual(['Review Invoice numbers, tax IDs and legal names', 'Sign off Invoice numbers, tax IDs and legal names']);
   });
 });
 
@@ -205,17 +204,19 @@ describe('the eight Approval samples tell true stories about the Transaction and
   });
 });
 
-describe('on Approval\'s form the facts are read beside the answer and never edited', () => {
-  it('places each fact as a labelled row with no control, and keeps one required input for the answer form', async () => {
+describe('on Approval\'s form the facts are read above the answer and never edited', () => {
+  it('keeps the ask and its facts fixed while the person chooses an answer', async () => {
     const { schema } = await compose({ object: 'Approval', context: 'form', options: { transient: true } } as never) as { schema: UiSchema };
     const nodes = schemaNodes(schema);
     const facts = nodes.filter(node => node.meta?.intent === FORM_FACT);
     expect(facts.map(row => row.children?.[0]?.props?.content)).toEqual(FACT_LABELS);
     for (const field of FACT_FIELDS) expect(nodes.filter(node => CONTROLS.has(node.component) && bound(node).includes(field)), field).toEqual([]);
-    // The answer is the lifecycle's own control; the approval's name is the required input a form keeps.
-    expect(nodes.filter(node => node.component === 'StatusSelector').map(node => node.props?.field)).toEqual(['status']);
-    expect(nodes.find(node => node.component === 'Input' && node.props?.field === 'name')).toBeDefined();
-    expect(schema.objectSchema?.name).toMatchObject({ required: true });
+    const answer = nodes.filter(node => node.component === 'StatusSelector');
+    expect(answer.map(node => node.props)).toEqual([expect.objectContaining({
+      field: 'status', label: 'Answer', help: 'This answer applies to what was shown above.',
+    })]);
+    expect(nodes.filter(node => CONTROLS.has(node.component) && bound(node).includes('name'))).toEqual([]);
+    expect(composeObject(loadObject('Approval')).schema.name).toMatchObject({ required: true, readOnly: true });
     // One field, one editor.
     const edited = nodes.filter(node => CONTROLS.has(node.component)).flatMap(bound);
     expect(new Set(edited).size).toBe(edited.length);
@@ -233,13 +234,13 @@ describe('on Approval\'s form the facts are read beside the answer and never edi
     for (const [renderer, page] of Object.entries(pages)) {
       const fragment = JSDOM.fragment(page);
       for (const label of FACT_LABELS) expect(text(page), `${renderer}: ${label}`).toContain(label);
-      for (const field of FACT_FIELDS) expect(fragment.querySelectorAll(`input[name="${field}"], select[name="${field}"], textarea[name="${field}"]`).length, `${renderer}: ${field}`).toBe(0);
+      for (const field of [...FACT_FIELDS, 'name']) expect(fragment.querySelectorAll(`input[name="${field}"], select[name="${field}"], textarea[name="${field}"]`).length, `${renderer}: ${field}`).toBe(0);
     }
     for (const framework of ['react', 'vue'] as const) {
       const app = await generate({ schema: workflow, framework, profile: 'build' } as never);
       const application = app.artifact!.files.find(file => file.path === 'src/application.ts')!.contents;
       const supplemental = JSON.parse(application.match(/export const supplementalFields[^=]*= (\[.*?\]);/)![1]!) as Array<{ name: string }>;
-      expect(supplemental.map(field => field.name).filter(name => FACT_FIELDS.includes(name)), framework).toEqual([]);
+      expect(supplemental.map(field => field.name).filter(name => [...FACT_FIELDS, 'name'].includes(name)), framework).toEqual([]);
     }
   });
 });

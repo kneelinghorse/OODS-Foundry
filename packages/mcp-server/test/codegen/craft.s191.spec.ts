@@ -24,7 +24,7 @@ describe('s191 craft values agree across render targets', () => {
     const outputs = [renderMappedComponent({ id: 'timeline', component, props }, '')!, renderToStaticMarkup(createElement(ReactComponents[component], props)), await renderToString(h(VueComponents[component], props))].map(text);
     for (const output of outputs) {
       expect(output).toContain('Billing Cycle Started');
-      expect(output).toContain('Active → Pending Cancellation');
+      expect(output).toContain('Active → Pending cancellation');
       expect(output).toContain('Subscription created');
       expect(output).not.toMatch(/billing_cycle_started|pending_cancellation|internal_code/);
     }

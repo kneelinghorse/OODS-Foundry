@@ -5,7 +5,7 @@
  * Provides detailed error messages with file and line number information.
  */
 
-import { load as yamlLoad } from 'js-yaml';
+import { loadDefinitionYaml } from '../../packages/mcp-server/src/objects/definition-yaml.js';
 import { readFileSync } from 'fs';
 import type {
   TraitDefinition,
@@ -45,7 +45,7 @@ export function parseYamlTrait(
 
   try {
     // Parse YAML with line number tracking
-    const parsed = yamlLoad(content, {
+    const parsed = loadDefinitionYaml(content, {
       filename: filePath,
       onWarning: (warning) => {
         errors.push({

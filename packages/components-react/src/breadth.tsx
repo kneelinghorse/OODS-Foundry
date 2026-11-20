@@ -983,7 +983,7 @@ export const InlineLabel = React.forwardRef<HTMLSpanElement, InlineLabelProps>(
 InlineLabel.displayName = 'OODS.InlineLabel';
 
 export const LabelCell = React.forwardRef<HTMLSpanElement, LabelCellProps>(
-  ({ label, text, value, description, subtitle, sublabel, supporting, truncate, maxLength, children, className, ...rest }, ref) => {
+  ({ label, text, value, caption, description, subtitle, sublabel, supporting, truncate, maxLength, children, className, ...rest }, ref) => {
     const content = childContent(children);
     const limit = truncate ? maxLength ?? 40 : maxLength;
     const primary = truncateLabel(firstText(label, text, value) ?? '', limit);
@@ -991,6 +991,7 @@ export const LabelCell = React.forwardRef<HTMLSpanElement, LabelCellProps>(
     const detail = notEcho(firstText(description, subtitle, sublabel, supporting), firstText(label, text, value));
     return <span ref={ref} className={classes('oods-label-cell', className)} data-oods-component="LabelCell" {...rest}>
       {content.authored || content.scalar !== undefined ? children : <>
+        {caption && <span data-oods-label-cell-caption="true">{caption}{' '}</span>}
         <span data-oods-label-cell-primary="true">{primary}</span>
         {detail ? <span data-oods-label-cell-description="true">{truncateLabel(detail, limit)}</span> : null}
       </>}
@@ -1143,7 +1144,10 @@ export const CancellationForm = React.forwardRef<HTMLFormElement | HTMLFieldSetE
     }, <>
       {formHeader(firstText(title, label, heading, name) ?? 'Cancellation Form', firstText(description, subtitle, hint))}
       <div data-form-content="true">{content.authored || content.scalar !== undefined ? children : <>
-        <label data-form-control="select"><span>Reason Code</span>{allowedReasons?.length === 0 ? <input name="reasonCode" defaultValue={reasonCode ?? ''} /> : <select name="reasonCode" defaultValue={reasonCode}>{selectOptionsMarkup(choices)}</select>}</label>
+        <label data-form-control="select"><span>Reason Code</span>{allowedReasons?.length === 0 ? <input name="reasonCode" defaultValue={reasonCode ?? ''} /> : <select name="reasonCode" defaultValue={reasonCode ?? ''}>
+          {!reasonCode && <option value="" disabled>Choose a reason</option>}
+          {selectOptionsMarkup(choices.filter(choice => choice.value !== ''))}
+        </select>}</label>
         {codeHelp && <p className="oods-field-help">{codeHelp}</p>}
         <label data-form-control="textarea"><span>Reason</span><textarea name="reason" rows={4} defaultValue={firstText(reason, cancellationReason) ?? ''} /></label>
         {reasonHelp && <p className="oods-field-help">{reasonHelp}</p>}

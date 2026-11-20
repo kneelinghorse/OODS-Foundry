@@ -8,6 +8,11 @@ import { sampleValue, validSample } from '../../src/importer/samples.js';
 const string = (extra: Record<string, unknown> = {}) => ({ type: 'string', ...extra });
 const five = (schema: Record<string, unknown>, field: string) => [0, 1, 2, 3, 4].map(index => sampleValue(schema, field, index));
 
+it('makes a mailbox address useful as a reference without treating ordinary addresses as emails', () => {
+  expect(sampleValue(string(), 'address', 1, 'MicrosoftGraphEmailAddress')).toBe('person2@example.com');
+  expect(sampleValue(string(), 'address', 1, 'ShippingAddress')).not.toContain('@');
+});
+
 it('illustrates common string fields the way real records read', () => {
   expect(sampleValue(string(), 'email', 2)).toBe('person3@example.com');
   expect(sampleValue(string(), 'contactEmail', 0)).toBe('person1@example.com');

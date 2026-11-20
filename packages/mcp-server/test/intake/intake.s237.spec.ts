@@ -181,3 +181,31 @@ it('reports vendor alpha modifiers and aliases to them instead of silently makin
  expect(draft.inventory.filter(entry=>entry.path==='standard').every(entry=>entry.status==='preserved')).toBe(true);
  expect(draft.counts.tokens).toBe(draft.counts.preserved+draft.counts.unmatched);
 });
+
+it('registers a Storybook Stack from the workspace package that defines it', async () => {
+  write('package.json', { private: true, workspaces: ['packages/*'] });
+  const workspace = 'packages/react';
+  write(workspace + '/package.json', { name: '@example/react', version: '1.2.3', exports: './dist/index.js' });
+  write(workspace + '/dist/index.js', 'export function Stack() {}');
+  const file = workspace + '/src/layout/Stack.tsx';
+  write(file, `type Props = { direction?: 'row' | 'column'; gap?: string; align?: string; justify?: string };
+    export function Stack(props: Props) { return <div style={{ gap: props.gap }} />; }`);
+  write('storybook/index.json', { v: 5, entries: {} });
+  write('storybook/manifests/components.json', { components: { stack: { id: 'stack', reactDocgen: { definedInFile: file } } } });
+  const input = { action: 'draft' as const, source: { project: folder, format: 'storybook' as const, storybook: 'storybook' } };
+  const first: any = await map(input);
+  const shown: any = await mapReadWriteSplit({ action: 'show', draftId: first.draftId });
+  expect(shown.proposals).toHaveLength(1);
+  const [proposal] = shown.proposals;
+  expect(proposal.mapping.substitution).toMatchObject({
+    component: 'Stack',
+    react: { package: '@example/react', version: '1.2.3', localPath: fs.realpathSync(path.join(folder, workspace)), export: 'Stack' },
+  });
+  await map({ action: 'apply', draftId: first.draftId, accept: [proposal.id] });
+  expect(loadMappings().mappings).toHaveLength(1);
+  write(workspace + '/package.json', { private: true });
+  write('package.json', { name: '@example/wrong-root', version: '9.9.9' });
+  const refused = draftComponents(input.source);
+  expect(refused.proposals).toHaveLength(0);
+  expect(refused.warnings.join(' ')).toContain('package name and exact version');
+});

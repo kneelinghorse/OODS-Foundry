@@ -22,7 +22,7 @@
  */
 import { historyAttribution } from './attribution.js';
 import { formatDateTime } from './date-time.js';
-import { getStatusPresentation, type StatusDomain } from './status-registry.js';
+import { enumOptionLabel, getStatusPresentation, type StatusDomain } from './status-registry.js';
 
 export type RelatedFinality = 'final' | 'not_final' | 'not_known';
 type Scalar = string | number | boolean | null;
@@ -47,7 +47,7 @@ export interface RelatedListSource {
   inner?: string;
   seat?: string;
   kept?: { name: string; kind?: string };
-  row?: { line?: RelatedLineItem[]; time?: string };
+  row?: { line?: RelatedLineItem[]; time?: string | { field: string; says: string } };
   /** s250-m01: on a source matched by a top-level field, each row carries its record's whole history. */
   lines?: boolean;
 }
@@ -84,6 +84,7 @@ export interface RelatedObject {
   /** Fields that hold an instant, shown as a date and time; `dateOnlyFields` show the date alone. */
   instantFields?: readonly string[];
   dateOnlyFields?: readonly string[];
+  timeLabels?: Readonly<Record<string, string>>;
   /** The object's name in a sentence: "grant", "grants". */
   noun?: { one: string; other: string };
   /**
@@ -91,6 +92,7 @@ export interface RelatedObject {
    * (a subscription's, an invoice's); left out, the lifecycle table.
    */
   statusDomain?: StatusDomain;
+  statusLabels?: Readonly<Record<string, string>>;
 }
 
 /** One history line of a related record that names the subject. */
@@ -179,7 +181,8 @@ const same = (value: unknown, key: string) => present(value) && (Array.isArray(v
 const instant = (value: unknown) => { const at = Date.parse(String(value)); return Number.isNaN(at) ? undefined : at; };
 const names = (from: unknown): string[] => (Array.isArray(from) ? from : [from]).filter((name): name is string => typeof name === 'string');
 const plural = (count: number, noun: { one: string; other: string } | undefined, fallback: string) => count === 1 ? noun?.one ?? fallback : noun?.other ?? `${fallback}s`;
-const fill = (words: string, name: string) => words.replaceAll('{name}', name);
+const fill = (words: string, name: string) =>
+  words.replace(/\{name\}(\.)?/g, (_, stop: string | undefined) => name + (stop && !/[.!?]$/.test(name) ? stop : ''));
 /** s250-m01: whether a record's field holds what a source's `when` asks: no value (null), any value, or this value. */
 const holds = (record: Row, field: string, value: RelatedWhenValue) => value === null ? !present(record[field])
   : typeof value === 'object' ? present(record[field]) : present(record[field]) && String(record[field]) === String(value);
@@ -188,10 +191,8 @@ const holds = (record: Row, field: string, value: RelatedWhenValue) => value ===
  * The state's words, from the status table a badge of the same table reads, in sentence case as a record's own list and
  * select write them ("Needs input", never "Needs Input").
  */
-export const relatedStateLabel = (state: string, domain: StatusDomain = 'lifecycle') => {
-  const label = getStatusPresentation(domain, state).label;
-  return label.charAt(0).toUpperCase() + label.slice(1).toLowerCase();
-};
+export const relatedStateLabel = (state: string, domain: StatusDomain = 'lifecycle') =>
+  getStatusPresentation(domain, state).label;
 
 /** A state read against a declared order: final, not final, or not known. */
 export function relatedFinality(state: unknown, order: Readonly<Record<string, readonly string[]>> | undefined): RelatedFinality {
@@ -214,7 +215,9 @@ export function relatedStateAt(record: Row, at: number): string | undefined {
 export function relatedEndedAt(record: Row, order: Readonly<Record<string, readonly string[]>> | undefined): string | undefined {
   if (relatedFinality(record.status, order) !== 'final') return undefined;
   const entry = ((Array.isArray(record.state_history) ? record.state_history : []) as Row[]).find(line => relatedFinality(line.to, order) === 'final');
-  return typeof entry?.at === 'string' ? entry.at : undefined;
+  const at = entry?.at;
+  if (at instanceof Date && Number.isFinite(at.getTime())) return at.toISOString();
+  return typeof at === 'string' ? at : undefined;
 }
 
 /** A record's display label: the field that names it, else its own id. */
@@ -284,25 +287,33 @@ export function resolveRelatedListRows(list: RelatedList, subject: RelatedObject
     const key = target.key && present(sample[target.key]) ? String(sample[target.key]) : undefined;
     const line = lineOf(source, sample);
     const domain = target.statusDomain ?? 'lifecycle';
+    const stateLabel = (state: string, inSentence = false) => {
+      if (target.statusLabels && Object.hasOwn(target.statusLabels, state)) return target.statusLabels[state]!;
+      const label = relatedStateLabel(state, domain);
+      return inSentence ? label.toLowerCase() : label;
+    };
     const row: RelatedRow = {
       object: target.name, ...(key ? { key } : {}), title: relatedTitle(target, sample),
-      ...(present(sample.status) ? { state: String(sample.status), stateDomain: domain, stateLabel: relatedStateLabel(String(sample.status), domain) } : {}),
+      ...(present(sample.status) ? { state: String(sample.status), stateDomain: domain, stateLabel: stateLabel(String(sample.status)) } : {}),
       finality: relatedFinality(sample.status, target.order), line, ...(line.length ? { lineText: line.join(' · ') } : {}),
       ...(source.seat ? { seat: source.seat } : {}),
     };
-    const timeField = source.row?.time;
+    const time = source.row?.time;
+    const timeField = typeof time === 'string' ? time : time?.field;
     if (timeField && present(sample[timeField])) {
       const value = String(sample[timeField]);
       const isInstant = Boolean(target.instantFields?.includes(timeField) || target.dateOnlyFields?.includes(timeField));
       row.time = { field: timeField, value, instant: isInstant };
-      row.timeText = isInstant ? formatDateTime(value, { dateOnly: Boolean(target.dateOnlyFields?.includes(timeField)) }) : value;
+      const caption = typeof time === 'object' ? time.says : target.timeLabels?.[timeField] ?? enumOptionLabel(timeField);
+      const shown = isInstant ? formatDateTime(value, { dateOnly: Boolean(target.dateOnlyFields?.includes(timeField)) }) : value;
+      row.timeText = `${caption}: ${shown}`;
     }
     if (readsAtEnd) {
       const at = relatedStateAt(sample, end!);
       row.stateAtEnd = at ?? null;
       if (at !== undefined) {
         row.finalityAtEnd = relatedFinality(at, target.order);
-        if (row.state) row.atEndText = `When the ${subjectNoun} ended: ${relatedStateLabel(at, domain).toLowerCase()}. Now: ${relatedStateLabel(row.state, domain).toLowerCase()}.`;
+        if (row.state) row.atEndText = `When the ${subjectNoun} ended: ${stateLabel(at, true)}. Now: ${stateLabel(row.state, true)}.`;
       }
     }
     return row;

@@ -139,7 +139,7 @@ describe('a closure\'s page: its name and state, its lines, who answers for it, 
       expect(body, renderer).not.toMatch(RAW_INSTANT);
       expect(body, renderer).not.toMatch(/Not recorded|unavailable|not resolved|OODS Foundry/);
       // A line that keeps the state reads its title and that state, never a move to itself.
-      expect(body, renderer).not.toMatch(/Closing → Closing|Still Running → Still Running/);
+      expect(body, renderer).not.toMatch(/Closing → Closing|Still running → Still running/);
     }
   });
 
@@ -233,7 +233,7 @@ describe('the list, its tones and its words', () => {
       const body = shown(page[renderer]);
       expect(body, renderer).toContain('Receipt sent');
       expect(body, renderer).not.toMatch(/(?<!Reported )\bClosed\b/);
-      expect(body, renderer).not.toMatch(/Closing → Closing|Still Running → Still Running/);
+      expect(body, renderer).not.toMatch(/Closing → Closing|Still running → Still running/);
     }
   });
 });

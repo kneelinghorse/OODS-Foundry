@@ -5,7 +5,7 @@
  */
 
 import { readFileSync } from 'fs';
-import { load as yamlLoad } from 'js-yaml';
+import { loadDefinitionYaml } from '../../packages/mcp-server/src/objects/definition-yaml.js';
 import {
   type ObjectAdditionalMetadata,
   type ObjectDefinition,
@@ -65,7 +65,7 @@ export function parseObjectDefinition(
   try {
     const warnings: ParseError[] = [];
 
-    const parsed = yamlLoad(content, {
+    const parsed = loadDefinitionYaml(content, {
       filename: filePath,
       onWarning: (warning) => {
         warnings.push(

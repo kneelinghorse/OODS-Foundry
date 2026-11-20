@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 import type { Page } from 'playwright';
 import { handle as compose } from '../../packages/mcp-server/src/tools/design.compose.js';
 import { fieldLabel } from '../../packages/mcp-server/src/compose/label-generator.js';
+import { JSDOM } from 'jsdom';
+import { screenTitle } from '../../packages/mcp-server/src/codegen/screen-shell.js';
 import { recordTitleField } from '../../packages/mcp-server/src/compose/record-label.js';
 import { schemaNodes } from './s185-m04-consumer-contract.js';
 import type { UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
@@ -82,7 +84,7 @@ export function workflowEditProbe(schema: UiSchema) {
   const editable = schemaNodes(schema).filter(node => ['Input', 'Textarea'].includes(node.component) && node.bindings?.onChange)
     .map(node => String(node.props?.field)).filter(field => field !== schema.workflow!.data.idField && fields[field]?.type === 'string' && !fields[field]?.enum?.length);
   // The application also emits required string fields omitted by its form screen.
-  const supplementalTitle = titleField !== schema.workflow!.data.idField && fields[titleField]!.required && fields[titleField]!.type === 'string' && !fields[titleField]!.enum?.length;
+  const supplementalTitle = titleField !== schema.workflow!.data.idField && fields[titleField]!.required && !fields[titleField]!.readOnly && fields[titleField]!.type === 'string' && !fields[titleField]!.enum?.length;
   const selectable = schemaNodes(schema).filter(node => node.component === 'Select' && node.bindings?.onChange)
     .map(node => String(node.props?.field)).filter(field => fields[field]?.enum && fields[field]!.enum!.length > 1);
   const field = editable.includes(titleField) || supplementalTitle ? titleField : editable.find(name => /(_name|_number|title|label)$/.test(name)) ?? editable[0] ?? selectable.find(name => name === 'currency') ?? selectable[0];
@@ -681,7 +683,7 @@ export async function runAppConsumers(output: string, mission = 's188-m03', obje
         const rendered = commandResult('node', ['ssr-observer.mjs'], consumer, { environment, scrubNpmCredentials: true, isolateDependencies: true });
         await json(path.join(cellRoot, 'logs/ssr-render.json'), rendered); requireGreen(rendered, 'SSR root');
         const { html } = JSON.parse(rendered.stdout) as { html: string };
-        assert.match(html, /data-screen="list"/); assert.ok(html.includes(`${object}s`));
+        assert.match(html, /data-screen="list"/); assert.equal(JSDOM.fragment(html).querySelector('h1')?.textContent?.trim(), screenTitle(object, 'list'));
         await fs.writeFile(path.join(cellRoot, 'server-render.html'), html);
         pass(activeGate, { htmlHash: digest(html), generatedEntry: `src/ssr.${framework === 'react' ? 'tsx' : 'ts'}` });
         activeGate = 'shared-css-resolution'; pass(activeGate, await cssProof(path.join(consumer, 'dist'), true));

@@ -22,6 +22,22 @@ describe('the words the related-list core writes', () => {
   const list: RelatedList = { id: 'under-way', label: 'Still under way', finality: ['not_final', 'not_known'], sources: [{ from: 'Task', via: 'state_history[].grant_id' }] } as RelatedList;
   const resolved = resolveRelatedListRows(list, subject, grant, objects);
 
+  it.each(['Kestrel Print Co.', 'Who?', 'Welcome!', 'A $& Co.'])('keeps the name %s and ends its sentence just once', name => {
+    const result = resolveRelatedListRows({ ...list, empty: 'No grants for {name}.' }, subject, { ...grant, name }, {});
+    expect(result.empty).toBe('No grants for ' + name);
+  });
+
+  it('adds a sentence stop when the name has none', () => {
+    expect(resolveRelatedListRows({ ...list, empty: 'No grants for {name}.' }, subject, grant, {}).empty).toBe('No grants for Northwind replies.');
+  });
+
+  it('uses the related object’s authored words in both the badge and its history at the grant’s end', () => {
+    const target = { ...objects.Task!, statusLabels: { needs_input: 'Awaiting QA' } };
+    const row = resolveRelatedListRows(list, subject, grant, { Task: target }).rows[0]!;
+    expect(row.stateLabel).toBe('Awaiting QA');
+    expect(row.atEndText).toBe('When the grant ended: Awaiting QA. Now: Awaiting QA.');
+  });
+
   it('counts the rows past the first five as not shown', () => {
     expect(resolved.rows).toHaveLength(7);
     expect(resolved.more).toBe('2 more not shown');
