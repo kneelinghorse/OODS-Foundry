@@ -20,10 +20,10 @@ it('health separates the head a proof measured from the tool census and never om
     expect(proofs[kind], kind).toHaveProperty('thisBuild', null); // source has no built revision stamp
     expect(proofs[kind], kind).toHaveProperty('head');
   }
-  const ledger = JSON.parse(fs.readFileSync('registry/tool-capability-ledger.v1.json', 'utf8'));
+  const ledger = JSON.parse(fs.readFileSync(new URL('../../registry/tool-capability-ledger.v1.json', import.meta.url), 'utf8'));
   expect(proofs.tools.head).toBe(ledger.portableExecution.bundleHead);
   expect(proofs.tools.sourceHead).toBe(ledger.head);
-  expect(proofs.html.cells).toBe(JSON.parse(fs.readFileSync('registry/html-cells.v1.json', 'utf8')).rows.length);
+  expect(proofs.html.cells).toBe(JSON.parse(fs.readFileSync(new URL('../../registry/html-cells.v1.json', import.meta.url), 'utf8')).rows.length);
   expect(proofs.fidelity.files).toBeGreaterThan(0);
 });
 
@@ -33,7 +33,7 @@ it('a matching source census cannot disguise an older, mixed or missing measurem
   expect(proofMatchesBuild(old, current)).toBe(false);
   expect(proofMatchesBuild(null, current)).toBe(false);
   expect(proofMatchesBuild(current)).toBeNull();
-  const ledger = JSON.parse(fs.readFileSync('registry/tool-capability-ledger.v1.json', 'utf8'));
+  const ledger = JSON.parse(fs.readFileSync(new URL('../../registry/tool-capability-ledger.v1.json', import.meta.url), 'utf8'));
   ledger.rows.find((row: any) => row.registration === 'auto').portableOutcome.bundleHead = old;
   expect(() => projectToolSummary(ledger)).toThrow(/portable outcome not bound/);
 });
@@ -58,7 +58,7 @@ it('selects a complete passing archive by its recorded execution time, without a
 it('a catalog component loses its generated-app label when the current runtime receipt no longer uses it', async () => {
   const folder = fs.mkdtempSync(path.join(os.tmpdir(), 'proof-label-'));
   try {
-    const ledger = JSON.parse(fs.readFileSync('registry/runtime-cells.v1.json', 'utf8'));
+    const ledger = JSON.parse(fs.readFileSync(new URL('../../registry/runtime-cells.v1.json', import.meta.url), 'utf8'));
     for (const row of ledger.rows) row.components = row.components.filter((name: string) => name !== 'Button');
     process.env.MCP_RUNTIME_CELLS_PATH = path.join(folder, 'runtime.json');
     fs.writeFileSync(process.env.MCP_RUNTIME_CELLS_PATH, JSON.stringify(ledger));

@@ -1,6 +1,6 @@
 trait:
   name: Approvable
-  version: 1.1.1
+  version: 1.1.2
   description: |
     The ability to be approved: the thing's own rule for which change needs which level of yes, from how many and from
     whom, and its outcome, worked out from the approvals that still stand. The approvals themselves are records of
@@ -17,8 +17,8 @@ trait:
     The outcome is two read-only fields: `approval_state`, under a name of its own so it never collides with the
     lifecycle's `status`, and `approval_summary`, one kept line ("Approved by Ruth Adeyemi · version 3 · 2 Nov").
     The product's own code works the outcome out from the approvals and writes both fields; they are kept off the
-    thing's form and shown on its detail page. The summary restates the Approval records, since a thing's own page lists
-    its approvals only where the thing declares that list (metadata.relatedLists), and no shipped object does.
+    thing's form and shown on its detail page. The summary is the product’s account of the outcome. A payment or article
+    also lists the individual approvals that name it, through metadata.relatedLists.
 
     OODS Foundry shows the outcome; it does not work it out. It does not count approvals, check who may approve,
     expire an ask, lock the thing or stop a change.
@@ -128,8 +128,8 @@ schema:
     readOnly: true
     description: |
       One kept line saying what the outcome rests on ("Approved by Ruth Adeyemi · version 3 · 2 Nov"), or why no
-      approval was asked. It restates the Approval records, since a thing's own page lists its approvals only where the
-      thing declares that list (metadata.relatedLists), and no shipped object does. Read-only.
+      approval was asked. The product writes this line. A payment or article also lists the individual
+      approvals that name it. Read-only.
     validation:
       maxLength: 240
 
@@ -167,6 +167,10 @@ view_extensions:
 dependencies: []
 
 metadata:
+  changelog:
+    - version: 1.1.2
+      date: "2026-11-22"
+      description: "Distinguishes the product’s summary from the individual approvals listed on a payment or article."
   created: "2026-11-11"
   updated: "2026-11-14"
   owners:

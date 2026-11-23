@@ -53,7 +53,7 @@ The seats are fields at the top of the record, so a search for a name on the Gra
 A grant's terms are:
 - what it covers, in a few words;
 - three lines for this party, in the agent's own convention: what goes ahead with no one asked, what needs a yes first, and what never happens. Anything no line names never happens;
-- money limits per use and per period, and a count per period, as whole numbers in the currency's minor units;
+- money limits per use and per period, in the currency’s minor units, and a maximum number of uses per period;
 - conditions in words, which are shown and not checked;
 - an end (below).
 
@@ -92,9 +92,11 @@ A cost of this reading: a sponsor cannot say "ask every time, never in advance" 
 
 The last five are endings, and final: a grant never comes back. A new grant follows it and names it. Paused is the one state a grant comes back from. No ending takes a success colour, and revoked is not a failure: it is the rule working. `Grant` declares this order. Your product enforces it on its own records, and OODS Foundry holds its own samples to it. A generated app keeps it in its own store: a grant's status select offers its state and the moves the order allows from it, and the store refuses any other move, so a revoked grant never goes back to active there.
 
-**The end, in the party's own day.** A grant to an agent names its end, kept three ways: the exact instant a product checks (`ends_at`), the party's time zone (`timezone`, such as Pacific/Auckland), and one line in the party's own words and zone (`ends_note`, "At the end of 31 Dec 2026, Tauranga time"), written by your product. People read the line: the list, the card and the detail page show it, and the detail page also shows the instant. Every time a grant's screens show, the instant and its history included, is in UTC and says so ("Dec 31, 2026, 10:59 AM UTC"), and a form's date-time input says UTC in its label. For a grant with no end, your product writes that too ("No end: it stands until someone ends it"); with no line, no end is shown. Showing a record's own times in its own zone on every screen is not built yet.
+**The end, in the party's own day.** A grant to an agent names its end, kept three ways: the exact instant a product checks (`ends_at`), the party's time zone (`timezone`, such as Pacific/Auckland), and one line in the party's own words and zone (`ends_note`, "At the end of 31 Dec 2026, Tauranga time"), written by your product. People read the line: the list, the card and the detail page show it, and the detail page also shows the instant. Every time a grant's screens show, the instant and its history included, is in UTC and says so ("Dec 31, 2026, 10:59 AM UTC"), and a form's date-time input says UTC in its label. For a grant with no end, your product writes that too ("No end: it stands until someone ends it"). Without that line, the list and card omit the end description. The detail page still shows the exact end time if the record supplies one. Showing a record's own times in its own zone on every screen is not built yet.
 
 **Disuse** is your product's rule: the grant shows its last use, and a grant that ends unused is expired, with its reason ("Unused for 90 days"). Reconfirmation is not modelled yet.
+
+Reconfirmation means asking the person who gave a grant whether it should still stand on the same terms. The history shows when the grant was given. If your product records the last-use time, the page shows that too. To ask again on a chosen date, your product needs a clock. A static page has none.
 
 ## "Always allow" is a grant inside a grant
 

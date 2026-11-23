@@ -20,7 +20,7 @@ export default defineConfig({
     // Coverage gate (mirrors @oods/viz-core). Root CI's coverage only includes the
     // repo `src/**`, so this package's emitter would never be MEASURED otherwise;
     // enabled here so the viz-determinism CI step (`pnpm --filter @oods/viz-render
-    // test`) enforces it. `all: true` counts untested files at 0% so a new uncovered
+    // test`) enforces it. The explicit src include counts untested files at 0% so a new uncovered
     // module is caught. Thresholds are MEASURED FLOORS (~5pts below the actuals).
     coverage: {
       enabled: true,
@@ -35,7 +35,6 @@ export default defineConfig({
         "src/echarts-render.worker.ts",
         "src/echarts-worker-runtime.ts",
       ],
-      all: true,
       reporter: ["text-summary"],
       thresholds: {
         statements: 90,

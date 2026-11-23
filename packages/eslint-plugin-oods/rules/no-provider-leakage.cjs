@@ -99,7 +99,7 @@ module.exports = {
   create(context) {
     const options = context.options[0] || {};
     const allowedPaths = options.allowedPaths || DEFAULT_ALLOWED_PATHS;
-    const filename = normalizePath(context.getFilename());
+    const filename = normalizePath(context.filename);
     const allowed = allowedPaths.some((pattern) => globToRegExp(pattern).test(filename));
 
     if (allowed) {

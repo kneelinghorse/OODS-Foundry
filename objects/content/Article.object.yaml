@@ -1,6 +1,6 @@
 object:
   name: Article
-  version: 1.1.0
+  version: 1.2.1
   domain: content.publication
   description: Canonical editorial article with hybrid taxonomy + tag classification for CMS surfaces.
   tags:
@@ -183,7 +183,24 @@ metadata:
     - Content platform team
     - Docs team
   steward: Publishing team
+  relatedLists:
+    - id: approvals
+      label: Approvals for this article
+      empty: No approvals are linked to this article here.
+      sources:
+        - { from: Approval, via: subject_id, key: slug, when: { subject_type: Article }, row: { line: [{ field: asked_of_name, says: Asked of }], time: due_at } }
+    - id: tasks
+      label: Tasks about this article
+      empty: No tasks are linked to this article here.
+      sources:
+        - { from: Task, via: subject_id, key: slug, when: { subject_type: Article }, row: { line: [{ field: asked_of_name, says: Doing it }], time: due_at } }
   changelog:
+    - version: 1.2.1
+      date: "2026-11-22"
+      description: "Names who was asked on approval rows and who does the work on task rows. Empty lists describe linked records."
+    - version: 1.2.0
+      date: "2026-11-22"
+      description: "Lists approvals and tasks that name the article."
     - version: 1.1.0
       date: "2026-11-11"
       description: Composes Approvable; guides and announcements need an approval to publish, and each sample says its outcome.

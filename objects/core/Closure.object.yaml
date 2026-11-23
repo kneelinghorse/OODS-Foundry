@@ -1,6 +1,6 @@
 object:
   name: Closure
-  version: 1.0.0
+  version: 1.0.1
   domain: core.governance
   description: The third part of the Grant story, what a product reports became of the work after a grant ended. Only a report should move it, a rule your product keeps.
   tags:
@@ -89,6 +89,11 @@ schema:
     description: Who answers for the closure, a person or a team, as shown.
 
 semantics:
+  updated_at:
+    semantic_type: audit.updated_at
+    token_mapping: tokenMap(audit.updated)
+    ui_hints:
+      label: Last report
   closure_id:
     semantic_type: governance.closure.id
     token_mapping: tokenMap(identity.id.primary)
@@ -129,6 +134,9 @@ metadata:
     - list
     - timeline
   changelog:
+    - version: 1.0.1
+      date: "2026-11-22"
+      description: "Labels the time of the last report on closure records."
     - version: 1.0.0
       date: "2026-11-17"
       description: Initial Closure object, the sixteenth public reference object and the third part of the Grant story; what a product reports became of the work after a grant ended.

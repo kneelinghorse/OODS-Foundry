@@ -1,6 +1,6 @@
 # Build the source snapshot
 
-Use Node.js 22 or later and pnpm 9.12.2. Each release snapshot includes its original lockfile and all workspace manifests. Start in a fresh clone of the public repository.
+Use Node.js 22.22.2 or later in the 22.x series, 24.15.0 or later in the 24.x series, or 26.0.0 and later and pnpm 9.12.2. Each release snapshot includes its original lockfile and all workspace manifests. Start in a fresh clone of the public repository.
 
 ```sh
 pnpm install --frozen-lockfile

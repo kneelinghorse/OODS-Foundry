@@ -92,6 +92,7 @@ export interface ObjectMetadata {
 /** s249-m01: one item of a related row's line: a field of the source, or fixed words shown when the source's fields hold the given values. */
 export type RelatedLineItem = string | { says: string; when: Record<string, string | number | boolean | null> }
   // s250-m04 (next step 1887, item 4): a field shown except when it holds one of the given values.
+  | { field: string; says: string }
   | { field: string; except: string | number | boolean | null | Array<string | number | boolean | null> };
 
 /** s249-m01: one source of a related list (objects/related-lists.ts says what each key means). */

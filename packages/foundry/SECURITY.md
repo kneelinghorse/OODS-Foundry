@@ -1,6 +1,6 @@
 # Security
 
-This note describes OODS Foundry 0.18.0. It does not claim a completed network audit.
+This note describes OODS Foundry 0.19.0. It does not claim a completed network audit.
 
 ## What runs on your machine
 
@@ -34,7 +34,7 @@ These are source-qualified configuration statements, not a claim that every exec
 Before a release is published, every package in its runtime archive is checked, name and version, against npm's
 advisory data. The package's own manifest declares no dependencies because the runtime travels inside it, so the check
 reads the archive itself. A high or critical advisory stops the release unless an exception names that package,
-version and advisory with a reason and a decision. 0.18.0 has no exception.
+version and advisory with a reason and a decision. 0.19.0 has no exception.
 
 Releases up to this one fixed these advisories by upgrading or removing the affected dependency. The
 [CHANGELOG](CHANGELOG.md) names the release that made each change.
@@ -68,8 +68,11 @@ The runtime dependency update covers these packages.
 - `ip-address` 10.7.2 moves to 10.7.4 for GHSA-rxp7-6hxx-x8q5.
 - `@hono/node-server` 1.19.19 moves to 2.1.9 for GHSA-rmxm-3fg6-px4f.
 
-Two moderate advisories remain in the token build's dependencies. Fixing `glob` (GHSA-3g3m-2fjr-6pw4) and
-`minimatch` (GHSA-g3hv-75wg-m249) would require overriding their declared major versions. OODS Foundry supplies fixed glob patterns.
+Two moderate advisories remain in the runtime, in `glob` (GHSA-3g3m-2fjr-6pw4) and `minimatch` (GHSA-g3hv-75wg-m249).
+The token build uses Style Dictionary, whose glob wrapper requires glob 13. Moving that path to a fixed version of glob would
+require overriding the wrapper’s declared major version. The bridge also brings in both packages through `@fastify/static` 10.1.3.
+Version 10.1.12 of that package uses glob 14, but changing the bridge alone would leave both findings in the token build.
+OODS Foundry supplies fixed glob patterns.
 
 These were matches by package name and version; they did not establish that an OODS Foundry tool reached the
 affected code. The current token build requires Node.js 22 or later.

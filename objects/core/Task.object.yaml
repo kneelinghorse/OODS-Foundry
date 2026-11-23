@@ -1,6 +1,6 @@
 object:
   name: Task
-  version: 1.0.1
+  version: 1.1.1
   domain: core.work
   description: One ask to one person or agent to do one piece of work, and what became of it.
   tags:
@@ -135,7 +135,24 @@ metadata:
     - Platform team
   steward: Design team
   maturity: alpha
+  relatedLists:
+    - id: approvals
+      label: Approvals for this task
+      empty: No approvals are linked to this task here.
+      sources:
+        - { from: Approval, via: subject_id, when: { subject_type: Task }, row: { line: [{ field: asked_of_name, says: Asked of }], time: due_at } }
+    - id: tasks
+      label: Tasks made from this task
+      empty: No child tasks are recorded here.
+      sources:
+        - { from: Task, via: parent_id, row: { line: [{ field: asked_of_name, says: Doing it }], time: due_at } }
   changelog:
+    - version: 1.1.1
+      date: "2026-11-22"
+      description: "Names who was asked on approval rows and who does the work on task rows. Empty lists describe linked records."
+    - version: 1.1.0
+      date: "2026-11-22"
+      description: "Lists approvals for the task and tasks made from it."
     - version: 1.0.1
       date: "2026-11-14"
       description: Every line an agent writes for a party names the grant it acted under.

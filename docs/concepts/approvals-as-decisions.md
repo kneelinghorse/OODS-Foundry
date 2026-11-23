@@ -84,7 +84,7 @@ Every history in OODS Foundry prints the level in its line, then the grant and t
 
 On an approval's form, the screen where the answer is chosen, five facts appear above the Answer select: the thing, exactly what was shown, the level, the meaning, and who is asking, with who it is asked for. They cannot be edited there, on the composed screen or in a generated app.
 
-![The answer screen for the Billing Agent's resend: the five facts read as text above the answer and the comment](approvals-as-decisions/approval-form-light.png)
+![The completed resend approval on its Edit screen. The five facts remain above the answer, which is final at Used, and the comment](approvals-as-decisions/approval-form-light.png)
 
 `design_compose` holds every such screen to those facts. A screen is one where an answer can be given when it has a control that edits the approval's lifecycle; a list's filter, sort and search are not answer controls, so a list never is.
 
@@ -101,4 +101,4 @@ On an approval's form, the screen where the answer is chosen, five facts appear 
 
 ## What OODS Foundry does not do
 
-It models and renders. It does not ask anyone, check who may approve, count approvals, expire an ask, move an approval from one state to the next on its own, sign anything, lock a record or stop a change outside a generated app's own store; those belong to your product and your runtime. A thing's own page lists its approvals only where the thing declares that list, and no shipped object does. No page shows a signed-in person "waiting for your yes"; a person's page lists the approvals waiting for their answer. The thing's outcome and summary are kept by your product, not worked out by OODS Foundry.
+It models and renders. It does not ask anyone, check who may approve, count approvals, expire an ask, move an approval from one state to the next on its own, sign anything, lock a record or stop a change outside a generated app's own store; those belong to your product and your runtime. A payment, an article and a task each list the approvals that name them. A team can declare the same list on its own object. No page shows a signed-in person "waiting for your yes"; a person's page lists the approvals waiting for their answer. The thing's outcome and summary are kept by your product, not worked out by OODS Foundry.

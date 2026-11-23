@@ -2,6 +2,8 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
+    // Vitest 3 included two quote marks in its 40-character budget for case values.
+    taskTitleValueFormatTruncate: 38,
     include: ['test/**/*.spec.ts', 'src/**/*.test.ts'],
     // Scale and ECharts soak suites are opt-in through their dedicated configs.
     // Per the s105-m03 audit (decision #614), scale tests run as a separate

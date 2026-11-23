@@ -1,3 +1,4 @@
+import toolchain from '../../packages/mcp-server/src/codegen/generated-toolchain.json' with { type: 'json' };
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
@@ -43,7 +44,7 @@ const VERIFIER_DEPENDENCIES = Object.freeze({
     '@types/react': '19.2.2',
     '@types/react-dom': '19.2.2',
     typescript: '5.9.3',
-    vite: '6.4.3',
+    vite: toolchain.vite,
   }),
   vue: Object.freeze({
     '@types/node': '20.19.21',
@@ -51,7 +52,7 @@ const VERIFIER_DEPENDENCIES = Object.freeze({
     '@vue/compiler-sfc': '3.5.42',
     '@vue/server-renderer': '3.5.42',
     typescript: '5.9.3',
-    vite: '6.4.3',
+    vite: toolchain.vite,
     'vue-tsc': '3.3.11',
   }),
 });

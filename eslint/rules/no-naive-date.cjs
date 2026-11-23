@@ -47,7 +47,7 @@ module.exports = {
     const allowInTests = options.allowInTests ?? false;
     const allowedFiles = options.allowedFiles ?? [];
 
-    const filename = context.getFilename();
+    const filename = context.filename;
     const isTestFile = /\.(test|spec)\.(ts|tsx|js|jsx)$/.test(filename);
     const isAllowedFile = allowedFiles.some((pattern) => filename.includes(pattern));
 
@@ -64,7 +64,7 @@ module.exports = {
           node.callee.name === 'Date'
         ) {
           // Check for inline disable comment
-          const sourceCode = context.getSourceCode();
+          const sourceCode = context.sourceCode;
           const commentsBefore = sourceCode.getCommentsBefore(node);
           const hasDisableComment = commentsBefore.some((comment) =>
             comment.value.includes('eslint-disable-next-line no-naive-date')
@@ -91,7 +91,7 @@ module.exports = {
           node.callee.property.name === 'now'
         ) {
           // Check for inline disable comment
-          const sourceCode = context.getSourceCode();
+          const sourceCode = context.sourceCode;
           const commentsBefore = sourceCode.getCommentsBefore(node);
           const hasDisableComment = commentsBefore.some((comment) =>
             comment.value.includes('eslint-disable-next-line no-naive-date')
@@ -116,7 +116,7 @@ module.exports = {
           node.property.type === 'Identifier' &&
           (node.property.name === 'parse' || node.property.name === 'UTC')
         ) {
-          const sourceCode = context.getSourceCode();
+          const sourceCode = context.sourceCode;
           const commentsBefore = sourceCode.getCommentsBefore(node);
           const hasDisableComment = commentsBefore.some((comment) =>
             comment.value.includes('eslint-disable-next-line no-naive-date')

@@ -1,6 +1,6 @@
 object:
   name: Transaction
-  version: 1.3.0
+  version: 1.4.1
   domain: core.commerce
   description: Canonical transaction record tracking monetary movement, lifecycle, and audit metadata.
   tags:
@@ -215,7 +215,24 @@ metadata:
     - Finance team
     - Risk team
   steward: Platform team
+  relatedLists:
+    - id: approvals
+      label: Approvals for this payment
+      empty: No approvals are linked to this payment here.
+      sources:
+        - { from: Approval, via: subject_id, key: payment_reference, when: { subject_type: Transaction }, row: { line: [{ field: asked_of_name, says: Asked of }], time: due_at } }
+    - id: tasks
+      label: Tasks about this payment
+      empty: No tasks are linked to this payment here.
+      sources:
+        - { from: Task, via: subject_id, key: payment_reference, when: { subject_type: Transaction }, row: { line: [{ field: asked_of_name, says: Doing it }], time: due_at } }
   changelog:
+    - version: 1.4.1
+      date: "2026-11-22"
+      description: "Names who was asked on approval rows and who does the work on task rows. Empty lists describe linked records."
+    - version: 1.4.0
+      date: "2026-11-22"
+      description: "Lists approvals and tasks that name the payment."
     - version: 1.3.0
       date: "2026-11-14"
       description: A resend may be allowed in advance by a standing yes under a grant, and its outcome then reads allowed in advance; the Billing Agent's resend names the grant it was made under.

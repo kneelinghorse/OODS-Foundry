@@ -335,7 +335,7 @@ function runBuiltErrorProbe(option: ProjectedOption): BuiltErrorProbeResult {
   return JSON.parse(child.stdout) as BuiltErrorProbeResult;
 }
 
-describe.sequential("ECharts render worker contract", () => {
+describe("ECharts render worker contract", () => {
   it("stays completely lazy and publishes only the ratified input boundary", async () => {
     const state = await getEChartsRenderWorkerState();
 

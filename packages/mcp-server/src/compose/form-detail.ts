@@ -472,7 +472,9 @@ export function reconcileFormDetail(schema: UiSchema, context: string, composed:
       };
       for (const child of screen.children ?? []) if (child !== holder) dropShown(child);
     }
-    const remaining = Object.keys(fields).filter(name => isScalar(name) && summaryField(name) && !covered.has(name) && !isInternalField(name, fields) && !isUnavailableField(name, fields));
+    const remaining = Object.keys(fields).filter(name => isScalar(name) && summaryField(name) && !covered.has(name)
+      && composed.semantics[name]?.ui_hints?.detailRow !== false
+      && !isInternalField(name, fields) && !isUnavailableField(name, fields));
     if (remaining.length && !tabs) {
       tabs = { id: `${screen.id}-record-tabs`, component: 'Tabs', children: [] };
       screen.children = [...(screen.children ?? []), { id: `${screen.id}-record-body`, component: 'Card', children: [tabs] }];

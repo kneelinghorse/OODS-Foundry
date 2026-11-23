@@ -1,6 +1,6 @@
 trait:
   name: Mandate
-  version: 1.1.1
+  version: 1.1.4
   description: |
     The record of a grant: a standing yes that one actor may act for a person or organization, on stated terms,
     until it ends. It keeps who asked for it, who gave it and in what capacity, who holds it and who it is for; what it
@@ -614,8 +614,8 @@ view_extensions:
   # it and one that keeps only an id shows the id. A list row and a card place the id alone. Every place is left undrawn where the record holds no value for it (`data-oods-omit-empty`). A grant
   # with no end says so in its end line, which the product writes ("No end: it stands until someone ends it"), so an
   # empty end is never drawn as "Not recorded" and never reads as if the grant ends.
-  # On a list row and a card a Text's label is not shown, so the holder, the party and the end are each a value over
-  # its caption ("Billing Agent", "Held by"); the object's summary line is its scope.
+  # The list captions each fact before its value ("Held by Billing Agent"). Cards put the value above its caption.
+  # The object’s summary line is its scope.
   list:
     - component: LabelCell
       position: after
@@ -633,7 +633,7 @@ view_extensions:
       position: after
       props:
         field: ends_note
-        description: Ends
+        description: "Ends:"
         data-oods-omit-empty: true
     # s250-m03 (next step 1888): the last use, in the product's own line; a grant that holds none draws no cell.
     - component: LabelCell
@@ -641,6 +641,7 @@ view_extensions:
       props:
         field: last_use
         description: Last used for
+        data-oods-own-line: true
         data-oods-omit-empty: true
   card:
     - component: LabelCell
@@ -1105,13 +1106,23 @@ dependencies:
   - Stateful
 
 metadata:
+  changelog:
+    - version: 1.1.4
+      date: "2026-11-22"
+      description: "Corrects the reading order of a captioned fact on lists and cards."
+    - version: 1.1.3
+      date: "2026-11-22"
+      description: "Punctuates the end caption on lists before the grant’s own words."
+    - version: 1.1.2
+      date: "2026-11-22"
+      description: "Places a recorded last use on its own line in a Grant list row."
   created: "2026-11-14"
   owners:
     - Core team
   maturity: alpha
   accessibility:
     keyboard: The record's facts add no interactive control; on an open grant, why it is ending is a labelled form input.
-    screenreader: Each fact is read with its visible label, label first on the detail page and the form ("Held by, Billing Agent") and value first on a list row or a card ("Billing Agent, Held by").
+    screenreader: Each fact is read with its visible label, label first on a list row, the detail page and the form ("Held by, Billing Agent") and value first on a card ("Billing Agent, Held by").
   regionsUsed:
     - list
     - card

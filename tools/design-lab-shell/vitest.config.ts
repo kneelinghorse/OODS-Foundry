@@ -11,7 +11,6 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
-    environmentMatchGlobs: [['**/rendererClient.test.ts', 'node']],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json-summary']

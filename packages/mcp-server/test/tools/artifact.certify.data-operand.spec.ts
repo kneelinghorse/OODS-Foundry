@@ -75,14 +75,14 @@ const cartesianIr = (): NormalizedVizSpec =>
 describe('artifact.certify input schema — the mirrored branch $defs (s172 m01)', () => {
   const BRANCHES = ['hierarchy', 'sankey', 'chord', 'network', 'geo'] as const;
 
-  it.each(BRANCHES)(
-    '$defs.%sBranch is deep-equal to viz.render.input.json $defs.%sInput (a copy, not a paraphrase)',
-    (branch) => {
+  // The historical case label contains a literal %s in the second schema reference.
+  for (const branch of BRANCHES) {
+    it(`$defs.${branch}Branch is deep-equal to viz.render.input.json $defs.%sInput (a copy, not a paraphrase)`, () => {
       const mirrored = (certifyInputSchema as any).$defs[`${branch}Branch`];
       const source = vizRenderInputSchema.$defs[`${branch}Input`];
       expect(mirrored).toEqual(source);
-    },
-  );
+    });
+  }
 
   it('$defs.hierarchyNode is deep-equal to viz.render.input.json $defs.hierarchyNode (the recursive $ref target comes along)', () => {
     expect((certifyInputSchema as any).$defs.hierarchyNode).toEqual(vizRenderInputSchema.$defs.hierarchyNode);

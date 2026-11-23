@@ -1,6 +1,6 @@
 object:
   name: Subscription
-  version: 2.0.0
+  version: 2.1.0
   domain: core.billing
   description: Canonical subscription record composing lifecycle, billing, and cancellation semantics.
   tags:
@@ -151,7 +151,17 @@ schema:
     required: false
     description: Recorded payments, oldest first, each with its time and amount in minor units. Drawn by the payment chart.
 
+  organization_id:
+    type: string
+    required: false
+    description: The identifier of the organization named as the customer.
+
 semantics:
+  organization_id:
+    semantic_type: organization.id
+    token_mapping: tokenMap(organization.id.primary)
+    ui_hints:
+      detailRow: false
   subscription_id:
     semantic_type: billing.subscription.id
     token_mapping: tokenMap(billing.subscription.id)
@@ -231,6 +241,9 @@ metadata:
   steward: Design team
   maturity: beta
   changelog:
+    - version: 2.1.0
+      date: "2026-11-22"
+      description: "Adds the optional customer organization id for lists on the organization’s page."
     - version: 2.0.0
       date: "2026-06-24"
       description: >-
@@ -262,6 +275,7 @@ samples:
     plan_interval: monthly
     billing_interval: monthly
     customer_name: Northwind Traders
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01
     customer_email: billing@northwind.example
     status: active
     state_history:
@@ -299,6 +313,7 @@ samples:
     plan_interval: monthly
     billing_interval: monthly
     customer_name: Northwind Traders
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01
     customer_email: billing@northwind.example
     status: paused
     state_history:
@@ -332,6 +347,7 @@ samples:
     plan_interval: monthly
     billing_interval: monthly
     customer_name: Lindqvist Bakery
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a03
     customer_email: finance@lindqvist.example
     status: active
     state_history:
@@ -372,6 +388,7 @@ samples:
     plan_interval: monthly
     billing_interval: monthly
     customer_name: Blue Harbor Studio
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a02
     customer_email: accounts@blueharbor.example
     status: trialing
     state_history:
@@ -400,6 +417,7 @@ samples:
     plan_interval: monthly
     billing_interval: monthly
     customer_name: Kestrel Print Co.
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a04
     customer_email: hello@kestrelprint.example
     status: past_due
     state_history:
@@ -436,6 +454,7 @@ samples:
     plan_interval: yearly
     billing_interval: yearly
     customer_name: Tidewater Co-op
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05
     customer_email: treasurer@tidewater.example
     status: active
     state_history:
@@ -467,6 +486,7 @@ samples:
     plan_interval: monthly
     billing_interval: monthly
     customer_name: Marlow Yoga
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a06
     customer_email: studio@marlowyoga.example
     status: terminated
     state_history:
@@ -502,6 +522,7 @@ samples:
     plan_interval: monthly
     billing_interval: monthly
     customer_name: Summit Outfitters
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a07
     customer_email: ap@summit.example
     status: pending_cancellation
     state_history:

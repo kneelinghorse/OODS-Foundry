@@ -58,7 +58,7 @@ const config: StorybookConfig = {
     '@storybook/addon-a11y',
     '@storybook/addon-onboarding',
     '@chromatic-com/storybook',
-    './apps/explorer/addons/storybook-addon-agent/register.tsx',
+    path.resolve(workspaceRoot, 'apps/explorer/addons/storybook-addon-agent/preset.mjs'),
   ],
   framework: {
     name: '@storybook/react-vite',

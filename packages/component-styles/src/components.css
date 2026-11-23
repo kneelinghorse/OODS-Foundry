@@ -2052,6 +2052,7 @@ div.oods-field[data-oods-component='Checkbox'] { display: grid; grid-template-co
 }
 .oods-collection-row [data-oods-label-cell-caption] { color: var(--sys-text-secondary, GrayText); }
 [data-oods-collection='rows'] > .oods-collection .oods-collection-row > :is(time, [data-oods-component='RelativeTimestamp']) { flex-basis: 100%; }
+[data-oods-collection='rows'] > .oods-collection .oods-collection-row > [data-oods-own-line] { flex-basis: 100%; }
 @media (max-width: 600px) {
   [data-oods-collection='rows'] > .oods-collection .oods-collection-row { flex-direction: row; align-items: center; column-gap: var(--sys-control-gap, 0.5rem); row-gap: var(--sys-control-gap-compact, 0.25rem); }
   [data-oods-collection='rows'] > .oods-collection .oods-collection-row > :first-child { flex: none; inline-size: 100%; }

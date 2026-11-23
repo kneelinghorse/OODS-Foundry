@@ -48,8 +48,8 @@ export interface Article {
 
   /**
    * One kept line saying what the outcome rests on ("Approved by Ruth Adeyemi · version 3 · 2 Nov"), or why no
-  approval was asked. It restates the Approval records, since a thing's own page lists its approvals only where the
-  thing declares that list (metadata.relatedLists), and no shipped object does. Read-only.
+  approval was asked. The product writes this line. A payment or article also lists the individual
+  approvals that name it. Read-only.
 
    *
    * Source: Approvable (trait)

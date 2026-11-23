@@ -1,6 +1,6 @@
 trait:
   name: Closeout
-  version: 1.0.0
+  version: 1.0.1
   description: |
     The record of what became of the work after something ended: what ended, how and when, who it was for, what the
     record covers and where it stands now. It also keeps when your product stops waiting for answers, until when access
@@ -436,13 +436,17 @@ dependencies:
   - Stateful
 
 metadata:
+  changelog:
+    - version: 1.0.1
+      date: "2026-11-22"
+      description: "Corrects the reading order of a captioned fact on lists and cards."
   created: "2026-11-17"
   owners:
     - Core team
   maturity: alpha
   accessibility:
     keyboard: The record's facts add no interactive control.
-    screenreader: Each fact is read with its visible label, label first on the detail page and the form ("For, Northwind Traders") and value first on a list row or a card ("Northwind Traders, For").
+    screenreader: Each fact is read with its visible label, label first on a list row, the detail page and the form ("For, Northwind Traders") and value first on a card ("Northwind Traders, For").
   regionsUsed:
     - list
     - card

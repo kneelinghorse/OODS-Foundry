@@ -28,6 +28,7 @@ import type { ObjectDefinition, RelatedList } from '../objects/types.js';
 import type { FieldSchemaEntry } from '../schemas/generated.js';
 import { recordNameField } from './record-label.js';
 import { fieldLabel } from './label-generator.js';
+import { declaredMoney } from './declared-money.js';
 import { statusTableOf } from './status-table.js';
 
 export type Finality = RelatedFinality;
@@ -38,7 +39,7 @@ type Row = Record<string, unknown>;
 
 const short = (name: unknown) => String(name).split('/').pop();
 const bare = (type: unknown) => String(type ?? '').replace(/\?$/, '');
-type Described = { definition: ObjectDefinition; shape: RelatedShape; object: RelatedObject; labels: Record<string, string> };
+type Described = { definition: ObjectDefinition; shape: RelatedShape; composed: ComposedObject; object: RelatedObject; labels: Record<string, string> };
 const cache = new WeakMap<ObjectDefinition, Omit<Described, 'definition'>>();
 
 /** The shape related-list checks read: the composed fields, the lifecycle's states and declared order, and the own id. */
@@ -78,7 +79,7 @@ function described(name: string): Described | undefined {
       const label = composed.semantics[field]?.ui_hints?.label;
       return [field, typeof label === 'string' ? label : fieldLabel(field)];
     }));
-    known = { shape, labels, object: {
+    known = { shape, composed, labels, object: {
       name: definition.object.name, ...(shape.key ? { key: shape.key } : {}), ...(titleField ? { titleField } : {}), ...(shape.order ? { order: shape.order } : {}),
       ...(statusLabels && typeof statusLabels === 'object' && !Array.isArray(statusLabels) ? { statusLabels } : {}),
       instantFields, dateOnlyFields, noun: { one: noun, other: `${noun}s` }, ...(statusDomain !== 'lifecycle' ? { statusDomain } : {}),
@@ -125,13 +126,22 @@ function usable(subjectName: string, subject: Described, list: RelatedList, inde
 }
 
 /* Keep only labels a related row reads in the generated app's data. */
-function withTimeLabels(target: Described, lists: readonly RelatedList[]): RelatedObject {
+function withRowDisplay(target: Described, lists: readonly RelatedList[]): RelatedObject {
   const timeLabels: Record<string, string> = {};
+  const moneyFields: Record<string, { currencyField: string; minorUnits?: number }> = {};
   for (const list of lists) for (const source of list.sources) {
+    if (!sourceNames(source.from).includes(target.object.name)) continue;
     const time = source.row?.time;
-    if (typeof time === 'string' && sourceNames(source.from).includes(target.object.name)) timeLabels[time] = target.labels[time]!;
+    if (typeof time === 'string') timeLabels[time] = target.labels[time]!;
+    for (const item of source.row?.line ?? []) {
+      if (typeof item === 'string' || !('says' in item) || !('field' in item)) continue;
+      const { schema, semantics, traits } = target.composed;
+      const owner = traits.find(trait => trait.definition.schema[item.field] === schema[item.field]);
+      const money = declaredMoney(item.field, schema, semantics, traits, owner);
+      if (money?.currencyField) moneyFields[item.field] = { currencyField: money.currencyField, minorUnits: money.minorUnits };
+    }
   }
-  return Object.keys(timeLabels).length ? { ...target.object, timeLabels } : target.object;
+  return { ...target.object, ...(Object.keys(timeLabels).length ? { timeLabels } : {}), ...(Object.keys(moneyFields).length ? { moneyFields } : {}) };
 }
 
 /** Resolve one declared list for one record of the subject object. */
@@ -145,7 +155,7 @@ export function resolveRelatedList(subjectName: string, record: Row, list: Relat
   const objects: Record<string, RelatedObject> = {};
   for (const source of fit?.sources ?? []) for (const from of sourceNames(source.from)) {
     const found = described(from);
-    if (found) objects[from] = { ...withTimeLabels(found, [fit!]), records: (found.definition.samples ?? []) as Row[] };
+    if (found) objects[from] = { ...withRowDisplay(found, [fit!]), records: (found.definition.samples ?? []) as Row[] };
   }
   const resolved = resolveRelatedListRows((fit ?? { ...list, sources: [] }) as CoreList, subject.object, record, objects);
   return { ...resolved, warnings };
@@ -180,6 +190,7 @@ function copiedFields(object: RelatedObject, lists: readonly RelatedList[], from
       else for (const field of Object.keys(item.when)) fields.add(field);
     }
   }
+  for (const money of Object.values(object.moneyFields ?? {})) fields.add(money.currencyField);
   return [...fields];
 }
 
@@ -203,10 +214,11 @@ export function relatedAppData(subjectName: string): { lists: RelatedList[]; own
       if (objects[from]) continue;
       const found = described(from);
       if (!found) continue;
-      const fields = copiedFields(found.object, lists, from);
+      const shape = withRowDisplay(found, lists);
+      const fields = copiedFields(shape, lists, from);
       const records = ((found.definition.samples ?? []) as Row[]).map(sample => Object.fromEntries(fields.filter(field => Object.hasOwn(sample, field)).map(field => [field, structuredClone(sample[field])])));
-      objects[from] = { ...withTimeLabels(found, lists), records };
+      objects[from] = { ...shape, records };
     }
   }
-  return { lists, own: withTimeLabels(subject, lists), objects, copied };
+  return { lists, own: withRowDisplay(subject, lists), objects, copied };
 }

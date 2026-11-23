@@ -2,6 +2,30 @@
 
 What changed in each version of OODS Foundry, in the terms you use it in.
 
+## 0.19.0
+
+When a grant has a last-use summary, the Grant list shows “Last used for” on its own line. “Ends:” introduces the end in the party’s words (Mandate 1.1.4).
+
+Mandate, Assignment 1.0.1 and Closeout 1.0.1 now describe the reading order on lists and cards. A list reads “Doing it Billing Agent”. A card shows the name above “Doing it”.
+
+Closure 1.0.1 calls its update time “Last report” on its list.
+
+Payment and article detail pages list the approvals and tasks that name them. A task lists its approvals and the tasks made from it. The changed objects are Transaction 1.4.1, Article 1.2.1 and Task 1.1.1.
+
+Approvable 1.1.2 describes how the product’s approval summary sits alongside the individual asks.
+
+Subscription 2.1.0, Usage 1.1.0 and Invoice 1.1.0 can identify their customer with the optional organization_id field. Existing records can still supply just the customer’s name.
+
+Organization 1.3.1 lists subscriptions, usage and invoices after payments. Each heading counts the records that identify that organization.
+
+Generated Vue screens now declare Vue directly at the same version as generated Vue workflows.
+
+Generated apps now pin Vite 6.4.6. This clears five advisories in Vite’s development server, including one rated high that affects Windows. In an app you already generated, change `vite` to `6.4.6` in its `package.json` and reinstall.
+
+Updated the development and test toolchain to Vitest 5, ESLint 10, Storybook 10 and Vite 6.4.6. Cleared all high and critical findings in the repository lockfile while preserving installed runtime dependencies and the public MCP tool list.
+
+Not in this release are grants passed from one agent to another, pages in each subject’s own time zone, scheduled reconfirmation, or pages that change with the viewer. A person cannot yet stop all an agent’s work at once or pause the agent from its sponsor’s page. Each ask still names one actor. How far an answer reaches across asks, and how a person’s own agent could read the page as data, remain open.
+
 ## 0.18.0
 
 On Grant’s Edit form, “Keep it” and “Pause it instead” restore the saved ending reason and keep unrelated edits. The form shows “Unsaved changes” when the draft differs from the saved grant. A saved result appears below the navigation and clears on the next screen. Task and Transaction start cancellation at “Choose a reason”. A read-only currency beside a money fact has no editor. Approval’s form labels the choice “Answer” and keeps the name of the ask read-only. Its facts appear above the answer.

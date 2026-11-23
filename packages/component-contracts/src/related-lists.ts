@@ -21,6 +21,7 @@
  *   as a closure's page reads its grant's end, with the noun that names what ended in the row's sentence.
  */
 import { historyAttribution } from './attribution.js';
+import { formatPriceAmount } from './billing.js';
 import { formatDateTime } from './date-time.js';
 import { enumOptionLabel, getStatusPresentation, type StatusDomain } from './status-registry.js';
 
@@ -31,7 +32,7 @@ type Row = Record<string, unknown>;
  * A row line's item: a field of the source; fixed words shown when its fields hold the given values ({ says, when }); or,
  * s250-m04 (next step 1887, item 4), a field shown except when it holds one of the given values ({ field, except }).
  */
-export type RelatedLineItem = string | { says: string; when: Record<string, Scalar> } | { field: string; except: Scalar | Scalar[] };
+export type RelatedLineItem = string | { says: string; when: Record<string, Scalar> } | { field: string; except: Scalar | Scalar[] } | { field: string; says: string };
 /** s250-m01: what a source's `when` asks of a field: this value, no value (null), or any value ({ present: true }). */
 export type RelatedWhenValue = Scalar | { present: true };
 
@@ -84,6 +85,8 @@ export interface RelatedObject {
   /** Fields that hold an instant, shown as a date and time; `dateOnlyFields` show the date alone. */
   instantFields?: readonly string[];
   dateOnlyFields?: readonly string[];
+  /** Display rules for captioned fields that declare a currency on the source object. */
+  moneyFields?: Readonly<Record<string, { currencyField: string; minorUnits?: number }>>;
   timeLabels?: Readonly<Record<string, string>>;
   /** The object's name in a sentence: "grant", "grants". */
   noun?: { one: string; other: string };
@@ -226,11 +229,25 @@ export function relatedTitle(object: RelatedObject, record: Row): string {
   return String(present(value) ? value : object.key && present(record[object.key]) ? record[object.key] : '');
 }
 
-function lineOf(source: RelatedListSource, record: Row): string[] {
+function captionedValue(target: RelatedObject, field: string, record: Row): string {
+  const value = record[field];
+  const money = target.moneyFields?.[field];
+  if (money) {
+    const currency = record[money.currencyField];
+    if (typeof currency !== 'string' || !/^[a-z]{3}$/i.test(currency)) return 'Currency unavailable';
+    if (money.minorUnits) return formatPriceAmount(value, currency, money.minorUnits);
+    return typeof value === 'number' && Number.isFinite(value)
+      ? new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(value) : 'Invalid amount';
+  }
+  return typeof value === 'number' ? value.toLocaleString('en-US', { maximumFractionDigits: 20 }) : String(value);
+}
+
+function lineOf(target: RelatedObject, source: RelatedListSource, record: Row): string[] {
   return (source.row?.line ?? []).flatMap(item => {
     if (typeof item === 'string') return present(record[item]) ? [String(record[item])] : [];
     if ('field' in item) {
       const value = record[item.field];
+      if ('says' in item) return present(value) ? [`${item.says}: ${captionedValue(target, item.field, record)}`] : [];
       const except = (Array.isArray(item.except) ? item.except : [item.except]).map(String);
       return present(value) && !except.includes(String(value)) ? [String(value)] : [];
     }
@@ -285,7 +302,7 @@ export function resolveRelatedListRows(list: RelatedList, subject: RelatedObject
   const seen = new Set<string>();
   const rowOf = (target: RelatedObject, source: RelatedListSource, sample: Row): RelatedRow => {
     const key = target.key && present(sample[target.key]) ? String(sample[target.key]) : undefined;
-    const line = lineOf(source, sample);
+    const line = lineOf(target, source, sample);
     const domain = target.statusDomain ?? 'lifecycle';
     const stateLabel = (state: string, inSentence = false) => {
       if (target.statusLabels && Object.hasOwn(target.statusLabels, state)) return target.statusLabels[state]!;

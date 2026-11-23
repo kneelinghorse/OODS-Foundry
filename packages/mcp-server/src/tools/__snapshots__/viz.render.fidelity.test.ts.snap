@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'area': viz.render produces a spec that compiles, parses, draws, and keeps its data 1`] = `
+exports[`viz.render render fidelity (renderable, not just AJV-valid) > area: viz.render produces a spec that compiles, parses, draws, and keeps its data 1`] = `
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "autosize": {
@@ -132,7 +132,7 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'area': v
 }
 `;
 
-exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'bar': viz.render produces a spec that compiles, parses, draws, and keeps its data 1`] = `
+exports[`viz.render render fidelity (renderable, not just AJV-valid) > bar: viz.render produces a spec that compiles, parses, draws, and keeps its data 1`] = `
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "autosize": {
@@ -266,7 +266,150 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'bar': vi
 }
 `;
 
-exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'heatmap': viz.render produces a spec that compiles, parses, draws, and keeps its data 1`] = `
+exports[`viz.render render fidelity (renderable, not just AJV-valid) > explicit color range (F5): the agent-supplied scale wins over the baked OODS palette and stays renderable 1`] = `
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+  "autosize": {
+    "contains": "padding",
+    "type": "fit-y",
+  },
+  "config": {
+    "axis": {
+      "domainColor": "#D4D4D4",
+      "gridColor": "#E5E5E5",
+      "labelColor": "#525252",
+      "labelFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "tickColor": "#D4D4D4",
+      "titleColor": "#0A0A0A",
+      "titleFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+    },
+    "axisX": {
+      "grid": false,
+    },
+    "axisY": {
+      "grid": true,
+      "tickCount": {
+        "expr": "min(5, ceil(height / 40))",
+      },
+    },
+    "background": "#FFFFFF",
+    "font": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+    "legend": {
+      "labelColor": "#525252",
+      "labelFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "titleColor": "#0A0A0A",
+      "titleFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+    },
+    "title": {
+      "anchor": "start",
+      "color": "#0A0A0A",
+      "font": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "fontSize": 24,
+      "fontWeight": 600,
+    },
+    "view": {
+      "stroke": null,
+    },
+  },
+  "data": {
+    "values": [
+      {
+        "quarter": "2024-01",
+        "region": "North",
+        "revenue": 120000,
+        "units": 340,
+      },
+      {
+        "quarter": "2024-01",
+        "region": "South",
+        "revenue": 135000,
+        "units": 410,
+      },
+      {
+        "quarter": "2024-02",
+        "region": "North",
+        "revenue": 128000,
+        "units": 360,
+      },
+      {
+        "quarter": "2024-02",
+        "region": "South",
+        "revenue": 142000,
+        "units": 430,
+      },
+      {
+        "quarter": "2024-03",
+        "region": "North",
+        "revenue": 131000,
+        "units": 372,
+      },
+      {
+        "quarter": "2024-03",
+        "region": "South",
+        "revenue": 150000,
+        "units": 455,
+      },
+    ],
+  },
+  "description": "Line chart of sum of revenue by quarter, split by region.",
+  "encoding": {
+    "color": {
+      "field": "region",
+      "scale": {
+        "range": [
+          "#264653",
+          "#E76F51",
+        ],
+      },
+      "title": "Region",
+      "type": "nominal",
+    },
+    "x": {
+      "axis": {
+        "labelExpr": "utcFormat(datum.value, {date: '%b %d'})",
+      },
+      "field": "quarter",
+      "scale": {
+        "type": "utc",
+      },
+      "title": "Quarter",
+      "type": "temporal",
+    },
+    "y": {
+      "aggregate": "sum",
+      "field": "revenue",
+      "title": "Revenue",
+      "type": "quantitative",
+    },
+  },
+  "height": 300,
+  "mark": {
+    "strokeWidth": 2.5,
+    "type": "line",
+  },
+  "title": "Line chart",
+  "usermeta": {
+    "oods": {
+      "a11y": {
+        "ariaLabel": "Line chart of Revenue by Quarter",
+        "description": "Line chart of sum of revenue by quarter, split by region.",
+      },
+      "name": "Line chart",
+      "portability": {
+        "tableColumnOrder": [
+          "quarter",
+          "revenue",
+          "region",
+          "units",
+        ],
+      },
+      "specId": "viz:line",
+    },
+  },
+}
+`;
+
+exports[`viz.render render fidelity (renderable, not just AJV-valid) > heatmap: viz.render produces a spec that compiles, parses, draws, and keeps its data 1`] = `
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "config": {
@@ -407,7 +550,7 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'heatmap'
 }
 `;
 
-exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'line': viz.render produces a spec that compiles, parses, draws, and keeps its data 1`] = `
+exports[`viz.render render fidelity (renderable, not just AJV-valid) > line: viz.render produces a spec that compiles, parses, draws, and keeps its data 1`] = `
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "autosize": {
@@ -554,7 +697,7 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'line': v
 }
 `;
 
-exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'scatter': viz.render produces a spec that compiles, parses, draws, and keeps its data 1`] = `
+exports[`viz.render render fidelity (renderable, not just AJV-valid) > scatter: viz.render produces a spec that compiles, parses, draws, and keeps its data 1`] = `
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
   "autosize": {
@@ -697,149 +840,6 @@ exports[`viz.render render fidelity (renderable, not just AJV-valid) > 'scatter'
         ],
       },
       "specId": "viz:scatter",
-    },
-  },
-}
-`;
-
-exports[`viz.render render fidelity (renderable, not just AJV-valid) > explicit color range (F5): the agent-supplied scale wins over the baked OODS palette and stays renderable 1`] = `
-{
-  "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
-  "autosize": {
-    "contains": "padding",
-    "type": "fit-y",
-  },
-  "config": {
-    "axis": {
-      "domainColor": "#D4D4D4",
-      "gridColor": "#E5E5E5",
-      "labelColor": "#525252",
-      "labelFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-      "tickColor": "#D4D4D4",
-      "titleColor": "#0A0A0A",
-      "titleFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-    },
-    "axisX": {
-      "grid": false,
-    },
-    "axisY": {
-      "grid": true,
-      "tickCount": {
-        "expr": "min(5, ceil(height / 40))",
-      },
-    },
-    "background": "#FFFFFF",
-    "font": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-    "legend": {
-      "labelColor": "#525252",
-      "labelFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-      "titleColor": "#0A0A0A",
-      "titleFont": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-    },
-    "title": {
-      "anchor": "start",
-      "color": "#0A0A0A",
-      "font": "Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
-      "fontSize": 24,
-      "fontWeight": 600,
-    },
-    "view": {
-      "stroke": null,
-    },
-  },
-  "data": {
-    "values": [
-      {
-        "quarter": "2024-01",
-        "region": "North",
-        "revenue": 120000,
-        "units": 340,
-      },
-      {
-        "quarter": "2024-01",
-        "region": "South",
-        "revenue": 135000,
-        "units": 410,
-      },
-      {
-        "quarter": "2024-02",
-        "region": "North",
-        "revenue": 128000,
-        "units": 360,
-      },
-      {
-        "quarter": "2024-02",
-        "region": "South",
-        "revenue": 142000,
-        "units": 430,
-      },
-      {
-        "quarter": "2024-03",
-        "region": "North",
-        "revenue": 131000,
-        "units": 372,
-      },
-      {
-        "quarter": "2024-03",
-        "region": "South",
-        "revenue": 150000,
-        "units": 455,
-      },
-    ],
-  },
-  "description": "Line chart of sum of revenue by quarter, split by region.",
-  "encoding": {
-    "color": {
-      "field": "region",
-      "scale": {
-        "range": [
-          "#264653",
-          "#E76F51",
-        ],
-      },
-      "title": "Region",
-      "type": "nominal",
-    },
-    "x": {
-      "axis": {
-        "labelExpr": "utcFormat(datum.value, {date: '%b %d'})",
-      },
-      "field": "quarter",
-      "scale": {
-        "type": "utc",
-      },
-      "title": "Quarter",
-      "type": "temporal",
-    },
-    "y": {
-      "aggregate": "sum",
-      "field": "revenue",
-      "title": "Revenue",
-      "type": "quantitative",
-    },
-  },
-  "height": 300,
-  "mark": {
-    "strokeWidth": 2.5,
-    "type": "line",
-  },
-  "title": "Line chart",
-  "usermeta": {
-    "oods": {
-      "a11y": {
-        "ariaLabel": "Line chart of Revenue by Quarter",
-        "description": "Line chart of sum of revenue by quarter, split by region.",
-      },
-      "name": "Line chart",
-      "portability": {
-        "tableColumnOrder": [
-          "quarter",
-          "revenue",
-          "region",
-          "units",
-        ],
-      },
-      "specId": "viz:line",
     },
   },
 }

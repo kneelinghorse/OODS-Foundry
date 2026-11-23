@@ -1187,7 +1187,7 @@ describe('component map coverage', () => {
       }),
     );
 
-    const window = new Window({ settings: { disableJavaScriptEvaluation: false } });
+    const window = new Window({ settings: { enableJavaScriptEvaluation: true, suppressInsecureJavaScriptEnvironmentWarning: true } });
     window.document.write(html);
     const tabs = [...window.document.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
     const panels = [...window.document.querySelectorAll<HTMLElement>('[role="tabpanel"]')];

@@ -8,24 +8,16 @@ const metadataRule = require('../../eslint/rules/no-account-unsafe-metadata.cjs'
 
 async function lintMetadata(code: string) {
   const eslint = new ESLint({
-    useEslintrc: false,
-    plugins: {
-      oods: {
-        rules: {
-          'no-account-unsafe-metadata': metadataRule,
-        },
-      },
-    },
+    overrideConfigFile: true,
     overrideConfig: {
-      parser: require.resolve('@typescript-eslint/parser'),
-      parserOptions: {
+      files: ['**/*.{ts,tsx}'],
+      languageOptions: {
+        parser: require('@typescript-eslint/parser'),
         ecmaVersion: 2022,
         sourceType: 'module',
       },
-      plugins: ['oods'],
-      rules: {
-        'oods/no-account-unsafe-metadata': 'error',
-      },
+      plugins: { oods: { rules: { 'no-account-unsafe-metadata': metadataRule } } },
+      rules: { 'oods/no-account-unsafe-metadata': 'error' },
     },
   });
 

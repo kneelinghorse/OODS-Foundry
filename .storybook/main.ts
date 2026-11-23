@@ -1,5 +1,5 @@
 import type { StorybookConfig } from '@storybook/react-vite';
-import baseConfig from '../storybook.config';
+import baseConfig from '../storybook.config.ts';
 const baseViteFinal = baseConfig.viteFinal;
 
 function remapStories(patterns: StorybookConfig['stories']): StorybookConfig['stories'] {

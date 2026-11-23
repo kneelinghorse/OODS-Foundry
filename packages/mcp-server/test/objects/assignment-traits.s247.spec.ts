@@ -67,7 +67,7 @@ describe('core/Assignment is a shipped trait', () => {
   it('holds the record\'s fields, every id a plain string so an imported reference can bind, the ask the one field required', () => {
     expect(listTraits()).toContain('Assignment');
     const trait = loadTrait('core/Assignment');
-    expect(trait.trait).toMatchObject({ name: 'Assignment', version: '1.0.0', category: 'core' });
+    expect(trait.trait).toMatchObject({ name: 'Assignment', version: '1.0.1', category: 'core' });
     expect(Object.keys(trait.schema)).toEqual(FIELDS);
     for (const field of FIELDS.filter(name => name.endsWith('_id'))) expect(trait.schema[field]!.type, field).toBe('string');
     expect(Object.entries(trait.schema).filter(([, field]) => field.required).map(([name]) => name)).toEqual(['instruction']);

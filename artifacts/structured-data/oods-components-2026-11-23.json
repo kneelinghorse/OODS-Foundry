@@ -8,7 +8,7 @@
     "approvedRuntimeCensus": null,
     "classificationStatus": "proposed-awaiting-approval"
   },
-  "generatedAt": "2026-11-20T05:13:51Z",
+  "generatedAt": "2026-11-23T04:02:57Z",
   "stats": {
     "componentCount": 114,
     "traitCount": 55,
@@ -6271,7 +6271,7 @@
           "priority": null,
           "props": {
             "field": "ends_note",
-            "description": "Ends",
+            "description": "Ends:",
             "data-oods-omit-empty": true
           },
           "source": "traits/core/Mandate.trait.yaml"
@@ -6285,6 +6285,7 @@
           "props": {
             "field": "last_use",
             "description": "Last used for",
+            "data-oods-own-line": true,
             "data-oods-omit-empty": true
           },
           "source": "traits/core/Mandate.trait.yaml"
@@ -18356,8 +18357,8 @@
     },
     {
       "name": "Approvable",
-      "version": "1.1.1",
-      "description": "The ability to be approved: the thing's own rule for which change needs which level of yes, from how many and from\nwhom, and its outcome, worked out from the approvals that still stand. The approvals themselves are records of\ntheir own (the Approval object, through the Decision trait): one ask to one actor that becomes their answer.\n\nThe rule is the parameters. `levels` names the levels of yes the product declares, least deliberate first, as Decision does on\nthe Approval; `levelDefinitions` says what each one is, in six short texts; `requiredLevels` says which change (a\nstate the thing moves to, or a named action) needs which level; `approvalsNeeded`, `askerMayAnswer`,\n`agentLevels` and `lapsesOnChange` say how many, whether the asker may answer, which levels an agent's yes may\nsatisfy, and whether a yes lapses when the thing changes. `inAdvance` names the changes a grant's standing yes may\nallow in advance, where the product lets a yes given earlier stand for one asked now; it is empty by default, so\nevery change the rule names is asked each time. The definitions are kept with the rule; no screen changes by level.\n\nThe outcome is two read-only fields: `approval_state`, under a name of its own so it never collides with the\nlifecycle's `status`, and `approval_summary`, one kept line (\"Approved by Ruth Adeyemi · version 3 · 2 Nov\").\nThe product's own code works the outcome out from the approvals and writes both fields; they are kept off the\nthing's form and shown on its detail page. The summary restates the Approval records, since a thing's own page lists\nits approvals only where the thing declares that list (metadata.relatedLists), and no shipped object does.\n\nOODS Foundry shows the outcome; it does not work it out. It does not count approvals, check who may approve,\nexpire an ask, lock the thing or stop a change.",
+      "version": "1.1.2",
+      "description": "The ability to be approved: the thing's own rule for which change needs which level of yes, from how many and from\nwhom, and its outcome, worked out from the approvals that still stand. The approvals themselves are records of\ntheir own (the Approval object, through the Decision trait): one ask to one actor that becomes their answer.\n\nThe rule is the parameters. `levels` names the levels of yes the product declares, least deliberate first, as Decision does on\nthe Approval; `levelDefinitions` says what each one is, in six short texts; `requiredLevels` says which change (a\nstate the thing moves to, or a named action) needs which level; `approvalsNeeded`, `askerMayAnswer`,\n`agentLevels` and `lapsesOnChange` say how many, whether the asker may answer, which levels an agent's yes may\nsatisfy, and whether a yes lapses when the thing changes. `inAdvance` names the changes a grant's standing yes may\nallow in advance, where the product lets a yes given earlier stand for one asked now; it is empty by default, so\nevery change the rule names is asked each time. The definitions are kept with the rule; no screen changes by level.\n\nThe outcome is two read-only fields: `approval_state`, under a name of its own so it never collides with the\nlifecycle's `status`, and `approval_summary`, one kept line (\"Approved by Ruth Adeyemi · version 3 · 2 Nov\").\nThe product's own code works the outcome out from the approvals and writes both fields; they are kept off the\nthing's form and shown on its detail page. The summary is the product’s account of the outcome. A payment or article\nalso lists the individual approvals that name it, through metadata.relatedLists.\n\nOODS Foundry shows the outcome; it does not work it out. It does not count approvals, check who may approve,\nexpire an ask, lock the thing or stop a change.",
       "category": "core",
       "tags": [
         "approval-rule",
@@ -18479,7 +18480,7 @@
           "type": "string",
           "required": false,
           "readOnly": true,
-          "description": "One kept line saying what the outcome rests on (\"Approved by Ruth Adeyemi · version 3 · 2 Nov\"), or why no\napproval was asked. It restates the Approval records, since a thing's own page lists its approvals only where the\nthing declares that list (metadata.relatedLists), and no shipped object does. Read-only.\n",
+          "description": "One kept line saying what the outcome rests on (\"Approved by Ruth Adeyemi · version 3 · 2 Nov\"), or why no\napproval was asked. The product writes this line. A payment or article also lists the individual\napprovals that name it. Read-only.\n",
           "validation": {
             "maxLength": 240
           }
@@ -18506,6 +18507,13 @@
       "tokens": {},
       "dependencies": [],
       "metadata": {
+        "changelog": [
+          {
+            "version": "1.1.2",
+            "date": "2026-11-22",
+            "description": "Distinguishes the product’s summary from the individual approvals listed on a payment or article."
+          }
+        ],
         "created": "2026-11-11",
         "updated": "2026-11-14",
         "owners": [
@@ -18965,7 +18973,7 @@
     },
     {
       "name": "Assignment",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "description": "The record of one ask to one person or agent to do one piece of work, and what became of it: who asked, and for\nwhom; who is doing it; exactly what was asked; what the work is about; what it waits on; where it came from; and\nhow it ended. A task is an ask, not a ticket: the thing the work is about (an invoice, a payment, an issue) stays\nthe product's own record, and the task points at it. The Task object composes this trait, and the importer\nproposes it for another system's record of work, so every field lives here and a proposal can bind what the\nsource has.\n\nThe state of the work is not a field of this trait. It is the record's own lifecycle, through Stateful: for a\nTask, not started, working, needs input, waiting, paused, outcome unknown, and its five endings. A changed ask is\na new task. Handing the whole of the work on ends this one and starts another that names it as the one it came\nfrom; asking for help with a part starts another while this one waits.\n\nA reference to a person, an agent, a task or a thing is an id and a kept name. The name is kept on the record, so\nit still reads after the person leaves or the thing is deleted, and the record's rows show it in place of the id;\nthe closed Reference details block lists the ids themselves. The kinds are the Actor trait's words: who asked can\nbe a person, an agent or a system (an automation); the one doing the work is a person or an agent. No field says\nwhat the one doing the work may do: their authority lives on their own record, a person's account and roles, an\nagent's rules and any grant it holds from the one the work is for.\n\nOODS Foundry keeps and shows this record. It does not run, retry, pause, cancel or time out the work, check who may\ndo it, or keep the try count, what a task waits on or the first ask true.",
       "category": "core",
       "tags": [
@@ -19715,6 +19723,13 @@
         "Stateful"
       ],
       "metadata": {
+        "changelog": [
+          {
+            "version": "1.0.1",
+            "date": "2026-11-22",
+            "description": "Corrects the reading order of a captioned fact on lists and cards."
+          }
+        ],
         "created": "2026-11-13",
         "owners": [
           "Core team"
@@ -19722,7 +19737,7 @@
         "maturity": "alpha",
         "accessibility": {
           "keyboard": "The record's facts add no interactive control; the three fields the doer writes are labelled form inputs.",
-          "screenreader": "Each fact is read with its visible label, label first on the detail page and the form (\"Doing it, Billing Agent\") and value first on a list row or a card (\"Billing Agent, Doing it\")."
+          "screenreader": "Each fact is read with its visible label, label first on a list row, the detail page and the form (\"Doing it, Billing Agent\") and value first on a card (\"Billing Agent, Doing it\")."
         },
         "regionsUsed": [
           "list",
@@ -21075,7 +21090,7 @@
     },
     {
       "name": "Closeout",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "description": "The record of what became of the work after something ended: what ended, how and when, who it was for, what the\nrecord covers and where it stands now. It also keeps when your product stops waiting for answers, until when access\nalready given may still work, and the receipt your product sent, each as your product reports it. The Closure object,\nthe third part of the Grant story, composes this trait for a grant that was given and then ended; a team's own record of\na revocation or an offboarding can compose it too.\n\nWho was told, what each answered and what became of each piece of work are not fields of this trait. They are the\nrecord's history, through Stateful: each line names who reported it, and a line that reports without moving the\nrecord's state keeps that state. The state is the record's own lifecycle.\n\nA reference to what ended, or to who it was for, is an id and a kept name, so it still reads after that record is\ngone. Every field is written by your product when it reports, so a form reads them as facts and edits none. An\ninstant is shown in UTC, labelled so.\n\nOODS Foundry models and shows this record. It does not close anything, tell anyone, stop a token, send a receipt or\nwork out whether everything stopped. Only a report should move the record, and that rule is your product's to keep:\nOODS Foundry does not check who moves it, and on an object with a form its status can be changed there.",
       "category": "core",
       "tags": [
@@ -21651,6 +21666,13 @@
         "Stateful"
       ],
       "metadata": {
+        "changelog": [
+          {
+            "version": "1.0.1",
+            "date": "2026-11-22",
+            "description": "Corrects the reading order of a captioned fact on lists and cards."
+          }
+        ],
         "created": "2026-11-17",
         "owners": [
           "Core team"
@@ -21658,7 +21680,7 @@
         "maturity": "alpha",
         "accessibility": {
           "keyboard": "The record's facts add no interactive control.",
-          "screenreader": "Each fact is read with its visible label, label first on the detail page and the form (\"For, Northwind Traders\") and value first on a list row or a card (\"Northwind Traders, For\")."
+          "screenreader": "Each fact is read with its visible label, label first on a list row, the detail page and the form (\"For, Northwind Traders\") and value first on a card (\"Northwind Traders, For\")."
         },
         "regionsUsed": [
           "list",
@@ -25779,7 +25801,7 @@
     },
     {
       "name": "Mandate",
-      "version": "1.1.1",
+      "version": "1.1.4",
       "description": "The record of a grant: a standing yes that one actor may act for a person or organization, on stated terms,\nuntil it ends. It keeps who asked for it, who gave it and in what capacity, who holds it and who it is for; what it\ncovers in words, its three lines for that party, its limits and its end; its use as the product counts it; the\ngrant it sits inside or replaced; and who ended it and why. The Grant object composes this trait, and the importer\ncan propose it for another system's grant or consent record that keeps a state, an end and the agent or app that\nholds it, so every field lives here and a proposal can bind what the source has.\n\nThe state of the grant is not a field of this trait. It is the record's own lifecycle, through Stateful: for a\nGrant, requested, then active (or paused), declined or withdrawn, or expired when no one answers in time; a grant\nonce given ends revoked, expired or replaced. Its terms are not\nedited in place. A change of terms is a new grant that names the one it replaces, and a standing yes for one\naction is a new grant inside the first, with its own bounds and end.\n\nA reference to a person, an agent, an organization or another grant is an id and a kept name, so it still reads\nafter the person leaves or the grant ends. The kinds are the Actor trait's three words: person, agent or system.\nThe three lines follow the Agent's own: items separated by \"; \", and \"None\" when there are none. The money limits\nare whole numbers in the currency's minor units at two decimal places, so a currency with other decimals reads\nwrong. The end is kept three ways: the exact instant a product checks, the party's time zone, and one line in the\nparty's own words and zone, which is what people read.\n\nOODS Foundry keeps and shows this record. It does not check a grant against what an actor does, count its uses or\nspend, expire or renew one, stop a token or decide whether an action was allowed. A generated app's Revoke, Pause\nand Resume change the record when a person asks, and stop nothing outside it.",
       "category": "core",
       "tags": [
@@ -25824,7 +25846,7 @@
           "priority": null,
           "props": {
             "field": "ends_note",
-            "description": "Ends",
+            "description": "Ends:",
             "data-oods-omit-empty": true
           }
         },
@@ -25836,6 +25858,7 @@
           "props": {
             "field": "last_use",
             "description": "Last used for",
+            "data-oods-own-line": true,
             "data-oods-omit-empty": true
           }
         },
@@ -27267,6 +27290,23 @@
         "Stateful"
       ],
       "metadata": {
+        "changelog": [
+          {
+            "version": "1.1.4",
+            "date": "2026-11-22",
+            "description": "Corrects the reading order of a captioned fact on lists and cards."
+          },
+          {
+            "version": "1.1.3",
+            "date": "2026-11-22",
+            "description": "Punctuates the end caption on lists before the grant’s own words."
+          },
+          {
+            "version": "1.1.2",
+            "date": "2026-11-22",
+            "description": "Places a recorded last use on its own line in a Grant list row."
+          }
+        ],
         "created": "2026-11-14",
         "owners": [
           "Core team"
@@ -27274,7 +27314,7 @@
         "maturity": "alpha",
         "accessibility": {
           "keyboard": "The record's facts add no interactive control; on an open grant, why it is ending is a labelled form input.",
-          "screenreader": "Each fact is read with its visible label, label first on the detail page and the form (\"Held by, Billing Agent\") and value first on a list row or a card (\"Billing Agent, Held by\")."
+          "screenreader": "Each fact is read with its visible label, label first on a list row, the detail page and the form (\"Held by, Billing Agent\") and value first on a card (\"Billing Agent, Held by\")."
         },
         "regionsUsed": [
           "list",
@@ -32983,7 +33023,7 @@
     },
     {
       "name": "Article",
-      "version": "1.1.0",
+      "version": "1.2.1",
       "domain": "content.publication",
       "description": "Canonical editorial article with hybrid taxonomy + tag classification for CMS surfaces.",
       "tags": [
@@ -33148,7 +33188,67 @@
           "Docs team"
         ],
         "steward": "Publishing team",
+        "relatedLists": [
+          {
+            "id": "approvals",
+            "label": "Approvals for this article",
+            "empty": "No approvals are linked to this article here.",
+            "sources": [
+              {
+                "from": "Approval",
+                "via": "subject_id",
+                "key": "slug",
+                "when": {
+                  "subject_type": "Article"
+                },
+                "row": {
+                  "line": [
+                    {
+                      "field": "asked_of_name",
+                      "says": "Asked of"
+                    }
+                  ],
+                  "time": "due_at"
+                }
+              }
+            ]
+          },
+          {
+            "id": "tasks",
+            "label": "Tasks about this article",
+            "empty": "No tasks are linked to this article here.",
+            "sources": [
+              {
+                "from": "Task",
+                "via": "subject_id",
+                "key": "slug",
+                "when": {
+                  "subject_type": "Article"
+                },
+                "row": {
+                  "line": [
+                    {
+                      "field": "asked_of_name",
+                      "says": "Doing it"
+                    }
+                  ],
+                  "time": "due_at"
+                }
+              }
+            ]
+          }
+        ],
         "changelog": [
+          {
+            "version": "1.2.1",
+            "date": "2026-11-22",
+            "description": "Names who was asked on approval rows and who does the work on task rows. Empty lists describe linked records."
+          },
+          {
+            "version": "1.2.0",
+            "date": "2026-11-22",
+            "description": "Lists approvals and tasks that name the article."
+          },
           {
             "version": "1.1.0",
             "date": "2026-11-11",
@@ -33313,7 +33413,7 @@
     },
     {
       "name": "Closure",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "domain": "core.governance",
       "description": "The third part of the Grant story, what a product reports became of the work after a grant ended. Only a report should move it, a rule your product keeps.",
       "tags": [
@@ -33395,6 +33495,13 @@
         "owner_name"
       ],
       "semantics": {
+        "updated_at": {
+          "semantic_type": "audit.updated_at",
+          "token_mapping": "tokenMap(audit.updated)",
+          "ui_hints": {
+            "label": "Last report"
+          }
+        },
         "closure_id": {
           "semantic_type": "governance.closure.id",
           "token_mapping": "tokenMap(identity.id.primary)"
@@ -33440,6 +33547,11 @@
           "timeline"
         ],
         "changelog": [
+          {
+            "version": "1.0.1",
+            "date": "2026-11-22",
+            "description": "Labels the time of the last report on closure records."
+          },
           {
             "version": "1.0.0",
             "date": "2026-11-17",
@@ -34612,7 +34724,7 @@
     },
     {
       "name": "Invoice",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "domain": "saas.billing",
       "description": "Canonical SaaS invoice object normalizing payment terms, status, and refund posture.",
       "tags": [
@@ -34697,9 +34809,17 @@
         "attachments",
         "portal_url",
         "dunning_step",
-        "payment_source"
+        "payment_source",
+        "organization_id"
       ],
       "semantics": {
+        "organization_id": {
+          "semantic_type": "organization.id",
+          "token_mapping": "tokenMap(organization.id.primary)",
+          "ui_hints": {
+            "detailRow": false
+          }
+        },
         "invoice_id": {
           "semantic_type": "billing.invoice.id",
           "token_mapping": "tokenMap(billing.invoice.id)"
@@ -34779,6 +34899,13 @@
         "billing.invoice.dunning_step": "var(--cmp-badge-text-warning)"
       },
       "metadata": {
+        "changelog": [
+          {
+            "version": "1.1.0",
+            "date": "2026-11-22",
+            "description": "Adds the optional customer organization id for lists on the organization’s page."
+          }
+        ],
         "owners": [
           "Revenue ops team",
           "Finance team"
@@ -34915,7 +35042,7 @@
     },
     {
       "name": "Organization",
-      "version": "1.2.1",
+      "version": "1.3.1",
       "domain": "core.account",
       "description": "Canonical account record for tenant and workspace governance across the platform.",
       "tags": [
@@ -35099,6 +35226,16 @@
         "steward": "Platform team",
         "changelog": [
           {
+            "version": "1.3.1",
+            "date": "2026-11-22",
+            "description": "Shows consumed quantities with their units and balances in the invoice currency. Empty billing lists describe linked records."
+          },
+          {
+            "version": "1.3.0",
+            "date": "2026-11-22",
+            "description": "Lists subscriptions, usage and invoices that identify this organization as their customer."
+          },
+          {
             "version": "1.2.1",
             "date": "2026-11-19",
             "description": "Shows grants and closures for the organization, dates each closure by its last report and displays residency codes in capitals."
@@ -35232,13 +35369,74 @@
             "id": "payments",
             "label": "Payments for {name}",
             "empty": "No payment names {name}.",
-            "note": "Subscriptions, usage and invoices name their customer in words, so they are not listed here.",
             "sources": [
               {
                 "from": "Transaction",
                 "via": "organization_id",
                 "row": {
                   "time": "occurred_at"
+                }
+              }
+            ]
+          },
+          {
+            "id": "subscriptions",
+            "label": "Subscriptions for {name}",
+            "empty": "No subscriptions are linked to {name} here.",
+            "sources": [
+              {
+                "from": "Subscription",
+                "via": "organization_id",
+                "row": {
+                  "time": {
+                    "field": "current_period_end",
+                    "says": "Period ends"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "usage",
+            "collapsed": true,
+            "label": "Usage for {name}",
+            "empty": "No usage records are linked to {name} here.",
+            "sources": [
+              {
+                "from": "Usage",
+                "via": "organization_id",
+                "row": {
+                  "line": [
+                    {
+                      "field": "consumed_quantity",
+                      "says": "Consumed"
+                    },
+                    "unit_label"
+                  ],
+                  "time": {
+                    "field": "period_end",
+                    "says": "Period ends"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "id": "invoices",
+            "label": "Invoices for {name}",
+            "empty": "No invoices are linked to {name} here.",
+            "sources": [
+              {
+                "from": "Invoice",
+                "via": "organization_id",
+                "row": {
+                  "line": [
+                    "memo",
+                    {
+                      "field": "balance_minor",
+                      "says": "Balance due"
+                    }
+                  ]
                 }
               }
             ]
@@ -35962,7 +36160,7 @@
     },
     {
       "name": "Subscription",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "domain": "core.billing",
       "description": "Canonical subscription record composing lifecycle, billing, and cancellation semantics.",
       "tags": [
@@ -36070,9 +36268,17 @@
         "current_period_end",
         "current_period_progress",
         "next_payment_due_at",
-        "payment_history"
+        "payment_history",
+        "organization_id"
       ],
       "semantics": {
+        "organization_id": {
+          "semantic_type": "organization.id",
+          "token_mapping": "tokenMap(organization.id.primary)",
+          "ui_hints": {
+            "detailRow": false
+          }
+        },
         "subscription_id": {
           "semantic_type": "billing.subscription.id",
           "token_mapping": "tokenMap(billing.subscription.id)"
@@ -36172,6 +36378,11 @@
         "maturity": "beta",
         "changelog": [
           {
+            "version": "2.1.0",
+            "date": "2026-11-22",
+            "description": "Adds the optional customer organization id for lists on the organization’s page."
+          },
+          {
             "version": "2.0.0",
             "date": "2026-06-24",
             "description": "Converge status onto the canonical Stripe-literal extend-8 state set. Replace the consolidated `delinquent` with `past_due` (retries ongoing → grace access) + `unpaid` (retries exhausted → access revoked). BREAKING: `delinquent` is removed from the status enum. Source: docs.stripe.com/api/subscriptions/object."
@@ -36187,7 +36398,7 @@
     },
     {
       "name": "Task",
-      "version": "1.0.1",
+      "version": "1.1.1",
       "domain": "core.work",
       "description": "One ask to one person or agent to do one piece of work, and what became of it.",
       "tags": [
@@ -36363,7 +36574,62 @@
         ],
         "steward": "Design team",
         "maturity": "alpha",
+        "relatedLists": [
+          {
+            "id": "approvals",
+            "label": "Approvals for this task",
+            "empty": "No approvals are linked to this task here.",
+            "sources": [
+              {
+                "from": "Approval",
+                "via": "subject_id",
+                "when": {
+                  "subject_type": "Task"
+                },
+                "row": {
+                  "line": [
+                    {
+                      "field": "asked_of_name",
+                      "says": "Asked of"
+                    }
+                  ],
+                  "time": "due_at"
+                }
+              }
+            ]
+          },
+          {
+            "id": "tasks",
+            "label": "Tasks made from this task",
+            "empty": "No child tasks are recorded here.",
+            "sources": [
+              {
+                "from": "Task",
+                "via": "parent_id",
+                "row": {
+                  "line": [
+                    {
+                      "field": "asked_of_name",
+                      "says": "Doing it"
+                    }
+                  ],
+                  "time": "due_at"
+                }
+              }
+            ]
+          }
+        ],
         "changelog": [
+          {
+            "version": "1.1.1",
+            "date": "2026-11-22",
+            "description": "Names who was asked on approval rows and who does the work on task rows. Empty lists describe linked records."
+          },
+          {
+            "version": "1.1.0",
+            "date": "2026-11-22",
+            "description": "Lists approvals for the task and tasks made from it."
+          },
           {
             "version": "1.0.1",
             "date": "2026-11-14",
@@ -36380,7 +36646,7 @@
     },
     {
       "name": "Transaction",
-      "version": "1.3.0",
+      "version": "1.4.1",
       "domain": "core.commerce",
       "description": "Canonical transaction record tracking monetary movement, lifecycle, and audit metadata.",
       "tags": [
@@ -36586,7 +36852,67 @@
           "Risk team"
         ],
         "steward": "Platform team",
+        "relatedLists": [
+          {
+            "id": "approvals",
+            "label": "Approvals for this payment",
+            "empty": "No approvals are linked to this payment here.",
+            "sources": [
+              {
+                "from": "Approval",
+                "via": "subject_id",
+                "key": "payment_reference",
+                "when": {
+                  "subject_type": "Transaction"
+                },
+                "row": {
+                  "line": [
+                    {
+                      "field": "asked_of_name",
+                      "says": "Asked of"
+                    }
+                  ],
+                  "time": "due_at"
+                }
+              }
+            ]
+          },
+          {
+            "id": "tasks",
+            "label": "Tasks about this payment",
+            "empty": "No tasks are linked to this payment here.",
+            "sources": [
+              {
+                "from": "Task",
+                "via": "subject_id",
+                "key": "payment_reference",
+                "when": {
+                  "subject_type": "Transaction"
+                },
+                "row": {
+                  "line": [
+                    {
+                      "field": "asked_of_name",
+                      "says": "Doing it"
+                    }
+                  ],
+                  "time": "due_at"
+                }
+              }
+            ]
+          }
+        ],
         "changelog": [
+          {
+            "version": "1.4.1",
+            "date": "2026-11-22",
+            "description": "Names who was asked on approval rows and who does the work on task rows. Empty lists describe linked records."
+          },
+          {
+            "version": "1.4.0",
+            "date": "2026-11-22",
+            "description": "Lists approvals and tasks that name the payment."
+          },
           {
             "version": "1.3.0",
             "date": "2026-11-14",
@@ -36623,7 +36949,7 @@
     },
     {
       "name": "Usage",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "domain": "saas.billing",
       "description": "Metered usage snapshot for consumption based billing supporting trend analysis and overage forecasting.",
       "tags": [
@@ -36704,9 +37030,17 @@
         "currency",
         "variance_minor",
         "last_reported_at",
-        "anomalies"
+        "anomalies",
+        "organization_id"
       ],
       "semantics": {
+        "organization_id": {
+          "semantic_type": "organization.id",
+          "token_mapping": "tokenMap(organization.id.primary)",
+          "ui_hints": {
+            "detailRow": false
+          }
+        },
         "meter_name": {
           "semantic_type": "text.label",
           "token_mapping": "tokenMap(billing.usage.meter_name)"
@@ -36771,6 +37105,13 @@
         "billing.usage.trend_percent": "var(--cmp-text-accent)"
       },
       "metadata": {
+        "changelog": [
+          {
+            "version": "1.1.0",
+            "date": "2026-11-22",
+            "description": "Adds the optional customer organization id for lists on the organization’s page."
+          }
+        ],
         "owners": [
           "Analytics team",
           "Product ops team"

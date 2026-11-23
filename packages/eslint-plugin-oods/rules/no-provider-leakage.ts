@@ -80,7 +80,7 @@ const noProviderLeakageRule: Rule.RuleModule = {
   create(context) {
     const option = (context.options[0] as ProviderLeakageOptions | undefined) ?? {};
     const allowedPaths = option.allowedPaths ?? DEFAULT_ALLOWED_PATHS;
-    const filename = normalizePath(context.getFilename());
+    const filename = normalizePath(context.filename);
     const allowed = allowedPaths.some((pattern) => globToRegExp(pattern).test(filename));
 
     if (allowed) {

@@ -163,7 +163,7 @@ view_extensions:             # what the trait places on each screen: list, card,
       props: { field: units_on_hand }
 ```
 
-A trait of yours can place only the components OODS Foundry ships; `catalog_list` names them. Your own components can replace those ids through substitution; see [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.18.0/COMPONENTS.md).
+A trait of yours can place only the components OODS Foundry ships; `catalog_list` names them. Your own components can replace those ids through substitution; see [COMPONENTS.md](https://cdn.jsdelivr.net/npm/@oods/foundry@0.19.0/COMPONENTS.md).
 
 ## Checking and registering
 
@@ -256,7 +256,7 @@ metadata:
           row: { line: [carrier, destination], time: shipped_at }
 ```
 
-A row's `line` lists fields of the source, fixed words for given values (`{ says, when }`), or a field left out for given
+A captioned field in a row’s `line`, such as `{ field: asked_of_name, says: Asked of }`, shows its caption with its value when present. A captioned amount uses the source field’s declared currency and scale. A row’s `line` can also list fields of the source, fixed words for given values (`{ says, when }`), or a field left out for given
 values (`{ field: acts_for, except: None }`). A list may also say `filtered` (`one`, and `other` with `{count}`: what it
 says when nothing is listed but records that point at it are in a state the list leaves out), `note` (said once under the list), `rowsNote` (said under the rows, only
 when there are some), `collapsed` (closed until opened), `finality` (rows whose state is `final`, `not_final` or
@@ -271,8 +271,7 @@ instant that date-time field holds, whatever the record's own state, and a row s
 under a page's lists names this record, unless one of its lists reads another of this record's fields through `key`:
 then it says the rows were matched by id. Validation
 refuses a malformed list and names its path. The detail page draws the lists after the record's own panels, in React,
-Vue and HTML alike, and ends with one note on what they cannot see: they read ids, never names, and only the objects
-named. In a generated app, the other objects' records are copied from the samples when the app was made
+Vue and HTML alike. The related section ends with a note explaining which records it can show. The lists match ids in the named objects. In a generated app, the other objects' records are copied from the samples when the app was made
 (`src/related-data.ts`); replace `relatedRows` in `src/store.ts` with your own query.
 
 ### Lifecycle actions

@@ -48,7 +48,7 @@ module.exports = {
     },
   },
   create(context) {
-    const filename = context.getFilename();
+    const filename = context.filename;
 
     if (!filename.endsWith('.modifier.ts') && !filename.endsWith('.modifier.tsx')) {
       return {};

@@ -73,7 +73,7 @@ describe('core/Mandate is a shipped trait', () => {
   it('holds the record\'s fields, every id a plain string so an imported reference can bind, none required', () => {
     expect(listTraits()).toContain('Mandate');
     const trait = loadTrait('core/Mandate');
-    expect(trait.trait).toMatchObject({ name: 'Mandate', version: '1.1.1', category: 'core' });
+    expect(trait.trait).toMatchObject({ name: 'Mandate', version: '1.1.4', category: 'core' });
     expect(Object.keys(trait.schema)).toEqual(FIELDS);
     for (const field of FIELDS.filter(name => name.endsWith('_id'))) expect(trait.schema[field]!.type, field).toBe('string');
     expect(Object.entries(trait.schema).filter(([, field]) => field.required)).toEqual([]);
@@ -371,7 +371,7 @@ describe('the record trait composed onto test objects, in every context where it
     for (const context of ['list', 'card'] as const) {
       const page = await pages('Consent', context, [full]);
       const facts = context === 'list'
-        ? ['Held by', 'Billing Agent', 'For', 'Tidewater Co-op', 'Ends', 'At the end of 31 Dec 2026, Tauranga time']
+        ? ['Held by', 'Billing Agent', 'For', 'Tidewater Co-op', 'Ends:', 'At the end of 31 Dec 2026, Tauranga time']
         : ['Billing Agent', 'Held by', 'Tidewater Co-op', 'For', 'At the end of 31 Dec 2026, Tauranga time', 'Ends'];
       for (const renderer of RENDERERS) inOrder(shown(page[renderer]), ['Resend returned transfers', ...facts], `${renderer} ${context}`);
     }

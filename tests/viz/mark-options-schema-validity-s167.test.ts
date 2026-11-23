@@ -52,7 +52,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
-import { describe, expect, it } from 'vitest';
+import { chai, describe, expect, it } from 'vitest';
 import { toVegaLiteSpec } from '../../packages/viz-core/src/adapters/vega-lite-adapter.js';
 import { toEChartsOption } from '../../packages/viz-core/src/adapters/echarts-adapter.js';
 import type { NormalizedVizSpec } from '../../packages/viz-core/src/spec/normalized-viz-spec.js';
@@ -686,7 +686,8 @@ describe('s168 m02 — allowlist + translation table (FF#22 corrective)', () => 
 });
 
 describe('s217 m06 — whole-spec validity without exceptions', () => {
-  it.each(wholeSpecFixtures())('$rel validates directly, without repair or annotation', ({ spec }) => {
+  const cases = wholeSpecFixtures().map(fixture => ({ ...fixture, label: chai.util.inspect(fixture.rel) }));
+  it.each(cases)('$label validates directly, without repair or annotation', ({ spec }) => {
     const compiled = toVegaLiteSpec(spec);
     const valid = validate(compiled);
     expect(valid, JSON.stringify(validate.errors)).toBe(true);

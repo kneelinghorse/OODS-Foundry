@@ -50,7 +50,7 @@ A person or other principal is a record whose name is user, account, organizatio
 
 ### Approval records
 
-An approval is a decision, not a status: one person's answer about one thing, kept as a record of its own (see [Approvals as decisions](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.18.0/docs/concepts/approvals-as-decisions.md)). Where another system keeps a table of approvals, one answer per row, the importer proposes `Decision` for it, graded on structure:
+An approval is a decision, not a status: one person's answer about one thing, kept as a record of its own (see [Approvals as decisions](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.19.0/docs/concepts/approvals-as-decisions.md)). Where another system keeps a table of approvals, one answer per row, the importer proposes `Decision` for it, graded on structure:
 
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|
@@ -70,7 +70,7 @@ The importer does not propose `Approvable`: an approval outcome kept as a field 
 
 ### Records of work
 
-A task is an ask, not a ticket: one ask to one person or agent to do one piece of work, and what became of it (see [Tasks as asks](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.18.0/docs/concepts/tasks-as-asks.md)). Where another system keeps a record of work, the importer proposes `Assignment` for it, graded on structure:
+A task is an ask, not a ticket: one ask to one person or agent to do one piece of work, and what became of it (see [Tasks as asks](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.19.0/docs/concepts/tasks-as-asks.md)). Where another system keeps a record of work, the importer proposes `Assignment` for it, graded on structure:
 
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|
@@ -118,7 +118,7 @@ Not placed, because their schemas say too little: Linear's `stale` and `stopping
 
 ### Records of a grant
 
-A grant is a standing yes, not a setting: one set of terms on which one actor may act for one person or organization, until it ends (see [Grants as standing yeses](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.18.0/docs/concepts/grants-as-standing-yeses.md)). Where another system keeps a record of a grant, a consent or a connection, the importer proposes `Mandate` for it, graded on structure:
+A grant is a standing yes, not a setting: one set of terms on which one actor may act for one person or organization, until it ends (see [Grants as standing yeses](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.19.0/docs/concepts/grants-as-standing-yeses.md)). Where another system keeps a record of a grant, a consent or a connection, the importer proposes `Mandate` for it, graded on structure:
 
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|

@@ -8,24 +8,16 @@ const tenancyRule = require('../../eslint/rules/no-unsafe-tenancy-override.cjs')
 
 async function lintTenancy(code: string, filePath: string) {
   const eslint = new ESLint({
-    useEslintrc: false,
-    plugins: {
-      oods: {
-        rules: {
-          'no-unsafe-tenancy-override': tenancyRule,
-        },
-      },
-    },
+    overrideConfigFile: true,
     overrideConfig: {
-      parser: require.resolve('@typescript-eslint/parser'),
-      parserOptions: {
+      files: ['**/*.{ts,tsx}'],
+      languageOptions: {
+        parser: require('@typescript-eslint/parser'),
         ecmaVersion: 2022,
         sourceType: 'module',
       },
-      plugins: ['oods'],
-      rules: {
-        'oods/no-unsafe-tenancy-override': 'error',
-      },
+      plugins: { oods: { rules: { 'no-unsafe-tenancy-override': tenancyRule } } },
+      rules: { 'oods/no-unsafe-tenancy-override': 'error' },
     },
   });
 

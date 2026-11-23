@@ -42,7 +42,7 @@ A to-do is a task whose asker, doer and the one who answers for it are one perso
 
 There is no seat called assignee, because the word now means two things. In some products the assignee is the one doing the work; in others it is the one who answers for it while an agent does the work. With people those were one person, so one field did. An agent can do the first and not the second.
 
-The one who answers is the task's owner, through `Ownerable`, with the role "Answers for it". The screens call it "Owner" and the detail page's panel "Ownership Summary"; on a list row the owner's name has no role beside it, so the one doing the work is shown as a value over its caption, "Doing it", to keep the two apart. The seats keep their names after the work ends: on a finished, declined or handed-over task, Doing it still names the one who was asked to do it, and the badge and the result say how it ended.
+The one who answers is the task's owner, through `Ownerable`, with the role "Answers for it". The screens call it "Owner" and the detail page's panel "Ownership Summary"; on a list row the owner's name has no role beside it, so the one doing the work appears after the caption "Doing it" to keep the two apart. The seats keep their names after the work ends: on a finished, declined or handed-over task, Doing it still names the one who was asked to do it, and the badge and the result say how it ended.
 
 ## Eleven states
 
@@ -133,7 +133,7 @@ It models and renders. It does not run, retry, pause or expire work, and its Can
 
 - Cancel follows the declared order in generated React and Vue screens only. Cancel is not a declared action, so an HTML screen offers it whatever the state, where it offers a grant's Revoke only from the states Revoke moves from.
 - A task's form also offers fields a person would not edit there: the owner's id, type, name and role. It does not offer the task's own id, when it was created or last changed, or its last event.
-- On a task's or a thing's own page it cannot list the tasks that belong to it: a task's helpers, a thing's tasks. The Task list's search finds them by name. A person's page lists the tasks waiting for their answer, and an agent's page the records whose lines name it as the one who acted; there is no signed-in person, so no page says "waiting for you".
+- A payment or article lists the tasks that name it. A task lists the tasks made from it. A person's page lists the tasks waiting for their answer, and an agent's page the records whose lines name it as the one who acted; there is no signed-in person, so no page says "waiting for you".
 - The try count, what a task waits on, the first ask's name and who answers are kept by your product and checked by nothing.
 - Accepting a result through an approval that names its task is the model, and is not wired.
 - A line a generated app writes when a person changes a task names who acted only when your product passes who is acting (`createWorkflow({ actor })`).

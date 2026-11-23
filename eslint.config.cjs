@@ -1,5 +1,3 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-
 const globals = require('globals');
 const tsParser = require('@typescript-eslint/parser');
 const tseslint = require('@typescript-eslint/eslint-plugin');
@@ -14,6 +12,7 @@ module.exports = [
     ignores: ['dist/**', 'coverage/**', 'node_modules/**'],
   },
   {
+    linterOptions: { reportUnusedDisableDirectives: 'off' },
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       parser: tsParser,
@@ -45,12 +44,13 @@ module.exports = [
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
+          caughtErrors: 'none',
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
         },
       ],
       '@typescript-eslint/no-floating-promises': 'off',
-      '@typescript-eslint/ban-types': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',

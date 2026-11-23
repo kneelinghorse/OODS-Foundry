@@ -19,6 +19,7 @@ const FIXTURE_DIR = path.resolve(TEST_FILE_DIR, '../fixtures/ui');
 const MCP_SERVER_DIR = path.join(REPO_ROOT, 'packages', 'mcp-server');
 const MCP_BRIDGE_DIR = path.join(REPO_ROOT, 'packages', 'mcp-bridge');
 
+const caseTitle = "{ name: '$name', file: '$file', minFragments: $minFragments, minComponentCount: $minComponentCount }";
 const TEMPLATE_CASES: TemplateCase[] = [
   { name: 'dashboard', file: 'dashboard-page.ui-schema.json', minFragments: 3, minComponentCount: 15 },
   { name: 'form-page', file: 'form-page.ui-schema.json', minFragments: 3, minComponentCount: 15 },
@@ -105,7 +106,7 @@ describe('fragment integration e2e', () => {
     }
   });
 
-  it.each(TEMPLATE_CASES)('%s fragment mode meets expected fragment and component coverage', async (templateCase) => {
+  it.each(TEMPLATE_CASES)(`${caseTitle} fragment mode meets expected fragment and component coverage`, async (templateCase) => {
     const schema = loadFixture(templateCase.file);
     const result = await renderHandle({
       mode: 'full',
@@ -129,7 +130,7 @@ describe('fragment integration e2e', () => {
     }
   });
 
-  it.each(TEMPLATE_CASES)('%s fragment output preserves component structure vs full-document mode', async (templateCase) => {
+  it.each(TEMPLATE_CASES)(`${caseTitle} fragment output preserves component structure vs full-document mode`, async (templateCase) => {
     const schema = loadFixture(templateCase.file);
     const [fragmentResult, documentResult] = await Promise.all([
       renderHandle({
@@ -160,7 +161,7 @@ describe('fragment integration e2e', () => {
     expect(fragmentComponents).toEqual(sortComponents(normalizedDocumentComponents));
   });
 
-  it.each(TEMPLATE_CASES)('%s bridge transport returns fragment output equivalent to direct handler', async (templateCase) => {
+  it.each(TEMPLATE_CASES)(`${caseTitle} bridge transport returns fragment output equivalent to direct handler`, async (templateCase) => {
     if (!bridge) throw new Error('Bridge process not initialized');
     const schema = loadFixture(templateCase.file);
     const input: ReplRenderInput = {

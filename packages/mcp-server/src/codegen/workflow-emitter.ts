@@ -1,3 +1,4 @@
+import toolchain from './generated-toolchain.json' with { type: 'json' };
 import { pluralLabel } from './screen-shell.js';
 import type { UiElement, UiSchema } from '../schemas/generated.js';
 import type { CodegenOptions, CodegenResult, Emitter, GeneratedArtifactAction } from './types.js';
@@ -285,7 +286,7 @@ ${collectionEditors.size ? "    // Collection editors dispatch whole domain valu
     const known = GENERATED_DEPENDENCY_CATALOG[name as keyof typeof GENERATED_DEPENDENCY_CATALOG];
     if (known) dependencies[name] = known.version;
   }
-  files.push({ path: 'package.json', contents: JSON.stringify({ name: `${schema.workflow.object.toLowerCase()}-workflow-${framework}`, version: '1.0.0', private: true, type: 'module', engines: { node: GENERATED_APP_NODE_FLOOR }, scripts: { dev: 'vite --host 127.0.0.1', build: `${framework === 'vue' ? 'vue-tsc' : 'tsc'} --noEmit && vite build`, typecheck: `${framework === 'vue' ? 'vue-tsc' : 'tsc'} --noEmit` }, dependencies, devDependencies: { '@types/node': '20.19.21', typescript: '5.9.3', vite: '6.4.3', ...(framework === 'react' ? { '@types/react': '19.2.2', '@types/react-dom': '19.2.1' } : { 'vue-tsc': '3.3.11' }) } }, null, 2) + '\n' });
+  files.push({ path: 'package.json', contents: JSON.stringify({ name: `${schema.workflow.object.toLowerCase()}-workflow-${framework}`, version: '1.0.0', private: true, type: 'module', engines: { node: GENERATED_APP_NODE_FLOOR }, scripts: { dev: 'vite --host 127.0.0.1', build: `${framework === 'vue' ? 'vue-tsc' : 'tsc'} --noEmit && vite build`, typecheck: `${framework === 'vue' ? 'vue-tsc' : 'tsc'} --noEmit` }, dependencies, devDependencies: { '@types/node': '20.19.21', typescript: '5.9.3', vite: toolchain.vite, ...(framework === 'react' ? { '@types/react': '19.2.2', '@types/react-dom': '19.2.1' } : { 'vue-tsc': '3.3.11' }) } }, null, 2) + '\n' });
   files.push({ path: 'README.md', contents: '# Generated workflow\n\nRun `npm install`, then `npm run build` and `npm run dev`. The screens receive data and actions from src/App; src/application.ts and src/store.ts supply a local sample workflow. Connect your own data, navigation and action handlers for your application. Related-record label lookups contain the imported sample records only; supply your own relationship lookup data for real records.\n\nA new generation is a complete new app and merges nothing into your app. Keep your changes in your own files, and see GENERATED-APPS.md in @oods/foundry.\n' });
   return { status: 'ok', framework, code: app, fileExtension: extension, files, imports: [...imports], actions, warnings };
 }

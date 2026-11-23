@@ -143,7 +143,7 @@ describe('Task is the fourteenth public object', () => {
   it('composes the record trait, its lifecycle, its times, the one who answers and Cancel', () => {
     const task = loadObject('Task');
     // s248-m02: 1.0.1, every line an agent writes for a party names its grant.
-    expect(task.object).toMatchObject({ name: 'Task', version: '1.0.1' });
+    expect(task.object).toMatchObject({ name: 'Task', version: '1.1.1' });
     expect(task.object).not.toHaveProperty('visibility');
     expect(task.traits.map(trait => trait.name)).toEqual(['core/Assignment', 'lifecycle/Stateful', 'lifecycle/Timestampable', 'structural/Ownerable', 'lifecycle/Cancellable']);
     const lifecycle = task.traits[1]!.parameters!;
@@ -265,7 +265,15 @@ describe('the eight Task samples tell true stories about the shipped samples the
   it('adds and rewords no shipped sample of another object, the resend\'s task and the grant on agent lines aside', () => {
     // s248-m02: every line an agent writes for a party also names its grant (Approval's and Transaction's), which is
     // stripped too; what else moved is named below.
-    const strip = (name: string, samples: Sample[]) => samples.map(sample => sample.state_history === undefined ? sample : ({ ...sample,
+    const withoutBillingId = (name: string, sample: Sample) => {
+      if (!['Subscription', 'Usage', 'Invoice'].includes(name)) return sample;
+      const { organization_id, ...previous } = sample;
+      const label = name === 'Invoice' ? sample.billing_contact_name : sample.customer_name;
+      const customer = loadObject('Organization').samples!.find(row => row.label === label);
+      expect(customer?.organization_id, String(label)).toBe(organization_id);
+      return previous;
+    };
+    const strip = (name: string, samples: Sample[]) => samples.map(sample => withoutBillingId(name, sample)).map(sample => sample.state_history === undefined ? sample : ({ ...sample,
       state_history: (sample.state_history as Sample[]).map((entry: Sample) => {
         const { grant_id: _grant, grant_name: _grantName, ...rest } = entry;
         if (name !== 'Transaction') return rest;

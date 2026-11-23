@@ -176,7 +176,7 @@ describe('1887, item 4: a row line can leave a field out for one value', () => {
       [[{ field: 'acts_for' }], 'metadata.relatedLists[5].sources[0].row.line[0].except', /must be the value, or a list of the values, for which the field is left out/],
       [[{ field: 'acts_for', except: { a: 1 } }], 'metadata.relatedLists[5].sources[0].row.line[0].except', /must be the value, or a list of the values/],
       [[{ field: 'acts_on', except: 'None' }], 'metadata.relatedLists[5].sources[0].row.line[0].field', /"acts_on" is not a field of Agent/],
-      [[{ field: 'acts_for', except: 'None', says: 'x' }], 'metadata.relatedLists[5].sources[0].row.line[0].says', /takes field and except/],
+      [[{ field: 'acts_for', except: 'None', says: 'x' }], 'metadata.relatedLists[5].sources[0].row.line[0].except', /takes field and says/],
     ] as const) {
       const result = await validate({ yaml: withLine(line) });
       const problem = result.errors.find(error => error.path === where);

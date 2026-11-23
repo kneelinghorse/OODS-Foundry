@@ -23,7 +23,7 @@ export default defineConfig({
     // Coverage gate (sprint-112 m04). Root CI's coverage only includes the repo
     // `src/**`, so @oods/viz-core's own recommender / profiler / adapters were never
     // MEASURED. Enabled here so the viz-determinism CI step (`pnpm --filter
-    // @oods/viz-core test`) enforces it. `all: true` counts untested files at 0% so
+    // @oods/viz-core test`) enforces it. The explicit src include counts untested files at 0% so
     // a new uncovered module is caught. Thresholds are MEASURED FLOORS (~5pts below
     // the 2026-06 actuals: stmts/lines 54.6%, branches 66.4%, functions 50.8%) — a
     // real floor that does not red on minor unrelated churn, NOT an aspiration.
@@ -31,7 +31,6 @@ export default defineConfig({
       enabled: true,
       provider: 'v8',
       include: ['src/**'],
-      all: true,
       reporter: ['text-summary'],
       thresholds: {
         statements: 50,

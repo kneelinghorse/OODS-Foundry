@@ -4,11 +4,9 @@ import React from 'react';
 import { describe, expect, it, beforeAll, afterAll, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { render } from '@testing-library/react';
-import { axe, toHaveNoViolations } from 'vitest-axe';
+import { axe } from 'vitest-axe';
 import { CategoryTree } from '../../../src/components/classification/CategoryTree.js';
 import type { CategoryNode } from '../../../src/schemas/classification/category-node.ts';
-
-expect.extend({ toHaveNoViolations });
 
 const A11Y_FIXTURES: CategoryNode[] = [
   {

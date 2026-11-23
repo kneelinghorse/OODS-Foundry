@@ -34,8 +34,8 @@ import { typecheckWorkflow } from '../product-reality/workflow-typecheck.js';
 
 const { JSDOM } = createRequire(import.meta.url)('jsdom') as { JSDOM: new (html: string) => { window: { document: Document } } };
 type Sample = Record<string, any>;
-const OBJECTS = ['User', 'Organization', 'Agent', 'Grant'] as const;
-const NAME: Record<string, string> = { User: 'name', Organization: 'label', Agent: 'name', Grant: 'name' };
+const OBJECTS = ['User', 'Organization', 'Agent', 'Grant', 'Transaction', 'Article', 'Task'] as const;
+const NAME: Record<string, string> = { User: 'name', Organization: 'label', Agent: 'name', Grant: 'name', Transaction: 'payment_reference', Article: 'slug', Task: 'name' };
 const RENDERERS = ['html', 'react', 'vue'] as const;
 const words = (text: string | null | undefined) => (text ?? '').replace(/\s+/g, ' ').trim();
 /** Every text node's words, joined by spaces, as the HTML cells' measure reads a page (s215-html-measure.ts). */
@@ -176,7 +176,7 @@ describe('the region draws the same lists, rows and words in React, Vue and HTML
   });
 
   it('draws no region for an object that declares no list, and none when a screen is given no lists', async () => {
-    for (const object of ['Task', 'Approval', 'Transaction', 'Subscription']) {
+    for (const object of ['Approval', 'Subscription']) {
       const schema = (await compose({ object, context: 'detail', options: { transient: true } } as never) as { schema: UiSchema }).schema;
       expect(JSON.stringify(schema), object).not.toContain('"source":"related"');
     }
@@ -209,11 +209,12 @@ describe('the four pages say what Interface 4 says', () => {
   it('the organization lists the agents holding a grant for it, one row per outer grant with the grants inside it, and says what it cannot see', () => {
     const tidewater = page('Organization', 'Tidewater Co-op');
     expect(tidewater.lists.map(list => list.heading)).toEqual(['Grants asked for Tidewater Co-op, not yet answered (0)', 'Agents holding a grant for Tidewater Co-op (1)', 'Recorded on behalf of Tidewater Co-op (4)',
-      'Tasks for Tidewater Co-op (1)', 'Approvals for Tidewater Co-op (1)', 'Payments for Tidewater Co-op (1)', 'Ended grants for Tidewater Co-op (0)',
+      'Tasks for Tidewater Co-op (1)', 'Approvals for Tidewater Co-op (1)', 'Payments for Tidewater Co-op (1)',
+      'Subscriptions for Tidewater Co-op (1)', 'Usage for Tidewater Co-op (2)', 'Invoices for Tidewater Co-op (1)', 'Ended grants for Tidewater Co-op (0)',
       // s250-m03: the closures of grants for the organization (the third part of the Grant story).
       'Closures of grants for Tidewater Co-op (0)']);
     expect(tidewater.text).toContain('Tidewater invoices and payments Active Billing Agent · Invoices and payments · 28 Sep: asked for a standing yes to resend returned transfers Ends: At the end of 31 Dec 2026, Tauranga time 1 grant inside it Resend returned transfers Active Billing Agent · Resend a payment the bank returned · No uses counted');
-    expect(tidewater.text).toContain('Subscriptions, usage and invoices name their customer in words, so they are not listed here.');
+    expect(tidewater.text).toContain('Subscriptions for Tidewater Co-op (1) Enterprise Active');
     expect(tidewater.notes).toEqual(['These lists show only records here that name Tidewater Co-op by id; records that name Tidewater Co-op only in words, or that another product keeps, are not listed.']);
     // An empty list names the seat it read; a standing list emptied by ended grants says so.
     const northwind = page('Organization', 'Northwind Traders');
@@ -256,7 +257,7 @@ describe('the four pages say what Interface 4 says', () => {
 describe('generated apps list their records\' related records from copied records and their own live store', () => {
   const apps = {} as Record<string, Record<'react' | 'vue', GeneratedArtifact>>;
   beforeAll(async () => {
-    for (const object of [...OBJECTS, 'Task']) {
+    for (const object of [...OBJECTS, 'Approval']) {
       const workflow = (await compose({ object, context: 'workflow', options: { transient: true } } as never) as { schema: UiSchema }).schema;
       apps[object] = {} as never;
       for (const framework of ['react', 'vue'] as const) {
@@ -277,9 +278,9 @@ describe('generated apps list their records\' related records from copied record
         const result = typecheckWorkflow(artifact);
         expect(result.status, `${object} ${framework}: ${result.stdout}${result.stderr}`).toBe(0);
       }
-      expect(file(apps.Task![framework], 'src/related-data.ts')).toBeUndefined();
-      expect(file(apps.Task![framework], 'src/store.ts')).not.toContain('relatedRows');
-      expect(file(apps.Task![framework], 'src/application.ts')).not.toContain('related');
+      expect(file(apps.Approval![framework], 'src/related-data.ts')).toBeUndefined();
+      expect(file(apps.Approval![framework], 'src/store.ts')).not.toContain('relatedRows');
+      expect(file(apps.Approval![framework], 'src/application.ts')).not.toContain('related');
     }
   });
 

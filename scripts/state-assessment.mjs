@@ -1128,46 +1128,49 @@ async function runGuardrailsCheck(context) {
   const metadataViolations = [];
   const tenancyViolations = [];
 
-  const eslint = new ESLint({
-    useEslintrc: false,
-    cwd: context.repoRoot,
-    plugins: {
-      oods: {
-        rules: {
-          'no-account-unsafe-metadata': metadataGuardrailRule,
-          'no-unsafe-tenancy-override': tenancyGuardrailRule,
-        },
-      },
-    },
-    overrideConfig: {
-      parser: require.resolve('@typescript-eslint/parser'),
-      parserOptions: {
-        ecmaVersion: 2022,
-        sourceType: 'module',
-      },
-      plugins: ['oods'],
-      ignorePatterns: [
-        '**/node_modules/**',
-        'dist/**',
-        'storybook-static/**',
-        'coverage/**',
-        'tests/**',
-        '**/*.test.ts',
-        '**/*.test.tsx',
-        '**/*.spec.ts',
-        '**/*.spec.tsx',
-        'stories/**',
-        'scripts/tenancy/**',
-      ],
-      rules: {
-        'oods/no-account-unsafe-metadata': 'error',
-        'oods/no-unsafe-tenancy-override': 'error',
-      },
-    },
-  });
-
   let lintResults;
   try {
+    const eslint = new ESLint({
+      cwd: context.repoRoot,
+      overrideConfigFile: true,
+      overrideConfig: [
+        {
+          ignores: [
+            '**/node_modules/**',
+            'dist/**',
+            'storybook-static/**',
+            'coverage/**',
+            'tests/**',
+            '**/*.test.ts',
+            '**/*.test.tsx',
+            '**/*.spec.ts',
+            '**/*.spec.tsx',
+            'stories/**',
+            'scripts/tenancy/**',
+          ],
+        },
+        {
+          files: ['**/*.{ts,tsx}'],
+          languageOptions: {
+            parser: require('@typescript-eslint/parser'),
+            ecmaVersion: 2022,
+            sourceType: 'module',
+          },
+          plugins: {
+            oods: {
+              rules: {
+                'no-account-unsafe-metadata': metadataGuardrailRule,
+                'no-unsafe-tenancy-override': tenancyGuardrailRule,
+              },
+            },
+          },
+          rules: {
+            'oods/no-account-unsafe-metadata': 'error',
+            'oods/no-unsafe-tenancy-override': 'error',
+          },
+        },
+      ],
+    });
     lintResults = await eslint.lintFiles(['src/**/*.ts', 'src/**/*.tsx']);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error ?? 'Unknown lint failure');
@@ -1635,21 +1638,41 @@ async function runCoverageCheck(context) {
     { label: 'coverage summary', path: 'coverage/coverage-summary.json' }
   ];
 
-  const command = await runProcess(
-    context.pnpmCmd,
-    ['exec', 'vitest', 'run', '--coverage', '--reporter=json'],
-    { cwd: context.repoRoot, captureOutput: true }
-  );
+  async function readReport(file) {
+    try {
+      return await readJsonIfExists(file);
+    } catch (error) {
+      rationale.push(`Could not read ${path.basename(file)}: ${error.message}`);
+      return null;
+    }
+  }
 
-  const vitestJson = extractVitestJson(command.stdout ?? '');
-  const coverageSummary = await readJsonIfExists(path.join(context.repoRoot, 'coverage', 'coverage-summary.json'));
+  const directory = await fs.mkdtemp(path.join(context.artifactsRoot, '.vitest-'));
+  const reportPath = path.join(directory, 'tests.json');
+  const summaryPath = path.join(context.repoRoot, 'coverage', 'coverage-summary.json');
+  const previous = await fs.stat(summaryPath, { bigint: true }).catch(() => null);
+  let vitestJson;
+  let command;
+  try {
+    command = await runProcess(context.pnpmCmd, ['run', 'test:coverage:root', '--run', '--reporter=json', `--outputFile=${reportPath}`],
+      { cwd: context.repoRoot, captureOutput: true });
+    vitestJson = await readReport(reportPath);
+  } finally {
+    await fs.rm(directory, { recursive: true, force: true });
+  }
+  const current = await fs.stat(summaryPath, { bigint: true }).catch(() => null);
+  const freshSummary = current && (current.ino !== previous?.ino || current.ctimeNs !== previous?.ctimeNs);
+  const coverageSummary = freshSummary ? await readReport(summaryPath) : null;
+  const hasTests = typeof vitestJson?.success === 'boolean' && vitestJson.numTotalTests > 0 && Array.isArray(vitestJson.testResults);
+  const hasLines = Number.isFinite(coverageSummary?.total?.lines?.pct);
+  const failClosed = !hasTests || !hasLines;
 
   let status = 'UNKNOWN';
   let keyMetric = 'No coverage data';
   let linePct = null;
   let branchPct = null;
 
-  if (coverageSummary?.total?.lines?.pct != null) {
+  if (hasLines) {
     linePct = coverageSummary.total.lines.pct;
     branchPct = coverageSummary.total.branches?.pct ?? null;
     if (linePct >= 80) {
@@ -1662,8 +1685,8 @@ async function runCoverageCheck(context) {
     keyMetric = `Coverage — lines: ${linePct.toFixed(2)}%`;
   }
 
-  if (!vitestJson) {
-    rationale.push('Unable to parse vitest JSON reporter output.');
+  if (!hasTests) {
+    rationale.push('The coverage command produced no usable Vitest test report.');
   } else {
     const passRate =
       vitestJson.numTotalTests > 0
@@ -1679,7 +1702,14 @@ async function runCoverageCheck(context) {
     }
   }
 
+  if (command.exitCode !== 0 || failClosed || vitestJson?.success === false) {
+    status = 'RED';
+  }
+  if (command.exitCode !== 0) rationale.push(`Coverage command exited with code ${command.exitCode}.`);
+  if (!hasLines) rationale.push('The coverage command produced no fresh line coverage summary.');
+
   await writeJson(path.join(context.artifactsRoot, 'tests.json'), {
+    runnerExitCode: command.exitCode,
     generatedAt: new Date().toISOString(),
     status,
     coverage: coverageSummary?.total ?? null,
@@ -1691,32 +1721,16 @@ async function runCoverageCheck(context) {
     id: 'coverage',
     label: CHECK_RUNNERS.coverage.label,
     status,
+    failClosed,
     keyMetric,
     metrics: {
+      runnerExitCode: command.exitCode,
       coverage: coverageSummary?.total ?? null,
       vitest: vitestJson ?? null
     },
     rationale,
     evidence
   };
-}
-
-function extractVitestJson(stdout) {
-  if (typeof stdout !== 'string' || stdout.length === 0) {
-    return null;
-  }
-  const lines = stdout.split('\n');
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
-      try {
-        return JSON.parse(trimmed);
-      } catch {
-        continue;
-      }
-    }
-  }
-  return null;
 }
 
 function collectTestDurations(vitestJson) {
@@ -2002,7 +2016,7 @@ function runProcess(command, args, options = {}) {
     child.on('close', (code) => {
       const durationMs = Math.round(performance.now() - startedAt);
       resolve({
-        exitCode: code ?? 0,
+        exitCode: code ?? 1,
         stdout: captureOutput ? stdout : null,
         stderr: captureOutput ? stderr : null,
         durationMs

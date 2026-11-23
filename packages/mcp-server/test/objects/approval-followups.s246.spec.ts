@@ -313,6 +313,6 @@ describe('the worked example obeys its own rule: what was shown is what the yes 
     for (const [level, definition] of Object.entries(rule.levelDefinitions)) for (const [key, value] of Object.entries(definition)) expect(value.length, `${level}.${key}`).toBeLessThanOrEqual(160);
     // s247-m02: 1.2.2, the resend names the task it was made under. s248-m02: 1.3.0, resends open to a yes given in
     // advance, and the resend names its grant; the level definitions above do not change.
-    expect(loadObject('Transaction').object.version).toBe('1.3.0');
+    expect(loadObject('Transaction').object.version).toBe('1.4.1');
   });
 });

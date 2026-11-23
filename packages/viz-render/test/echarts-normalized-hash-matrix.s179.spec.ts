@@ -104,7 +104,7 @@ function matrixOption(family: MatrixFamily): Record<string, unknown> {
   return option;
 }
 
-describe.sequential("s179 ECharts normalized-SVG hash matrix", () => {
+describe("s179 ECharts normalized-SVG hash matrix", () => {
   beforeAll(async () => {
     for (const family of MATRIX_FAMILIES) {
       const option = matrixOption(family);

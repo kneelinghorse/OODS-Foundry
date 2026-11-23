@@ -65,7 +65,7 @@ describe('core/Decision and core/Approvable are shipped traits', () => {
     const approvable = loadTrait('core/Approvable');
     // s248-m01: 1.1.0 adds inAdvance, the changes a grant's standing yes may allow in advance, empty by default; the rest
     // of the rule and both outcome fields are unchanged, and the default outcomes do not move.
-    expect(approvable.trait).toMatchObject({ name: 'Approvable', version: '1.1.1', category: 'core' });
+    expect(approvable.trait).toMatchObject({ name: 'Approvable', version: '1.1.2', category: 'core' });
     expect(approvable.parameters.map(parameter => parameter.name)).toEqual(['levels', 'levelDefinitions', 'requiredLevels', 'approvalsNeeded', 'askerMayAnswer', 'agentLevels', 'lapsesOnChange', 'inAdvance', 'outcomes']);
     expect(Object.keys(approvable.schema)).toEqual(['approval_state', 'approval_summary']);
     for (const field of Object.values(approvable.schema)) expect(field).toMatchObject({ required: false, readOnly: true });

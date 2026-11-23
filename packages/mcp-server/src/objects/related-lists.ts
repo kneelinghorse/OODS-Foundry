@@ -217,6 +217,12 @@ export function relatedListProblems(raw: unknown, subject: RelatedShape, shape: 
             if (typeof item === 'string') { field(place, item, 'a field'); return; }
             // s250-m04 (next step 1887, item 4): a field shown except when it holds one of the given values.
             if (isMap(item) && 'field' in item) {
+              if ('says' in item) {
+                field(`${place}.field`, item.field, 'a field');
+                if (!text(item.says)) problem(`${place}.says`, `${place}.says must name the displayed value.`);
+                for (const key of Object.keys(item)) if (!['field', 'says'].includes(key)) problem(`${place}.${key}`, `${place} takes field and says.`);
+                return;
+              }
               for (const key of Object.keys(item)) if (!['field', 'except'].includes(key)) problem(`${place}.${key}`, `${place} takes field and except.`);
               field(`${place}.field`, item.field, 'a field');
               const except = Array.isArray(item.except) ? item.except : [item.except];

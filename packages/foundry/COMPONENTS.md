@@ -111,7 +111,7 @@ notice; wire your data, navigation and persistence handlers before shipping.
 Before applying adapters, install the OODS libraries in the team project as well as its own dependencies. For React:
 
 ```bash
-npm install @oods/components-react@0.18.0 @oods/component-contracts@0.18.0 @oods/component-styles@0.18.0 @oods/tokens@0.18.0
+npm install @oods/components-react@0.19.0 @oods/component-contracts@0.19.0 @oods/component-styles@0.19.0 @oods/tokens@0.19.0
 ```
 
 For Vue, replace `@oods/components-react` with `@oods/components-vue` at the same version. Connecting the MCP server alone does not install these project dependencies. A missing dependency is reported before any adapter is written. If the manifest changes after drafting, draft again before applying.
@@ -137,7 +137,7 @@ cd team-app
 From the shadcn project, install OODS Foundry locally. Connecting the MCP server with `npx` does not install a package into that project, and the next command needs its registry files:
 
 ```bash
-npm install @oods/foundry@0.18.0
+npm install @oods/foundry@0.19.0
 ```
 
 Install the sixteen adapters from that package in one call:
@@ -304,7 +304,7 @@ The Vue layout proof covers npm + Vite, installed TypeScript, project-relative T
 The release's public snapshot serves these files directly; no website deployment is required. The two catalogs are `packages/foundry/shadcn/registry.json` and `packages/foundry/shadcn/vue/registry.json`. Install a version-pinned item by URL:
 
 ```bash
-npx shadcn-vue@2.8.2 add https://raw.githubusercontent.com/kneelinghorse/OODS-Foundry/v0.18.0/packages/foundry/shadcn/vue/oods-button.json -y
+npx shadcn-vue@2.8.2 add https://raw.githubusercontent.com/kneelinghorse/OODS-Foundry/v0.19.0/packages/foundry/shadcn/vue/oods-button.json -y
 ```
 
 For React, use `shadcn@4.21.1` and omit `/vue` from the URL. The same items remain available locally in the npm package. React Aria remains unsupported: its onPress/isDisabled and render-prop APIs require separate adapters and proof; the Radix/Base adapters are not compatible with it.

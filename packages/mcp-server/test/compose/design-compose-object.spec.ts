@@ -37,8 +37,8 @@ describe('design.compose — object-aware path', () => {
       context: 'detail',
     });
     const ou = result.objectUsed!;
-    // Bumped to 2.0.0 in s126-m01: breaking status-enum change (delinquent → past_due + unpaid).
-    expect(ou.version).toBe('2.0.0');
+    // The optional customer organization id shipped in the 2.1.0 definition.
+    expect(ou.version).toBe('2.1.0');
     expect(ou.traits).toBeInstanceOf(Array);
     expect(ou.traits.length).toBeGreaterThan(0);
     expect(ou.fieldsComposed).toBeGreaterThan(0);

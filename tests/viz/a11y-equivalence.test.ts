@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { chai, describe, expect, it } from 'vitest';
 import { generateAccessibleTable } from '@oods/viz-core';
 import { generateNarrativeSummary } from '@oods/viz-core';
 import { validateVizEquivalenceRules } from '@oods/viz-core';
@@ -106,7 +106,7 @@ describe('Non-cartesian a11y equivalence (FD#10)', () => {
     { name: 'sankey/chord (flow)', analyze: () => analyzeSankey(SANKEY) },
     { name: 'force_graph (network)', analyze: () => analyzeNetwork(NETWORK) },
     { name: 'choropleth/bubble_map/flow_map (spatial)', analyze: () => analyzeSpatial({ features: SPATIAL }) },
-  ];
+  ].map(({ name, analyze }) => ({ name: chai.util.inspect(name), analyze }));
 
   it.each(cases)('produces a ready table + narrative for $name', ({ analyze }) => {
     const analysis = analyze();

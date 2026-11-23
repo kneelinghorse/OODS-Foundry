@@ -56,7 +56,7 @@ describe('core/Closeout is a shipped trait', () => {
   it('holds the record\'s fields, every id a plain string, none required, none editable, and no state of its own', () => {
     expect(listTraits()).toContain('Closeout');
     const trait = loadTrait('core/Closeout');
-    expect(trait.trait).toMatchObject({ name: 'Closeout', version: '1.0.0', category: 'core' });
+    expect(trait.trait).toMatchObject({ name: 'Closeout', version: '1.0.1', category: 'core' });
     expect(Object.keys(trait.schema)).toEqual(FIELDS);
     for (const field of FIELDS.filter(name => name.endsWith('_id'))) expect(trait.schema[field]!.type, field).toBe('string');
     for (const field of INSTANTS) expect(trait.schema[field]!.type, field).toBe('datetime');

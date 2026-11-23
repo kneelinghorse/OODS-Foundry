@@ -153,6 +153,14 @@ process.stdout.write(JSON.stringify({ before: { applies: before.applies }, after
 describe('the party\'s and the answerer\'s pages list their closures', () => {
   const rowsOf = (object: string, field: string, value: string, id: string) => listOf(object, sample(object, field, value), id).rows;
 
+  it('dates each Closure list row by its last report, as the related closure rows do', async () => {
+    const result = await pipeline({ object: 'Closure', context: 'list', framework: 'html' });
+    const doc = new JSDOM(result.render?.html ?? '').window.document;
+    const times = [...doc.querySelectorAll('.oods-collection-row time')];
+    expect(times).toHaveLength(samplesOf('Closure').length);
+    for (const time of times) expect(textOf(time)).toMatch(/^Last report: /);
+  });
+
   it('lists two closures on Dana Whitfield\'s and Northwind Traders\' pages and one on Jonah Marlow\'s and Marlow Yoga\'s, each with its name, state, line, its latest report and its lines', () => {
     expect(rowsOf('User', 'name', 'Dana Whitfield', 'closures').map(row => row.title)).toEqual(['Closure of Northwind spring order replies', 'Closure of Northwind customer replies']);
     expect(rowsOf('Organization', 'label', 'Northwind Traders', 'closures').map(row => row.title)).toEqual(['Closure of Northwind spring order replies', 'Closure of Northwind customer replies']);
@@ -177,6 +185,24 @@ describe('the party\'s and the answerer\'s pages list their closures', () => {
     expect(withFixtures('User', priya, 'closures-for', { Closure: [forPriya] }).rows.map(row => row.title)).toEqual(['Closure of a grant for Priya Raman']);
     expect(withFixtures('User', priya, 'closures', { Closure: [forPriya] }).rows.map(row => row.title)).toEqual([]);
     expect(withFixtures('User', dana, 'closures', { Closure: [forPriya] }).rows.map(row => row.title)).toContain('Closure of a grant for Priya Raman');
+  });
+});
+
+describe('lists on the record an ask names', () => {
+  it.each([
+    ['Article', 'Task', 'slug', 'tasks'],
+    ['Task', 'Approval', 'task_id', 'approvals'],
+  ])('draws a matching row on %s even when the shipped samples have none', async (subject, source, key, listId) => {
+    const record = samplesOf(subject)[0]!;
+    const ask = { ...samplesOf(source)[0], name: 'Check the final figures', subject_type: subject, subject_id: record[key] };
+    const otherKind = { ...ask, name: 'Unrelated ask', subject_type: 'Other' };
+    const list = withFixtures(subject, record, listId, { [source]: [ask, otherKind] });
+    const schema = (await compose({ object: subject, context: 'detail', options: { transient: true } })).schema!;
+    const model = { ...seedPreviewModel({ schema, object: subject, context: 'detail' }), related: [list] };
+    const html = renderRecordBody(schema, { objectName: subject, sampleModel: model });
+    const doc = new JSDOM(html).window.document;
+    const rows = doc.querySelectorAll('section[data-oods-list="' + listId + '"] .oods-related-row');
+    expect([...rows].map(textOf)).toEqual([expect.stringContaining(ask.name)]);
   });
 });
 

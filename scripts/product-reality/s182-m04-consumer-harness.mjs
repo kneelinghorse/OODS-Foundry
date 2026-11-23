@@ -1,3 +1,4 @@
+import toolchain from '../../packages/mcp-server/src/codegen/generated-toolchain.json' with { type: 'json' };
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import fsp from 'node:fs/promises';
@@ -71,7 +72,7 @@ const PUBLIC_EXTERNAL_VERSIONS = Object.freeze({
   react: '19.2.0',
   'react-dom': '19.2.0',
   typescript: '5.9.3',
-  vite: '6.4.3',
+  vite: toolchain.vite,
   vue: '3.5.42',
   'vue-tsc': '3.3.11',
 });

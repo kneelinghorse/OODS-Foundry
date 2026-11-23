@@ -1,6 +1,6 @@
 trait:
   name: Assignment
-  version: 1.0.0
+  version: 1.0.1
   description: |
     The record of one ask to one person or agent to do one piece of work, and what became of it: who asked, and for
     whom; who is doing it; exactly what was asked; what the work is about; what it waits on; where it came from; and
@@ -332,9 +332,8 @@ view_extensions:
   # the id already shows the name, so a source that keeps only a name still shows it and one that keeps only an id
   # shows the id. `data-oods-omit-empty` is the opt-in that leaves a place undrawn where the record holds no value for
   # it, so a task that waits on nothing has no "Waiting on" line; no view in 0.13.1 carries it.
-  # On a list row and a card a Text's label is not shown, so the one doing the work and what it waits on are each a
-  # value over its caption ("Billing Agent", "Doing it"): a row also carries the chip of the one who answers for the work
-  # (Ownerable on Task), and two bare names side by side do not say which is which (s247-m01 screens, round 1).
+  # A list row reads "Doing it Billing Agent" beside the chip of the one who answers for the work (Ownerable on Task).
+  # The caption distinguishes the two names. On a card, the value sits above its caption.
   list:
     - component: LabelCell
       position: after
@@ -576,13 +575,17 @@ dependencies:
   - Stateful
 
 metadata:
+  changelog:
+    - version: 1.0.1
+      date: "2026-11-22"
+      description: "Corrects the reading order of a captioned fact on lists and cards."
   created: "2026-11-13"
   owners:
     - Core team
   maturity: alpha
   accessibility:
     keyboard: The record's facts add no interactive control; the three fields the doer writes are labelled form inputs.
-    screenreader: Each fact is read with its visible label, label first on the detail page and the form ("Doing it, Billing Agent") and value first on a list row or a card ("Billing Agent, Doing it").
+    screenreader: Each fact is read with its visible label, label first on a list row, the detail page and the form ("Doing it, Billing Agent") and value first on a card ("Billing Agent, Doing it").
   regionsUsed:
     - list
     - card

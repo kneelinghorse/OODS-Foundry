@@ -67,7 +67,7 @@ npm run build
 npm run dev
 ```
 
-Generated apps pin the OODS release that generated them; to upgrade, regenerate the app or move all four pins together.
+Generated apps use the OODS release that generated them. To upgrade, regenerate the app or update every OODS library listed in your app’s package.json to the same release, then reinstall.
 
 ![Vue Membership form on a phone](images/vue-form-390-light.png)
 

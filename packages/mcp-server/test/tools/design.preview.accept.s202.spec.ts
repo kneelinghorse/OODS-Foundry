@@ -73,7 +73,7 @@ describe('design.preview action accept records the accepted version with its mea
     expect(fs.readdirSync(path.join(compositionsDir, id, 'versions')).filter(name => name.endsWith('.json')).sort()).toEqual(['1.json', '2.json']);
 
     const versions = await previewReadWriteSplit({ action: 'versions', compositionId: id }, context);
-    const validateVersions = getAjv().compile(JSON.parse(fs.readFileSync(path.resolve('src/schemas/design.versions.output.json'), 'utf8')));
+    const validateVersions = getAjv().compile(JSON.parse(fs.readFileSync(new URL('../../src/schemas/design.versions.output.json', import.meta.url), 'utf8')));
     expect(validateVersions(versions), JSON.stringify(validateVersions.errors)).toBe(true);
     expect(versions).toMatchObject({ action: 'versions', latest: 2, accepted: { version: 2, acceptedAt: second.accepted.acceptedAt, acceptances: 2 } });
     // The browser page's host reads the same record.

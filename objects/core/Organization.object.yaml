@@ -1,6 +1,6 @@
 object:
   name: Organization
-  version: 1.2.1
+  version: 1.3.1
   domain: core.account
   description: Canonical account record for tenant and workspace governance across the platform.
   tags:
@@ -188,6 +188,12 @@ metadata:
     - Billing team
   steward: Platform team
   changelog:
+    - version: 1.3.1
+      date: "2026-11-22"
+      description: "Shows consumed quantities with their units and balances in the invoice currency. Empty billing lists describe linked records."
+    - version: 1.3.0
+      date: "2026-11-22"
+      description: "Lists subscriptions, usage and invoices that identify this organization as their customer."
     - version: 1.2.1
       date: "2026-11-19"
       description: Shows grants and closures for the organization, dates each closure by its last report and displays residency codes in capitals.
@@ -238,9 +244,24 @@ metadata:
     - id: payments
       label: "Payments for {name}"
       empty: "No payment names {name}."
-      note: Subscriptions, usage and invoices name their customer in words, so they are not listed here.
       sources:
         - { from: Transaction, via: organization_id, row: { time: occurred_at } }
+    - id: subscriptions
+      label: "Subscriptions for {name}"
+      empty: "No subscriptions are linked to {name} here."
+      sources:
+        - { from: Subscription, via: organization_id, row: { time: { field: current_period_end, says: Period ends } } }
+    - id: usage
+      collapsed: true
+      label: "Usage for {name}"
+      empty: "No usage records are linked to {name} here."
+      sources:
+        - { from: Usage, via: organization_id, row: { line: [{ field: consumed_quantity, says: Consumed }, unit_label], time: { field: period_end, says: Period ends } } }
+    - id: invoices
+      label: "Invoices for {name}"
+      empty: "No invoices are linked to {name} here."
+      sources:
+        - { from: Invoice, via: organization_id, row: { line: [memo, { field: balance_minor, says: Balance due }] } }
     - id: ended-grants
       label: "Ended grants for {name}"
       empty: "No grant for {name} has ended."

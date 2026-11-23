@@ -331,7 +331,7 @@ function emitEvidence(label: string, evidence: unknown): void {
   );
 }
 
-describe.sequential(
+describe(
   "ECharts artifact.certify concurrency and resource release gate",
   () => {
     it("runs four artifact.certify calls at the server cap with conflicting geo data and mixed families", async () => {

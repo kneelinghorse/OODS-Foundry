@@ -86,7 +86,7 @@ const baseChannelSchema = z.object({
   enabled: z.boolean().default(true),
   metadata: metadataSchema,
   tags: z.array(z.string().min(1).max(64)).default([]),
-  config: z.record(z.string(), z.unknown()).default({}),
+  config: customConfigSchema.default({}),
 });
 
 const configValidators: Record<CoreChannelType, z.ZodTypeAny> = {

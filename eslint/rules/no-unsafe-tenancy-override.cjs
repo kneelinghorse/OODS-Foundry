@@ -46,7 +46,7 @@ module.exports = {
   },
 
   create(context) {
-    const filename = context.getFilename();
+    const filename = context.filename;
     const allowed = isAllowedFile(filename);
 
     const reports = [];

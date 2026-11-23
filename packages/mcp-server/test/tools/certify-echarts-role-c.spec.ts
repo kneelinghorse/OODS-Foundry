@@ -110,7 +110,7 @@ async function repaintedCarrier(
   return { option, svg: await renderEChartsToSvg(option) };
 }
 
-describe.sequential("ECharts Role-C structural paint extraction", () => {
+describe("ECharts Role-C structural paint extraction", () => {
   it.each(ECHARTS_OPERAND_CASES)(
     "$chartType: extracts only visible chart carriers from the exact served option",
     async (operand) => {

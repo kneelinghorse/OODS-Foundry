@@ -7,7 +7,10 @@ import { createRequire } from 'node:module';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const selection = JSON.parse(fs.readFileSync(path.join(root, 'scripts/runtime/public-test-selection.json'), 'utf8'));
 const require = createRequire(import.meta.url);
-export const publicDependencyWorkerOptions = { pool: 'forks' as const, poolOptions: { forks: { execArgv: ['--require', path.join(root, 'scripts/runtime/public-dependency-guard.cjs'), '--import', path.join(root, 'scripts/runtime/public-dependency-register.mjs')] } } };
+export const publicDependencyWorkerOptions = {
+  pool: 'forks' as const,
+  execArgv: ['--require', path.join(root, 'scripts/runtime/public-dependency-guard.cjs'), '--import', path.join(root, 'scripts/runtime/public-dependency-register.mjs')],
+};
 
 // Vite transforms TS without native module hooks. Guard that load path in the same isolated project.
 export function publicDependencyBoundary() {

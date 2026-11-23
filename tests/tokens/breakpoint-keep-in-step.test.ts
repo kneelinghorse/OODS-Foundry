@@ -19,7 +19,7 @@
 
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { chai, describe, expect, it } from 'vitest';
 import { BREAKPOINT_SCREEN_KEYS, tokenArtifactPath } from '../../tailwind.config.js';
 
 const ROOT = process.cwd();
@@ -144,7 +144,8 @@ describe('breakpoint keep-in-step — the matcher (s173 m02, stage 1)', () => {
 });
 
 describe('breakpoint keep-in-step — the legacy catalogue is EXACT (s173 m02, stage 1)', () => {
-  it.each(LEGACY_SITES)('$file still carries its $px px query, unchanged', ({ file, px }) => {
+  const cases = LEGACY_SITES.map(site => ({ ...site, label: chai.util.inspect(site.file) }));
+  it.each(cases)('$label still carries its $px px query, unchanged', ({ file, px }) => {
     const source = readFileSync(resolve(ROOT, file), 'utf8');
     const literals = collectWidthLiterals(source);
     expect(literals.map((literal) => literal.px)).toContain(px);

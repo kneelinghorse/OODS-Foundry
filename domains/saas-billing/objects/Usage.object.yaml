@@ -1,6 +1,6 @@
 object:
   name: Usage
-  version: 1.0.0
+  version: 1.1.0
   domain: saas.billing
   description: Metered usage snapshot for consumption based billing supporting trend analysis and overage forecasting.
   tags:
@@ -95,7 +95,17 @@ schema:
     description: Detected anomalies with context for investigation.
     default: []
 
+  organization_id:
+    type: string
+    required: false
+    description: The identifier of the organization named as the customer.
+
 semantics:
+  organization_id:
+    semantic_type: organization.id
+    token_mapping: tokenMap(organization.id.primary)
+    ui_hints:
+      detailRow: false
   # The meter names the record (SaaSBillingMetered's meter_name, marked as the label), ahead of the customer it bills.
   meter_name:
     semantic_type: text.label
@@ -149,6 +159,10 @@ tokens:
   billing.usage.trend_percent: "var(--cmp-text-accent)"
 
 metadata:
+  changelog:
+    - version: 1.1.0
+      date: "2026-11-22"
+      description: "Adds the optional customer organization id for lists on the organization’s page."
   owners:
     - Analytics team
     - Product ops team
@@ -173,6 +187,7 @@ samples:
   - usage_id: use_northwind_orders_2026_09
     subscription_id: sub_northwind_business
     customer_name: Northwind Traders
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01
     meter_id: mtr_orders_api
     meter_name: Orders API
     provider: Stripe
@@ -201,6 +216,7 @@ samples:
   - usage_id: use_northwind_dashboards_2026_08
     subscription_id: sub_northwind_analytics
     customer_name: Northwind Traders
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a01
     meter_id: mtr_dashboard_queries
     meter_name: Dashboard queries
     provider: Stripe
@@ -228,6 +244,7 @@ samples:
   - usage_id: use_lindqvist_catalog_2026_09
     subscription_id: sub_lindqvist_starter
     customer_name: Lindqvist Bakery
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a03
     meter_id: mtr_catalog_api
     meter_name: Catalog API
     provider: Stripe
@@ -256,6 +273,7 @@ samples:
   - usage_id: use_blueharbor_webhooks_2026_09
     subscription_id: sub_blueharbor_team
     customer_name: Blue Harbor Studio
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a02
     meter_id: mtr_webhooks
     meter_name: Webhook deliveries
     provider: Stripe
@@ -284,6 +302,7 @@ samples:
   - usage_id: use_kestrel_printjobs_2026_09
     subscription_id: sub_kestrel_team
     customer_name: Kestrel Print Co.
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a04
     meter_id: mtr_print_jobs_api
     meter_name: Print jobs API
     provider: Stripe
@@ -313,6 +332,7 @@ samples:
   - usage_id: use_tidewater_reporting_2026_09
     subscription_id: sub_tidewater_enterprise
     customer_name: Tidewater Co-op
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05
     meter_id: mtr_reporting_api
     meter_name: Reporting API
     provider: Stripe
@@ -341,6 +361,7 @@ samples:
   - usage_id: use_summit_inventory_2026_09
     subscription_id: sub_summit_business
     customer_name: Summit Outfitters
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a07
     meter_id: mtr_inventory_sync
     meter_name: Inventory sync
     provider: Stripe
@@ -368,6 +389,7 @@ samples:
   - usage_id: use_tidewater_search_2026_09
     subscription_id: sub_tidewater_enterprise
     customer_name: Tidewater Co-op
+    organization_id: 3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05
     meter_id: mtr_search_api
     meter_name: Search API
     provider: Stripe

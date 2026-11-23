@@ -23,6 +23,7 @@ import { fileURLToPath } from 'node:url';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { handle as compose } from '../../src/tools/design.compose.js';
 import { handle as generate } from '../../src/tools/code.generate.js';
+import { loadObject } from '../../src/objects/object-loader.js';
 import type { GeneratedArtifact } from '../../src/codegen/types.js';
 import type { UiSchema } from '../../src/schemas/generated.js';
 import { runGeneratedStore } from '../product-reality/render-generated.js';
@@ -79,10 +80,47 @@ for (const record of fresh().list({ pageSize: 1000 }).records.concat(fresh().lis
 process.stdout.write(JSON.stringify(out));
 `;
 
+// Subscription now keeps the id of its named customer. Compare that id with the independent
+// Organization record and preserve every historical field and every other store result.
+const customers = new Map(loadObject('Organization').samples!.map(row => [row.label, row.organization_id]));
+function withCustomerId(record: Record<string, unknown>) {
+  const organization_id = customers.get(record.customer_name);
+  expect(organization_id, String(record.customer_name)).toBeTypeOf('string');
+  return { ...record, organization_id };
+}
+
+// Transaction and Task now use the related-row store extension already shipped on User in 0.18.0.
+const relatedStoreParts = [
+  `import { resolveRelatedListRows, type ResolvedRelatedList } from '@oods/component-contracts';
+import { relatedCopied, relatedLists, relatedObjects, relatedOwn } from './related-data';`,
+  `/**
+ * The record's related lists (metadata.relatedLists), worked out by the same core HTML and the standalone screens use.
+ * Records of other objects come from related-data.ts, copied from the samples when this app was made; the app's own
+ * records are the store's, so a change made here shows on the page that lists it. Replace this with your own query.
+ */
+export function relatedRows(record: DomainRecord, records: readonly DomainRecord[]): ResolvedRelatedList[] {
+  const objects = { ...relatedObjects, [relatedOwn.name]: { ...relatedOwn, records: records as unknown as Array<Record<string, unknown>> } };
+  return relatedLists.map((list) => ({ ...resolveRelatedListRows(list, relatedOwn, record as unknown as Record<string, unknown>, objects), ...(relatedCopied[list.id] ? { copied: relatedCopied[list.id] } : {}) }));
+}`,
+  '    related(record: DomainRecord) { return relatedRows(record, records); },',
+];
+function withoutStoreAdditions(object: Object, source: string) {
+  const additions = object === 'Subscription' ? [
+    '  "organization_id"?: string;\n', '  organizationId: record["organization_id"],\n',
+    ',"organization_id":"Organization id"', ',"organization_id":"string"',
+  ] : relatedStoreParts;
+  for (const addition of additions) {
+    expect(source, object).toContain(addition);
+    source = source.replace(addition, '');
+  }
+  return source;
+}
+
 // Only a new history line at the comparison clock takes the revised multiword status label.
 // Every seeded line, actor, state code, reason and refusal still compares to the historical store.
-function expectedHistory<T>(results: T): T {
+function expectedHistory<T>(object: Object, results: T): T {
   return JSON.parse(JSON.stringify(results, function (key, value) {
+    if (object === 'Subscription' && key === 'record' && value) return withCustomerId(value);
     if (key !== 'title' || this.at !== '2026-11-20T09:00:00.000Z') return value;
     if (this.to === 'past_due' && value === 'Past Due') return 'Past due';
     if (this.to === 'pending_cancellation' && value === 'Pending Cancellation') return 'Pending cancellation';
@@ -96,7 +134,7 @@ describe("Cancel's behaviour is unchanged for the three objects that cancel (s24
       const code = schemas[object].workflow!.data.cancellationReasonCodes?.[0] ?? 'customer_request';
       const old = runGeneratedStore(beforeFiles(object), CANCEL_SCRIPT(code)) as Array<{ result: { record?: Record<string, unknown>; refused?: string } }>;
       const now = runGeneratedStore(apps[object].react.files, CANCEL_SCRIPT(code)) as typeof old;
-      expect(now).toEqual(expectedHistory(old));
+      expect(now).toEqual(expectedHistory(object, old));
       // Both kinds of result are compared, so the check cannot pass on refusals alone, or on writes alone.
       expect(old.some(entry => entry.result.record), object).toBe(true);
       expect(old.some(entry => entry.result.refused), object).toBe(true);
@@ -107,7 +145,7 @@ describe("Cancel's behaviour is unchanged for the three objects that cancel (s24
         const history = record.state_history as Array<Record<string, unknown>>;
         const { actor_id, actor_name, actor_kind, ...line } = history.at(-1)!;
         expect({ actor_id, actor_name, actor_kind }, `${object} ${index}`).toEqual({ actor_id: ACTOR.id, actor_name: ACTOR.name, actor_kind: ACTOR.kind });
-        expect({ ...entry, result: { record: { ...record, state_history: [...history.slice(0, -1), line] } } }, `${object} ${index}`).toEqual(expectedHistory(old[index]));
+        expect({ ...entry, result: { record: { ...record, state_history: [...history.slice(0, -1), line] } } }, `${object} ${index}`).toEqual(expectedHistory(object, old[index]));
       });
     });
 
@@ -122,14 +160,24 @@ describe("Cancel's behaviour is unchanged for the three objects that cancel (s24
         const notice = framework === 'react'
           ? '<p className="workflow-notice" role="status">{state.notice}</p>'
           : '<p class="workflow-notice" role="status">{{ state.notice }}</p>';
-        const previous = before(object, name);
+        let previous = before(object, name);
+        if (object !== 'Subscription') {
+          const state = framework === 'react' ? 'state' : 'state.value';
+          previous = previous.replace('collectionQuery:', `related: app.related(${state}.draft), collectionQuery:`);
+        }
         const withoutNotice = framework === 'react'
           ? previous.replace('    ' + notice + '\n', '')
           : previous.replace('</section>' + notice, '</section>');
         expect(file(apps[object][framework], name)).toBe(withoutNotice.replace('</nav>', '</nav>\n    ' + notice));
       }
       for (const name of ['src/actions.ts', 'src/sample-data.ts']) {
-        for (const framework of ['react', 'vue'] as const) expect(file(apps[object][framework], name), `${object} ${framework} ${name}`).toBe(before(object, name));
+        let expected = before(object, name);
+        if (object === 'Subscription' && name === 'src/sample-data.ts') {
+          const start = expected.indexOf(' = [') + ' = '.length;
+          const samples = JSON.parse(expected.slice(start).trim().slice(0, -1)) as Array<Record<string, unknown>>;
+          expected = expected.slice(0, start) + JSON.stringify(samples.map(withCustomerId), null, 2) + ';\n';
+        }
+        for (const framework of ['react', 'vue'] as const) expect(file(apps[object][framework], name), `${object} ${framework} ${name}`).toBe(expected);
       }
       // s249-m04 (next step 1864 item 1): application.ts moves in one line only, the map of the screens' field nodes, which
       // loses the form controls a form no longer offers (the record's own id, its creation and update instants, its last
@@ -140,11 +188,16 @@ describe("Cancel's behaviour is unchanged for the three objects that cancel (s24
         const old = before(object, 'src/application.ts');
         const strip = (text: string) => text.replace(/^const fieldByNodeId: .*$/m, '');
         // The loading screen clears the notice. A successful save carries it to its destination.
-        const expected = old
+        let expected = old
           .replace('navigate(screen: Screen, id = state.id)', "navigate(screen: Screen, id = state.id, notice = '')")
           .replace('publish({ screen, id, cancelOpen:', "publish({ screen, id, notice: '', cancelOpen:")
           .replace('publish({ records: list.records', 'publish({ notice, records: list.records')
           .replace("publish({ notice: 'Changes saved in this session.' }); await navigate(destination)", "await navigate(destination, state.id, 'Changes saved in this session.')");
+        if (object !== 'Subscription') {
+          expected = expected.replace('collectionEvents, type DomainRecord', 'collectionEvents, relatedRows, type DomainRecord')
+            .replace('history, collectionEvents };', 'history, collectionEvents, relatedRows };')
+            .replace('    retry()', "    /** The shown record's related lists, from the store's live records and the copied ones. */\n    related(record: DomainRecord) { return store.related(record); },\n    retry()");
+        }
         expect(strip(now), `${object} ${framework} application.ts`).toBe(strip(expected));
         const removed = Object.entries(fieldMap(old)).filter(([node]) => !Object.hasOwn(fieldMap(now), node));
         expect(Object.fromEntries(Object.entries(fieldMap(old)).filter(([node]) => Object.hasOwn(fieldMap(now), node))), `${object} ${framework}`).toEqual(fieldMap(now));
@@ -155,8 +208,9 @@ describe("Cancel's behaviour is unchanged for the three objects that cancel (s24
 
     it(`${object}: every other line of its store that moves is named`, () => {
       const old = before(object, 'src/store.ts').split('\n');
-      const now = file(apps[object].react, 'src/store.ts')!.split('\n');
-      expect(file(apps[object].vue, 'src/store.ts')).toBe(now.join('\n'));
+      const current = file(apps[object].react, 'src/store.ts')!;
+      expect(file(apps[object].vue, 'src/store.ts')).toBe(current);
+      const now = withoutStoreAdditions(object, current).split('\n');
       const removed = old.filter(line => !now.includes(line));
       const added = now.filter(line => !old.includes(line));
       const ordered = object === 'Task';
@@ -213,7 +267,7 @@ describe('an object that declares no order saves as before (s249-m03, Interface 
     it(`${object}: an edit and every status move preserve the historical record with current history titles`, () => {
       const old = runGeneratedStore(beforeFiles(object), UPDATE_SCRIPT);
       const now = runGeneratedStore(apps[object].react.files, UPDATE_SCRIPT);
-      expect(now).toEqual(expectedHistory(old));
+      expect(now).toEqual(expectedHistory(object, old));
       expect((old as unknown[]).length).toBeGreaterThan(10);
     });
   }

@@ -60,7 +60,7 @@
       ]
     }
   ],
-  "head": "9510a511bd38dc3ebac9e5acc339caa1825ed327",
+  "head": "ed6358965842cf7c00d1122f44f2abbd587ce302",
   "builderSelfCertified": false,
   "methodology": {
     "testImportLocation": "Where a spec that imports the tool's handler module lives: packages/mcp-server/test/product-reality, then test/contracts, then any other mcp-server spec. A literal runtime import is source evidence that a test reaches the handler, not proof of invocation, passing execution or browser certification. Grouped action imports roll up to their registered family. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not count.",
@@ -739,7 +739,7 @@
           },
           {
             "path": "packages/mcp-server/test/product-reality/newcomer-answers.s211.spec.ts",
-            "line": 10,
+            "line": 11,
             "handler": "packages/mcp-server/src/tools/catalog.list.ts"
           },
           {
@@ -1028,7 +1028,7 @@
           },
           {
             "path": "packages/mcp-server/test/product-reality/newcomer-answers.s211.spec.ts",
-            "line": 11,
+            "line": 12,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -1838,7 +1838,7 @@
           },
           {
             "path": "packages/mcp-server/test/product-reality/newcomer-answers.s211.spec.ts",
-            "line": 13,
+            "line": 14,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2198,6 +2198,11 @@
           {
             "path": "packages/mcp-server/test/compose/design-compose.spec.ts",
             "line": 14,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/compose/detail-row.s253.spec.ts",
+            "line": 7,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -3123,7 +3128,7 @@
           },
           {
             "path": "packages/mcp-server/test/product-reality/newcomer-answers.s211.spec.ts",
-            "line": 12,
+            "line": 13,
             "handler": "packages/mcp-server/src/tools/health.ts"
           },
           {
@@ -4942,6 +4947,11 @@
           {
             "path": "packages/mcp-server/test/objects/assignment-traits.s247.spec.ts",
             "line": 35,
+            "handler": "packages/mcp-server/src/tools/object.validate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/objects/billing-customer.s253.spec.ts",
+            "line": 4,
             "handler": "packages/mcp-server/src/tools/object.validate.ts"
           },
           {

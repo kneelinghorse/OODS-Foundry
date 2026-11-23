@@ -18,7 +18,7 @@ import type { RelatedList } from '../../src/objects/types.js';
 type Sample = Record<string, any>;
 const NAME: Record<string, string> = { Organization: 'label', User: 'name', Agent: 'name', Grant: 'name', Task: 'name' };
 // s250-m03: Closure, whose closure_id is its own id, is listed on the grant's, the party's and the answerer's pages.
-const KEY: Record<string, string> = { Organization: 'organization_id', User: 'user_id', Agent: 'agent_id', Grant: 'grant_id', Task: 'task_id', Approval: 'approval_id', Transaction: 'payment_reference', Closure: 'closure_id' };
+const KEY: Record<string, string> = { Organization: 'organization_id', User: 'user_id', Agent: 'agent_id', Grant: 'grant_id', Task: 'task_id', Approval: 'approval_id', Transaction: 'payment_reference', Closure: 'closure_id', Subscription: 'subscription_id', Usage: 'usage_id', Invoice: 'invoice_id' };
 const show = (row: RelatedRow): string => [row.seat ? `${row.seat}: ` : '', row.title, row.kept ? ` (kept${row.kept.kind ? ', ' + row.kept.kind : ''})` : '',
   row.state ? ` [${row.state}${row.stateAtEnd !== undefined ? ` at end ${row.stateAtEnd ?? 'none'}` : ''}]` : '', row.lines ? ` (${row.lines.length} lines)` : '',
   row.inner ? ` {${row.inner.map(inner => `${inner.title} [${inner.state}]`).join(', ')}}` : ''].join('');
@@ -29,6 +29,9 @@ const list = (object: string, name: string, id: string) => resolveRelatedLists(o
 const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does not apply'>>> = {
   Organization: {
     "Northwind Traders": {
+      'subscriptions': ["Business [active]", "Analytics add-on [paused]"],
+      'usage': ["Orders API [ok]", "Dashboard queries [ok]"],
+      'invoices': ["INV-2026-0142 [paid]"],
       // s250-m03: the closures of its ended grants.
       'closures': ["Closure of Northwind spring order replies [reported_closed] (3 lines)", "Closure of Northwind customer replies [still_running] (3 lines)"],
       'done-for': ["Reply about order NW-2207 [needs_input] (2 lines)"],
@@ -37,22 +40,34 @@ const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does no
       'ended-grants': ["Northwind spring order replies [replaced]","Northwind customer replies [revoked]"],
     },
     "Blue Harbor Studio": {
+      'subscriptions': ["Team [trialing]"],
+      'usage': ["Webhook deliveries [ok]"],
+      'invoices': ["INV-2026-0160 [draft]"],
       'acting-for': ["Blue Harbor session bookings [paused]"],
       'done-for': ["Send Sunday's session reminders [outcome_unknown] (2 lines)"],
       'tasks': ["Send Sunday's session reminders [outcome_unknown]"],
       'payments': ["PAY-2026-0425 [authorized]"],
     },
     "Lindqvist Bakery": {
+      'subscriptions': ["Starter [active]"],
+      'usage': ["Catalog API [ok]"],
+      'invoices': ["INV-2026-0151 [paid]", "INV-2026-0133 [refunded]"],
       'tasks': ["Count flour and butter for Monday's order [handed_over]","Count flour and butter by hand [finished]"],
       'payments': ["PAY-2026-0395 [refunded]","PAY-2026-0417 [settled]"],
     },
     "Kestrel Print Co.": {
+      'subscriptions': ["Team [past_due]"],
+      'usage': ["Print jobs API [investigating]"],
+      'invoices': ["INV-2026-0139 [past_due]"],
       'acting-for': ["Kestrel overdue invoices [active]"],
       'done-for': ["Add a late fee to overdue invoices [declined] (1 lines)","Send September's payment reminders [cancelled] (1 lines)"],
       'tasks': ["Add a late fee to overdue invoices [declined]","Send September's payment reminders [cancelled]"],
       'payments': ["PAY-2026-0409 [failed]"],
     },
     "Tidewater Co-op": {
+      'subscriptions': ["Enterprise [active]"],
+      'usage': ["Reporting API [ok]", "Search API [ok]"],
+      'invoices': ["INV-2026-0155 [processing]"],
       'acting-for': ["Tidewater invoices and payments [active] {Resend returned transfers [active]}"],
       'done-for': ["Get INV-2026-0155 paid [waiting] (4 lines)","Approve the resend of PAY-2026-0429 [used] (3 lines)","PAY-2026-0429 [pending] (1 lines)","Resend returned transfers [active] (1 lines)"],
       'tasks': ["Get INV-2026-0155 paid [waiting]"],
@@ -60,11 +75,16 @@ const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does no
       'payments': ["PAY-2026-0429 [pending]"],
     },
     "Marlow Yoga": {
+      'subscriptions': ["Starter [terminated]"],
+      'invoices': ["INV-2026-0118 [void]"],
       // s250-m03: the closures of its ended grants.
       'closures': ["Closure of Marlow Yoga class bookings [not_known] (3 lines)"],
       'ended-grants': ["Marlow Yoga class bookings [revoked]"],
     },
     "Summit Outfitters": {
+      'subscriptions': ["Business [pending_cancellation]"],
+      'usage': ["Inventory sync [delayed]"],
+      'invoices': ["INV-2026-0149 [paid]"],
       'acting-for': ["Summit online orders [active]"],
       'done-for': ["Hold 40 trail tents for the autumn sale [paused] (1 lines)"],
       'tasks': ["Hold 40 trail tents for the autumn sale [paused]"],
@@ -220,7 +240,8 @@ describe('the resolver returns, for every sample of the four objects, the rows t
     expect(list('User', 'Ruth Adeyemi', 'given-for')).toMatchObject({ label: 'Given for Ruth Adeyemi by someone else', empty: 'No grant given for Ruth Adeyemi by someone else stands now.', rows: [] });
     expect(list('User', 'Dana Whitfield', 'waiting')).toMatchObject({ label: 'Waiting for Dana Whitfield\'s answer' });
     expect(list('Agent', 'Support Agent', 'acts-for')).toMatchObject({ label: 'Grants Support Agent holds', empty: 'Support Agent holds no grant now.', rows: [] });
-    expect(list('Organization', 'Tidewater Co-op', 'payments').note).toBe('Subscriptions, usage and invoices name their customer in words, so they are not listed here.');
+    expect(list('Organization', 'Tidewater Co-op', 'payments').note).toBeUndefined();
+    expect(list('Organization', 'Tidewater Co-op', 'invoices').rows.map(row => row.title)).toEqual(['INV-2026-0155']);
     expect(list('Organization', 'Marlow Yoga', 'ended-grants').collapsed).toBe(true);
   });
 
@@ -303,7 +324,7 @@ describe('the resolver matches by id only', () => {
   /** R4's method: a value points at a party only when it equals a registered id; every top-level value and history entry. */
   function pointersAt(id: string): Set<string> {
     const found = new Set<string>();
-    for (const object of ['Task', 'Approval', 'Transaction', 'Grant', 'Agent', 'User', 'Organization', 'Closure']) for (const record of samplesOf(object)) {
+    for (const object of ['Task', 'Approval', 'Transaction', 'Grant', 'Agent', 'User', 'Organization', 'Closure', 'Subscription', 'Usage', 'Invoice']) for (const record of samplesOf(object)) {
       const values = [...Object.values(record), ...((record.state_history ?? []) as Sample[]).flatMap(entry => Object.values(entry))];
       if (values.some(value => value === id || (Array.isArray(value) && value.includes(id)))) found.add(`${object}:${String(record[KEY[object]!])}`);
     }
@@ -347,4 +368,20 @@ describe('the resolver matches by id only', () => {
     expect(samplesOf('Subscription').some(subscription => subscription.customer_name === 'Tidewater Co-op')).toBe(true);
     expect(resolveRelatedList('Organization', tidewater, custom).rows).toEqual([]);
   });
+});
+
+it('identifies the addressee even when someone else answered the ask', () => {
+  const article = loadObject('Article').samples!.find(row => row.slug === 'set-up-automatic-payment-retries')!;
+  expect(article).toBeDefined();
+  const approvals = resolveRelatedLists('Article', article).find(group => group.id === 'approvals')!;
+  expect(approvals.rows.map(row => row.lineText)).toContain('Asked of: Kwame Asante');
+});
+
+it('keeps currency, zero balances and consumption visible when billing records are listed together', () => {
+  expect(list('Organization', 'Tidewater Co-op', 'invoices').rows[0]!.lineText).toContain('Balance due: $12,000.00');
+  expect(list('Organization', 'Kestrel Print Co.', 'invoices').rows[0]!.lineText).toContain('Balance due: £49.00');
+  expect(list('Organization', 'Northwind Traders', 'invoices').rows[0]!.lineText).toContain('Balance due: $0.00');
+  expect(list('Organization', 'Tidewater Co-op', 'usage').rows.map(row => row.lineText)).toEqual([
+    'Consumed: 612,340 · API calls', 'Consumed: 128,400 · API calls',
+  ]);
 });

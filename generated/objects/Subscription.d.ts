@@ -203,6 +203,13 @@ export interface Subscription {
   next_payment_due_at?: string;
 
   /**
+   * The identifier of the organization named as the customer.
+   *
+   * Source: Subscription (object override)
+   */
+  organization_id?: string;
+
+  /**
    * Recorded payments, oldest first, each with its time and amount in minor units. Drawn by the payment chart.
    *
    * Source: Subscription (object override)

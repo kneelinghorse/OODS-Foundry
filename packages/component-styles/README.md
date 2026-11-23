@@ -24,8 +24,8 @@ The stylesheet expects OODS component markup and classes. Applying it to an unre
 
 ## Limits
 
-Generated apps pin the OODS release that generated them; to upgrade, regenerate the app or move all four pins together. These packages are separate from the local MCP server, `@oods/foundry`.
+Generated apps use the OODS release that generated them. To upgrade, regenerate the app or update every OODS library listed in your app’s package.json to the same release, then reinstall. These packages are separate from the local MCP server, `@oods/foundry`.
 
 ## License
 
-Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/component-styles@0.18.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/component-styles@0.18.0/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.
+Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/component-styles@0.19.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/component-styles@0.19.0/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.

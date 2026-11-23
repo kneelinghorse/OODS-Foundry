@@ -111,7 +111,7 @@ it('includes unreachable reference reports in object show', async () => {
 });
 
 it('uses OData navigation labels for detail and picker and declared labels on list columns', async () => {
-  const file = path.resolve('test/fixtures/importer/odata-bindings.xml');
+  const file = path.resolve(import.meta.dirname, '../fixtures/importer/odata-bindings.xml');
   const staged = await importObject({ action: 'draft', source: { path: file, format: 'odata' } });
   await importObject({ action: 'apply', importId: staged.importId, objects: [{ name: 'Agency' }, { name: 'Trip' }] });
   const target = loadObject('Agency');

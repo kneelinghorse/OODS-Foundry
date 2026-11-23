@@ -4,9 +4,13 @@ import type { GeneratedArtifactAction } from '../../packages/mcp-server/src/code
 import type { UiElement, UiSchema } from '../../packages/mcp-server/src/schemas/generated.js';
 import { holdsValue, omitEmptyFields, OPENED_STATUSES_PROP, STATUSES_PROP, WHEN_UNSET_PROP } from '../../packages/mcp-server/src/codegen/binding-utils.js';
 
-const { JSDOM } = createRequire(import.meta.url)('jsdom') as {
-  JSDOM: { fragment(html: string): DocumentFragment };
-};
+const require = createRequire(import.meta.url);
+
+// The Node-floor quickstart uses Chromium and shares this harness without parsing HTML with jsdom.
+export function parseHtmlFragment(html: string): DocumentFragment {
+  const { JSDOM } = require('jsdom') as { JSDOM: { fragment(markup: string): DocumentFragment } };
+  return JSDOM.fragment(html);
+}
 
 export const S185_SCHEMA_NAMES = Object.freeze([
   'cmos-messages-redesign',
@@ -302,7 +306,7 @@ export function deriveMountObligations(schema: UiSchema, source: string, model: 
 }
 
 export function observeMountObligations(obligations: MountObligation[], html: string) {
-  const root = JSDOM.fragment(html);
+  const root = parseHtmlFragment(html);
   return obligations.map((obligation) => {
     const node = root.querySelector(selectorForNode(obligation.nodeId));
     const owner = node?.closest(`[data-oods-component=${JSON.stringify(obligation.component)}]`);
@@ -333,7 +337,7 @@ export function sourceOwnsControl(source: string, nodeId: string): boolean {
   return source.includes(`id="${nodeId}"`) || source.includes(`'${nodeId}-' + collectionIndex`);
 }
 
-export function htmlHasSelector(html: string, selector: string): boolean { return !!JSDOM.fragment(html).querySelector(selector); }
+export function htmlHasSelector(html: string, selector: string): boolean { return !!parseHtmlFragment(html).querySelector(selector); }
 
 /** Choose behavior declared by the saved tree, never a control invented by the consumer. */
 /** Text the live consumer types into an editor-owned action's first text input. */

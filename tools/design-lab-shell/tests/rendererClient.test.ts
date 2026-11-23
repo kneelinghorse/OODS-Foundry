@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { vi } from 'vitest';
 import { renderDesignLab, validateDesignLab } from '../src/rendererClient.js';
 import { sampleSchema } from '../src/sampleSchema.js';
@@ -41,7 +42,7 @@ describe('rendererClient', () => {
 
     const output = result.status === 'ok' ? result.output : null;
     expect(output?.status).toBe('error');
-    expect(output?.errors.some((issue) => issue.code === 'UNKNOWN_COMPONENT')).toBe(true);
+    expect(output?.errors.some((issue) => issue.code === 'OODS-V006')).toBe(true);
     expect(output?.meta?.missingComponents).toContain('UnknownWidget');
     expect(output?.renderedTree?.screens?.[0]?.component).toBe('UnknownWidget');
     expect(warn).toHaveBeenCalled();
@@ -56,7 +57,7 @@ describe('rendererClient', () => {
 
     const output = result.status === 'ok' ? result.output : null;
     expect(output?.status).toBe('error');
-    expect(output?.errors.map((issue) => issue.code)).toContain('MISSING_BASE_TREE');
+    expect(output?.errors.map((issue) => issue.code)).toContain('OODS-V010');
   });
 
   it('flags schema validation issues for unknown properties', async () => {
@@ -71,7 +72,7 @@ describe('rendererClient', () => {
 
     const output = result.status === 'ok' ? result.output : null;
     expect(output?.status).toBe('invalid');
-    expect(output?.errors.some((issue) => issue.code === 'DSL_SCHEMA')).toBe(true);
+    expect(output?.errors.some((issue) => issue.code === 'OODS-V007')).toBe(true);
     expect(output?.errors.some((issue) => String(issue.path).includes('/screens/0/layout/type'))).toBe(true);
     expect(warn).toHaveBeenCalled();
   });
