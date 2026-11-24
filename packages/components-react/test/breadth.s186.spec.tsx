@@ -9,7 +9,7 @@ import {
   AddressCollectionPanel, AddressSummaryBadge, AddressValidationTimeline, AuditEvent, ClassificationPanel, FilterPanel,
   MembershipAuditTimeline, MembershipPanel, MessageEventTimeline, MessageStatusBadge, PreferencePanel, PreferenceSummaryBadge,
   PreferenceTimeline, PriceSummary, RoleBadgeList, TagManager, TagPills,
-  AddressEditor, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput, TemplatePicker,
+  AddressEditor, ColorStatePicker, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput, TemplatePicker,
 } from '../src/index.js';
 
 afterEach(cleanup);
@@ -366,10 +366,18 @@ describe('Sprint 186 React wave-2 components', () => {
     expect(onChange).toHaveBeenCalledWith({ street: 'New', city: '', region: 'CA', postalCode: '90210' });
   });
 
+  it('lets the user choose a color state before the form supplies one', () => {
+    const { container } = render(<ColorStatePicker colorStates={['neutral', 'success']} />);
+    const select = container.querySelector('select')!;
+    expect(select.value).toBe('');
+    expect(select.options[0]!.textContent).toBe('Choose state');
+    expect(select.options[0]!.disabled).toBe(true);
+  });
+
   it('PreferenceEditor, RoleAssignmentForm and TemplatePicker default their titles and options and let children replace the body', () => {
     const { container, rerender } = render(<PreferenceEditor />);
     expect(screen.getByRole('heading', { level: 2, name: 'Preference Editor' })).toBeTruthy();
-    expect([...(screen.getByLabelText('Namespace') as HTMLSelectElement).options].map(option => option.value)).toEqual(['default']);
+    expect([...(screen.getByLabelText('Namespace') as HTMLSelectElement).options].map(option => option.value)).toEqual(['', 'default']);
     expect((screen.getByLabelText('Preference Document') as HTMLTextAreaElement).value).toBe('');
     rerender(<PreferenceEditor json='{"a":1}' namespaces={['x']} />);
     expect((screen.getByLabelText('Preference Document') as HTMLTextAreaElement).value).toBe('{"a":1}');
@@ -384,7 +392,7 @@ describe('Sprint 186 React wave-2 components', () => {
     rerender(<TemplatePicker />);
     expect(container.querySelector('legend')?.textContent).toBe('Template Picker');
     expect([...(screen.getByLabelText('Template') as HTMLSelectElement).options].map(option => option.textContent)).toEqual(['Select...']);
-    expect([...(screen.getByLabelText('Channel') as HTMLSelectElement).options].map(option => option.value)).toEqual(['email', 'sms', 'in_app']);
+    expect([...(screen.getByLabelText('Channel') as HTMLSelectElement).options].map(option => option.value)).toEqual(['', 'email', 'sms', 'in_app']);
     rerender(<TemplatePicker options={['a']} value="a"><p>Authored</p></TemplatePicker>);
     expect(container.querySelector('select')).toBeNull();
     expect(container.querySelector('[data-form-content]')?.textContent).toBe('Authored');

@@ -65,7 +65,7 @@ describe('form and detail reconcile their declared semantics', () => {
     const html = (component: string, props: Record<string, unknown>) => renderMappedComponent({ id: 'value-check', component, props }, '')!;
     expect(html('ArchiveSummary', { isArchived: false })).toContain('<dd>No</dd>');
     const summary = html('CancellationSummary', { cancelAtPeriodEnd: false, requestedAt: '2026-09-08T12:00:00Z', reason: 'Budget', code: 'customer_request' });
-    expect(summary).toContain('Sep 8, 2026, 12:00 PM'); expect(summary).toContain('<dd>Customer Request</dd>');
+    expect(summary).toContain('Sep 8, 2026, 12:00 PM'); expect(summary).toContain('<dd>Customer request</dd>');
     expect(html('CancellationForm', { reasonCode: 'customer_request', allowedReasons: ['budget'], embedded: true })).toMatch(/value="customer_request"[^>]*selected/);
     expect(html('Input', { type: 'datetime-local', value: '2026-09-08T12:00:00Z', label: 'Requested at', help: 'When requested.' })).toContain('value="2026-09-08T12:00"');
   });

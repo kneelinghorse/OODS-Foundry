@@ -708,7 +708,7 @@ describe('@oods/components-react shared scenarios', () => {
           expect(component?.querySelector('h2')?.textContent).toBe('Product classification');
           expect((component?.querySelector('[name="category"]') as HTMLInputElement).value).toBe('Electronics');
           expect((component?.querySelector('[name="tags"]') as HTMLInputElement).value).toBe('["alpha","beta"]');
-          expect((component?.querySelector('[name="mode"]') as HTMLSelectElement).value).toBe('flexible');
+          expect((component?.querySelector('[name="mode"]') as HTMLSelectElement).value).toBe('hybrid');
           break;
         }
         case 'owner-badge-principal': {

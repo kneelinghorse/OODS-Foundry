@@ -1,6 +1,6 @@
 object:
   name: Approval
-  version: 1.1.2
+  version: 1.1.3
   domain: core.governance
   description: One ask to one person or agent for a yes, about one version of one thing, and the answer it became.
   tags:
@@ -113,6 +113,9 @@ metadata:
   steward: Design team
   maturity: alpha
   changelog:
+    - version: 1.1.3
+      date: "2026-11-23"
+      description: The sample article sign-off uses the same name as its approval level.
     - version: 1.1.2
       date: "2026-11-19"
       description: The declined article review names Nadia Farouk as the person asked. The answer form keeps the ask fixed and labels its select Answer.
@@ -243,7 +246,7 @@ samples:
     last_event: asked
     last_event_at: '2026-09-25T11:00:00Z'
   - approval_id: 7b3d5f9a-1c2e-4a6b-8d0f-2e4a6c8e0a05
-    name: Sign off Invoice numbers, tax IDs and legal names
+    name: Sign-off for Invoice numbers, tax IDs and legal names
     subject_type: Article
     subject_id: invoice-numbers-tax-ids
     subject_name: Invoice numbers, tax IDs and legal names

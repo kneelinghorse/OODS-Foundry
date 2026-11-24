@@ -431,7 +431,7 @@ export function renderPackageReadme(facts) {
     "",
     "## Import your objects",
     "",
-    `\`object_import\` drafts ${facts.product} objects from the schema files your team already has: OpenAPI or Swagger, JSON Schema, Postgres DDL and migrations, Prisma, dbt, OData and GraphQL. It reads local files, or content you pass inline; it never fetches a URL, connects to an API or database, or runs your code. \`draft\` writes reviewable drafts to \`~/.oods-foundry/imports/\` and registers nothing, \`object_import_read\` with \`show\` returns one draft with its trait proposals and their evidence, and \`apply\` registers only the objects and proposals you accept. The guide is [IMPORTING-OBJECTS.md](${guide("IMPORTING-OBJECTS.md")}).`,
+    `\`object_import\` drafts ${facts.product} objects from the schema files your team already has: OpenAPI or Swagger, JSON Schema, Postgres DDL and migrations, Prisma, dbt, OData and GraphQL. It reads local files, or content you pass inline; it never fetches a URL, connects to an API or database, or runs your code. \`draft\` writes reviewable drafts to \`~/.oods-foundry/imports/\` and registers nothing, \`object_import_read\` with \`show\` returns one draft with its trait and related-list proposals and their evidence, and \`apply\` registers only the objects and proposals you accept. The guide is [IMPORTING-OBJECTS.md](${guide("IMPORTING-OBJECTS.md")}).`,
     "",
     "## Your own brands",
     "",

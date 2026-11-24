@@ -344,6 +344,8 @@ export async function observeFlow(page: Page, url: string, requireBillingViews =
         else await periodEnd.check();
         await page.locator('[data-oods-action="handleCancel"]').click();
       }
+      // Detail stays visible while the store checks the request. Read the result after the save acknowledgement.
+      await page.locator('.workflow-notice').filter({ hasText: 'Changes saved in this session.' }).waitFor({ timeout: 8000 });
       await ready(page, 'detail');
       const text = await screen(page).innerText(); assert.match(text, cancellationStatus);
       assert.equal(await page.locator('.workflow-notice').innerText(), 'Changes saved in this session.');

@@ -79,7 +79,7 @@ describe('the note under a page\'s lists is true of every list it draws', () => 
     expect(resolveRelatedLists('User', record).some(list => list.keyed)).toBe(false);
     const page = notes('User', record);
     for (const renderer of RENDERERS) {
-      expect(page[renderer], renderer).toEqual(['These lists show only records here that name Dana Whitfield by id; records that name Dana Whitfield only in words, or that another product keeps, are not listed.']);
+      expect(page[renderer], renderer).toEqual(['These lists show only records here that name Dana Whitfield by id; records that hold the name only in words, or that another product keeps, are not listed.']);
     }
   });
 });

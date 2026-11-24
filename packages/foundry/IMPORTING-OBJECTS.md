@@ -1,6 +1,6 @@
 # Bring your own objects
 
-`object_import` reads a schema your team already has and drafts OODS Foundry objects. Review the drafts and accept the objects and trait proposals you want. `object_registry` validates hand-written object or trait YAML; `object_register` saves it.
+`object_import` reads a schema your team already has and drafts OODS Foundry objects. Review the drafts and accept the objects, traits and related lists you want. `object_registry` validates hand-written object or trait YAML; `object_register` saves it.
 
 ## Files in
 
@@ -12,7 +12,7 @@ OODS Foundry does not fetch a URL, connect to an API/database, import a module, 
 {"action":"draft","source":{"path":"/path/to/openapi.json"}}
 ```
 
-The response gives an `importId`, counts, object names in dependency order, shipped-name clashes, proposal grades, and a diff-file path. Large listings are explicitly truncated in the response; `order.json` has the complete order and cycles. Nothing is registered at this step.
+The response gives an `importId`, counts, object names in dependency order, shipped-name clashes, trait proposal grades, the number of proposed related lists in `proposalLists`, and a diff-file path. Large listings are explicitly truncated in the response; `order.json` has the complete order and cycles. Nothing is registered at this step.
 
 The complete bundle is in `~/.oods-foundry/imports/<importId>/`, beside your objects and traits, outside the package install. A portable installation may set `OODS_FOUNDRY_HOME` before starting the server. `objects/` holds the draft YAML, `hub.json` the normalized schemas, `report.json` every outcome, and `diff.json` the comparison with currently registered definitions. `import.json` is content-addressed and binds the hashes of its separately streamed hub and report; editing any of them invalidates the import. To hand-edit a draft, use `object_registry` to validate and `object_register` to save that YAML.
 
@@ -24,9 +24,19 @@ Call `object_import_read`:
 {"action":"show","importId":"<from draft>","object":"YourObject"}
 ```
 
-`show` returns one draft's YAML, proposals with evidence and grades, unmapped elements, and the re-import comparison. A re-import reports added, removed and changed fields, trait and relationship changes, and potentially affected list/detail/form/timeline screens. It compares the unaccepted base draft with your effective registered definition, with previously accepted trait contributions listed separately as `traitFields`, rather than false removals; review those differences before overwriting.
+The `show` action returns one draft’s YAML, trait proposals, related-list proposals in `lists`, unmapped elements and a comparison with the registered definition. The comparison identifies field, trait and relationship changes and the screens they could affect. Fields contributed by previously accepted traits appear under `traitFields`. For related lists, `kept` names registered declarations offered again, `gone` names declarations the draft can no longer supply, and `open` names declarations proposed in the draft that differ from the registered lists. These names are list ids such as `charges`. To accept a list, find it under `lists` and pass the enclosing proposal’s `id` in `objects[].proposals`. Include the proposal ids for kept lists you want to keep when overwriting. A list id occupied by a different declaration must be resolved before acceptance, even with `overwrite: true`.
 
-A name alone is weak evidence and never raises a proposal's grade. Types, enums, formats and read-only declarations provide structural evidence. Trait parameter schemas validate every proposal; an invalid proposal is shown with errors and cannot be accepted. Proposals add a trait's canonical fields and views, so check that its fields express your model. Nothing is silently applied.
+A name alone is weak evidence and never raises a proposal's grade. Types, enums, formats and read-only declarations provide structural evidence. Trait parameter schemas validate trait proposals. Accepting a trait adds its canonical fields and views. List proposals are checked against the source and target fields. Each proposal carries its evidence and effects, and you can accept it when it passes validation.
+
+### Related lists from your keys
+
+A foreign key on a charge can give an account a list of its charges. Review the account with `show`. The proposal contains the list declaration, the source file and pointer, its strong evidence grade, and the effect of acceptance. Pass the proposal’s `id` in the account’s `objects[].proposals`. Accept the charge object in the same call if it is new. Accept the lists your readers need.
+
+The importer reads SQL foreign keys, Prisma relations with a stored key, dbt relationships tests, and OData navigations with a single-field referential constraint. A producer can also declare a stored key through the hub’s `x-oods.relationships`. It requires both objects in the draft to propose a list. A schema reference, a field name or an OData value help alone supplies no list. The report explains skipped value helps, link records whose composite primary key consists of foreign keys, shared primary keys, and keys referencing a field other than the target’s record key.
+
+When exactly one stored key points from a source to the target and the target declares exactly one matching Prisma list or OData collection navigation, the heading can use its name. If that name differs from the source record type, the heading also identifies the rows, such as “Membership records in Teams”. Accepting the proposal replaces that generated array of ids with the matching records. Several keys from the same source to a target get separate labels. The same applies when a record points to another of its own kind. Lists for fields such as `created_by` start collapsed. Replacing a shipped object requires its name in `confirmShipped` and replaces its existing list declarations in the team’s copy.
+
+Across 15 local schema sources, the importer proposed 375 lists. Pagila supplied 32, the cal.com Prisma schema 156, its SQL migrations 155, jaffle-shop one, Northwind seven, and the SAP CAP sample 24. TripPin, SAP’s travel fixture, GitHub’s GraphQL and REST schemas, JSON Resume, Stripe, Akeneo, inRiver and the package.json schema supplied none. Each count describes that source’s declarations. In Pagila, the child payment partitions each declare their own keys, so their lists are separate proposals.
 
 **Which enum is the lifecycle, and which time is the creation time.** A record with several string enums is proposed `Stateful` on one of them. Where a rule on this page recognises the record (an answer, a work's states, a grant's states), it is that state. Otherwise it is the enum named `status` or `state`, or failing that one whose name ends so (`consentStatus`, `grant_state`), ahead of one whose name sorts first, as FDX's `durationType` does before its `status`; failing that, the one whose name sorts first. The others stay in the report as alternatives. `Timestampable`'s creation time is a field named `created_at`, or else another of the record's date-times, never `updated_at` and never one named for an end (expires, expiry, expiration, expired, valid until, valid to, end or ends).
 
@@ -50,7 +60,7 @@ A person or other principal is a record whose name is user, account, organizatio
 
 ### Approval records
 
-An approval is a decision, not a status: one person's answer about one thing, kept as a record of its own (see [Approvals as decisions](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.19.0/docs/concepts/approvals-as-decisions.md)). Where another system keeps a table of approvals, one answer per row, the importer proposes `Decision` for it, graded on structure:
+An approval is a decision, not a status: one person's answer about one thing, kept as a record of its own (see [Approvals as decisions](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.20.0/docs/concepts/approvals-as-decisions.md)). Where another system keeps a table of approvals, one answer per row, the importer proposes `Decision` for it, graded on structure:
 
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|
@@ -70,7 +80,7 @@ The importer does not propose `Approvable`: an approval outcome kept as a field 
 
 ### Records of work
 
-A task is an ask, not a ticket: one ask to one person or agent to do one piece of work, and what became of it (see [Tasks as asks](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.19.0/docs/concepts/tasks-as-asks.md)). Where another system keeps a record of work, the importer proposes `Assignment` for it, graded on structure:
+A task is an ask, not a ticket: one ask to one person or agent to do one piece of work, and what became of it (see [Tasks as asks](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.20.0/docs/concepts/tasks-as-asks.md)). Where another system keeps a record of work, the importer proposes `Assignment` for it, graded on structure:
 
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|
@@ -118,7 +128,7 @@ Not placed, because their schemas say too little: Linear's `stale` and `stopping
 
 ### Records of a grant
 
-A grant is a standing yes, not a setting: one set of terms on which one actor may act for one person or organization, until it ends (see [Grants as standing yeses](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.19.0/docs/concepts/grants-as-standing-yeses.md)). Where another system keeps a record of a grant, a consent or a connection, the importer proposes `Mandate` for it, graded on structure:
+A grant is a standing yes, not a setting: one set of terms on which one actor may act for one person or organization, until it ends (see [Grants as standing yeses](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.20.0/docs/concepts/grants-as-standing-yeses.md)). Where another system keeps a record of a grant, a consent or a connection, the importer proposes `Mandate` for it, graded on structure:
 
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|
@@ -148,7 +158,7 @@ Measured on four published grant schemas and a team's table, downloaded on 14 No
 {"action":"apply","importId":"<from draft>","objects":[{"name":"YourObject","proposals":["<accepted proposal id>"]}]}
 ```
 
-Omit `proposals` to accept an object with no traits. Accept dependencies in the same call unless they are already registered. The batch validates all definitions, writes them in dependency order, and composes each supported context transiently, including timeline where declared or contributed by an accepted lifecycle/history trait. Read-only sources omit form. Cyclic relationships are retained: all files exist before composition. A write or composition failure restores previous files byte for byte and removes newly created files. A filesystem lock excludes concurrent registration/import writes; this is rollback on operation failure, not a crash-recovery database transaction.
+Omit `proposals` to accept the base draft with none of its proposed traits or lists. Accept dependencies in the same call unless they are already registered. The batch validates all definitions, writes them in dependency order, and composes each supported context transiently, including timeline where declared or contributed by an accepted lifecycle/history trait. Read-only sources omit form. Cyclic relationships are retained: all files exist before composition. A write or composition failure restores previous files byte for byte and removes newly created files. A filesystem lock excludes concurrent registration/import writes; this is rollback on operation failure, not a crash-recovery database transaction.
 
 `overwrite: true` permits replacing your existing objects. A shipped-name replacement additionally requires that exact name in `confirmShipped`, for example `"confirmShipped":["User"]`. Reviewing one shipped replacement does not authorize another.
 
@@ -181,7 +191,7 @@ Converters cannot represent every transformation, refinement or runtime behavior
 
 Broken local JSON Pointers are preserved as `x-oods-unresolved-ref` with an unmapped link and source location; they never become invented relationships. Network and named-anchor references are reported and skipped. Outside-folder and escaping-symlink references refuse the whole import before an outside read. Traversal is bounded to 160 nesting levels and ten million values, including YAML alias expansion.
 
-Imported records use declared titles or natural keys, then identifiers. An email-address object can use its address as its reference label when the source supplies no title. Authored enum labels travel with the accepted definition and remain visible when you read it back. Samples are deterministic and checked against enum, pattern, format and bounds; unsatisfiable sample constraints are reported. Field help comes only from source descriptions. Date-only values display without a time. Declared relationships use related sample records in form pickers; applications supply their live choices. A relationship drawn from a foreign key makes no list on the other record's page: a team declares its lists in `metadata.relatedLists` on the object whose page shows them.
+Imported records use declared titles or natural keys, then identifiers. An email-address object can use its address as its reference label when the source supplies no title. Authored enum labels travel with the accepted definition and remain visible when you read it back. Samples are deterministic and checked against enum, pattern, format and bounds; unsatisfiable sample constraints are reported. Field help comes only from source descriptions. Date-only values display without a time. Declared relationships use related sample records in form pickers; applications supply their live choices. Accepting a related-list proposal adds its declaration to `metadata.relatedLists` on the object whose page shows the matching records.
 
 ## Postgres DDL and migrations
 

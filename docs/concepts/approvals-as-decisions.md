@@ -82,7 +82,7 @@ Every history in OODS Foundry prints the level in its line, then the grant and t
 
 ## The screen where an answer is given
 
-On an approval's form, the screen where the answer is chosen, five facts appear above the Answer select: the thing, exactly what was shown, the level, the meaning, and who is asking, with who it is asked for. They cannot be edited there, on the composed screen or in a generated app.
+On an approval's form, the screen where the answer is chosen, five facts appear above the Answer select: the thing, exactly what was shown, the level, the meaning, and who is asking, with who it is asked for when someone is named. They cannot be edited there, on the composed screen or in a generated app.
 
 ![The completed resend approval on its Edit screen. The five facts remain above the answer, which is final at Used, and the comment](approvals-as-decisions/approval-form-light.png)
 

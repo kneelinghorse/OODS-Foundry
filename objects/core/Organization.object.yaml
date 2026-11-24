@@ -1,6 +1,6 @@
 object:
   name: Organization
-  version: 1.3.1
+  version: 1.3.3
   domain: core.account
   description: Canonical account record for tenant and workspace governance across the platform.
   tags:
@@ -85,7 +85,8 @@ schema:
   plan_tier:
     type: string
     required: true
-    description: Billing plan currently assigned to the organization.
+    description: >-
+      The account's tier, coarser than its plan: free with no paid plan, growth on a paid plan below Enterprise, enterprise on Enterprise. Its subscriptions name the plan.
     validation:
       enum:
         - free
@@ -169,6 +170,8 @@ semantics:
   plan_tier:
     semantic_type: organization.plan.tier
     token_mapping: tokenMap(organization.plan.tier)
+    ui_hints:
+      label: Account tier
   billing_status:
     semantic_type: billing.account.status
     token_mapping: tokenMap(billing.account.status)
@@ -188,6 +191,12 @@ metadata:
     - Billing team
   steward: Platform team
   changelog:
+    - version: 1.3.3
+      date: "2026-11-23"
+      description: "Labels the organization’s coarse subscription band “Account tier”. Its subscriptions name their individual plans."
+    - version: 1.3.2
+      date: "2026-11-23"
+      description: "Captions a usage window’s final calendar date “Last day of period”."
     - version: 1.3.1
       date: "2026-11-22"
       description: "Shows consumed quantities with their units and balances in the invoice currency. Empty billing lists describe linked records."
@@ -256,7 +265,7 @@ metadata:
       label: "Usage for {name}"
       empty: "No usage records are linked to {name} here."
       sources:
-        - { from: Usage, via: organization_id, row: { line: [{ field: consumed_quantity, says: Consumed }, unit_label], time: { field: period_end, says: Period ends } } }
+        - { from: Usage, via: organization_id, row: { line: [{ field: consumed_quantity, says: Consumed }, unit_label], time: { field: period_end, says: Last day of period } } }
     - id: invoices
       label: "Invoices for {name}"
       empty: "No invoices are linked to {name} here."

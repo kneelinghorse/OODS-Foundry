@@ -31,6 +31,13 @@ const AccessibilityShowcase = defineComponent({
 });
 
 describe('@oods/components-vue ported accessibility outcomes', () => {
+  it('keeps the visible state in a labelled badge and honors an explicit aria-label', () => {
+    const badge = mount(StatusBadge, { props: { status: 'past_due', label: 'Answer', content: 'Payment overdue' } });
+    expect(badge.attributes('aria-label')).toBe('Answer: Payment overdue');
+    const custom = mount(StatusBadge, { props: { status: 'past_due', label: 'Answer' }, attrs: { 'aria-label': 'Custom wording' } });
+    expect(custom.attributes('aria-label')).toBe('Custom wording');
+  });
+
   it('uses the authored state name in badge speech and history', () => {
     const badge = mount(StatusBadge, { props: { status: 'past_due' }, slots: { default: 'Payment overdue' } });
     expect(badge.attributes('aria-label')).toBe('Status: Payment overdue');

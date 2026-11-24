@@ -116,7 +116,8 @@ const TRACKED_BOUNDARY_COUNTS = Object.freeze({
   // Sprint 250 m05 retains its 0.17.0 refresh pair (#2972), the 2026-11-17 exports; likewise.
   // The 0.18.0 refresh adds its dated component and token exports.
   // The 0.19.0 refresh adds its dated component and token exports.
-  "artifacts/structured-data": 83,
+  // The 0.20.0 refresh adds its dated component and token exports.
+  "artifacts/structured-data": 85,
 });
 
 export const ABSOLUTE_PATH_EXEMPTIONS = new Set([

@@ -50,8 +50,8 @@ describe('Sprint 187 built package export cells', () => {
       expect(root.querySelector('input[name="category"]')?.getAttribute('value')).toBe('Electronics');
       expect(root.querySelector('input[name="tags"]')?.getAttribute('value')).toBe('["alpha","beta"]');
       // Display labels are humanized; the submitted enum remains unchanged.
-      expect(root.querySelector('option[selected]')?.textContent).toBe('Flexible');
-      expect(root.querySelector('option[selected]')?.getAttribute('value')).toBe('flexible');
+      expect(root.querySelector('option[selected]')?.textContent).toBe('Hybrid');
+      expect(root.querySelector('option[selected]')?.getAttribute('value')).toBe('hybrid');
     }
     if (component === 'OwnerBadge') {
       expect(root.textContent).toBe('user-7');

@@ -40,9 +40,9 @@ describe('Sprint 187 naming and classification semantics', () => {
     expect(root.getAttribute('data-badge-variant')).toBe('classification');
     expect(mountFamily('ClassificationBadge', { label: 'Label', text: 'Text' }, 'Authored').textContent).toBe('Authored');
   });
-  it('ClassificationEditor follows native React selection when the mode is absent', () => {
-    expect(mountFamily('ClassificationEditor').querySelector('select')?.value).toBe('strict');
-    expect(mountFamily('ClassificationEditor', { modes: ['hybrid', 'tag'] }).querySelector('select')?.value).toBe('hybrid');
+  it('ClassificationEditor leaves the mode unchosen for default and supplied catalogs', () => {
+    expect(mountFamily('ClassificationEditor').querySelector('select')?.value).toBe('');
+    expect(mountFamily('ClassificationEditor', { modes: ['hybrid', 'tag'] }).querySelector('select')?.value).toBe('');
   });
   it('ClassificationEditor labels native editable controls but prevents unwired submission', () => {
     const root = mountFamily('ClassificationEditor', { name: 'Heading', hint: 'Hint', primaryCategory: 'Category', tags: ['a'], modes: [{ value: 'strict', label: 'Strict' }, { value: 'flexible', label: 'Flexible' }], classificationMode: 'flexible' });

@@ -253,7 +253,7 @@ export interface Organization {
   placeholder?: string;
 
   /**
-   * Billing plan currently assigned to the organization.
+   * The account's tier, coarser than its plan: free with no paid plan, growth on a paid plan below Enterprise, enterprise on Enterprise. Its subscriptions name the plan.
    *
    * Source: Organization (object override)
    */

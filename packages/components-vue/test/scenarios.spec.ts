@@ -881,7 +881,7 @@ describe('@oods/components-vue shared scenarios', () => {
           expect(component.element?.querySelector('h2')?.textContent).toBe('Product classification');
           expect((component.element?.querySelector('[name="category"]') as HTMLInputElement).value).toBe('Electronics');
           expect((component.element?.querySelector('[name="tags"]') as HTMLInputElement).value).toBe('["alpha","beta"]');
-          expect((component.element?.querySelector('[name="mode"]') as HTMLSelectElement).value).toBe('flexible');
+          expect((component.element?.querySelector('[name="mode"]') as HTMLSelectElement).value).toBe('hybrid');
           break;
         }
         case 'owner-badge-principal': {

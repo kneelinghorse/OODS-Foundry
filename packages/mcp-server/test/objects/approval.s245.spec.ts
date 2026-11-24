@@ -64,7 +64,7 @@ describe('Approval is the thirteenth public object', () => {
   it('composes Decision, Stateful and Timestampable, with a lifecycle that starts before anyone is asked', () => {
     const approval = loadObject('Approval');
     // s248-m02: 1.1.1, the resend approval's first line says why it was created, and its agent lines name the grant.
-    expect(approval.object).toMatchObject({ name: 'Approval', version: '1.1.2' });
+    expect(approval.object).toMatchObject({ name: 'Approval', version: '1.1.3' });
     expect(approval.object).not.toHaveProperty('visibility');
     expect(approval.traits.map(trait => trait.name)).toEqual(['core/Decision', 'lifecycle/Stateful', 'lifecycle/Timestampable']);
     const lifecycle = approval.traits[1]!.parameters!;
@@ -136,7 +136,7 @@ describe('Approval is the thirteenth public object', () => {
     expect(found.ruth).toEqual(['Approve the resend of PAY-2026-0429']);
     expect(found.prorations).toEqual(['Approve publishing How prorations work when plans change']);
     // Search finds the person asked for the review and the later sign-off record that names her in its history.
-    expect(found.nadia).toEqual(['Review Invoice numbers, tax IDs and legal names', 'Sign off Invoice numbers, tax IDs and legal names']);
+    expect(found.nadia).toEqual(['Review Invoice numbers, tax IDs and legal names', 'Sign-off for Invoice numbers, tax IDs and legal names']);
   });
 });
 
@@ -233,7 +233,9 @@ describe('on Approval\'s form the facts are read above the answer and never edit
     }
     for (const [renderer, page] of Object.entries(pages)) {
       const fragment = JSDOM.fragment(page);
-      for (const label of FACT_LABELS) expect(text(page), `${renderer}: ${label}`).toContain(label);
+      // The first sample has no party it was requested for.
+      for (const label of FACT_LABELS.filter(label => label !== 'Asked for')) expect(text(page), `${renderer}: ${label}`).toContain(label);
+      expect(text(page), renderer).not.toContain('Asked for');
       for (const field of [...FACT_FIELDS, 'name']) expect(fragment.querySelectorAll(`input[name="${field}"], select[name="${field}"], textarea[name="${field}"]`).length, `${renderer}: ${field}`).toBe(0);
     }
     for (const framework of ['react', 'vue'] as const) {

@@ -1,6 +1,6 @@
 import { enumOptionLabel } from './status-registry.js';
 import { historyAttribution } from './attribution.js';
-import { formatDateTime, formatReadOnlyValue } from './date-time.js';
+import { formatDateTime } from './date-time.js';
 
 export interface TraitEventValues {
   archivedAt?: string | null; restoredAt?: string | null; archivedBy?: string | null; reason?: string | null;
@@ -29,7 +29,7 @@ export function traitEventRows(kind: TraitEventKind, values: TraitEventValues) {
   return rows.map(value => {
     const { attribution, ...row } = value as { title: string; at?: string; attribution?: string; actor?: string; reason?: string; code?: string };
     const at = row.at && formatDateTime(row.at) ? row.at : undefined;
-    return { ...row, code: row.code ? formatReadOnlyValue(row.code, 'string', true) : undefined, at, time: at ? formatDateTime(at) : 'Time not recorded', ...(attribution && values.showActor !== false ? { attribution } : {}), actor: values.showActor === false ? undefined : row.actor, reason: values.showReason === false ? undefined : row.reason };
+    return { ...row, code: row.code ? enumOptionLabel(row.code) : undefined, at, time: at ? formatDateTime(at) : 'Time not recorded', ...(attribution && values.showActor !== false ? { attribution } : {}), actor: values.showActor === false ? undefined : row.actor, reason: values.showReason === false ? undefined : row.reason };
   });
 }
 

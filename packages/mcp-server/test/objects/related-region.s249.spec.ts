@@ -215,7 +215,7 @@ describe('the four pages say what Interface 4 says', () => {
       'Closures of grants for Tidewater Co-op (0)']);
     expect(tidewater.text).toContain('Tidewater invoices and payments Active Billing Agent · Invoices and payments · 28 Sep: asked for a standing yes to resend returned transfers Ends: At the end of 31 Dec 2026, Tauranga time 1 grant inside it Resend returned transfers Active Billing Agent · Resend a payment the bank returned · No uses counted');
     expect(tidewater.text).toContain('Subscriptions for Tidewater Co-op (1) Enterprise Active');
-    expect(tidewater.notes).toEqual(['These lists show only records here that name Tidewater Co-op by id; records that name Tidewater Co-op only in words, or that another product keeps, are not listed.']);
+    expect(tidewater.notes).toEqual(['These lists show only records here that name Tidewater Co-op by id; records that hold the name only in words, or that another product keeps, are not listed.']);
     // An empty list names the seat it read; a standing list emptied by ended grants says so.
     const northwind = page('Organization', 'Northwind Traders');
     expect(northwind.text).toContain('Agents holding a grant for Northwind Traders (0) No agent holds a grant for Northwind Traders now. 2 other grants for Northwind Traders are asked for or have ended.');

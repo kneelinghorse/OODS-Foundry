@@ -13,6 +13,6 @@ describe('catalog names are labels, identifiers are values', () => {
   it('shows template and channel names without replacing stored IDs', () => {
     const html = renderToStaticMarkup(<TemplatePicker templates={[{ id: 'template-001', name: 'Welcome Email' }]} channels={[{ id: 'channel-001', name: 'Primary Email' }]} />);
     const host = document.createElement('div'); host.innerHTML = html;
-    expect([...host.querySelectorAll('option')].map(node => [node.value, node.textContent])).toEqual([['template-001', 'Welcome Email'], ['channel-001', 'Primary Email']]);
+    expect([...host.querySelectorAll('option')].map(node => [node.value, node.textContent])).toEqual([['', 'Choose a template'], ['template-001', 'Welcome Email'], ['', 'Choose a channel'], ['channel-001', 'Primary Email']]);
   });
 });

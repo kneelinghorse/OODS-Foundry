@@ -39,13 +39,16 @@ describe('s198 form craft and one attributable seed policy', () => {
   });
   it('HTML uses catalog names for labels while retaining stored role/template IDs', () => {
     for (const [component, props, names] of [
-      ['RoleAssignmentForm', { availableRoles: [{ id: 'role-001', name: 'Owner' }, { id: 'role-002', name: 'Editor', label: 'Content editor' }] }, ['Owner', 'Content editor']],
-      ['TemplatePicker', { templates: [{ id: 'template-001', name: 'Welcome Email' }], channels: [{ id: 'channel-001', name: 'Primary Email' }] }, ['Welcome Email', 'Primary Email']],
+      ['RoleAssignmentForm', { availableRoles: [{ id: 'role-001', name: 'Owner' }, { id: 'role-002', name: 'Editor', label: 'Content editor' }] }, ['Choose a role', 'Owner', 'Content editor']],
+      ['TemplatePicker', { templates: [{ id: 'template-001', name: 'Welcome Email' }], channels: [{ id: 'channel-001', name: 'Primary Email' }] }, ['Choose a template', 'Welcome Email', 'Choose a channel', 'Primary Email']],
     ] as const) {
       const html = renderMappedComponent({ id: 'catalog', component, props }, '')!;
       const options = [...JSDOM.fragment(html).querySelectorAll('option')];
       expect(options.map(option => option.textContent)).toEqual(names);
-      expect(options.every(option => option.value.includes('-00'))).toBe(true);
+      for (const option of options) {
+        if (option.disabled) expect([option.value, option.selected]).toEqual(['', true]);
+        else expect(option.value).toContain('-00');
+      }
     }
   });
   it('keeps authored trait examples tied to canonical role and communication catalogs', () => {

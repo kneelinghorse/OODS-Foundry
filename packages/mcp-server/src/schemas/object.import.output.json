@@ -104,6 +104,10 @@
             "type": "integer",
             "minimum": 0
           }
+        },
+        "proposalLists": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "additionalProperties": false
@@ -150,6 +154,55 @@
         },
         "diff": {
           "type": "object"
+        },
+        "lists": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "list": {
+                "type": "object"
+              },
+              "grade": {
+                "const": "strong",
+                "type": "string"
+              },
+              "evidence": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "effects": {
+                "type": "string"
+              },
+              "valid": {
+                "type": "boolean"
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "backSide": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "list",
+              "grade",
+              "evidence",
+              "effects",
+              "valid",
+              "errors"
+            ],
+            "additionalProperties": false
+          }
         }
       },
       "additionalProperties": false

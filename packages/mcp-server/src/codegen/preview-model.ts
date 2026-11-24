@@ -75,7 +75,11 @@ export function seedPreviewModel({ schema, context, object, workflowSchema, esta
     // Absence in the seed is meaningful (for example, an active record has no cancellation date).
     // Do not retain the consumer probe's invented values for omitted domain fields.
     for (const field of Object.keys(workflowSchema.objectSchema ?? {})) delete model[snakeToCamel(field)];
-    Object.assign(model, shown ? camel(shown) : {}, established);
+    const screenFields = new Set(Object.keys(schema.objectSchema ?? {}).map(snakeToCamel));
+    for (const [key, value] of Object.entries(camel(shown ?? {}))) {
+      if (screenFields.has(key)) model[key] = value;
+    }
+    Object.assign(model, established);
     // s249-m02: the shown record's related lists, resolved from the registered objects' samples, as HTML draws them.
     if (schemaNodes(schema).some(node => node.collection?.source === 'related') && !Object.hasOwn(established, 'related')) model.related = shown ? resolveRelatedLists(object, shown) : [];
     if (context === 'timeline' && !Object.hasOwn(established, 'events')) {

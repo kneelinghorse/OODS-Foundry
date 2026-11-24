@@ -8,7 +8,7 @@
     "approvedRuntimeCensus": null,
     "classificationStatus": "proposed-awaiting-approval"
   },
-  "generatedAt": "2026-11-23T04:02:57Z",
+  "generatedAt": "2026-11-24T05:40:50Z",
   "stats": {
     "componentCount": 114,
     "traitCount": 55,
@@ -12947,7 +12947,8 @@
           "position": "main",
           "priority": 70,
           "props": {
-            "field": "requested_for_name"
+            "field": "requested_for_name",
+            "data-oods-omit-empty": true
           },
           "source": "traits/core/Decision.trait.yaml"
         },
@@ -13156,7 +13157,8 @@
           "position": "top",
           "priority": 73,
           "props": {
-            "field": "requested_for_id"
+            "field": "requested_for_id",
+            "data-oods-omit-empty": true
           },
           "source": "traits/core/Decision.trait.yaml"
         },
@@ -13167,7 +13169,8 @@
           "position": "top",
           "priority": 72,
           "props": {
-            "field": "requested_for_name"
+            "field": "requested_for_name",
+            "data-oods-omit-empty": true
           },
           "source": "traits/core/Decision.trait.yaml"
         },
@@ -21704,7 +21707,7 @@
     },
     {
       "name": "Colorized",
-      "version": "2.0.0",
+      "version": "2.0.2",
       "description": "Maps lifecycle states to semantic color tokens for consistent status theming across the\ndesign system. Colorized is the visual bridge between the Stateful trait's data model and\nthe OODS token system's three-tier architecture (ref → theme → system → component).\n\nEvery object that composes Stateful should also compose Colorized so that status values\nresolve to a deterministic set of surface, border, text, and icon tokens. The trait\nencodes WCAG contrast enforcement, color-blind safety via redundant icon+text cues,\nand theme-aware OKLCH token resolution — ensuring status communication never relies\non color alone.",
       "category": "visual",
       "tags": [
@@ -21873,7 +21876,7 @@
           "type": "string",
           "required": false,
           "computed": true,
-          "description": "Human-readable status label announced by screen readers. Generated from the\ncolor_state value via toLabel() (e.g., \"past_due\" → \"Past Due\"). Ensures status\nmeaning is communicated without reliance on color perception.\n"
+          "description": "Accessible text for the color state, for example “Critical” for critical.\n"
         }
       },
       "semantics": {
@@ -21938,8 +21941,8 @@
         ],
         "maturity": "stable",
         "accessibility": {
-          "keyboard": "n/a — Colorized is a visual presentation trait with no interactive elements.",
-          "screenreader": "StatusBadge announces the accessibility_label (human-readable status) and tone.\nColor is never the sole channel for status information.\n",
+          "keyboard": "The form’s ColorStatePicker has a labelled native select. Tab moves focus to the enabled control and the arrow keys choose a state.",
+          "screenreader": "The card’s ColorizedBadge shows its label or state as text. The form’s ColorStatePicker exposes a native select labelled “Color state”.",
           "colorBlind": "All status badges MUST include both an icon and text label alongside the color indicator.\nThis icon+text redundancy requirement ensures that deuteranopia, protanopia, and\ntritanopia users can distinguish statuses without relying on hue perception.\nThe fallbackTone parameter provides a safe default when tone inference fails.\n",
           "contrastEnforcement": "WCAG compliance is enforced at two levels:\n  1. Build-time: pnpm tokens:guardrails checks OKLCH delta-L >= 10 and delta-C <= 0.04\n     for all interactive state transitions (hover, focus, active).\n  2. Design-time: All text-on-surface pairings in the status token layer meet the\n     contrast ratio specified by the contrastLevel parameter (4.5:1 for AA, 7:1 for AAA).\nDark theme tokens (themes/dark/status.json) use direct OKLCH values tuned to maintain\nthese ratios against dark surfaces.\n"
         },
@@ -22274,7 +22277,7 @@
     },
     {
       "name": "Decision",
-      "version": "1.1.1",
+      "version": "1.1.2",
       "description": "The record of one ask to one actor and the answer it became: who asked, and for whom; who was asked; who answered,\nand for whom when a delegate or an agent answered; about exactly what, at what level of yes, and what that yes\nmeans. An approval is a decision, not a status. The Approval object composes this trait, and the importer\nproposes it for another system's table of approvals, so every field lives here and a proposal can bind what the\nsource has.\n\nThe answer itself is not a field of this trait. It is the record's own lifecycle, through Stateful: not yet asked,\nwaiting, approved, declined, and the ways a yes ends (out of date, taken back, expired, withdrawn, not needed,\nused). A refusal changes nothing on the thing, so it is kept here and not as a line in the thing's history.\n\nA reference to a person, an agent or a thing is an id and a kept name. The name is kept on the record, so it still\nreads after the person leaves or the thing is deleted, and it is shown wherever the id is. The kinds are the Actor\ntrait's three words: person, agent or system.\n\nThe level is one of the names the product declares in `levels`, in order, the way it declares a lifecycle's states;\nthe thing approved declares the same names through Approvable. The meaning is one kept line saying what this yes\nmeans and permits, in words, written by the product when it asks (\"Sign-off: you answer for this release\"): 21 CFR\n11.50 requires a signed record to show \"the meaning (such as review, approval, responsibility, or authorship)\nassociated with the signature\". Keeping that meaning alone does not establish Part 11 compliance. Your product handles signatures and verifies the signer’s identity.\n\nOODS Foundry keeps and shows this record. It does not ask anyone, check who may answer, count answers, expire an\nask or stop a change.",
       "category": "core",
       "tags": [
@@ -22425,7 +22428,8 @@
           "position": "main",
           "priority": 70,
           "props": {
-            "field": "requested_for_name"
+            "field": "requested_for_name",
+            "data-oods-omit-empty": true
           }
         },
         {
@@ -22596,7 +22600,8 @@
           "position": "top",
           "priority": 73,
           "props": {
-            "field": "requested_for_id"
+            "field": "requested_for_id",
+            "data-oods-omit-empty": true
           }
         },
         {
@@ -22605,7 +22610,8 @@
           "position": "top",
           "priority": 72,
           "props": {
-            "field": "requested_for_name"
+            "field": "requested_for_name",
+            "data-oods-omit-empty": true
           }
         }
       ],
@@ -31677,7 +31683,7 @@
     },
     {
       "name": "Statusable",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "description": "Semantic status presentation layer that maps business statuses to visual tones,\ndesign tokens, and badge/banner rendering. Statusable owns the status registry\npattern: a domain-scoped lookup table that translates raw status strings into\nconsistent visual output (tone, label, icon, token sets).\n\nDISTINCT from Stateful — Stateful governs state machine transitions and guards;\nStatusable governs how status LOOKS. Statusable is the bridge between data-layer\nstate and the component layer (Badge, Banner, StatusBadge).\n\nCore concepts:\n- Status Registry: Map<domain, Map<status, StatusPresentation>>\n- Tone System: Six semantic tones (neutral, info, accent, success, warning, critical)\n- Token Resolution: --cmp-status-{tone}-{surface|border|text} CSS variables\n- Domain Scoping: Each domain (subscription, invoice, ticket, etc.) has its own status map\n- Emphasis Variants: badge.subtle / badge.solid, banner.subtle / banner.solid",
       "category": "visual",
       "tags": [
@@ -31921,8 +31927,8 @@
         ],
         "maturity": "experimental",
         "accessibility": {
-          "keyboard": "Badge and Banner elements are not interactive; no keyboard handling required.",
-          "screenreader": "StatusBadge announces status label and tone as a live region.\nBanner uses role=\"status\" with aria-live=\"polite\" for critical/warning tones.\n"
+          "keyboard": "The badge has no keyboard action. Tab reaches the Banner dismiss button when React receives onDismiss or Vue receives dismissLabel. The HTML Banner renders its text without a dismiss button.",
+          "screenreader": "StatusBadge shows the state as text alongside its color. By default the badge is a span and its visible text is available to screen readers. A critical or danger Banner defaults to an assertive alert. Other tones default to a polite status. An explicit role takes precedence. React and Vue still set aria-live from the tone unless it is overridden. HTML supplies aria-live from the tone only when it also supplies the role."
         },
         "regionsUsed": [
           "list",
@@ -32868,7 +32874,7 @@
     },
     {
       "name": "Approval",
-      "version": "1.1.2",
+      "version": "1.1.3",
       "domain": "core.governance",
       "description": "One ask to one person or agent for a yes, about one version of one thing, and the answer it became.",
       "tags": [
@@ -32997,6 +33003,11 @@
         "steward": "Design team",
         "maturity": "alpha",
         "changelog": [
+          {
+            "version": "1.1.3",
+            "date": "2026-11-23",
+            "description": "The sample article sign-off uses the same name as its approval level."
+          },
           {
             "version": "1.1.2",
             "date": "2026-11-19",
@@ -35042,7 +35053,7 @@
     },
     {
       "name": "Organization",
-      "version": "1.3.1",
+      "version": "1.3.3",
       "domain": "core.account",
       "description": "Canonical account record for tenant and workspace governance across the platform.",
       "tags": [
@@ -35201,7 +35212,10 @@
         },
         "plan_tier": {
           "semantic_type": "organization.plan.tier",
-          "token_mapping": "tokenMap(organization.plan.tier)"
+          "token_mapping": "tokenMap(organization.plan.tier)",
+          "ui_hints": {
+            "label": "Account tier"
+          }
         },
         "billing_status": {
           "semantic_type": "billing.account.status",
@@ -35225,6 +35239,16 @@
         ],
         "steward": "Platform team",
         "changelog": [
+          {
+            "version": "1.3.3",
+            "date": "2026-11-23",
+            "description": "Labels the organization’s coarse subscription band “Account tier”. Its subscriptions name their individual plans."
+          },
+          {
+            "version": "1.3.2",
+            "date": "2026-11-23",
+            "description": "Captions a usage window’s final calendar date “Last day of period”."
+          },
           {
             "version": "1.3.1",
             "date": "2026-11-22",
@@ -35415,7 +35439,7 @@
                   ],
                   "time": {
                     "field": "period_end",
-                    "says": "Period ends"
+                    "says": "Last day of period"
                   }
                 }
               }

@@ -8,7 +8,9 @@ import { writeCanonical, hashStagedFile } from '../importer/staging-json.js';
 import { draftSource, type Draft, type ImportResult } from '../importer/draft.js';
 import { canonical, ImportProblem, type SourceInput } from '../importer/source.js';
 import { listObjects, loadObject, objectEntry, userObjectsFolder } from '../objects/object-loader.js';
+import { relatedShape, shapeOfDefinition } from '../compose/related-records.js';
 import { composeObject } from '../objects/trait-composer.js';
+import { sourceNames } from '../objects/related-lists.js';
 import { withDefinitionWrite } from '../objects/definition-write.js';
 import type { ObjectDefinition } from '../objects/types.js';
 import { ToolError } from '../errors/tool-error.js';
@@ -20,7 +22,7 @@ export type ObjectImportInput =
   | { action: 'draft'; source: SourceInput }
   | { action: 'show'; importId: string; object: string }
   | { action: 'apply'; importId: string; objects: Array<{ name: string; proposals?: string[]; currencies?: Record<string, { field: string; minorUnits?: number }> }>; overwrite?: boolean; confirmShipped?: string[] };
-export type ImportDiff = { name: string; status: 'new' | 'changed' | 'unchanged'; fields: { added: string[]; removed: string[]; changed: string[] }; screens: string[]; traitsChanged: boolean; relationshipsChanged: boolean; traitFields?: string[] };
+export type ImportDiff = { name: string; status: 'new' | 'changed' | 'unchanged'; fields: { added: string[]; removed: string[]; changed: string[] }; screens: string[]; traitsChanged: boolean; relationshipsChanged: boolean; traitFields?: string[]; lists?: { kept: string[]; gone: string[]; open: string[]; overwrite?: string } };
 const contexts = ['list', 'detail', 'form'] as const;
 
 function stagingRoot(): string {
@@ -68,11 +70,34 @@ function read(importId: string, includeReport = false): Pick<ImportResult, 'draf
   } catch (error) { throw new ToolError('OODS-V220', `Cannot read staged import ${importId}: ${(error as Error).message}. Run draft again.`); }
 }
 
+/** A paired inverse navigation is now rendered as matching rows, including in the sample data. */
+function removeInverse(definition: ObjectDefinition, field: string) {
+  delete definition.schema[field];
+  delete definition.semantics[field];
+  definition.relationships = definition.relationships?.filter(edge => edge.via !== field);
+  for (const sample of definition.samples ?? []) delete sample[field];
+  if (definition.metadata.listColumns) definition.metadata.listColumns = definition.metadata.listColumns.filter(column => column.field !== field);
+}
+
 /** Differences describe the unaccepted base draft against the effective registered object, including accepted traits. */
 export function diffDraft(draft: Draft): ImportDiff {
   const existing = objectEntry(draft.name);
-  if (!existing) return { name: draft.name, status: 'new', fields: { added: Object.keys(draft.definition.schema).sort(), removed: [], changed: [] }, screens: [...(draft.definition.metadata.supportedContexts ?? contexts)], traitsChanged: false, relationshipsChanged: !!draft.dependencies.length };
-  const prior = loadObject(draft.name), before = composeObject(prior), after = composeObject(draft.definition);
+  const prior = existing ? loadObject(draft.name) : undefined;
+  const registered = prior?.metadata.relatedLists ?? [];
+  const proposed = draft.lists ?? [];
+  const kept = proposed.filter(p => registered.some(list => canonical(list) === canonical(p.list)));
+  const lists = {
+    kept: kept.map(p => p.list.id),
+    gone: registered.filter(list => !kept.some(p => p.list.id === list.id)).map(list => list.id),
+    open: proposed.filter(p => !kept.includes(p)).map(p => p.list.id),
+    ...(registered.length ? { overwrite: 'Overwriting this object drops any registered list you do not accept again.' } : {}),
+  };
+  const listDiff = registered.length || proposed.length ? { lists } : {};
+  if (!prior) return { name: draft.name, status: 'new', fields: { added: Object.keys(draft.definition.schema).sort(), removed: [], changed: [] }, screens: [...(draft.definition.metadata.supportedContexts ?? contexts)], traitsChanged: false, relationshipsChanged: !!draft.dependencies.length, ...listDiff };
+  const inverses = kept.flatMap(proposal => proposal.backSide ? [proposal.backSide] : []);
+  const expected = inverses.length ? structuredClone(draft.definition) : draft.definition;
+  for (const field of inverses) removeInverse(expected, field);
+  const before = composeObject(prior), after = composeObject(expected);
   const oldFields = before.schema, newFields = after.schema;
   const traitFields = Object.keys(oldFields).filter(field => !Object.hasOwn(prior.schema, field) && !Object.hasOwn(newFields, field)).sort();
   const fields = {
@@ -80,11 +105,13 @@ export function diffDraft(draft: Draft): ImportDiff {
     removed: Object.keys(oldFields).filter(field => !Object.hasOwn(newFields, field) && !traitFields.includes(field)).sort(),
     changed: Object.keys(newFields).filter(field => Object.hasOwn(oldFields, field) && canonical([prior.schema[field] ?? oldFields[field], prior.schema[field] ? prior.semantics[field] : before.semantics[field]]) !== canonical([newFields[field], after.semantics[field]])).sort(),
   };
-  const traitsChanged = canonical(prior.traits) !== canonical(draft.definition.traits);
-  const relationshipsChanged = canonical(prior.relationships ?? []) !== canonical(draft.definition.relationships ?? []);
-  const metadataChanged = canonical([prior.object, prior.metadata, prior.samples, prior.tokens]) !== canonical([draft.definition.object, draft.definition.metadata, draft.definition.samples, draft.definition.tokens]);
-  const changed = traitsChanged || relationshipsChanged || metadataChanged || Object.values(fields).some(list => list.length);
-  return { name: draft.name, status: changed ? 'changed' : 'unchanged', fields, screens: changed ? [...new Set([...(prior.metadata.supportedContexts ?? contexts), ...(draft.definition.metadata.supportedContexts ?? contexts)])] : [], traitsChanged, relationshipsChanged, traitFields };
+  const traitsChanged = canonical(prior.traits) !== canonical(expected.traits);
+  const relationshipsChanged = canonical(prior.relationships ?? []) !== canonical(expected.relationships ?? []);
+  const { relatedLists: _registeredLists, ...priorMetadata } = prior.metadata;
+  const { relatedLists: _draftLists, ...draftMetadata } = expected.metadata;
+  const metadataChanged = canonical([prior.object, priorMetadata, prior.samples, prior.tokens]) !== canonical([expected.object, draftMetadata, expected.samples, expected.tokens]);
+  const changed = lists.gone.length > 0 || traitsChanged || relationshipsChanged || metadataChanged || Object.values(fields).some(list => list.length);
+  return { name: draft.name, status: changed ? 'changed' : 'unchanged', fields, screens: changed ? [...new Set([...(prior.metadata.supportedContexts ?? contexts), ...(draft.definition.metadata.supportedContexts ?? contexts)])] : [], traitsChanged, relationshipsChanged, traitFields, ...listDiff };
 }
 
 async function apply(input: Extract<ObjectImportInput, { action: 'apply' }>, imported: Pick<ImportResult, 'drafts' | 'report'>) {
@@ -98,6 +125,7 @@ async function apply(input: Extract<ObjectImportInput, { action: 'apply' }>, imp
     const drafts = imported.drafts.filter(draft => selected.has(draft.name));
     if (drafts.length !== selected.size) throw new ToolError('OODS-V220', 'An accepted object is not in this import. Use show and the staged order.json.');
     const available = [...new Set([...listObjects(), ...selected.keys()])];
+    const incoming = new Map<string, ObjectDefinition>();
     const writes: Array<{ name: string; file: string; yaml: string; previous?: Buffer }> = [];
     for (const draft of drafts) {
       const selection = selected.get(draft.name)!;
@@ -115,6 +143,22 @@ async function apply(input: Extract<ObjectImportInput, { action: 'apply' }>, imp
       const ids = new Set(selection.proposals ?? []);
       if (ids.size !== (selection.proposals ?? []).length) throw new ToolError('OODS-V220', `Repeated proposal for ${draft.name}.`);
       for (const id of ids) {
+        const listProposal = draft.lists?.find(proposal => proposal.id === id);
+        if (listProposal) {
+          if (!listProposal.valid) throw new ToolError('OODS-V220', `Proposal ${id} is invalid: ${listProposal.errors.join(' ')}`);
+          const { list } = listProposal;
+          const missing = list.sources.flatMap(source => sourceNames(source.from)).find(name => !available.includes(name));
+          if (missing) throw new ToolError('OODS-V220', `Proposal ${id} lists ${missing}, which this call does not accept and no registered object provides.`);
+          const lists = definition.metadata.relatedLists ??= [];
+          const entry = objectEntry(draft.name);
+          const previous = entry?.source === 'user' ? loadObject(draft.name).metadata.relatedLists?.find(prior => prior.id === list.id) : undefined;
+          if (lists.some(prior => prior.id === list.id) || (previous && canonical(previous) !== canonical(list))) {
+            throw new ToolError('OODS-V220', `The list id ${list.id} is already taken on ${draft.name}.`);
+          }
+          lists.push(list);
+          if (listProposal.backSide) removeInverse(definition, listProposal.backSide);
+          continue;
+        }
         const proposal = draft.proposals.find(p => p.id === id);
         if (!proposal || !proposal.valid) throw new ToolError('OODS-V220', `Proposal ${id} for ${draft.name} is missing or invalid; review show before accepting it.`);
         if (definition.traits.some(trait => trait.name === proposal.trait.name)) throw new ToolError('OODS-V220', `Two accepted proposals configure ${proposal.trait.name} on ${draft.name}; choose one.`);
@@ -122,8 +166,7 @@ async function apply(input: Extract<ObjectImportInput, { action: 'apply' }>, imp
       }
       if (definition.traits.some(trait => ['Stateful', 'Supersedable', 'Auditable', 'Timestampable'].includes(trait.name.split('/').pop()!)) && !definition.metadata.supportedContexts?.includes('timeline')) definition.metadata.supportedContexts?.push('timeline');
       const yaml = dump(definition, { noRefs: true, sortKeys: true, lineWidth: 120 });
-      const checked = validateDefinition(yaml, available);
-      if (!checked.valid) throw new ToolError('OODS-V220', `${draft.name} was not applied: ${checked.errors.map(error => error.message).join(' ')}`, { errors: checked.errors });
+      incoming.set(draft.name, definition);
       const existing = objectEntry(draft.name);
       if ((existing?.source === 'shipped' || existing?.replaces) && !input.confirmShipped?.includes(draft.name)) throw new ToolError('OODS-C006', `Accepting ${draft.name} replaces a shipped object. Name it in confirmShipped to confirm this specific replacement.`, { name: draft.name });
       const own = existing?.source === 'user' ? existing.file : undefined;
@@ -131,6 +174,14 @@ async function apply(input: Extract<ObjectImportInput, { action: 'apply' }>, imp
       const file = own ?? path.join(folder, `${draft.name}.object.yaml`);
       if (fs.existsSync(file) && (!own || fs.lstatSync(file).isSymbolicLink())) throw new ToolError('OODS-C004', `Refusing occupied or symbolic-link target ${file}.`);
       writes.push({ name: draft.name, file, yaml, ...(own ? { previous: fs.readFileSync(file) } : {}) });
+    }
+    const lookup = (name: string) => {
+      const definition = incoming.get(name);
+      return definition ? shapeOfDefinition(definition, composeObject(definition)) : relatedShape(name);
+    };
+    for (const write of writes) {
+      const checked = validateDefinition(write.yaml, available, lookup);
+      if (!checked.valid) throw new ToolError('OODS-V220', `${write.name} was not applied: ${checked.errors.map(error => error.message).join(' ')}`, { errors: checked.errors });
     }
     // Every validation above finishes before the first definition changes. Snapshot exact bytes for rollback.
     const changed: typeof writes = [];
@@ -176,6 +227,7 @@ async function execute(input: ObjectImportInput) {
         objects: result.drafts.slice(0, 80).map(draft => draft.name), objectsTruncated: result.drafts.length > 80,
         shippedClashes: result.drafts.filter(draft => { const entry = objectEntry(draft.name); return entry?.source === 'shipped' || !!entry?.replaces; }).map(draft => draft.name).slice(0, 30),
         diff: { new: diffs.filter(d => d.status === 'new').length, changed: diffs.filter(d => d.status === 'changed').length, unchanged: diffs.filter(d => d.status === 'unchanged').length, file: path.join(staged.directory, 'diff.json') },
+        proposalLists: result.drafts.reduce((sum, draft) => sum + (draft.lists?.length ?? 0), 0),
         proposalTraits: {} as Record<string, number>, proposalGrades: { strong: 0, medium: 0, weak: 0 }, cycleCount: result.cycles.length,
         files: { hub: 'hub.json', report: 'report.json', order: 'order.json', objects: 'objects/' },
       };
@@ -186,7 +238,7 @@ async function execute(input: ObjectImportInput) {
     if (input.action === 'show') {
       const draft = imported.drafts.find(d => d.name === input.object);
       if (!draft) throw new ToolError('OODS-N005', `${input.object} is not in this import.`);
-      return { action: 'show' as const, importId: input.importId, name: draft.name, yaml: draft.yaml, proposals: draft.proposals,
+      return { action: 'show' as const, importId: input.importId, name: draft.name, yaml: draft.yaml, proposals: draft.proposals, lists: draft.lists ?? [],
         unmapped: imported.report.filter(entry => entry.object === draft.name && entry.outcome === 'unmapped'), diff: diffDraft(draft) };
     }
     if (input.action === 'apply') return await apply(input, imported);

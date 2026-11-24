@@ -48,6 +48,6 @@ describe('the words the related-list core writes', () => {
   });
 
   it('says once which records the lists show', () => {
-    expect(resolved.cannotSee).toBe('These lists show only records here that name Northwind replies by id; records that name Northwind replies only in words, or that another product keeps, are not listed.');
+    expect(resolved.cannotSee).toBe('These lists show only records here that name Northwind replies by id; records that hold the name only in words, or that another product keeps, are not listed.');
   });
 });

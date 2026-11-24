@@ -60,7 +60,7 @@
       ]
     }
   ],
-  "head": "ed6358965842cf7c00d1122f44f2abbd587ce302",
+  "head": "02ea51a413f0aff6280f3967846c98ce9b3bc495",
   "builderSelfCertified": false,
   "methodology": {
     "testImportLocation": "Where a spec that imports the tool's handler module lives: packages/mcp-server/test/product-reality, then test/contracts, then any other mcp-server spec. A literal runtime import is source evidence that a test reaches the handler, not proof of invocation, passing execution or browser certification. Grouped action imports roll up to their registered family. Transitive imports and constructed imports/dispatch are not followed; type-only and schema-only imports do not count.",
@@ -982,6 +982,11 @@
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
+            "path": "packages/mcp-server/test/product-reality/generated-apps.s254.spec.ts",
+            "line": 3,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
             "path": "packages/mcp-server/test/product-reality/generated-heading-update.s185.spec.ts",
             "line": 11,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
@@ -1393,6 +1398,11 @@
           {
             "path": "packages/mcp-server/test/e2e/tier1-acceptance.e2e.spec.ts",
             "line": 10,
+            "handler": "packages/mcp-server/src/tools/code.generate.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/accept-lists.s254.spec.ts",
+            "line": 120,
             "handler": "packages/mcp-server/src/tools/code.generate.ts"
           },
           {
@@ -1809,6 +1819,11 @@
           {
             "path": "packages/mcp-server/test/product-reality/fresh-composition.s187.spec.ts",
             "line": 13,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/product-reality/generated-apps.s254.spec.ts",
+            "line": 2,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -2288,6 +2303,11 @@
           {
             "path": "packages/mcp-server/test/e2e/object-codegen-pipeline.spec.ts",
             "line": 10,
+            "handler": "packages/mcp-server/src/tools/design.compose.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/accept-lists.s254.spec.ts",
+            "line": 119,
             "handler": "packages/mcp-server/src/tools/design.compose.ts"
           },
           {
@@ -4880,6 +4900,11 @@
             "handler": "packages/mcp-server/src/tools/object.register.ts"
           },
           {
+            "path": "packages/mcp-server/test/importer/accept-lists.s254.spec.ts",
+            "line": 8,
+            "handler": "packages/mcp-server/src/tools/object.register.ts"
+          },
+          {
             "path": "packages/mcp-server/test/importer/approval-evidence.s245.spec.ts",
             "line": 23,
             "handler": "packages/mcp-server/src/tools/object.register.ts"
@@ -4908,6 +4933,11 @@
             "path": "packages/mcp-server/test/importer/importer.spec.ts",
             "line": 10,
             "handler": "packages/mcp-server/src/tools/object.register.ts"
+          },
+          {
+            "path": "packages/mcp-server/test/importer/list-proposals.s254.spec.ts",
+            "line": 6,
+            "handler": "packages/mcp-server/src/tools/object.validate.ts"
           },
           {
             "path": "packages/mcp-server/test/importer/readable-screens.s240.spec.ts",
@@ -5509,6 +5539,11 @@
             "handler": "packages/mcp-server/src/tools/object.import.ts"
           },
           {
+            "path": "packages/mcp-server/test/importer/accept-lists.s254.spec.ts",
+            "line": 7,
+            "handler": "packages/mcp-server/src/tools/object.import.ts"
+          },
+          {
             "path": "packages/mcp-server/test/importer/approval-evidence.s245.spec.ts",
             "line": 21,
             "handler": "packages/mcp-server/src/tools/object.import.ts"
@@ -5584,7 +5619,7 @@
           "kind": "documented-limit",
           "file": "packages/mcp-server/src/tools/object.import.ts",
           "reason": "Explicit acceptance only; detected batch failures restore prior definitions. This rollback does not provide crash or power-loss recovery.",
-          "line": 154
+          "line": 205
         }
       ]
     },

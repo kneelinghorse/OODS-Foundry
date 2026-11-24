@@ -1,4 +1,5 @@
 import type { FieldSchemaEntry, UiElement, UiSchema } from '../schemas/generated.js';
+import { pluralLabel } from '../codegen/screen-shell.js';
 import { fieldLabel } from './label-generator.js';
 import { enumOptionLabel } from './internal-fields.js';
 import { recordNameField, recordSummaryField } from './record-label.js';
@@ -158,7 +159,11 @@ export function populateCollections(schema: UiSchema, context: string, objectNam
       if (search) { search.bindings = undefined; search.collectionControl = 'search'; search.props = { label: 'Search', placeholder: searchPlaceholder?.trim() || 'Search records', clearable: true }; }
       if (filter && filterField) {
         filter.component = 'Select'; filter.children = undefined; filter.bindings = undefined; filter.collectionControl = 'filter';
-        filter.props = { ...(filterField !== 'status' ? { field: filterField } : {}), label: fields[filterField]?.displayLabel ?? fieldLabel(filterField), options: [{ value: '', label: /(?:^|_)(?:status|state)$/.test(filterField) ? 'All states' : 'All' }, ...(fields[filterField]!.enum ?? []).map(value => ({ value: String(value), label: enumOptionLabel(String(value), fields[filterField]!.enumLabels) }))] };
+        const displayLabel = fields[filterField]?.displayLabel;
+        const all = /(?:^|_)(?:status|state)$/.test(filterField)
+          ? displayLabel ? `All ${pluralLabel(displayLabel).toLowerCase()}` : 'All states'
+          : 'All';
+        filter.props = { ...(filterField !== 'status' ? { field: filterField } : {}), label: displayLabel ?? fieldLabel(filterField), options: [{ value: '', label: all }, ...(fields[filterField]!.enum ?? []).map(value => ({ value: String(value), label: enumOptionLabel(String(value), fields[filterField]!.enumLabels) }))] };
       }
       if (sortIndicator) {
         sortIndicator.bindings = { ...sortIndicator.bindings, onChange: 'handleSortChange' };

@@ -239,8 +239,9 @@ export function readSql(documents: Document[]): ReaderResult {
         else note(at, 'Non-literal SQL default retained in source and never evaluated.');
       } else if (constraint.type === 'reference' || constraint.type === 'foreign key') {
         const target = key(constraint.foreignTable);
-        if (names.length !== 1 || constraint.foreignColumns.length > 1) { note(at, 'Composite foreign key retained in source; a scalar picker cannot express a tuple.'); return; }
+        if (names.length !== 1 || (constraint.foreignColumns?.length ?? 0) > 1) { note(at, 'Composite foreign key retained in source; a scalar picker cannot express a tuple.'); return; }
         if (!tables.has(target)) { note(at, `Foreign key target ${target} is absent from this source.`); return; }
+        (schema['x-import-foreign-keys'] ??= []).push({ reader: 'sql', target, via: names[0], referenced: constraint.foreignColumns?.[0]?.name, origin: at });
         schema['x-oods'].relationships.push({ target, via: names[0], cardinality: 'many-to-one', label: names[0].replace(/_/g, ' ') });
         note(at, 'Foreign key becomes a declared relationship.', 'mapped');
       } else if (constraint.type === 'check') { if (!check(constraint.expr, fields, at)) note(at, 'CHECK expression preserved in source; only literal comparisons and IN lists map to validation.'); else note(at, 'CHECK becomes field validation.', 'mapped'); }

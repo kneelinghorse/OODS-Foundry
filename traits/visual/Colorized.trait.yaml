@@ -1,6 +1,6 @@
 trait:
   name: Colorized
-  version: 2.0.0
+  version: 2.0.2
   description: |
     Maps lifecycle states to semantic color tokens for consistent status theming across the
     design system. Colorized is the visual bridge between the Stateful trait's data model and
@@ -128,9 +128,7 @@ schema:
     required: false
     computed: true
     description: |
-      Human-readable status label announced by screen readers. Generated from the
-      color_state value via toLabel() (e.g., "past_due" → "Past Due"). Ensures status
-      meaning is communicated without reliance on color perception.
+      Accessible text for the color state, for example “Critical” for critical.
 
 semantics:
   color_state:
@@ -246,10 +244,10 @@ metadata:
     - Engineering team
   maturity: stable
   accessibility:
-    keyboard: "n/a — Colorized is a visual presentation trait with no interactive elements."
-    screenreader: |
-      StatusBadge announces the accessibility_label (human-readable status) and tone.
-      Color is never the sole channel for status information.
+    keyboard: >-
+      The form’s ColorStatePicker has a labelled native select. Tab moves focus to the enabled control and the arrow keys choose a state.
+    screenreader: >-
+      The card’s ColorizedBadge shows its label or state as text. The form’s ColorStatePicker exposes a native select labelled “Color state”.
     colorBlind: |
       All status badges MUST include both an icon and text label alongside the color indicator.
       This icon+text redundancy requirement ensures that deuteranopia, protanopia, and

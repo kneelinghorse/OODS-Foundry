@@ -19,6 +19,14 @@ function makeNode(component: string, props: Record<string, unknown> = {}, extras
 }
 
 describe('component map coverage', () => {
+  it('shows a disabled prompt until a color state is selected', () => {
+    const html = renderMappedComponent(makeNode('ColorStatePicker', { colorStates: ['neutral', 'success'] }));
+    expect(html).toContain('<option value="" disabled selected>Choose state</option>');
+    expect(html).toContain('<option value="neutral">Neutral</option>');
+    const empty = renderMappedComponent(makeNode('ColorStatePicker', { colorStates: [] }));
+    expect(empty).toContain('<option value="" disabled selected>Choose state</option></select>');
+  });
+
   it('covers required components', () => {
     for (const component of [
       'Button',

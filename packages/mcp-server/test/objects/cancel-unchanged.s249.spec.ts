@@ -193,6 +193,27 @@ describe("Cancel's behaviour is unchanged for the three objects that cancel (s24
           .replace('publish({ screen, id, cancelOpen:', "publish({ screen, id, notice: '', cancelOpen:")
           .replace('publish({ records: list.records', 'publish({ notice, records: list.records')
           .replace("publish({ notice: 'Changes saved in this session.' }); await navigate(destination)", "await navigate(destination, state.id, 'Changes saved in this session.')");
+        // A refused write keeps the mounted form or Cancel panel. A failed load still offers retry.
+        expected = expected.replace(`  async function change(operation: () => DomainRecord, destination: Screen) {
+    publish({ uiState: 'loading', error: '' });
+    try { await store.ready(); operation(); await navigate(destination, state.id, 'Changes saved in this session.'); }
+    catch (error) { publish({ uiState: 'error', error: error instanceof Error ? error.message : String(error) }); }
+  }`, `  let changePending = false;
+  async function change(operation: () => DomainRecord, destination: Screen, notice = 'Changes saved in this session.') {
+    if (changePending) return;
+    changePending = true;
+    const initial = state;
+    let loaded = false;
+    try {
+      await store.ready();
+      if (state !== initial) return;
+      loaded = true;
+      operation();
+      await navigate(destination, state.id, notice);
+    } catch (error) {
+      if (state === initial) publish({ uiState: loaded ? 'success' : 'error', error: error instanceof Error ? error.message : String(error) });
+    } finally { changePending = false; }
+  }`).replace('dismissCancellation() { publish({ cancelOpen: false }); }', "dismissCancellation() { publish({ cancelOpen: false, error: '' }); }");
         if (object !== 'Subscription') {
           expected = expected.replace('collectionEvents, type DomainRecord', 'collectionEvents, relatedRows, type DomainRecord')
             .replace('history, collectionEvents };', 'history, collectionEvents, relatedRows };')

@@ -344,7 +344,7 @@ export function resolveRelatedListRows(list: RelatedList, subject: RelatedObject
     ...(list.note ? { note: fill(list.note, name) } : {}),
     cannotSee: keyed
       ? 'These lists show only records here, matched by id; records named only in words, or that another product keeps, are not listed.'
-      : `These lists show only records here that name ${name} by id; records that name ${name} only in words, or that another product keeps, are not listed.`,
+      : `These lists show only records here that name ${name} by id; records that hold the name only in words, or that another product keeps, are not listed.`,
     collapsed: list.collapsed === true, applies, ...(keyed ? { keyed: true as const } : {}), ...(ended ? { endedAt: ended } : {}), warnings: [] as string[],
   };
   let beside: string | undefined;

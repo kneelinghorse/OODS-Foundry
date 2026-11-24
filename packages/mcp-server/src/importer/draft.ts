@@ -1,3 +1,4 @@
+import { proposeLists, type ListProposal } from './list-proposals.js';
 import { identifierField, recordKeyField } from '../objects/record-identity.js';
 import { isMailboxAddress, sampleValue } from './samples.js';
 import { approvalRecord, grantRecord, initialStateOf, namedForEnd, namedForState, suggestTraits, workRecord } from './proposals.js';
@@ -14,7 +15,7 @@ import { normalizeSource, type Hub, type Normalized, type ReportEntry } from './
 import { canonical, escapePointer, hash, isMap, walk, wrappedReference, type MapValue, type Origin, type SourceInput } from './source.js';
 
 export type Proposal = { id: string; trait: TraitReference; grade: 'strong' | 'medium' | 'weak'; evidence: Array<Origin & { kind: 'declaration' | 'structure' | 'name'; reason: string }>; effects: string; valid: boolean; errors: string[] };
-export type Draft = { name: string; sourceName: string; origin: Origin; yaml: string; definition: ObjectDefinition; proposals: Proposal[]; dependencies: string[] };
+export type Draft = { name: string; sourceName: string; origin: Origin; yaml: string; definition: ObjectDefinition; proposals: Proposal[]; lists?: ListProposal[]; dependencies: string[] };
 export type ImportResult = Normalized & { drafts: Draft[]; cycles: string[][]; counts: { total: number; mapped: number; proposed: number; unmapped: number; fields: number; mappedFields: number } };
 const formats: Record<string, string> = { uuid: 'uuid', 'date-time': 'datetime', date: 'date', email: 'email', uri: 'url', url: 'url' };
 const fieldConstraints = new Set(['minLength', 'maxLength', 'minimum', 'maximum', 'minItems', 'maxItems', 'uniqueItems', 'pattern', 'format', 'exclusiveMinimum', 'exclusiveMaximum', 'multipleOf']);
@@ -412,6 +413,7 @@ export function draftSource(input: SourceInput): ImportResult {
     const owner = drafts.filter(draft => entry.file === draft.origin.file && (entry.pointer === draft.origin.pointer || entry.pointer.startsWith(draft.origin.pointer + '/'))).sort((a, b) => b.origin.pointer.length - a.origin.pointer.length)[0];
     if (owner) entry.object = owner.name;
   }
+  proposeLists(drafts, hub, report);
   const ordered = dependencyOrder(drafts);
   const counts = { total: report.length, mapped: 0, proposed: 0, unmapped: 0, fields: 0, mappedFields: 0 };
   for (const entry of report) { counts[entry.outcome]++; if (entry.kind === 'property') { counts.fields++; if (entry.outcome === 'mapped') counts.mappedFields++; } }

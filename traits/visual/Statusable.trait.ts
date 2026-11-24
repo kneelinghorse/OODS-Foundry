@@ -14,7 +14,7 @@ export type StatusTone = (typeof STATUS_TONES)[number];
 const StatusableTrait = {
   trait: {
     name: 'Statusable',
-    version: '1.0.0',
+    version: '1.0.1',
     description:
       'Semantic status presentation layer that maps business statuses to visual tones, ' +
       'design tokens, and badge/banner rendering. Distinct from Stateful — Stateful governs ' +
@@ -197,10 +197,8 @@ const StatusableTrait = {
     owners: ['Design team', 'Engineering team'],
     maturity: 'experimental',
     accessibility: {
-      keyboard: 'Badge and Banner elements are not interactive; no keyboard handling required.',
-      screenreader:
-        'StatusBadge announces status label and tone as a live region. ' +
-        'Banner uses role="status" with aria-live="polite" for critical/warning tones.',
+      keyboard: 'The badge has no keyboard action. Tab reaches the Banner dismiss button when React receives onDismiss or Vue receives dismissLabel. The HTML Banner renders its text without a dismiss button.',
+      screenreader: 'StatusBadge shows the state as text alongside its color. By default the badge is a span and its visible text is available to screen readers. A critical or danger Banner defaults to an assertive alert. Other tones default to a polite status. An explicit role takes precedence. React and Vue still set aria-live from the tone unless it is overridden. HTML supplies aria-live from the tone only when it also supplies the role.',
     },
     regionsUsed: ['list', 'detail', 'form', 'timeline'],
     examples: ['Subscription', 'Invoice', 'Ticket', 'User'],

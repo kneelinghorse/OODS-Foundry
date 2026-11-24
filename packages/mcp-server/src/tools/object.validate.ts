@@ -121,7 +121,7 @@ function checkFields(schema: unknown, owner: string, errors: DefinitionProblem[]
   }
 }
 
-function checkObject(document: Record<string, unknown>, result: Checked, available: readonly string[]) {
+function checkObject(document: Record<string, unknown>, result: Checked, available: readonly string[], lookup: typeof relatedShape) {
   const { errors, warnings } = result;
   checkUnknownKeys(document, OBJECT_KEYS, warnings);
   const name = checkHeader(document.object, 'object', ['name', 'version', 'domain', 'description'], errors);
@@ -229,7 +229,7 @@ function checkObject(document: Record<string, unknown>, result: Checked, availab
   }
   // s249-m01: lists declared on the page that shows them name registered sources, their composed fields, the six history
   // keys and their lifecycles' states; a list may read this object's own records before it is registered.
-  for (const problem of relatedListProblems(definition.metadata.relatedLists, shapeOfDefinition(definition, composed), relatedShape)) {
+  for (const problem of relatedListProblems(definition.metadata.relatedLists, shapeOfDefinition(definition, composed), lookup)) {
     errors.push({ kind: 'malformed', path: problem.path, message: problem.message });
   }
   // s249-m03: a lifecycle's declared actions name fields of the composed object and an event Timestampable records.
@@ -343,7 +343,7 @@ function checkTrait(document: Record<string, unknown>, result: Checked) {
 }
 
 /** Validate one definition; `register` calls this first and writes only what passes. */
-export function validateDefinition(yaml: string, available: readonly string[] = listObjects()): Checked {
+export function validateDefinition(yaml: string, available: readonly string[] = listObjects(), lookup = relatedShape): Checked {
   const result: Checked = { kind: null, name: null, valid: false, errors: [], warnings: [], contexts: [], folder: null };
   let document: unknown;
   try {
@@ -364,7 +364,7 @@ export function validateDefinition(yaml: string, available: readonly string[] = 
   if (isMap(document.object)) {
     result.kind = 'object';
     result.folder = userObjectsFolder();
-    checkObject(document, result, available);
+    checkObject(document, result, available, lookup);
   } else {
     result.kind = 'trait';
     result.folder = userTraitsFolder();

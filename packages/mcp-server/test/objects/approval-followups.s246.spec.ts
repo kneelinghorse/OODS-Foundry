@@ -36,6 +36,7 @@ import { getDefinition } from '../../src/errors/registry.js';
 import { seedPreviewModel, schemaNodes } from '../../src/codegen/preview-model.js';
 import type { UiElement, UiSchema } from '../../src/schemas/generated.js';
 import { renderGenerated } from '../product-reality/render-generated.js';
+import { emit as renderHtml } from '../../src/codegen/html-emitter.js';
 
 const { JSDOM } = createRequire(import.meta.url)('jsdom') as { JSDOM: { fragment(html: string): DocumentFragment } };
 const text = (html: string) => (JSDOM.fragment(html).textContent ?? '').replace(/\s+/g, ' ');
@@ -62,14 +63,21 @@ describe('who is asking is the fifth fact on the screen where an answer is given
     expect(order.indexOf('requested_for_name')).toBeLessThan(order.indexOf('answer'));
     const workflow = (await compose({ object: 'Approval', context: 'workflow', options: { transient: true } } as never) as { schema: UiSchema }).schema;
     const html = String((await pipeline({ object: 'Approval', context: 'form', framework: 'html', options: { skipValidation: true } } as never) as { render?: { html?: string } }).render?.html ?? '');
+    const model = seedPreviewModel({ schema, context: 'form', object: 'Approval', workflowSchema: workflow });
+    const represented = { ...model, requestedForName: 'Tidewater Co-op' };
     const pages: Record<string, string> = { html };
+    const representedPages: Record<string, string> = { html: renderHtml(schema, { typescript: true, styling: 'tokens', sampleModel: represented }).code };
     for (const framework of ['react', 'vue'] as const) {
       const result = await generate({ schema, framework, profile: 'build', options: { typescript: true, styling: 'tokens' } } as never);
-      pages[framework] = renderGenerated(framework, result.code!, seedPreviewModel({ schema, context: 'form', object: 'Approval', workflowSchema: workflow }), result.artifact!.actions.map(({ name }: { name: string }) => name));
+      const actions = result.artifact!.actions.map(({ name }: { name: string }) => name);
+      pages[framework] = renderGenerated(framework, result.code!, model, actions);
+      representedPages[framework] = renderGenerated(framework, result.code!, represented, actions);
     }
     for (const [renderer, page] of Object.entries(pages)) {
       const body = text(page);
-      for (const label of ['Asked by', 'Asked for']) expect(body, `${renderer}: ${label}`).toContain(label);
+      expect(body, renderer).toContain('Asked by');
+      expect(body, renderer).not.toContain('Asked for');
+      expect(text(representedPages[renderer]), renderer).toMatch(/Asked for\s*Tidewater Co-op/);
       const fragment = JSDOM.fragment(page);
       for (const field of ['requested_by_id', 'requested_by_name', 'requested_for_id', 'requested_for_name']) expect(fragment.querySelectorAll(`input[name="${field}"], select[name="${field}"], textarea[name="${field}"]`).length, `${renderer}: ${field}`).toBe(0);
     }

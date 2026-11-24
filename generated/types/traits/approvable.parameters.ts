@@ -39,7 +39,7 @@ export interface ApprovableTraitParameters {
    */
   agentLevels?: LevelName[];
   /**
-   * Whether a yes stops standing when the thing changes after it was given.
+   * Whether your product marks an earlier yes out of date when the thing changes. OODS Foundry keeps the setting.
    */
   lapsesOnChange?: boolean;
   /**

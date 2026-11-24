@@ -1,6 +1,6 @@
 trait:
   name: Decision
-  version: 1.1.1
+  version: 1.1.2
   description: |
     The record of one ask to one actor and the answer it became: who asked, and for whom; who was asked; who answered,
     and for whom when a delegate or an agent answered; about exactly what, at what level of yes, and what that yes
@@ -416,6 +416,7 @@ view_extensions:
       priority: 70
       props:
         field: requested_for_name
+        data-oods-omit-empty: true
     - component: Text
       position: main
       priority: 69
@@ -529,12 +530,14 @@ view_extensions:
       fact: true
       props:
         field: requested_for_id
+        data-oods-omit-empty: true
     - component: Text
       position: top
       priority: 72
       fact: true
       props:
         field: requested_for_name
+        data-oods-omit-empty: true
 
 # The answer is the record's lifecycle, so the record composes Stateful beside this trait.
 dependencies:

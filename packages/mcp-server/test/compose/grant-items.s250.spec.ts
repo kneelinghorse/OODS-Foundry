@@ -60,6 +60,15 @@ describe('1884: the dashboard layout leaves out an empty place the trait asked t
     for (const object of ['Grant', 'Task']) expect((await dashboard(object)).match(/\b[A-Z][A-Za-z ]* unavailable\b/g), object).toBeNull();
   });
 
+  it.each(['detail', 'form'] as const)('shows Asked for on Approval’s %s only when a party is named', async context => {
+    const { schema } = await compose({ object: 'Approval', context, options: { transient: true } });
+    const render = (requestedForName: string) => textOf(renderRecordBody(schema, {
+      objectName: 'Approval', sampleModel: { requestedForId: requestedForName ? 'org-1' : '', requestedForName },
+    }));
+    expect(render('')).not.toContain('Asked for');
+    expect(render('Tidewater Co-op')).toContain('Asked for Tidewater Co-op');
+  });
+
   it('leaves out an empty Requested for seat on the dashboard and shows the named party when supplied', async () => {
     expect(await dashboard('Approval')).not.toContain('Requested for unavailable');
     const { schema } = await compose({ object: 'Approval', context: 'detail', layout: 'dashboard', options: { transient: true } });

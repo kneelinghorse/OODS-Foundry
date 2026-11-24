@@ -668,7 +668,7 @@ function renderDatePicker(node: UiElement): string {
   return renderInput({ ...node, props: { ...props, type, value } });
 }
 
-function normalizeSelectOptions(rawOptions: unknown, selectedValue: unknown): Array<{ value: string; label: string; selected: boolean }> {
+function normalizeSelectOptions(rawOptions: unknown, selectedValue: unknown, labelFor = (value: string) => formatReadOnlyValue(value, 'string', true)): Array<{ value: string; label: string; selected: boolean }> {
   if (!Array.isArray(rawOptions)) return [];
   const selectedValues = new Set<string>();
   if (Array.isArray(selectedValue)) {
@@ -683,14 +683,14 @@ function normalizeSelectOptions(rawOptions: unknown, selectedValue: unknown): Ar
   for (const entry of rawOptions) {
     if (isRecord(entry)) {
       const value = entry.value !== undefined && entry.value !== null ? serializePropValue(entry.value) : asString(entry.id) ?? asString(entry.label) ?? '';
-      const label = asString(entry.label) ?? asString(entry.name) ?? formatReadOnlyValue(value, 'string', true);
+      const label = asString(entry.label) ?? asString(entry.name) ?? labelFor(value);
       if (!value && !label) continue;
       options.push({ value, label, selected: selectedValues.has(value) });
       continue;
     }
     const value = serializePropValue(entry);
     if (!value) continue;
-    options.push({ value, label: formatReadOnlyValue(value, 'string', true), selected: selectedValues.has(value) });
+    options.push({ value, label: labelFor(value), selected: selectedValues.has(value) });
   }
   return options;
 }
@@ -1293,15 +1293,15 @@ function renderTextareaControl(label: string, name: string, value?: string): str
   }</textarea></label>`;
 }
 
-function renderSelectControl(label: string, name: string, optionsSource: unknown, selectedValue?: unknown, emptyLabel?: string): string {
+function renderSelectControl(label: string, name: string, optionsSource: unknown, selectedValue?: unknown, emptyLabel?: string, promptWithoutOptions = false): string {
   const options = normalizeSelectOptions(optionsSource, selectedValue);
-  const prompt = emptyLabel && !selectedValue ? `<option value="" disabled selected>${escapeHtml(emptyLabel)}</option>` : '';
+  const prompt = (options.length > 0 || promptWithoutOptions) && emptyLabel && !selectedValue ? `<option value="" disabled selected>${escapeHtml(emptyLabel)}</option>` : '';
   const optionsHtml =
     options.length > 0
       ? options
         .map((option) => `<option value="${escapeHtml(option.value)}"${option.selected ? ' selected' : ''}>${escapeHtml(option.label)}</option>`)
         .join('')
-      : '<option value="">Select...</option>';
+      : prompt ? '' : '<option value="">Select...</option>';
   return `<label class="oods-field" data-form-control="select"><span class="oods-field-label">${escapeHtml(label)}</span><select class="oods-field-control" name="${escapeHtml(name)}">${prompt}${optionsHtml}</select></label>`;
 }
 
@@ -1341,11 +1341,11 @@ function renderAddressEditor(node: UiElement, childrenHtml = ''): string {
 
 function renderClassificationEditor(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
-  const modeOptions = Array.isArray(props.modes) ? props.modes : ['strict', 'flexible'];
+  const modeOptions = Array.isArray(props.modes) ? props.modes : ['taxonomy', 'tag', 'hybrid'];
   const body = [
     renderInputControl('Category', 'category', firstSerialized(props, ['category', 'primaryCategory'])),
     renderInputControl('Tags', 'tags', firstSerialized(props, ['tags']), { placeholder: 'tag-1, tag-2' }),
-    renderSelectControl('Mode', 'mode', modeOptions, props.mode ?? props.classificationMode),
+    renderSelectControl('Mode', 'mode', modeOptions, props.mode ?? props.classificationMode, 'Choose a mode'),
   ].join('');
   return renderFormContainer(node, childrenHtml, body, {
     tag: 'form',
@@ -1358,7 +1358,7 @@ function renderPreferenceEditor(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
   const namespaceOptions = Array.isArray(props.namespaces) ? props.namespaces : ['default'];
   const body = [
-    renderSelectControl('Namespace', 'namespace', namespaceOptions, props.namespace),
+    renderSelectControl('Namespace', 'namespace', namespaceOptions, props.namespace, 'Choose a namespace'),
     renderTextareaControl('Preference Document', 'preferenceDocument', firstSerialized(props, ['document', 'json', 'value'])),
   ].join('');
   return renderFormContainer(node, childrenHtml, body, {
@@ -1372,7 +1372,7 @@ function renderRoleAssignmentForm(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
   const roles = props.roles ?? props.availableRoles ?? [];
   const body = [
-    renderSelectControl('Role', 'role', roles, props.role ?? props.defaultRoleId),
+    renderSelectControl('Role', 'role', roles, props.role ?? props.defaultRoleId, 'Choose a role'),
     renderInputControl('Assignee', 'assignee', firstSerialized(props, ['assignee', 'member'])),
   ].join('');
   return renderFormContainer(node, childrenHtml, body, {
@@ -1384,8 +1384,8 @@ function renderRoleAssignmentForm(node: UiElement, childrenHtml = ''): string {
 
 function renderCancellationForm(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
-  const reasons = normalizeSelectOptions(props.allowedReasons ?? ['no_longer_needed', 'budget', 'duplicate'], props.reasonCode);
-  if (typeof props.reasonCode === 'string' && props.reasonCode && !reasons.some(reason => reason.value === props.reasonCode)) reasons.unshift({ value: props.reasonCode, label: formatReadOnlyValue(props.reasonCode, 'string', true), selected: true });
+  const reasons = normalizeSelectOptions(props.allowedReasons ?? ['no_longer_needed', 'budget', 'duplicate'], props.reasonCode, enumOptionLabel);
+  if (typeof props.reasonCode === 'string' && props.reasonCode && !reasons.some(reason => reason.value === props.reasonCode)) reasons.unshift({ value: props.reasonCode, label: enumOptionLabel(props.reasonCode), selected: true });
   const body = [
     Array.isArray(props.allowedReasons) && props.allowedReasons.length === 0
       ? renderInputControl('Reason Code', 'reasonCode', asString(props.reasonCode))
@@ -1448,7 +1448,7 @@ function renderGeoFieldMappingForm(node: UiElement, childrenHtml = ''): string {
 function renderColorStatePicker(node: UiElement, childrenHtml = ''): string {
   const props = isRecord(node.props) ? node.props : {};
   const colorStates = props.colorStates ?? props.options ?? ['default', 'success', 'warning', 'critical'];
-  const body = renderSelectControl('Color State', 'colorState', colorStates, props.colorState ?? props.value);
+  const body = renderSelectControl('Color State', 'colorState', colorStates, props.colorState ?? props.value, 'Choose state', true);
   return renderFormContainer(node, childrenHtml, body, {
     tag: 'fieldset',
     defaultTitle: 'Color State Picker',
@@ -1461,8 +1461,8 @@ function renderTemplatePicker(node: UiElement, childrenHtml = ''): string {
   const templates = props.templates ?? props.options ?? [];
   const channels = props.channels ?? ['email', 'sms', 'in_app'];
   const body = [
-    renderSelectControl('Template', 'template', templates, props.templateId ?? props.value),
-    renderSelectControl('Channel', 'channel', channels, props.channel),
+    renderSelectControl('Template', 'template', templates, props.templateId ?? props.value, 'Choose a template'),
+    renderSelectControl('Channel', 'channel', channels, props.channel, 'Choose a channel'),
   ].join('');
   return renderFormContainer(node, childrenHtml, body, {
     tag: 'fieldset',
@@ -1820,7 +1820,7 @@ function renderCancellationSummary(node: UiElement, childrenHtml = ''): string {
       },
       { term: 'Requested at', keys: ['requestedAt', 'requestedAtField'], format: value => typeof value === 'string' ? formatDateTime(value) : undefined },
       { term: 'Reason', keys: ['reason', 'cancellationReason', 'reasonField'] },
-      { term: 'Code', keys: ['code', 'codeField'], format: value => value == null ? undefined : formatReadOnlyValue(value, 'string', true) },
+      { term: 'Code', keys: ['code', 'codeField'], format: value => typeof value === 'string' && value ? enumOptionLabel(value) : value == null ? undefined : formatReadOnlyValue(value, 'string', true) },
     ],
   });
 }

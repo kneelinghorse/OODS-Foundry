@@ -54,6 +54,7 @@ export function readDbt(documents: Document[]): ReaderResult {
     else if (test === 'relationships') {
       const target = reference(args.to);
       if (!target) { note(at, 'Relationship target is not a literal ref()/source(); no Jinja evaluated.'); return; }
+      (schema['x-import-foreign-keys'] ??= []).push({ reader: 'dbt', target, via: field, referenced: typeof args.field === 'string' ? args.field : undefined, origin: at });
       schema['x-oods'].relationships.push({ target, via: field, cardinality: 'many-to-one', label: field.replace(/_/g, ' ') });
       property.type ??= 'string';
     } else { note(at, `dbt test ${test} preserved; its SQL semantics are not executed or guessed.`); return; }

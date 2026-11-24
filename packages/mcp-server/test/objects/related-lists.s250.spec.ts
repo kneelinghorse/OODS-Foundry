@@ -358,7 +358,7 @@ describe('a page says what its lists read', () => {
     for (const record of loadObject(object).samples as Sample[]) {
       const [first] = resolveRelatedLists(object, record).filter(list => list.applies);
       const name = String(record[field]);
-      expect(first!.cannotSee, `${object} ${name}`).toBe(`These lists show only records here that name ${name} by id; records that name ${name} only in words, or that another product keeps, are not listed.`);
+      expect(first!.cannotSee, `${object} ${name}`).toBe(`These lists show only records here that name ${name} by id; records that hold the name only in words, or that another product keeps, are not listed.`);
     }
   });
 });

@@ -25,8 +25,8 @@ export function CommunicationDetailPanel({ id, title = 'Communication', channels
 
 export interface ColorStatePickerProps { id?: string; title?: string; colorStates?: readonly string[]; value?: string; disabled?: boolean; onChange?: (value: string) => void }
 export function ColorStatePicker({ id, title = 'Color state', colorStates = DEFAULT_COLOR_STATES, value, disabled, onChange }: ColorStatePickerProps) {
-  const generatedId = React.useId(); const [selected, setSelected] = React.useState(value ?? colorStates[0] ?? '');
-  React.useEffect(() => setSelected(value ?? colorStates[0] ?? ''), [value, colorStates]);
+  const generatedId = React.useId(); const [selected, setSelected] = React.useState(value ?? '');
+  React.useEffect(() => setSelected(value ?? ''), [value, colorStates]);
   return <fieldset id={id} className="oods-trait-recipe" data-oods-component="ColorStatePicker"><legend>{title}</legend><Select id={`${id ?? generatedId}-state`} label="Color state" name="color_state" value={selected} disabled={disabled} options={[...(!colorStates.includes(selected) ? [{ value: selected, label: selected || 'Choose state', disabled: true }] : []), ...colorStates.map(value => ({ value, label: formatReadOnlyValue(value, 'string', true) }))]} onValueChange={next => { setSelected(next); onChange?.(next); }} /></fieldset>;
 }
 export interface StatusColorLegendProps { id?: string; title?: string; colorStates?: readonly string[]; value?: string; showTokenReferences?: boolean }

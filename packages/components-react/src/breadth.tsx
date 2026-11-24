@@ -1,5 +1,5 @@
 import { svgCarriesTitle, vizPreviewLayers } from '@oods/component-contracts';
-import { formatDateTime, formatReadOnlyValue, summaryValue, formatReferenceLabel, formatPriceAmount, formatPriceCode, ownerKindLabel, ownershipPhrase } from '@oods/component-contracts';
+import { enumOptionLabel, formatDateTime, formatReadOnlyValue, summaryValue, formatReferenceLabel, formatPriceAmount, formatPriceCode, ownerKindLabel, ownershipPhrase } from '@oods/component-contracts';
 import * as React from 'react';
 
 import { Badge } from './presentational.js';
@@ -681,14 +681,14 @@ AuditEvent.displayName = 'OODS.AuditEvent';
 type SelectChoice = { value: string; label: string };
 
 // Mirrors the HTML renderer's normalizeSelectOptions (records retain value/id and display label/name, scalars render as text).
-const normalizeSelectOptions = (raw: unknown): SelectChoice[] => {
+const normalizeSelectOptions = (raw: unknown, labelFor = (value: string) => formatReadOnlyValue(value, 'string', true)): SelectChoice[] => {
   if (!Array.isArray(raw)) return [];
   const choices: SelectChoice[] = [];
   for (const entry of raw) {
     if (isRecord(entry)) {
       const text = (key: string) => (typeof entry[key] === 'string' && (entry[key] as string).length > 0 ? entry[key] as string : undefined);
       const value = text('value') ?? text('id') ?? text('label') ?? '';
-      const label = text('label') ?? text('name') ?? formatReadOnlyValue(value, 'string', true);
+      const label = text('label') ?? text('name') ?? labelFor(value);
       if (!value && !label) continue;
       choices.push({ value, label });
       continue;
@@ -696,16 +696,18 @@ const normalizeSelectOptions = (raw: unknown): SelectChoice[] => {
     if (entry === undefined || entry === null) continue;
     const value = typeof entry === 'object' ? JSON.stringify(entry) : String(entry);
     if (!value) continue;
-    choices.push({ value, label: formatReadOnlyValue(value, 'string', true) });
+    choices.push({ value, label: labelFor(value) });
   }
   return choices;
 };
 
-const selectOptionsMarkup = (choices: SelectChoice[]): React.ReactNode => (
-  choices.length > 0
-    ? choices.map((choice, index) => <option key={index} value={choice.value}>{choice.label}</option>)
-    : <option value="">Select...</option>
-);
+const selectOptionsMarkup = (choices: SelectChoice[], prompt?: string): React.ReactNode => {
+  if (!choices.length) return <option value="">Select...</option>;
+  return <>
+    {prompt && <option value="" disabled>{prompt}</option>}
+    {choices.map((choice, index) => <option key={index} value={choice.value}>{choice.label}</option>)}
+  </>;
+};
 
 const preventSubmit = (event: React.FormEvent<HTMLFormElement>): void => { event.preventDefault(); };
 
@@ -777,6 +779,7 @@ export const PreferenceEditor = React.forwardRef<HTMLFormElement, PreferenceEdit
     const resolvedTitle = firstText(title, label, heading, name) ?? 'Preference Editor';
     const resolvedSubtitle = firstText(description, subtitle, hint);
     const choices = normalizeSelectOptions(Array.isArray(namespaces) ? namespaces : ['default']);
+    const selectedNamespace = firstText(namespace);
     return (
       <form
         ref={ref}
@@ -791,7 +794,7 @@ export const PreferenceEditor = React.forwardRef<HTMLFormElement, PreferenceEdit
           {authored ? children : <>
             <label data-form-control="select">
               <span>Namespace</span>
-              <select name="namespace" defaultValue={firstText(namespace)}>{selectOptionsMarkup(choices)}</select>
+              <select name="namespace" defaultValue={selectedNamespace ?? ''}>{selectOptionsMarkup(choices, selectedNamespace ? undefined : 'Choose a namespace')}</select>
             </label>
             <label data-form-control="textarea">
               <span>Preference Document</span>
@@ -812,6 +815,7 @@ export const RoleAssignmentForm = React.forwardRef<HTMLFormElement, RoleAssignme
     const resolvedTitle = firstText(title, label, heading, name) ?? 'Role Assignment';
     const resolvedSubtitle = firstText(description, subtitle, hint);
     const choices = normalizeSelectOptions(roles ?? availableRoles ?? []);
+    const selectedRole = firstText(role, defaultRoleId);
     return (
       <form
         ref={ref}
@@ -826,7 +830,7 @@ export const RoleAssignmentForm = React.forwardRef<HTMLFormElement, RoleAssignme
           {authored ? children : <>
             <label data-form-control="select">
               <span>Role</span>
-              <select name="role" defaultValue={firstText(role, defaultRoleId)}>{selectOptionsMarkup(choices)}</select>
+              <select name="role" defaultValue={selectedRole ?? ''}>{selectOptionsMarkup(choices, selectedRole ? undefined : 'Choose a role')}</select>
             </label>
             <label data-form-control="input">
               <span>Assignee</span>
@@ -937,7 +941,9 @@ export const TemplatePicker = React.forwardRef<HTMLFieldSetElement, TemplatePick
     const resolvedTitle = firstText(title, label, heading, name) ?? 'Template Picker';
     const resolvedSubtitle = firstText(description, subtitle, hint);
     const templateChoices = normalizeSelectOptions(templates ?? options ?? []);
+    const selectedTemplate = firstText(templateId, value);
     const channelChoices = normalizeSelectOptions(channels ?? ['email', 'sms', 'in_app']);
+    const selectedChannel = firstText(channel);
     return (
       <fieldset
         ref={ref}
@@ -951,11 +957,11 @@ export const TemplatePicker = React.forwardRef<HTMLFieldSetElement, TemplatePick
           {authored ? children : <>
             <label data-form-control="select">
               <span>Template</span>
-              <select name="template" defaultValue={firstText(templateId, value)}>{selectOptionsMarkup(templateChoices)}</select>
+              <select name="template" defaultValue={selectedTemplate ?? ''}>{selectOptionsMarkup(templateChoices, selectedTemplate ? undefined : 'Choose a template')}</select>
             </label>
             <label data-form-control="select">
               <span>Channel</span>
-              <select name="channel" defaultValue={firstText(channel)}>{selectOptionsMarkup(channelChoices)}</select>
+              <select name="channel" defaultValue={selectedChannel ?? ''}>{selectOptionsMarkup(channelChoices, selectedChannel ? undefined : 'Choose a channel')}</select>
             </label>
           </>}
         </div>
@@ -1021,13 +1027,14 @@ export const ClassificationEditor = React.forwardRef<HTMLFormElement, Classifica
   ({ title, label, heading, name, description, subtitle, hint, category, primaryCategory, tags, modes, mode, classificationMode, children, className, onSubmit, ...rest }, ref) => {
     const content = childContent(children);
     const tagText = typeof tags === 'string' ? tags : tags === undefined ? '' : JSON.stringify(tags);
+    const selectedMode = firstText(mode, classificationMode);
     return <form ref={ref} className={classes('oods-classification-editor', className)} data-oods-component="ClassificationEditor" data-form-type="classification-editor"
       onSubmit={(event) => { preventSubmit(event); onSubmit?.(event); }} {...rest}>
       {formHeader(firstText(title, label, heading, name) ?? 'Classification Editor', firstText(description, subtitle, hint))}
       <div data-form-content="true">{content.authored || content.scalar !== undefined ? children : <>
         <label data-form-control="input"><span>Category</span><input type="text" name="category" defaultValue={firstText(category, primaryCategory) ?? ''} /></label>
         <label data-form-control="input"><span>Tags</span><input type="text" name="tags" placeholder="tag-1, tag-2" defaultValue={tagText} /></label>
-        <label data-form-control="select"><span>Mode</span><select name="mode" defaultValue={firstText(mode, classificationMode)}>{selectOptionsMarkup(normalizeSelectOptions(Array.isArray(modes) ? modes : ['strict', 'flexible']))}</select></label>
+        <label data-form-control="select"><span>Mode</span><select name="mode" defaultValue={selectedMode ?? ''}>{selectOptionsMarkup(normalizeSelectOptions(Array.isArray(modes) ? modes : ['taxonomy', 'tag', 'hybrid']), selectedMode ? undefined : 'Choose a mode')}</select></label>
       </>}</div>
     </form>;
   }
@@ -1136,8 +1143,8 @@ PriceCardMeta.displayName = 'OODS.PriceCardMeta';
 export const CancellationForm = React.forwardRef<HTMLFormElement | HTMLFieldSetElement, CancellationFormProps>(
   ({ title, label, heading, name, description, subtitle, hint, allowedReasons, reasonCode, reason, cancellationReason, embedded, reasonHelp, codeHelp, children, className, onSubmit, ...rest }, ref) => {
     const content = childContent(children);
-    const choices = normalizeSelectOptions(allowedReasons ?? ['no_longer_needed', 'budget', 'duplicate']);
-    if (reasonCode && !choices.some(choice => choice.value === reasonCode)) choices.unshift({ value: reasonCode, label: reasonCode });
+    const choices = normalizeSelectOptions(allowedReasons ?? ['no_longer_needed', 'budget', 'duplicate'], enumOptionLabel);
+    if (reasonCode && !choices.some(choice => choice.value === reasonCode)) choices.unshift({ value: reasonCode, label: enumOptionLabel(reasonCode) });
     return React.createElement(embedded ? 'fieldset' : 'form', {
       ...rest, ref, className: classes('oods-cancellation-form', className), 'data-oods-component': 'CancellationForm', 'data-form-type': 'cancellation',
       ...(!embedded ? { onSubmit: (event: React.FormEvent<HTMLFormElement>) => { preventSubmit(event); onSubmit?.(event); } } : {}),

@@ -129,6 +129,13 @@ describe('@oods/components-react ported scenarios', () => {
     expect(badge?.getAttribute('aria-label')).toBe('Status: Active');
   });
 
+  it('keeps the visible state in a labelled badge and honors an explicit aria-label', () => {
+    const { rerender } = render(<StatusBadge status="past_due" label="Answer" content="Payment overdue" />);
+    expect(screen.getByLabelText('Answer: Payment overdue').textContent).toContain('Payment overdue');
+    rerender(<StatusBadge status="past_due" label="Answer" aria-label="Custom wording" />);
+    expect(screen.getByLabelText('Custom wording')).toBeTruthy();
+  });
+
   it('uses the authored state name for badge speech, current status, next states and history', () => {
     const enumLabels = { past_due: 'Payment overdue' };
     render(<><StatusBadge status="past_due" content="Payment overdue" /><StatusTimeline status="past_due" enumLabels={enumLabels} allowedTransitions={['past_due']} history={[{ from: 'still_running', to: 'past_due' }]} /></>);

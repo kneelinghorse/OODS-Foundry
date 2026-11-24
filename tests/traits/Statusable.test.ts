@@ -15,7 +15,7 @@ describe('Statusable trait', () => {
     const def = result.data!;
 
     expect(def.trait.name).toBe('Statusable');
-    expect(def.trait.version).toBe('1.0.0');
+    expect(def.trait.version).toBe('1.0.1');
     expect(def.schema.status.type).toBe('string');
     expect(def.schema.domain.type).toBe('StatusDomain');
     expect(def.semantics?.status?.token_mapping).toBe('tokenMap(status.registry.*)');

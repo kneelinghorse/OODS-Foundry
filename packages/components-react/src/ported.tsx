@@ -65,7 +65,7 @@ export const StatusBadge = React.forwardRef<HTMLSpanElement, StatusBadgeProps>(
         showIcon={showIcon}
         content={visibleLabel}
         title={title ?? presentation.description}
-        aria-label={ariaLabel ?? label ?? `Status: ${typeof visibleLabel === 'string' ? visibleLabel : presentation.label}`}
+        aria-label={ariaLabel ?? `${label || 'Status'}: ${typeof visibleLabel === 'string' ? visibleLabel : presentation.label}`}
         className={classes('oods-status-badge', className)}
         data-oods-component="StatusBadge"
         {...rest}
@@ -472,7 +472,7 @@ export const CancellationSummary = React.forwardRef<HTMLElement, CancellationSum
             <div data-summary-item="true"><dt>Reason</dt><dd>{reason}</dd></div>
           ) : null}
           {code ? (
-            <div data-summary-item="true"><dt>Code</dt><dd>{formatReadOnlyValue(code, 'string', true)}</dd></div>
+            <div data-summary-item="true"><dt>Code</dt><dd>{enumOptionLabel(code)}</dd></div>
           ) : null}
           {childValue !== undefined && childValue !== null ? (
             <div data-summary-item="true"><dt>{label ?? 'Cancellation'}</dt><dd>{childValue}</dd></div>

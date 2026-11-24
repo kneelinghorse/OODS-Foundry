@@ -145,6 +145,7 @@ export function readOdata(documents: Document[]): ReaderResult {
       if (raw.$Kind === 'NavigationProperty' && !many && raw.$ReferentialConstraint && Object.keys(raw.$ReferentialConstraint).length === 1) {
         const local = Object.keys(raw.$ReferentialConstraint)[0];
         if (value[local]) {
+          (schema['x-import-foreign-keys'] ??= []).push({ reader: 'odata', target: expand(type), via: local, referenced: raw.$ReferentialConstraint[local], origin: at });
           schema['x-odata'].navigation = { ...schema['x-odata'].navigation, [field]: raw };
           schema['x-oods'].relationships = [...(schema['x-oods'].relationships ?? []), { target: expand(type), via: local, cardinality: 'many-to-one', label: staticText(annotationValue(raw, 'Common.Label')) ?? field }];
           note(at, `Navigation uses its declared foreign-key field ${local}; no duplicate editor is created.`, 'mapped');

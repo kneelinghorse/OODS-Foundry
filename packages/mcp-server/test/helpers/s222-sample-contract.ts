@@ -192,3 +192,13 @@ export function s251Field<T extends Record<string, unknown>>(object: string, nam
   }
   return declared;
 }
+
+/** The account tier groups subscriptions; each linked subscription supplies its own plan. */
+export function s254Field<T extends Record<string, unknown>>(object: string, name: string, field: T): T {
+  const declared = s251Field(object, name, field);
+  if (object === 'Organization' && name === 'plan_tier' && declared.description === 'Billing plan currently assigned to the organization.') {
+    return { ...declared, displayLabel: 'Account tier',
+      description: "The account's tier, coarser than its plan: free with no paid plan, growth on a paid plan below Enterprise, enterprise on Enterprise. Its subscriptions name the plan." };
+  }
+  return declared;
+}

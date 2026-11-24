@@ -27,6 +27,13 @@ const walk = (nodes: UiElement[]): UiElement[] => nodes.flatMap(node => [node, .
 const schemas = new Map<string, UiSchema>();
 const artifacts = new Map<string, GeneratedArtifact>();
 
+it('uses the approval’s own word for its unfiltered answers', async () => {
+  const { schema } = await compose({ object: 'Approval', context: 'list', options: { transient: true } });
+  const filter = walk(schema.screens).find(node => node.collectionControl === 'filter');
+  expect(filter?.props).toMatchObject({ label: 'Answer' });
+  expect((filter?.props?.options as { value: string; label: string }[])[0]).toEqual({ value: '', label: 'All answers' });
+});
+
 beforeAll(async () => {
   for (const object of ['Subscription', 'Organization', 'User']) {
     const result = await compose({ object, context: 'workflow', options: { transient: true } });

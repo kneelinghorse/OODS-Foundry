@@ -177,10 +177,21 @@ export function createWorkflow(options: StoreOptions = {}) {
     const selected = list.records[0];
     publish({ records: list.records, total: list.total, page: list.page, pageSize: list.pageSize, search: query.search ?? '', status: query.status ?? '', descending: query.descending ?? false, archived: query.archived ?? false, uiState: selected ? 'success' : 'empty' });
   }
-  async function change(operation: () => DomainRecord, destination: Screen) {
-    publish({ uiState: 'loading', error: '' });
-    try { await store.ready(); operation(); await navigate(destination, state.id, 'Changes saved in this session.'); }
-    catch (error) { publish({ uiState: 'error', error: error instanceof Error ? error.message : String(error) }); }
+  let changePending = false;
+  async function change(operation: () => DomainRecord, destination: Screen, notice = 'Changes saved in this session.') {
+    if (changePending) return;
+    changePending = true;
+    const initial = state;
+    let loaded = false;
+    try {
+      await store.ready();
+      if (state !== initial) return;
+      loaded = true;
+      operation();
+      await navigate(destination, state.id, notice);
+    } catch (error) {
+      if (state === initial) publish({ uiState: loaded ? 'success' : 'error', error: error instanceof Error ? error.message : String(error) });
+    } finally { changePending = false; }
   }${declared ? workflowActionFunctions(declared) : ''}
   const actions: WorkflowActions = {
 ${actions.map((action) => `    ${action.name}: ${implementations[action.name]},`).join('\n')}
@@ -244,7 +255,7 @@ ${collectionEditors.size ? "    // Collection editors dispatch whole domain valu
     subscribe(listener: (state: AppState) => void) { listeners.add(listener); return () => { listeners.delete(listener); }; },
     navigate, actions, edit, choose,
     confirmCancellation() { return change(() => store.cancel(state.id, String(value("cancellation_reason") ?? ""), String(value("cancellation_reason_code") ?? ""), Boolean(value("cancel_at_period_end"))), 'detail'); },
-    dismissCancellation() { publish({ cancelOpen: false }); },${declared ? workflowActionApi(declared) : ''}
+    dismissCancellation() { publish({ cancelOpen: false, error: '' }); },${declared ? workflowActionApi(declared) : ''}
     filter(search: string, status = query.status ?? '') { query = { ...query, search, status, page: 1 }; return refreshList(); },
     sort(descending: boolean) { query = { ...query, sort: sortField, descending }; return refreshList(); },
     page(page: number) { query = { ...query, page }; return refreshList(); },
@@ -364,10 +375,15 @@ const values = computed(() => state.value.draft as Record<string, unknown>);${de
 const rule = computed(() => (state.value.draft, app.actionRule()));${declared.confirm ? `
 const preview = computed(() => (state.value.actionOpen ? app.actionPreview() : undefined));
 const confirmHeading = ref<HTMLElement | null>(null);
-const confirmNote = ref<HTMLTextAreaElement | null>(null);
+const confirmNote = ref('');
 let opener: HTMLElement | null = null;
 watch(() => state.value.actionOpen, async (open) => {
-  if (open) { opener = document.activeElement instanceof HTMLElement ? document.activeElement : null; await nextTick(); confirmHeading.value?.focus(); }
+  if (open) {
+    confirmNote.value = state.value.actionVia === 'form' && confirmation.reasonField ? String(values.value[confirmation.reasonField] ?? '') : '';
+    opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    await nextTick();
+    confirmHeading.value?.focus();
+  }
   else { await nextTick(); if (opener?.isConnected) opener.focus(); opener = null; }
 });` : ''}` : ''}
 </script>
@@ -428,7 +444,7 @@ body { margin: 0; background: var(--sys-surface-canvas); color: var(--sys-text-p
 .workflow-content .oods-tabs__overflow, .workflow-content .oods-tabs-overflow { position: relative; flex-shrink: 0; }
 .workflow-content .oods-tab-list [role="menu"] { position: absolute; inset: 100% 0 auto auto; z-index: 2; min-width: max-content; }
 
-.workflow-cancel { display: flex; gap: var(--cmp-spacing-inline-md); flex-wrap: wrap; border: 1px solid var(--sys-border-subtle); padding: var(--cmp-spacing-inset-default); margin: 0 0 var(--sys-space-inset-default); border-radius: var(--cmp-input-radius); }
+.workflow-cancel { display: flex; align-items: flex-start; gap: var(--cmp-spacing-inline-md); flex-wrap: wrap; border: 1px solid var(--sys-border-subtle); padding: var(--cmp-spacing-inset-default); margin: 0 0 var(--sys-space-inset-default); border-radius: var(--cmp-input-radius); }
 .workflow-notice { min-height: var(--sys-space-stack-default); color: var(--sys-text-secondary); font-size: var(--sys-text-scale-body-sm-font-size); }
 [data-oods-screen-actions] { display: flex; flex-wrap: wrap; gap: var(--cmp-spacing-stack-xs); margin-top: var(--sys-space-inset-default); }
 @media (max-width: 600px) { .workflow-content [data-layout="sidebar"] { grid-template-columns: minmax(0, 1fr) !important; } .workflow-app { padding: var(--sys-space-inset-default) var(--cmp-spacing-inset-default); } .workflow-content { padding: var(--cmp-spacing-inset-default); } .workflow-heading h1 { font-size: var(--sys-text-scale-heading-lg-font-size); } .workflow-mode { display: none; } }

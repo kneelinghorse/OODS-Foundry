@@ -296,8 +296,8 @@ describe('the eight Task samples tell true stories about the shipped samples the
       Usage: 'c54a4d96226e4e98',
       // The Order Agent acts only for the organization that granted it authority.
       Agent: '531646cea5071cbf',
-      // Sprint 251 names Nadia Farouk as the individual asked to review the article.
-      Approval: 'ffbe9d5f90d90031',
+      // Sprint 251 names Nadia Farouk. Sprint 254 names the article’s request “Sign-off for …” (0.19.0: ffbe9d5f90d90031).
+      Approval: '16abf7de28a74b3d',
     };
     for (const [name, digest] of Object.entries(SHIPPED)) {
       expect(crypto.createHash('sha256').update(JSON.stringify(strip(name, loadObject(name).samples as Sample[] ?? []))).digest('hex').slice(0, 16), name).toBe(digest);

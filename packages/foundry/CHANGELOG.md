@@ -2,6 +2,28 @@
 
 What changed in each version of OODS Foundry, in the terms you use it in.
 
+## 0.20.0
+
+The importer proposes related lists from declared foreign keys. Inspect them in `object_import_read` and accept their ids through the existing `objects[].proposals` input. Re-import compares registered lists with the new proposals. The two importer output schemas, `object.import.output.json` and `object.import.read.output.json`, add optional `lists` to show replies and `proposalLists` to draft summaries. The generated output types include these keys. Clients validating replies against the closed 0.19.0 output schemas need the new schemas. The advertised input and the hosted tool set keep their existing contracts.
+
+Organization 1.3.3 labels the organization’s coarse subscription band “Account tier”. Its subscriptions name their individual plans.
+
+Organization 1.3.2 captions a usage window’s final calendar date “Last day of period”.
+
+On pages whose lists all find records naming the subject, the footnote now names that subject once.
+
+Approval 1.1.3 names the article sample “Sign-off for Invoice numbers, tax IDs and legal names”, matching its Sign-off level. Approvable’s lapsesOnChange setting says whether your product marks an earlier yes out of date when the thing changes.
+
+A refused save, cancellation or grant action keeps the screen open with the entered text and the reason for refusal. A load failure still offers “Try again”. Cancellation reason codes read in sentence case, including in history and summaries. Approval’s Answer filter starts at “All answers”.
+
+Colorized 2.0.2 describes the accessible label with its supported critical state and names the card’s ColorizedBadge and the form’s ColorStatePicker. Statusable 1.0.1 describes how its badge presents state and how its Banner announces a message.
+
+Decision 1.1.2 shows “Asked for” on an approval’s detail page and form when the asker names someone they represent.
+
+Role, namespace, template and channel pickers start with a prompt until a choice is supplied. ClassificationEditor offers Taxonomy, Tag and Hybrid by default. A form using Classifiable starts on the object’s declared mode. Passing `mode="strict"` without a custom `modes` list no longer matches an option. Intent-only component selection leaves ClassificationEditor to forms that place it explicitly. ColorStatePicker starts at “Choose state” when the value is absent.
+
+Generated React and Vue forms for Approval, Article, Grant, Task and Transaction now pass strict TypeScript with their sample data. Since 0.18.0, Media’s inline screen has shown the card’s “September release walkthrough” sample. In 0.17.0 it showed “Proration timeline diagram”. The inline app now passes strict TypeScript and its document title reads “Media inline”.
+
 ## 0.19.0
 
 When a grant has a last-use summary, the Grant list shows “Last used for” on its own line. “Ends:” introduces the end in the party’s words (Mandate 1.1.4).

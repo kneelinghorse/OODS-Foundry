@@ -1,4 +1,4 @@
-import { currencyMinorUnits, enumOptionLabel, formatDateTime, formatReadOnlyValue } from '@oods/component-contracts';
+import { currencyMinorUnits, enumOptionLabel, formatDateTime } from '@oods/component-contracts';
 import {
   computed,
   defineComponent,
@@ -201,7 +201,7 @@ export const StatusBadge = defineComponent({
       const children = slots.default?.();
       const slotLabel = children?.length && children.every(node => node.type === Text) ? children.map(node => node.children).join('') : undefined;
       const badgeSlots = children ? { ...slots, default: () => children } : slots;
-      const ariaLabel = stringValue(attrs['aria-label']) ?? props.label ?? `Status: ${slotLabel ?? props.content ?? presentation.label}`;
+      const ariaLabel = stringValue(attrs['aria-label']) ?? `${props.label || 'Status'}: ${slotLabel ?? props.content ?? presentation.label}`;
       return h(Badge, {
         ...attrs,
         class: mergedClass('oods-status-badge', attrs.class),
@@ -468,7 +468,7 @@ export const CancellationSummary = defineComponent({
         ));
       }
       if (props.reason) rows.push(summaryEntry('Reason', props.reason, 'reason'));
-      if (props.code) rows.push(summaryEntry('Code', formatReadOnlyValue(props.code, 'string', true), 'code'));
+      if (props.code) rows.push(summaryEntry('Code', enumOptionLabel(props.code), 'code'));
       return h('section', {
         ...attrs,
         class: mergedClass('oods-cancellation-summary', attrs.class),

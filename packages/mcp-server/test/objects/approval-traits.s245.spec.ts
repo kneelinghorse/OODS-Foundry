@@ -50,7 +50,7 @@ describe('core/Decision and core/Approvable are shipped traits', () => {
   it('Decision holds the record\'s fields, every id a plain string so an imported reference can bind', () => {
     expect(listTraits()).toEqual(expect.arrayContaining(['Decision', 'Approvable']));
     const decision = loadTrait('core/Decision');
-    expect(decision.trait).toMatchObject({ name: 'Decision', version: '1.1.1', category: 'core' });
+    expect(decision.trait).toMatchObject({ name: 'Decision', version: '1.1.2', category: 'core' });
     expect(Object.keys(decision.schema)).toEqual(DECISION_FIELDS);
     for (const field of DECISION_FIELDS.filter(name => name.endsWith('_id'))) expect(decision.schema[field]!.type, field).toBe('string');
     expect(Object.entries(decision.schema).filter(([, field]) => field.required).map(([name]) => name)).toEqual(['subject_name', 'shown', 'level', 'meaning']);

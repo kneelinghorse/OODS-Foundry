@@ -6,7 +6,7 @@ import {
   AddressCollectionPanel, AddressSummaryBadge, AddressValidationTimeline, AuditEvent, ClassificationPanel, FilterPanel,
   MembershipAuditTimeline, MembershipPanel, MessageEventTimeline, MessageStatusBadge, PreferencePanel, PreferenceSummaryBadge,
   PreferenceTimeline, PriceSummary, RoleBadgeList, TagManager, TagPills,
-  AddressEditor, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput, TemplatePicker,
+  AddressEditor, ColorStatePicker, PreferenceEditor, RoleAssignmentForm, StatusSelector, TagInput, TemplatePicker,
 } from '../src/index.js';
 
 // Every expectation here mirrors the HTML renderer (renderPanelSection,
@@ -398,10 +398,18 @@ describe('Sprint 186 Vue wave-2 components', () => {
     expect(wrapper.emitted('change')).toEqual([[{ street: 'New', city: '', region: 'CA', postalCode: '90210' }]]);
   });
 
+  it('lets the user choose a color state before the form supplies one', () => {
+    const wrapper = mount(ColorStatePicker, { props: { colorStates: ['neutral', 'success'] } });
+    const select = wrapper.get('select').element as HTMLSelectElement;
+    expect(select.value).toBe('');
+    expect(select.options[0]!.textContent).toBe('Choose state');
+    expect(select.options[0]!.disabled).toBe(true);
+  });
+
   it('PreferenceEditor, RoleAssignmentForm and TemplatePicker default their titles and options and let the slot replace the body', async () => {
     const preference = mount(PreferenceEditor);
     expect(preference.get('[data-form-header] > h2').text()).toBe('Preference Editor');
-    expect([...(preference.get('select[name="namespace"]').element as HTMLSelectElement).options].map((option) => option.value)).toEqual(['default']);
+    expect([...(preference.get('select[name="namespace"]').element as HTMLSelectElement).options].map((option) => option.value)).toEqual(['', 'default']);
     expect((preference.get('textarea').element as HTMLTextAreaElement).value).toBe('');
     await preference.setProps({ json: '{"a":1}', namespaces: ['x'] });
     expect((preference.get('textarea').element as HTMLTextAreaElement).value).toBe('{"a":1}');
@@ -415,7 +423,7 @@ describe('Sprint 186 Vue wave-2 components', () => {
     const picker = mount(TemplatePicker);
     expect(picker.get('legend').text()).toBe('Template Picker');
     expect([...(picker.get('select[name="template"]').element as HTMLSelectElement).options].map((option) => option.textContent)).toEqual(['Select...']);
-    expect([...(picker.get('select[name="channel"]').element as HTMLSelectElement).options].map((option) => option.value)).toEqual(['email', 'sms', 'in_app']);
+    expect([...(picker.get('select[name="channel"]').element as HTMLSelectElement).options].map((option) => option.value)).toEqual(['', 'email', 'sms', 'in_app']);
     const authored = mount(TemplatePicker, { props: { options: ['a'], value: 'a' }, slots: { default: () => h('p', 'Authored') } });
     expect(authored.find('select').exists()).toBe(false);
     expect(authored.get('[data-form-content]').text()).toBe('Authored');

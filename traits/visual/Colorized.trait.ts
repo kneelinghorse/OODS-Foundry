@@ -19,7 +19,7 @@ export type ColorMode = 'semantic' | 'custom';
 const ColorizedTrait = {
   trait: {
     name: 'Colorized',
-    version: '2.0.0',
+    version: '2.0.2',
     description:
       'Maps lifecycle states to semantic color tokens for consistent status theming. ' +
       'Bridges the Stateful trait to the OODS token system via OKLCH-based, WCAG-compliant color resolution.',
@@ -89,7 +89,7 @@ const ColorizedTrait = {
       type: 'string',
       required: false,
       description:
-        'Human-readable status label for screen readers, generated from color_state via toLabel(). Computed at render time.',
+        'Accessible text for the color state, for example “Critical” for critical.',
       validation: {
         computed: true,
       },
@@ -177,9 +177,8 @@ const ColorizedTrait = {
     owners: ['Design team', 'Engineering team'],
     maturity: 'stable',
     accessibility: {
-      keyboard: 'n/a — visual presentation trait with no interactive elements.',
-      screenreader:
-        'StatusBadge announces the accessibility_label and tone. Color is never the sole status channel.',
+      keyboard: 'The form’s ColorStatePicker has a labelled native select. Tab moves focus to the enabled control and the arrow keys choose a state.',
+      screenreader: 'The card’s ColorizedBadge shows its label or state as text. The form’s ColorStatePicker exposes a native select labelled “Color state”.',
       colorBlind:
         'All status badges MUST include icon+text alongside color. Ensures deuteranopia/protanopia/tritanopia safety.',
       contrastEnforcement:

@@ -58,6 +58,8 @@ export function readPrisma(documents: Document[]): ReaderResult {
       const relationKeys = value(relation?.args?.find((arg: MapValue) => arg.kind === 'namedArgument' && arg.name.value === 'fields')?.expression);
       if (models.has(typeName) && relationKeys?.length === 1) {
         schema['x-oods'].relationships.push({ target: typeName, via: relationKeys[0], cardinality: 'many-to-one', label: field.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/^./, (char: string) => char.toUpperCase()) });
+        const referenced = value(relation?.args?.find((arg: MapValue) => arg.kind === 'namedArgument' && arg.name.value === 'references')?.expression);
+        (schema['x-import-foreign-keys'] ??= []).push({ reader: 'prisma', target: typeName, via: relationKeys[0], referenced: referenced?.[0], origin: at });
         schema['x-prisma-relations'] ??= {}; schema['x-prisma-relations'][field] = { target: typeName, attribute: relation };
         note(at, `Relationship navigation ${field} is represented by its foreign-key picker ${relationKeys[0]}.`, 'mapped', 'property');
         fieldDescription = ''; continue;
