@@ -213,7 +213,8 @@ describe('the four pages say what Interface 4 says', () => {
       'Subscriptions for Tidewater Co-op (1)', 'Usage for Tidewater Co-op (2)', 'Invoices for Tidewater Co-op (1)', 'Ended grants for Tidewater Co-op (0)',
       // s250-m03: the closures of grants for the organization (the third part of the Grant story).
       'Closures of grants for Tidewater Co-op (0)']);
-    expect(tidewater.text).toContain('Tidewater invoices and payments Active Billing Agent · Invoices and payments · 28 Sep: asked for a standing yes to resend returned transfers Ends: At the end of 31 Dec 2026, Tauranga time 1 grant inside it Resend returned transfers Active Billing Agent · Resend a payment the bank returned · No uses counted');
+    // s255-m03: the grant's last use is the summary kept under it on 6 Oct, by its kept name; no memory is listed here.
+    expect(tidewater.text).toContain('Tidewater invoices and payments Active Billing Agent · Invoices and payments · 6 Oct: kept Memory about Ruth Adeyemi, 6 Oct 2026, 09:00 UTC Ends: At the end of 31 Dec 2026, Tauranga time 1 grant inside it Resend returned transfers Active Billing Agent · Resend a payment the bank returned · No uses counted');
     expect(tidewater.text).toContain('Subscriptions for Tidewater Co-op (1) Enterprise Active');
     expect(tidewater.notes).toEqual(['These lists show only records here that name Tidewater Co-op by id; records that hold the name only in words, or that another product keeps, are not listed.']);
     // An empty list names the seat it read; a standing list emptied by ended grants says so.
@@ -231,17 +232,20 @@ describe('the four pages say what Interface 4 says', () => {
   it('the grant\'s page shows what was recorded under it beside the product\'s count, what was under way at its end, and its parties now', () => {
     const tidewater = page('Grant', 'Tidewater invoices and payments');
     // "Recorded after it ended" is drawn only once a grant has ended.
-    expect(tidewater.lists.map(list => list.id)).toEqual(['inside', 'replaced-by', 'recorded', 'under-way', 'parties']);
+    // s255-m04: "Kept under it", the memories kept under the grant, follows what was recorded under it, on every grant.
+    expect(tidewater.lists.map(list => list.id)).toEqual(['inside', 'replaced-by', 'recorded', 'kept', 'under-way', 'parties']);
     // s250-m03: an ended grant's page shows its closure, after what was recorded after it ended.
-    expect(page('Grant', 'Northwind customer replies').lists.map(list => list.id)).toEqual(['inside', 'replaced-by', 'recorded', 'under-way', 'after-end', 'closure', 'parties']);
+    expect(page('Grant', 'Northwind customer replies').lists.map(list => list.id)).toEqual(['inside', 'replaced-by', 'recorded', 'kept', 'under-way', 'after-end', 'closure', 'parties']);
     const recorded = resolveRelatedLists('Grant', samplesOf('Grant')[0]!).find(list => list.id === 'recorded')!;
-    expect([recorded.rows.length, recorded.lineCount, recorded.beside]).toEqual([4, 9, 'Your product counts 6 uses.']);
-    expect(tidewater.text).toContain('Recorded under it (4) Your product counts 6 uses.');
+    // s255-m03: the memories kept under the grant count as its uses (6 -> 11) and stay out of this list (settled 9).
+    expect([recorded.rows.length, recorded.lineCount, recorded.beside]).toEqual([4, 9, 'Your product counts 11 uses.']);
+    expect(tidewater.text).toContain('Recorded under it (4) Your product counts 11 uses.');
     // Where a grant holds no count, the sentence is left out, never "0 uses".
     for (const name of ['Marlow Yoga class bookings', 'Northwind spring order replies']) expect(page('Grant', name).text, name).not.toMatch(/Your product counts|0 uses/);
     const replies = page('Grant', 'Northwind customer replies');
     expect(replies.text).toContain('Still under way (1) Reply about order NW-2207 Needs input When the grant ended: needs input. Now: needs input. 2 lines Started · Oct 6, 2026, 2:00 PM');
-    expect(replies.text).toContain('These are only the records here that name this grant; work under it elsewhere is not shown.');
+    // s255-m04 (settled 9): the note names the kinds of record the list reads, since a memory's lines name the grant too.
+    expect(replies.text).toContain('These are only the tasks, approvals, payments and grants here that name this grant; work under it elsewhere is not shown.');
     // Foundry's own words for what was under way never say it closed, stopped or was done (the fixed caution aside).
     for (const grant of samplesOf('Grant')) {
       const underWay = resolveRelatedLists('Grant', grant).find(list => list.id === 'under-way')!;
@@ -250,7 +254,7 @@ describe('the four pages say what Interface 4 says', () => {
     }
     const kestrel = page('Grant', 'Kestrel overdue invoices');
     expect(kestrel.text).toContain('Its parties now (4) Given by: Grace Okafor Suspended Held by: Collections Agent Paused For: Kestrel Print Co. Active Answers for it: Accounts team A team, named on this grant; no record of its own is here.');
-    expect(kestrel.text).toContain('Still under way (0) No record that names this grant is under way. 2 records that name this grant have reached an end.');
+    expect(kestrel.text).toContain('Still under way (0) No task, approval, payment or grant that names this grant is under way. 2 tasks, approvals, payments or grants that name this grant have reached an end.');
   });
 });
 

@@ -1,6 +1,6 @@
 object:
   name: Closure
-  version: 1.0.1
+  version: 1.0.2
   domain: core.governance
   description: The third part of the Grant story, what a product reports became of the work after a grant ended. Only a report should move it, a rule your product keeps.
   tags:
@@ -134,6 +134,9 @@ metadata:
     - list
     - timeline
   changelog:
+    - version: 1.0.2
+      date: "2026-11-27"
+      description: "Its lists of what was under way when the grant ended and of what was recorded after it name the kinds of record they read: tasks, approvals, payments and grants."
     - version: 1.0.1
       date: "2026-11-22"
       description: "Labels the time of the last report on closure records."
@@ -152,15 +155,15 @@ metadata:
         - { from: [Organization, User], key: for_id, seat: For, kept: { name: for_name } }
     - id: under-way
       label: Still under way when the grant ended, by the records here
-      empty: No record here that names the grant was under way when it ended.
-      note: These are read from the records here that name the grant. They are not a report.
+      empty: No task, approval, payment or grant here that names the grant was under way when it ended.
+      note: These are read from the tasks, approvals, payments and grants here that name the grant. They are not a report.
       endedAt: { field: ended_at, noun: grant }
       finality: [not_final, not_known]
       sources:
         - { from: [Task, Approval, Transaction, Grant], via: "state_history[].grant_id", key: closes_id }
     - id: after-end
       label: Recorded under the grant after it ended
-      empty: Nothing here was recorded under the grant after it ended.
+      empty: No task, approval, payment or grant here was recorded under the grant after it ended.
       endedAt: { field: ended_at, noun: grant }
       afterEnd: true
       sources:

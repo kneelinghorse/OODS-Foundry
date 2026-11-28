@@ -7,7 +7,7 @@
 
 **Taking a grant back ends the yes, not the work.**
 
-When someone gives an agent a standing yes, where do they see everything they gave, and what happens when they take one back? In OODS Foundry a person's, an organization's and an agent's own pages list the records that point at them, by the seat each record names them in ([the seats](grants-as-standing-yeses.md#the-seats)), and a grant's page lists the records here that name it. In a generated app a grant can be revoked, paused and resumed. A revoke asks once first, saying what ends with it and what goes on, and the grant's page then shows what was still under way when it ended.
+When someone gives an agent a standing yes, where do they see everything they gave, and what happens when they take one back? In OODS Foundry a person's, an organization's and an agent's own pages list the records that name them in the seats their lists read ([the seats](grants-as-standing-yeses.md#the-seats)), and a grant's page lists the records here that name it by id, and its parties by the ids it holds. In a generated app a grant can be revoked, paused and resumed. A revoke asks once first, saying what ends with it and what goes on, and the grant's page then shows what was still under way when it ended.
 
 ![The Tidewater grant's revoke asks once: the grant inside that ends with it, the work still under way, what revoking does not recall, and who is ending it](the-persons-side/confirmation-light.png)
 
@@ -17,16 +17,18 @@ The detail page shows its related lists after the record’s main panels. Most l
 
 | Page | Its lists, in order |
 |---|---|
-| A person (`User`) | Waiting for {name}'s answer: the approvals asked of them, the tasks that need their input and the grants asked of them, by due date, then oldest. Agents holding a grant for {name}. Given for {name} by someone else, the ones that stand. Grants {name} gave. Grants {name} answers for. Agents {name} sponsors. What {name} approved. Ended grants {name} gave, and Ended grants given for {name} by someone else, each closed until opened. Closures {name} answers for. Closures of grants for {name}. |
+| A person (`User`) | Waiting for {name}'s answer: the approvals asked of them, the tasks that need their input and the grants asked of them, by due date, then oldest. Agents holding a grant for {name}. Given for {name} by someone else, the ones that stand. Grants {name} gave. Grants {name} answers for. Agents {name} sponsors. What {name} approved. Ended grants {name} gave, and Ended grants given for {name} by someone else, each closed until opened. Closures {name} answers for. Closures of grants for {name}. What is kept about {name}, and Removed memories about {name}, closed until opened. |
 | An organization (`Organization`) | Grants asked for {name}, not yet answered. Agents holding a grant for {name}. Recorded on behalf of {name}. Tasks for {name}. Approvals for {name}. Payments for {name}. Subscriptions for {name}. Usage for {name}, closed until opened. Invoices for {name}. Ended grants for {name}, closed until opened. Closures of grants for {name}. |
-| An agent (`Agent`) | Grants {name} holds. Work {name} did. Ended grants {name} held. |
-| A grant (`Grant`) | Grants inside it. Replaced by. Recorded under it, beside your product's own count of uses. Still under way. Recorded after it ended, and Its closure, each shown once it has ended. Its parties now. |
+| An agent (`Agent`) | Grants {name} holds. Work {name} did: the tasks, approvals, payments and grants whose lines name it as the one who acted. What {name} keeps. Ended grants {name} held, closed until opened. |
+| A grant (`Grant`) | Grants inside it. Replaced by. Recorded under it, beside your product's own count of uses. Kept under it. Still under way. Recorded after it ended, and Its closure, each shown once it has ended. Its parties now. |
 
 The same lists can appear on the thing an ask is about. A payment and an article each list their approvals and tasks. A task lists its approvals and the tasks made from it. To find a match, the page reads the payment reference, article slug or task id kept by the ask.
 
 All eight shipped Grant examples are for organizations. The “Given for {name} by someone else” list on a person’s page shows a row for an active or paused outer grant for that person, given by another actor. Its inner grants appear beneath it.
 
 Rows are read-only. A row shows its title and the facts its list calls for. A date appears when the source supplies one. Some grant rows show the grants inside them. When a list includes history, you can open the row’s recorded lines. A list shows its first five rows and counts the rest ("2 more not shown"). On a person's page, "Agents holding a grant for {name}" and "Grants {name} gave" say under their rows where to end a grant: "This list does not change grants: revoke one on the grant's own page." "Given for {name} by someone else" also says who should: "This list does not change grants. Only someone who may give grants for {name} should end one, on the grant's own page; this app does not check who is asking." A grant's own page is its detail screen, opened from the Grant list.
+
+**Memories on these pages.** What an assistant or an agent keeps about a person is a memory ([Memories as claims](memories-as-claims.md)). A person's page lists "What is kept about {name}", and below it, closed until opened, "Removed memories about {name}"; an agent's page lists "What {name} keeps", and a grant's page "Kept under it". The person's list says under its rows: "A summary can hold more than one thing, and a store elsewhere may keep more about {name} than is listed here."; the agent's and the grant's say "A summary can hold more than one thing, and a store elsewhere may keep more than is listed here." The removed list says: "What remains is what the product that held each memory reports." An organization's page lists no memories: there is no viewer, so a list of its members' memories would be an administrator's view drawn for anyone. A memory is not work: a grant's "Recorded under it", "Still under way" and its revoke question read tasks, approvals, payments and grants, and taking a grant back ends the yes, not the memory.
 
 **What each page cannot see.** Under its lists, every page has one note. A person's, an organization's and an agent's page say: "These lists show only records here that name {name} by id; records that hold the name only in words, or that another product keeps, are not listed." A grant's page, whose "Its parties now" looks its parties up by the ids the grant holds, says: "These lists show only records here, matched by id; records named only in words, or that another product keeps, are not listed." A subscription, usage record or invoice appears on its customer’s page when it carries the organization’s id. In a generated app, the records of other objects are copied from the samples when the app was made, and the page says so once; the app's own records are its store's, so a change made there shows at once. Replace `relatedRows` in the generated `src/store.ts` with your own query.
 
@@ -46,7 +48,7 @@ A grant's page offers each only from the states it moves from, alike in React, V
 
 - **Ends with it:** the active or paused grants inside it, by name.
 - **Not ended with it:** a grant inside it that is still only asked for, named with "Asked for and not yet answered, so it does not end with this one. Answer it on its own page."
-- **Still under way, not changed by this:** the records whose own lines name the grant and that are not final, or not known, each with its state, leaving out what ends with it.
+- **Still under way, not changed by this:** the tasks, approvals, payments and grants whose own lines name the grant and that are not final, or not known, each with its state, leaving out what ends with it.
 - **Not recalled:** "Revoking changes this app's records and nothing else. Credentials issued under the grant may still work, and payments already sent are not recalled." Your product may replace this sentence with its own.
 - **Other grants still held for this party:** the other grants its holder holds for the same party, shown only when there are some.
 - **Who is ending it:** the person the app was told of, or "This app was not told who is ending it."
@@ -72,9 +74,9 @@ A move the lifecycle declares no action for (to expired, replaced, declined or w
 
 ## What became of the work
 
-A grant's "Still under way" lists the records whose own lines name the grant and that were not final, or not known, when it ended, with their state then and now. It never calls them closed, stopped or done.
+A grant's "Still under way" lists the tasks, approvals, payments and grants whose own lines name the grant and that were not final, or not known, when it ended, with their state then and now. It never calls them closed, stopped or done.
 
-Dana Whitfield revoked Northwind customer replies on 8 October 2026: "Replies go back to the support team." The task it was used for, "Reply about order NW-2207", still needed her answer, and it still does. The grant's page lists that task as still under way: "When the grant ended: needs input. Now: needs input." Below it: "These are only the records here that name this grant; work under it elsewhere is not shown." Taking the grant back ended the yes. The work is the task's, and it goes on. What a product reports became of it is a closure, the third part of the story: [What became of the work](what-became-of-the-work.md).
+Dana Whitfield revoked Northwind customer replies on 8 October 2026: "Replies go back to the support team." The task it was used for, "Reply about order NW-2207", still needed her answer, and it still does. The grant's page lists that task as still under way: "When the grant ended: needs input. Now: needs input." Below it: "These are only the tasks, approvals, payments and grants here that name this grant; work under it elsewhere is not shown." Taking the grant back ended the yes. The work is the task's, and it goes on. What a product reports became of it is a closure, the third part of the story: [What became of the work](what-became-of-the-work.md).
 
 ## What OODS Foundry does not do
 

@@ -129,11 +129,23 @@ function usable(subjectName: string, subject: Described, list: RelatedList, inde
 function withRowDisplay(target: Described, lists: readonly RelatedList[]): RelatedObject {
   const timeLabels: Record<string, string> = {};
   const moneyFields: Record<string, { currencyField: string; minorUnits?: number }> = {};
+  const valueLabels: Record<string, Record<string, string>> = {};
   for (const list of lists) for (const source of list.sources) {
     if (!sourceNames(source.from).includes(target.object.name)) continue;
     const time = source.row?.time;
     if (typeof time === 'string') timeLabels[time] = target.labels[time]!;
     for (const item of source.row?.line ?? []) {
+      // s255-m04 (settled 8): the words a line field declares for its values (enumLabels, then valueLabels), less those of
+      // values an except hides, so a row prints a label and never a code.
+      const field = typeof item === 'string' ? item : 'field' in item ? item.field : undefined;
+      if (field) {
+        const hints = target.composed.semantics[field]?.ui_hints;
+        const declared = Object.fromEntries([hints?.enumLabels, hints?.valueLabels].flatMap(labels => labels && typeof labels === 'object' && !Array.isArray(labels) ? Object.entries(labels as Record<string, unknown>) : [])
+          .filter((entry): entry is [string, string] => typeof entry[1] === 'string'));
+        const hidden = typeof item === 'object' && 'except' in item ? (Array.isArray(item.except) ? item.except : [item.except]).map(String) : [];
+        for (const key of hidden) delete declared[key];
+        if (Object.keys(declared).length) valueLabels[field] = { ...valueLabels[field], ...declared };
+      }
       if (typeof item === 'string' || !('says' in item) || !('field' in item)) continue;
       const { schema, semantics, traits } = target.composed;
       const owner = traits.find(trait => trait.definition.schema[item.field] === schema[item.field]);
@@ -141,7 +153,7 @@ function withRowDisplay(target: Described, lists: readonly RelatedList[]): Relat
       if (money?.currencyField) moneyFields[item.field] = { currencyField: money.currencyField, minorUnits: money.minorUnits };
     }
   }
-  return { ...target.object, ...(Object.keys(timeLabels).length ? { timeLabels } : {}), ...(Object.keys(moneyFields).length ? { moneyFields } : {}) };
+  return { ...target.object, ...(Object.keys(timeLabels).length ? { timeLabels } : {}), ...(Object.keys(moneyFields).length ? { moneyFields } : {}), ...(Object.keys(valueLabels).length ? { valueLabels } : {}) };
 }
 
 /** Resolve one declared list for one record of the subject object. */

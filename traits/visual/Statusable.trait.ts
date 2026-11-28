@@ -14,7 +14,7 @@ export type StatusTone = (typeof STATUS_TONES)[number];
 const StatusableTrait = {
   trait: {
     name: 'Statusable',
-    version: '1.0.1',
+    version: '1.0.2',
     description:
       'Semantic status presentation layer that maps business statuses to visual tones, ' +
       'design tokens, and badge/banner rendering. Distinct from Stateful — Stateful governs ' +
@@ -193,6 +193,10 @@ const StatusableTrait = {
   dependencies: [] as const,
 
   metadata: {
+    changelog: [
+      { version: '1.0.2', date: '2026-11-27', description: 'Records 1.0.1 in its change history.' },
+      { version: '1.0.1', date: '2026-11-23', description: 'Describes how its badge presents state and how its Banner announces a message.' },
+    ],
     created: '2026-02-28',
     owners: ['Design team', 'Engineering team'],
     maturity: 'experimental',

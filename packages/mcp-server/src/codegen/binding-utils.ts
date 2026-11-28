@@ -82,7 +82,12 @@ export function displayFieldExpression(
     const labels = Object.fromEntries(entry.enum.map(value => [value, enumOptionLabel(value, entry.enumLabels)]));
     primary = `(Object.entries(${displayMap(labels)}).find(([key]) => key === String(${primaryValue}))?.[1] ?? ${primaryValue})`;
   }
-  if (entry?.valueLabels) {
+  if (entry?.valueLabels && Object.hasOwn(entry.valueLabels, '')) {
+    // s255-m02: a label keyed '' is the words for a value the record does not hold (storedValueLabel), so an absent or
+    // blank value reads it ("Not known") instead of nothing.
+    const label = `Object.entries(${displayMap(entry.valueLabels)}).find(([key]) => key === (${primaryValue} == null ? '' : String(${primaryValue})))?.[1]`;
+    primary = `((${primaryValue} == null || typeof ${primaryValue} !== 'object' ? ${label} : undefined) ?? ${primary})`;
+  } else if (entry?.valueLabels) {
     const label = `Object.entries(${displayMap(entry.valueLabels)}).find(([key]) => key === String(${primaryValue}))?.[1]`;
     primary = `((${primaryValue} != null && typeof ${primaryValue} !== 'object' ? ${label} : undefined) ?? ${primary})`;
   }

@@ -1,6 +1,6 @@
 object:
   name: Agent
-  version: 1.1.1
+  version: 1.1.2
   domain: core.identity
   description: An AI agent that acts inside a product, for the people and organizations it is granted to act for.
   tags:
@@ -151,6 +151,9 @@ metadata:
   steward: Design team
   maturity: alpha
   changelog:
+    - version: 1.1.2
+      date: "2026-11-27"
+      description: The Billing Agent's and the Inventory Agent's go-ahead lines name keeping notes about the people they deal with, the act a memory records. An agent's page lists what it keeps, and "Work {name} did" names the kinds of record it reads.
     - version: 1.1.1
       date: "2026-11-19"
       description: Lists the grants the agent holds and those under its standing grants. The Order Agent’s parties match its grant, and a stored None has an explanation on the page.
@@ -178,9 +181,17 @@ metadata:
           row: { line: [granted_for_name, scope, last_use, { says: No uses counted, when: { uses: 0 } }], time: ends_note }
     - id: work
       label: "Work {name} did"
-      empty: "No recorded change names {name} as the one who acted."
+      empty: "No change to a task, approval, payment or grant here names {name} as the one who acted."
       sources:
         - { from: [Task, Approval, Transaction, Grant], via: "state_history[].actor_id" }
+    # s255-m04 (settled 10): the memories this agent keeps, oldest first, each with its words, how it was made and whom it
+    # is about; a removed one is not listed here.
+    - id: keeps
+      label: "What {name} keeps"
+      empty: "{name} keeps no memory here now."
+      rowsNote: "A summary can hold more than one thing, and a store elsewhere may keep more than is listed here."
+      sources:
+        - { from: Memory, via: kept_by_id, states: [active, paused, replaced], order: created_at, row: { line: [{ field: words, says: What it says }, { field: origin, says: How it was made }, { field: about_name, says: About }], time: created_at } }
     # s250-m03 (next step 1888): only grants that hold a giver, since a request that expired unanswered was never held.
     - id: ended-grants
       label: "Ended grants {name} held"
@@ -207,9 +218,9 @@ samples:
     name: Billing Agent
     description: Matches payments to invoices for Tidewater Co-op
     provider: Built by Tidewater's finance team
-    skills: Look up invoices; Match payments to invoices; Resend payments; Draft replies
+    skills: Look up invoices; Match payments to invoices; Resend payments; Draft replies; Keep notes about people
     acts_for: Tidewater Co-op · invoices and payments · until 31 Dec 2026
-    allowed_actions: Look up invoices; Match payments to invoices
+    allowed_actions: Look up invoices; Match payments to invoices; Keep notes about the people it deals with
     asks_first_for: Resend a payment; Dispute a charge
     never_allowed: Change bank details; Close the account
     owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02
@@ -298,9 +309,9 @@ samples:
     name: Inventory Agent
     description: Counts flour and butter stock for Lindqvist Bakery
     provider: Built by Lindqvist Bakery
-    skills: Count stock; Suggest supplier orders
+    skills: Count stock; Suggest supplier orders; Keep notes about people
     acts_for: None
-    allowed_actions: Count stock
+    allowed_actions: Count stock; Keep notes about the people it deals with
     asks_first_for: Place a supplier order
     never_allowed: Change prices
     owner_id: 8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04

@@ -34,4 +34,4 @@ Generated apps use the OODS release that generated them. To upgrade, regenerate 
 
 ## License
 
-Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/components-vue@0.20.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/components-vue@0.20.0/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.
+Apache License 2.0. See [LICENSE](https://cdn.jsdelivr.net/npm/@oods/components-vue@0.21.0/LICENSE) and [NOTICE](https://cdn.jsdelivr.net/npm/@oods/components-vue@0.21.0/NOTICE). Generated output belongs to its user; installed package dependencies retain their own licenses.

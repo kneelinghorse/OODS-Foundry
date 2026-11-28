@@ -134,8 +134,9 @@ describe('a closure\'s page: its name and state, its lines, who answers for it, 
       // The three lists, the task read at the grant's end, and the page's sentence on what its lists read.
       inOrder(['The grant and its party now (2)', 'Grant: Northwind customer replies', 'Revoked', 'Replies go back to the support team', 'For: Northwind Traders',
         'Still under way when the grant ended, by the records here (1)', 'Reply about order NW-2207', 'Needs input', 'When the grant ended: needs input. Now: needs input.',
-        'These are read from the records here that name the grant. They are not a report.',
-        'Recorded under the grant after it ended (0)', 'Nothing here was recorded under the grant after it ended.', KEYED]);
+        // s255-m04: the lists name the kinds of record they read, since a memory's lines name the grant too.
+        'These are read from the tasks, approvals, payments and grants here that name the grant. They are not a report.',
+        'Recorded under the grant after it ended (0)', 'No task, approval, payment or grant here was recorded under the grant after it ended.', KEYED]);
       expect(body, renderer).not.toMatch(RAW_INSTANT);
       expect(body, renderer).not.toMatch(/Not recorded|unavailable|not resolved|OODS Foundry/);
       // A line that keeps the state reads its title and that state, never a move to itself.
@@ -150,8 +151,8 @@ describe('a closure\'s page: its name and state, its lines, who answers for it, 
         const body = shown(page[renderer]);
         expect(body, `${renderer} ${name}`).toContain(`Closure of ${name}`);
         expect(body, `${renderer} ${name}`).toContain(state);
-        expect(body, `${renderer} ${name}`).toContain('Still under way when the grant ended, by the records here (0) No record here that names the grant was under way when it ended.');
-        expect(body, `${renderer} ${name}`).toContain('Recorded under the grant after it ended (0) Nothing here was recorded under the grant after it ended.');
+        expect(body, `${renderer} ${name}`).toContain('Still under way when the grant ended, by the records here (0) No task, approval, payment or grant here that names the grant was under way when it ended.');
+        expect(body, `${renderer} ${name}`).toContain('Recorded under the grant after it ended (0) No task, approval, payment or grant here was recorded under the grant after it ended.');
         expect(body, `${renderer} ${name}`).toContain(KEYED);
       }
     }

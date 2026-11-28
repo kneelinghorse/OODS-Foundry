@@ -18,7 +18,8 @@ import type { RelatedList } from '../../src/objects/types.js';
 type Sample = Record<string, any>;
 const NAME: Record<string, string> = { Organization: 'label', User: 'name', Agent: 'name', Grant: 'name', Task: 'name' };
 // s250-m03: Closure, whose closure_id is its own id, is listed on the grant's, the party's and the answerer's pages.
-const KEY: Record<string, string> = { Organization: 'organization_id', User: 'user_id', Agent: 'agent_id', Grant: 'grant_id', Task: 'task_id', Approval: 'approval_id', Transaction: 'payment_reference', Closure: 'closure_id', Subscription: 'subscription_id', Usage: 'usage_id', Invoice: 'invoice_id' };
+// s255-m04: Memory, whose memory_id is its own id, on the person's, the keeper's and the grant's pages.
+const KEY: Record<string, string> = { Memory: 'memory_id', Organization: 'organization_id', User: 'user_id', Agent: 'agent_id', Grant: 'grant_id', Task: 'task_id', Approval: 'approval_id', Transaction: 'payment_reference', Closure: 'closure_id', Subscription: 'subscription_id', Usage: 'usage_id', Invoice: 'invoice_id' };
 const show = (row: RelatedRow): string => [row.seat ? `${row.seat}: ` : '', row.title, row.kept ? ` (kept${row.kept.kind ? ', ' + row.kept.kind : ''})` : '',
   row.state ? ` [${row.state}${row.stateAtEnd !== undefined ? ` at end ${row.stateAtEnd ?? 'none'}` : ''}]` : '', row.lines ? ` (${row.lines.length} lines)` : '',
   row.inner ? ` {${row.inner.map(inner => `${inner.title} [${inner.state}]`).join(', ')}}` : ''].join('');
@@ -106,6 +107,9 @@ const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does no
       'answers-for': ["Tidewater invoices and payments [active] {Resend returned transfers [active]}"],
       'sponsors': ["Billing Agent [active]"],
       'approved': ["PAY-2026-0429 [pending] (1 lines)"],
+      // s255-m04: what is kept about her, oldest first, and, closed until opened, the one removed.
+      'kept-about': ["Memory about Ruth Adeyemi, 2 Sep 2026, 01:00 UTC [active]","Memory about Ruth Adeyemi, 14 Sep 2026, 03:40 UTC [replaced]","Memory about Ruth Adeyemi, 28 Sep 2026, 21:12 UTC [active]","Memory about Ruth Adeyemi, 30 Sep 2026, 22:10 UTC [active]","Memory about Ruth Adeyemi, 6 Oct 2026, 09:00 UTC [active]"],
+      'removed-about': ["Memory about Ruth Adeyemi, 28 Sep 2026, 21:15 UTC [removed]"],
     },
     "Priya Raman": {
       'gave': ["Blue Harbor session bookings [paused]"],
@@ -114,11 +118,16 @@ const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does no
     },
     "Tomas Lindqvist": {
       'sponsors': ["Inventory Agent [draft]"],
+      // s255-m04: kept by the Inventory Agent for its own sponsor, under no grant.
+      'kept-about': ["Memory about Tomas Lindqvist, 15 Oct 2026, 06:30 UTC [active]"],
     },
     "Grace Okafor": {
       'gave': ["Kestrel overdue invoices [active]"],
     },
-    "Mei Chen": {},
+    "Mei Chen": {
+      // s255-m04: added by Ruth Adeyemi, paused when it expired.
+      'kept-about': ["Memory about Mei Chen, 24 Sep 2026, 02:00 UTC [paused]"],
+    },
     "Jonah Marlow": {
       // s250-m03: the closures of its ended grants.
       'closures': ["Closure of Marlow Yoga class bookings [not_known] (3 lines)"],
@@ -135,6 +144,8 @@ const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does no
     "Billing Agent": {
       'acts-for': ["Tidewater invoices and payments [active] {Resend returned transfers [active]}"],
       'work': ["Get INV-2026-0155 paid [waiting] (4 lines)","Approve the resend of PAY-2026-0429 [used] (3 lines)","PAY-2026-0429 [pending] (1 lines)","Resend returned transfers [active] (1 lines)"],
+      // s255-m04: what it keeps, oldest first; the removed one is not listed here.
+      'keeps': ["Memory about Ruth Adeyemi, 2 Sep 2026, 01:00 UTC [active]","Memory about Ruth Adeyemi, 14 Sep 2026, 03:40 UTC [replaced]","Memory about Mei Chen, 24 Sep 2026, 02:00 UTC [paused]","Memory about Ruth Adeyemi, 28 Sep 2026, 21:12 UTC [active]","Memory about Ruth Adeyemi, 30 Sep 2026, 22:10 UTC [active]","Memory about Ruth Adeyemi, 6 Oct 2026, 09:00 UTC [active]"],
     },
     "Support Agent": {
       'work': ["Reply about order NW-2207 [needs_input] (2 lines)"],
@@ -150,6 +161,7 @@ const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does no
     },
     "Inventory Agent": {
       'work': ["Count flour and butter for Monday's order [handed_over] (1 lines)"],
+      'keeps': ["Memory about Tomas Lindqvist, 15 Oct 2026, 06:30 UTC [active]"],
     },
     "Collections Agent": {
       'acts-for': ["Kestrel overdue invoices [active]"],
@@ -164,6 +176,8 @@ const EXPECTED: Record<string, Record<string, Record<string, string[] | 'does no
       'closure': 'does not apply',
       'inside': ["Resend returned transfers [active]"],
       'recorded': ["Get INV-2026-0155 paid [waiting] (4 lines)","Approve the resend of PAY-2026-0429 [used] (3 lines)","PAY-2026-0429 [pending] (1 lines)","Resend returned transfers [active] (1 lines)"],
+      // s255-m04: the memories kept under it; Memory stays out of its work lists.
+      'kept': ["Memory about Ruth Adeyemi, 2 Sep 2026, 01:00 UTC [active]","Memory about Ruth Adeyemi, 14 Sep 2026, 03:40 UTC [replaced]","Memory about Mei Chen, 24 Sep 2026, 02:00 UTC [paused]","Memory about Ruth Adeyemi, 28 Sep 2026, 21:12 UTC [active]","Memory about Ruth Adeyemi, 30 Sep 2026, 22:10 UTC [active]","Memory about Ruth Adeyemi, 6 Oct 2026, 09:00 UTC [active]"],
       'under-way': ["Get INV-2026-0155 paid [waiting] (4 lines)","PAY-2026-0429 [pending] (1 lines)","Resend returned transfers [active] (1 lines)"],
       'after-end': 'does not apply',
       'parties': ["Given by: Ruth Adeyemi [active]","Held by: Billing Agent [active]","For: Tidewater Co-op [active]","Answers for it: Ruth Adeyemi [active]"],
@@ -249,7 +263,8 @@ describe('the resolver returns, for every sample of the four objects, the rows t
     const recorded = list('Grant', 'Tidewater invoices and payments', 'recorded');
     expect(recorded.rows).toHaveLength(4);
     expect(recorded.lineCount).toBe(9);
-    expect(recorded.beside).toBe('Your product counts 6 uses.');
+    // s255-m03: the memories kept under the grant count as its uses (settled 9): 6 -> 11.
+    expect(recorded.beside).toBe('Your product counts 11 uses.');
     expect(list('Grant', 'Summit online orders', 'recorded').beside).toBe('Your product counts 1 use.');
     expect(list('Grant', 'Resend returned transfers', 'recorded').beside).toBe('Your product counts 0 uses.');
     for (const name of ['Marlow Yoga class bookings', 'Northwind spring order replies']) expect(list('Grant', name, 'recorded').beside, name).toBeUndefined();
@@ -280,7 +295,8 @@ describe('the resolver returns, for every sample of the four objects, the rows t
     expect(underWay.rows).toHaveLength(1);
     expect(underWay.rows[0]).toMatchObject({ object: 'Task', title: 'Reply about order NW-2207', state: 'needs_input', finality: 'not_final', stateAtEnd: 'needs_input', finalityAtEnd: 'not_final' });
     expect(underWay.label).toBe('Still under way');
-    expect(underWay.note).toBe('These are only the records here that name this grant; work under it elsewhere is not shown.');
+    // s255-m04 (settled 9): the note names the kinds of record the list reads, since a memory's lines name the grant too.
+    expect(underWay.note).toBe('These are only the tasks, approvals, payments and grants here that name this grant; work under it elsewhere is not shown.');
     expect(underWay.rows[0]!.atEndText).toBe('When the grant ended: needs input. Now: needs input.');
     // Taking the grant back ended the yes, not the work: the person it waits on still finds it waiting for her answer.
     expect(list('User', 'Dana Whitfield', 'waiting').rows.map(row => row.title)).toEqual(['Reply about order NW-2207']);
@@ -309,7 +325,7 @@ describe('the resolver returns, for every sample of the four objects, the rows t
   it('nests a grant inside another under its grant, so a heading counts the grants that can act, and shows a seat with no record here by its kept name', () => {
     const acting = list('Organization', 'Tidewater Co-op', 'acting-for');
     expect(acting.rows).toHaveLength(1);
-    expect(acting.rows[0]).toMatchObject({ title: 'Tidewater invoices and payments', line: ['Billing Agent', 'Invoices and payments', '28 Sep: asked for a standing yes to resend returned transfers'], time: { field: 'ends_note', value: 'At the end of 31 Dec 2026, Tauranga time', instant: false } });
+    expect(acting.rows[0]).toMatchObject({ title: 'Tidewater invoices and payments', line: ['Billing Agent', 'Invoices and payments', '6 Oct: kept Memory about Ruth Adeyemi, 6 Oct 2026, 09:00 UTC'], time: { field: 'ends_note', value: 'At the end of 31 Dec 2026, Tauranga time', instant: false } });
     expect(acting.rows[0]!.inner!.map(row => ({ title: row.title, line: row.line }))).toEqual([{ title: 'Resend returned transfers', line: ['Billing Agent', 'Resend a payment the bank returned', 'No uses counted'] }]);
     const parties = list('Grant', 'Kestrel overdue invoices', 'parties').rows;
     expect(parties.map(row => [row.seat, row.title, row.state ?? row.kept?.kind])).toEqual([['Given by', 'Grace Okafor', 'suspended'], ['Held by', 'Collections Agent', 'paused'], ['For', 'Kestrel Print Co.', 'active'], ['Answers for it', 'Accounts team', 'team']]);
@@ -324,7 +340,7 @@ describe('the resolver matches by id only', () => {
   /** R4's method: a value points at a party only when it equals a registered id; every top-level value and history entry. */
   function pointersAt(id: string): Set<string> {
     const found = new Set<string>();
-    for (const object of ['Task', 'Approval', 'Transaction', 'Grant', 'Agent', 'User', 'Organization', 'Closure', 'Subscription', 'Usage', 'Invoice']) for (const record of samplesOf(object)) {
+    for (const object of ['Task', 'Approval', 'Transaction', 'Grant', 'Agent', 'User', 'Organization', 'Closure', 'Subscription', 'Usage', 'Invoice', 'Memory']) for (const record of samplesOf(object)) {
       const values = [...Object.values(record), ...((record.state_history ?? []) as Sample[]).flatMap(entry => Object.values(entry))];
       if (values.some(value => value === id || (Array.isArray(value) && value.includes(id)))) found.add(`${object}:${String(record[KEY[object]!])}`);
     }

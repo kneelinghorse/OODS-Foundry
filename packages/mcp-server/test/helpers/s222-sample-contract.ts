@@ -202,3 +202,12 @@ export function s254Field<T extends Record<string, unknown>>(object: string, nam
   }
   return declared;
 }
+
+/** s255-m03 (settled 15 e): Organization's billing status describes itself in words for the people who read it on the form. */
+export function s255Field<T extends Record<string, unknown>>(object: string, name: string, field: T): T {
+  const declared = s254Field(object, name, field);
+  if (object === 'Organization' && name === 'billing_status' && typeof declared.description === 'string' && declared.description.startsWith('Coarse account-level financial standing used by the billing subsystem.')) {
+    return { ...declared, description: "The account's standing with billing, coarser than a subscription's status: good standing, past due, unpaid or suspended. Each subscription keeps its own status." };
+  }
+  return declared;
+}

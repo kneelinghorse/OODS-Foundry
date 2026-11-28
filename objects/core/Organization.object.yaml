@@ -1,6 +1,6 @@
 object:
   name: Organization
-  version: 1.3.3
+  version: 1.3.4
   domain: core.account
   description: Canonical account record for tenant and workspace governance across the platform.
   tags:
@@ -97,10 +97,7 @@ schema:
     required: true
     default: good_standing
     description: >-
-      Coarse account-level financial standing used by the billing subsystem.
-      Intentionally coarser than the subscription lifecycle: this is a 4-state
-      account vocabulary {good_standing, past_due, unpaid, suspended}, NOT the
-      8-state billing.subscription.status set. See docs/billing/lifecycle-states.md.
+      The account's standing with billing, coarser than a subscription's status: good standing, past due, unpaid or suspended. Each subscription keeps its own status.
     validation:
       enum:
         - good_standing
@@ -191,6 +188,9 @@ metadata:
     - Billing team
   steward: Platform team
   changelog:
+    - version: 1.3.4
+      date: "2026-11-27"
+      description: "Describes the billing status in words for the people who read it on the form. \"Recorded on behalf of {name}\" names the kinds of record it reads."
     - version: 1.3.3
       date: "2026-11-23"
       description: "Labels the organization’s coarse subscription band “Account tier”. Its subscriptions name their individual plans."
@@ -237,7 +237,8 @@ metadata:
           row: { line: [granted_to_name, scope, last_use, { says: No uses counted, when: { uses: 0 } }], time: ends_note }
     - id: done-for
       label: "Recorded on behalf of {name}"
-      empty: "No recorded change was made on behalf of {name}."
+      empty: "No change to a task, approval, payment or grant here was made on behalf of {name}."
+      rowsNote: "These are only the tasks, approvals, payments and grants here recorded on behalf of {name}."
       sources:
         - { from: [Task, Approval, Transaction, Grant], via: "state_history[].on_behalf_of_id" }
     - id: tasks

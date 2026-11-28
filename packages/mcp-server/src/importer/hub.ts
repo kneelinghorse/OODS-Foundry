@@ -3,14 +3,15 @@ import { readGraphql } from './readers/graphql.js';
 import { readPrisma } from './readers/prisma.js';
 import { readDbt } from './readers/dbt.js';
 import { readSql } from './readers/sql.js';
+import type { UnreadTable } from './readers/types.js';
 import fs from 'node:fs';
 import Ajv2020Import from 'ajv/dist/2020.js';
-import { Sources, ImportProblem, canonical, escapePointer, hash, isMap, walk, type MapValue, type Origin, type SourceInput } from './source.js';
+import { Sources, ImportProblem, canonical, escapePointer, hash, isMap, walk, wrappedReference, type MapValue, type Origin, type SourceInput } from './source.js';
 
 export type Outcome = 'mapped' | 'proposed' | 'unmapped';
 export type ReportEntry = Origin & { kind: 'schema' | 'property' | 'variant' | 'enum' | 'link' | 'keyword'; outcome: Outcome; reason: string; object?: string };
 export type Hub = { $schema: string; $defs: Record<string, MapValue>; 'x-oods': { version: 1; sources: Array<{ file: string; bytes: number; sha256: string }>; provenance: Record<string, Origin>; sourceNames: Record<string, string> } };
-export type Normalized = { hub: Hub; report: ReportEntry[]; contentHash: string };
+export type Normalized = { hub: Hub; report: ReportEntry[]; contentHash: string; unread?: UnreadTable[] };
 const DIALECT = 'https://json-schema.org/draft/2020-12/schema';
 const ajv = new (Ajv2020Import as any)({ strict: false, allErrors: true, validateFormats: false });
 // Deliberately separate from tool-contract Ajv: source vocabulary cannot alter tool validation.
@@ -29,6 +30,41 @@ export const pascalName = (name: string) => {
   const safe = /^[A-Za-z]/.test(joined) ? joined : `Imported${joined}`;
   return safe.length > 96 ? `${safe.slice(0, 80)}${hash(name).slice(0, 12)}` : safe;
 };
+/** s255-m01 (G1): what two inline records may differ in and still be one record: their words, not their shape. */
+const DOCUMENTATION = new Set(['title', 'description', 'example', 'examples', '$comment', 'externalDocs']);
+const shapeOf = (value: unknown): unknown => Array.isArray(value) ? value.map(shapeOf)
+  : isMap(value) ? Object.fromEntries(Object.keys(value).sort().filter(key => !DOCUMENTATION.has(key)).map(key => [key, shapeOf(value[key])])) : value;
+const METHODS = new Set(['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace', 'query']);
+/**
+ * s255-m01 (G1): an inline schema in an API operation is named by its title or, failing that, by where it sits: the method,
+ * the path and its role there (the response, with its status unless it succeeds; the request; a parameter or a header by
+ * its name), as in "GET /v1/memories/{memory_id}/ response". Before, it was named Operation and a hash of its pointer.
+ * Its media type is returned apart, to tell two schemas of one place apart, and the draft's name reads the method as a
+ * word (GetV1MemoriesMemoryIdResponse).
+ */
+function operationName(node: MapValue, pointer: string): { name: string; nameAs?: string; media: string } {
+  const parts = pointer.split('/').slice(1).map(part => part.replace(/~1/g, '/').replace(/~0/g, '~'));
+  const content = parts.indexOf('content'), media = content >= 0 ? parts[content + 1] ?? '' : '';
+  if (typeof node.schema?.title === 'string' && node.schema.title.trim()) return { name: node.schema.title, media };
+  const words: string[] = [];
+  let rest: string[];
+  if (parts[0] === 'paths') {
+    rest = parts.slice(2);
+    if (METHODS.has(rest[0])) { words.push(rest[0].toUpperCase()); rest = rest.slice(1); }
+    words.push(parts[1]);
+  } else {
+    words.push(parts[2], { parameters: 'parameter', responses: 'response', requestBodies: 'request', headers: 'header' }[parts[1]] ?? parts[1]);
+    rest = parts.slice(3);
+  }
+  for (let i = 0; i < rest.length; i++) {
+    if (rest[i] === 'responses') { const status = rest[++i]; words.push('response', ...(/^2\d\d$/.test(status) ? [] : [status])); }
+    else if (rest[i] === 'requestBody') words.push('request');
+    else if (rest[i] === 'parameters') { i++; words.push(typeof node.name === 'string' ? node.name : `parameter ${rest[i]}`, 'parameter'); }
+    else if (rest[i] === 'headers') words.push(rest[++i], 'header');
+    else if (rest[i] === 'content') i++;
+  }
+  return { name: words.join(' '), nameAs: parts[0] === 'paths' && METHODS.has(parts[2]) ? [words[0].toLowerCase(), ...words.slice(1)].join(' ') : undefined, media };
+}
 const schemaMaps = new Set(['properties', 'patternProperties', '$defs', 'definitions', 'dependentSchemas']);
 const schemaSingles = new Set(['items', 'additionalProperties', 'additionalItems', 'contains', 'not', 'if', 'then', 'else', 'propertyNames', 'unevaluatedProperties', 'unevaluatedItems']);
 const schemaArrays = new Set(['allOf', 'oneOf', 'anyOf', 'prefixItems']);
@@ -45,12 +81,14 @@ export function normalizeSource(input: SourceInput): Normalized {
     for (const doc of sources.documents.values()) doc.value = {};
     sources.documents.values().next().value!.value = projection.value;
   }
-  const schemas = new Map<string, { origin: Origin; value: MapValue; sourceName: string }>();
+  const schemas = new Map<string, { origin: Origin; value: MapValue; sourceName: string; media?: string; nameAs?: string }>();
+  // G1: an inline record read once, by file and shape; each later one of the same shape is reported as drafted once.
+  const inlineShapes = new Map<string, string>(), sameShape: Array<{ origin: Origin; first: string }> = [], references: Array<{ origin: Origin; target: string }> = [];
   const report = new Map<string, ReportEntry>();
   const addReport = (entry: ReportEntry) => { report.set(`${identity(entry)}:${entry.kind}`, entry); };
-  const addSchema = (value: unknown, origin: Origin, sourceName: string) => {
+  const addSchema = (value: unknown, origin: Origin, sourceName: string, inline?: { media: string; nameAs?: string }) => {
     if (!isMap(value)) return;
-    schemas.set(identity(origin), { origin, value, sourceName });
+    schemas.set(identity(origin), { origin, value, sourceName, ...inline });
   };
   // Unreachable references are named and skipped. Containment violations still abort before any read.
   const resolve = (reference: string, origin: Origin) => {
@@ -87,8 +125,19 @@ export function normalizeSource(input: SourceInput): Normalized {
         if (!isMap(resolved.value) && typeof resolved.value !== 'boolean') throw new ImportProblem('reference', 'A reference must resolve to a mapping or boolean schema.', origin);
       }
       if (isApi && /^(?:\/paths\/|\/components\/(?:parameters|responses|requestBodies|headers)\/)/.test(pointer) && isMap(node.schema)) {
-        const at = `${pointer}/schema`;
-        addSchema(node.schema, { file, pointer: at }, `Operation${hash(at).slice(0, 10)}`);
+        const at = `${pointer}/schema`, shape = isMap(node.schema.properties) ? `${file}\n${canonical(shapeOf(node.schema))}` : undefined;
+        // G1: a schema that is only a reference to a named schema is that record, drafted once under its own name.
+        const reference = typeof node.schema.$ref === 'string' && Object.keys(node.schema).every(key => key === '$ref' || DOCUMENTATION.has(key)) ? node.schema.$ref : wrappedReference(node.schema)?.$ref;
+        if (typeof reference === 'string') {
+          let target: string | undefined;
+          try { target = identity(sources.ref(reference, { file, pointer: `${at}/$ref` }).origin); } catch { target = undefined; }
+          if (target !== undefined && schemas.has(target)) { references.push({ origin: { file, pointer: at }, target }); return; }
+        }
+        const first = shape === undefined ? undefined : inlineShapes.get(shape);
+        if (first !== undefined) { sameShape.push({ origin: { file, pointer: at }, first }); return; }
+        if (shape !== undefined) inlineShapes.set(shape, identity({ file, pointer: at }));
+        const named = operationName(node, pointer);
+        addSchema(node.schema, { file, pointer: at }, named.name, { media: named.media, ...(named.nameAs ? { nameAs: named.nameAs } : {}) });
       }
     });
     for (const key of Object.keys(value).sort()) {
@@ -120,11 +169,17 @@ export function normalizeSource(input: SourceInput): Normalized {
   const used = new Set<string>();
   for (const [key, schema] of [...schemas.entries()].sort(([a], [b]) => a < b ? -1 : 1)) {
     // CSDL namespaces identify a service, not a user-facing object. Full identity stays in sourceNames and references.
-    const base = pascalName(format === 'odata' ? schema.sourceName.split('.').pop()! : schema.sourceName);
+    const base = pascalName(format === 'odata' ? schema.sourceName.split('.').pop()! : schema.nameAs ?? schema.sourceName);
     let name = base;
-    if (used.has(name)) name += hash(key).slice(0, 10);
+    // G1: two inline schemas of one place are told apart by media type, then by number; never by a hash.
+    if (used.has(name) && schema.media !== undefined) {
+      if (schema.media && !used.has(base + pascalName(schema.media))) name = base + pascalName(schema.media);
+      else for (let i = 2; used.has(name); i++) name = `${base}${i}`;
+    } else if (used.has(name)) name += hash(key).slice(0, 10);
     used.add(name); names.set(key, name);
   }
+  for (const { origin, target } of references) addReport({ ...origin, object: names.get(target), kind: 'schema', outcome: 'mapped', reason: `A reference to ${names.get(target)}: that record is drafted once, under its own name.` });
+  for (const { origin, first } of sameShape) addReport({ ...origin, object: names.get(first), kind: 'schema', outcome: 'mapped', reason: `The same shape as the inline schema at ${first.slice(first.indexOf('#') + 1)}, apart from its descriptions: one record, drafted once as ${names.get(first)}.` });
   const hub: Hub = { $schema: DIALECT, $defs: {}, 'x-oods': { version: 1, sources: [...sources.documents.values()].map(({ file, bytes, sha256 }) => ({ file, bytes, sha256 })).sort((a, b) => a.file < b.file ? -1 : 1), provenance: {}, sourceNames: {} } };
   const provenance = hub['x-oods'].provenance;
   const copy = (value: unknown, origin: Origin, destination: string): any => {
@@ -227,5 +282,5 @@ export function normalizeSource(input: SourceInput): Normalized {
     for (const entry of projection.report) addReport(entry);
   }
   if (!validateHubSchema(hub)) throw new ImportProblem('schema', `Invalid x-oods hub annotation: ${ajv.errorsText(hubContract.errors ?? ajv.errors)}`);
-  return { hub, report: [...report.values()].sort((a, b) => `${identity(a)}:${a.kind}` < `${identity(b)}:${b.kind}` ? -1 : 1), contentHash: `sha256:${hash(canonical(hub['x-oods'].sources))}` };
+  return { hub, report: [...report.values()].sort((a, b) => `${identity(a)}:${a.kind}` < `${identity(b)}:${b.kind}` ? -1 : 1), contentHash: `sha256:${hash(canonical(hub['x-oods'].sources))}`, ...(projection?.unread ? { unread: projection.unread } : {}) };
 }

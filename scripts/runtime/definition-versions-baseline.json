@@ -1,5 +1,5 @@
 {
-  "source": "0.20.0",
+  "source": "0.21.0",
   "definitions": {
     "domains/saas-billing/objects/Invoice.object.yaml": {
       "name": "Invoice",
@@ -73,8 +73,8 @@
     },
     "objects/core/Agent.object.yaml": {
       "name": "Agent",
-      "version": "1.1.1",
-      "digest": "0bc08175d9ccdfff74fd9274b9dcb20a6440d822da579272f81d33aecab3e680"
+      "version": "1.1.2",
+      "digest": "20819435b62993265e6b72dddd33429cf22e3a5be61ecb74c5569adf3d8c923b"
     },
     "objects/core/Approval.object.yaml": {
       "name": "Approval",
@@ -83,18 +83,23 @@
     },
     "objects/core/Closure.object.yaml": {
       "name": "Closure",
-      "version": "1.0.1",
-      "digest": "05e724cfb8aaf9c1552f4a66f4176e9415fa13b8736d16ad60a566d77003f64e"
+      "version": "1.0.2",
+      "digest": "7b194fc82cdf5e1f0b2428cccce46f6bc0cb49ff757de33b068dd372beec0152"
     },
     "objects/core/Grant.object.yaml": {
       "name": "Grant",
-      "version": "1.0.1",
-      "digest": "ef66db7b0f3db06cb9561297fab6885467d63e6fa5ccbb7e60c4e26f2469739c"
+      "version": "1.0.2",
+      "digest": "c7f1a5110ace48879dfb8e1be8833d072e2e488840497d53129f35d1cdc3f455"
+    },
+    "objects/core/Memory.object.yaml": {
+      "name": "Memory",
+      "version": "1.0.0",
+      "digest": "b2f4bce70667fee70d5947717de3f2697631324f1d8d18f0fee3dd7600fbc98a"
     },
     "objects/core/Organization.object.yaml": {
       "name": "Organization",
-      "version": "1.3.3",
-      "digest": "1b75a45aba6bb69f12f64c5050cb361096ed963036e1a891e1e46dee2ceb66d7"
+      "version": "1.3.4",
+      "digest": "c7e37066c8a96ec82cbe0f31a568ab1b4a386fdfd772b3e58ef212658ab79118"
     },
     "objects/core/Product.object.yaml": {
       "name": "Product",
@@ -123,8 +128,8 @@
     },
     "objects/core/User.object.yaml": {
       "name": "User",
-      "version": "1.5.1",
-      "digest": "1339988d2e947d1ac31d5576840ed14f464d45b26474ad34cf32ee8d44c72503"
+      "version": "1.5.2",
+      "digest": "320f2816c194cb306e06daf0e646e7072a5796548b161d2cecb147b7898baf66"
     },
     "traits/behavioral/Filterable.trait.yaml": {
       "name": "Filterable",
@@ -203,8 +208,8 @@
     },
     "traits/core/Decision.trait.yaml": {
       "name": "Decision",
-      "version": "1.1.2",
-      "digest": "479fb8dadb222fa527641cffdbd1419634b3d2b5bfff974116b0528d30c5df65"
+      "version": "1.1.3",
+      "digest": "165e31e4639f0a8274650224895025232ae1243bba1e7c2afe41612858b2f863"
     },
     "traits/core/Mandate.trait.yaml": {
       "name": "Mandate",
@@ -220,6 +225,11 @@
       "name": "Provenanced",
       "version": "1.0.0",
       "digest": "11d1ce391473240c30c2db09129b59f48c1ac61751ef5d7c322c3517afdff496"
+    },
+    "traits/core/Remembered.trait.yaml": {
+      "name": "Remembered",
+      "version": "1.0.0",
+      "digest": "4a88264b083ba3d42e3042f76b02c27c4220a098b6ac6231a7f480ff93918cb9"
     },
     "traits/financial/Billable.trait.yaml": {
       "name": "Billable",
@@ -268,13 +278,13 @@
     },
     "traits/visual/Colorized.trait.yaml": {
       "name": "Colorized",
-      "version": "2.0.2",
-      "digest": "69a24bcb2242deba1276e8b7189da8db47742e5078079d6c19544917ee9b091a"
+      "version": "2.0.3",
+      "digest": "d91d51048f188cfb1488ac610619f547d6ba693d9d6e6e51b20310c4982e3ead"
     },
     "traits/visual/Statusable.trait.yaml": {
       "name": "Statusable",
-      "version": "1.0.1",
-      "digest": "3f4908c737cb66ffff49ed7d3cbaf9a7ba53ea6d357706882c973e46bda7e6e9"
+      "version": "1.0.2",
+      "digest": "969fe24980e2c21f31caee0e0f274149ff30a29cde1346ffdd6e5be87c567ccc"
     },
     "traits/viz/encoding-color.trait.yaml": {
       "name": "EncodingColor",

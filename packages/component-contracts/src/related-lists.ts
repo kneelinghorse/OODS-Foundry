@@ -22,7 +22,7 @@
  */
 import { historyAttribution } from './attribution.js';
 import { formatPriceAmount } from './billing.js';
-import { formatDateTime } from './date-time.js';
+import { formatDateTime, storedValueLabel } from './date-time.js';
 import { enumOptionLabel, getStatusPresentation, type StatusDomain } from './status-registry.js';
 
 export type RelatedFinality = 'final' | 'not_final' | 'not_known';
@@ -88,6 +88,11 @@ export interface RelatedObject {
   /** Display rules for captioned fields that declare a currency on the source object. */
   moneyFields?: Readonly<Record<string, { currencyField: string; minorUnits?: number }>>;
   timeLabels?: Readonly<Record<string, string>>;
+  /**
+   * s255-m04 (settled 8): the words a row's line prints for a field's stored values, as the field declares them (its
+   * enumLabels and valueLabels); the key '' names a value the record does not hold. A field without them prints its value.
+   */
+  valueLabels?: Readonly<Record<string, Readonly<Record<string, string>>>>;
   /** The object's name in a sentence: "grant", "grants". */
   noun?: { one: string; other: string };
   /**
@@ -243,13 +248,19 @@ function captionedValue(target: RelatedObject, field: string, record: Row): stri
 }
 
 function lineOf(target: RelatedObject, source: RelatedListSource, record: Row): string[] {
+  // s255-m04 (settled 8): a field that declares words for its values prints them, never the stored code, and its words for
+  // no value ('') where the record holds none ("How it was made: Not known").
+  const labelled = (field: string) => storedValueLabel(record[field], target.valueLabels?.[field]);
   return (source.row?.line ?? []).flatMap(item => {
-    if (typeof item === 'string') return present(record[item]) ? [String(record[item])] : [];
+    if (typeof item === 'string') return [labelled(item) ?? (present(record[item]) ? String(record[item]) : undefined)].filter((text): text is string => text !== undefined);
     if ('field' in item) {
       const value = record[item.field];
-      if ('says' in item) return present(value) ? [`${item.says}: ${captionedValue(target, item.field, record)}`] : [];
+      if ('says' in item) {
+        const label = labelled(item.field);
+        return label !== undefined ? [`${item.says}: ${label}`] : present(value) ? [`${item.says}: ${captionedValue(target, item.field, record)}`] : [];
+      }
       const except = (Array.isArray(item.except) ? item.except : [item.except]).map(String);
-      return present(value) && !except.includes(String(value)) ? [String(value)] : [];
+      return present(value) && !except.includes(String(value)) ? [labelled(item.field) ?? String(value)] : [];
     }
     return Object.entries(item.when).every(([field, value]) => value === null ? !present(record[field]) : present(record[field]) && String(record[field]) === String(value)) ? [item.says] : [];
   });

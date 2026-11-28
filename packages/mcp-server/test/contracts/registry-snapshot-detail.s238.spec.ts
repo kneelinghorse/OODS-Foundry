@@ -35,6 +35,8 @@ describe('registry_snapshot sizes its reply for the client', () => {
     expect(summary.traits.Mandate!.description).toBe('The record of a grant: a standing yes that one actor may act for a person or organization, on stated terms, until it ends.');
     // s250-m01: the record of what became of the work after something ended, the 55th trait, does too.
     expect(summary.traits.Closeout!.description).toBe('The record of what became of the work after something ended: what ended, how and when, who it was for, what the record covers and where it stands now.');
+    // s255-m02: what an assistant or an agent keeps about a person, the 56th trait, does too.
+    expect(summary.traits.Remembered!.description).toBe('What an assistant or an agent keeps about a person, as the product that holds it shows it: what it says, who made it and how, the grant it is kept under, and what removing it would leave.');
   });
 
   it('returns complete definitions with detail full, and only the named ones when names are given', async () => {

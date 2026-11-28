@@ -75,9 +75,10 @@ A closure's page shows its lines, who answers for it and its facts, then three l
 
 - **The grant and its party now:** the grant and the party it was for, each as it stands now, by id, or by the name the
   closure keeps where it is no record here.
-- **Still under way when the grant ended, by the records here:** the records whose own lines name the grant and that
-  were not final, or not known, at the instant the grant ended, each with its state then and now. Under it: "These are
-  read from the records here that name the grant. They are not a report."
+- **Still under way when the grant ended, by the records here:** the tasks, approvals, payments and grants whose own
+  lines name the grant and that were not final, or not known, at the instant the grant ended, each with its state then
+  and now. Under it: "These are read from the tasks, approvals, payments and grants here that name the grant. They are
+  not a report."
 - **Recorded under the grant after it ended.**
 
 The second and third lists read the grant's end from the closure's own `ended_at` (`endedAt`, in [your own objects and

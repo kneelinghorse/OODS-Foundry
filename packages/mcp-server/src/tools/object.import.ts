@@ -163,8 +163,19 @@ async function apply(input: Extract<ObjectImportInput, { action: 'apply' }>, imp
         if (!proposal || !proposal.valid) throw new ToolError('OODS-V220', `Proposal ${id} for ${draft.name} is missing or invalid; review show before accepting it.`);
         if (definition.traits.some(trait => trait.name === proposal.trait.name)) throw new ToolError('OODS-V220', `Two accepted proposals configure ${proposal.trait.name} on ${draft.name}; choose one.`);
         definition.traits.push(proposal.trait);
+        // s255-m04: the labels a proposal writes beside its trait (Remembered: how the source's own origin values read).
+        for (const [field, mapping] of Object.entries(proposal.semantics ?? {})) {
+          definition.semantics[field] = { ...definition.semantics[field], ...mapping, ui_hints: { ...definition.semantics[field]?.ui_hints, ...mapping.ui_hints } };
+        }
       }
       if (definition.traits.some(trait => ['Stateful', 'Supersedable', 'Auditable', 'Timestampable'].includes(trait.name.split('/').pop()!)) && !definition.metadata.supportedContexts?.includes('timeline')) definition.metadata.supportedContexts?.push('timeline');
+      // s255-m04: an accepted Remembered makes the record a memory as Foundry shows one: read-only (your product's store writes
+      // it, so it composes no form, and so no workflow, Edit or Delete, as the shipped Memory composes none), and shown on a
+      // card too, where its words, how it was made and who keeps it show.
+      if (definition.traits.some(trait => trait.name.split('/').pop() === 'Remembered') && definition.metadata.supportedContexts) {
+        definition.metadata.supportedContexts = definition.metadata.supportedContexts.filter(context => context !== 'form');
+        if (!definition.metadata.supportedContexts.includes('card')) definition.metadata.supportedContexts.push('card');
+      }
       const yaml = dump(definition, { noRefs: true, sortKeys: true, lineWidth: 120 });
       incoming.set(draft.name, definition);
       const existing = objectEntry(draft.name);
@@ -225,6 +236,8 @@ async function execute(input: ObjectImportInput) {
       const summary = {
         action: 'draft' as const, ...staged, contentHash: result.contentHash, counts: result.counts, objectCount: result.drafts.length,
         objects: result.drafts.slice(0, 80).map(draft => draft.name), objectsTruncated: result.drafts.length > 80,
+        // s255-m01: a table the SQL reader could not parse is not drafted; the reply names it, not only report.json.
+        ...(result.unread?.length ? { tablesNotRead: result.unread.slice(0, 80), ...(result.unread.length > 80 ? { tablesNotReadTruncated: true } : {}) } : {}),
         shippedClashes: result.drafts.filter(draft => { const entry = objectEntry(draft.name); return entry?.source === 'shipped' || !!entry?.replaces; }).map(draft => draft.name).slice(0, 30),
         diff: { new: diffs.filter(d => d.status === 'new').length, changed: diffs.filter(d => d.status === 'changed').length, unchanged: diffs.filter(d => d.status === 'unchanged').length, file: path.join(staged.directory, 'diff.json') },
         proposalLists: result.drafts.reduce((sum, draft) => sum + (draft.lists?.length ?? 0), 0),

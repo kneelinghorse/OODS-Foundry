@@ -126,8 +126,8 @@ describe('a declared order may name only the states its lifecycle declares (next
   it('every checkout object still validates, Approval\'s declared order among them', async () => {
     const objects = listObjects();
     // m02: Task is the 31st checkout object, and its own declared order validates too. s248-m02: Grant the 32nd.
-    // s250-m02: Closure the 33rd.
-    expect(objects).toHaveLength(33);
+    // s250-m02: Closure the 33rd. s255-m03: Memory the 34th.
+    expect(objects).toHaveLength(34);
     for (const name of objects) {
       const result = await validate({ yaml: fs.readFileSync(getObjectFilePath(name)!, 'utf8') });
       expect(result.errors, name).toEqual([]);

@@ -215,7 +215,8 @@ describe('next step 1888: the person\'s page inputs', () => {
     expect(described).toContain('Held by Billing Agent');
     expect(described.at(-1)).toMatch(/^Updated at:/);
     const rows = Object.fromEntries([...doc.querySelectorAll('[data-oods-collection="rows"] [data-oods-row]')].map(row => [JSON.parse((row as HTMLElement).dataset.oodsRow!).name, textOf(row)]));
-    expect(rows['Tidewater invoices and payments']).toContain('Last used for 28 Sep: asked for a standing yes to resend returned transfers');
+    // s255-m03: the Tidewater grant's last use is a memory kept under it, read by its kept name (settled 6 and 9).
+    expect(rows['Tidewater invoices and payments']).toContain('Last used for 6 Oct: kept Memory about Ruth Adeyemi, 6 Oct 2026, 09:00 UTC');
     expect(rows['Northwind customer replies']).toContain('Last used for 6 Oct: asked Dana Whitfield a question about order NW-2207');
     for (const name of ['Marlow Yoga class bookings', 'Northwind spring order replies', 'Resend returned transfers']) expect(rows[name], name).not.toContain('Last used for');
   });
@@ -224,7 +225,7 @@ describe('next step 1888: the person\'s page inputs', () => {
     const ruth = sample('User', 'name', 'Ruth Adeyemi');
     for (const id of ['gave', 'answers-for']) {
       const [tidewater] = listOf('User', ruth, id).rows;
-      expect(tidewater!.lineText, id).toBe('Billing Agent · Tidewater Co-op · Invoices and payments · 28 Sep: asked for a standing yes to resend returned transfers');
+      expect(tidewater!.lineText, id).toBe('Billing Agent · Tidewater Co-op · Invoices and payments · 6 Oct: kept Memory about Ruth Adeyemi, 6 Oct 2026, 09:00 UTC');
       expect(tidewater!.inner![0]!.lineText, id).toBe('Billing Agent · Tidewater Co-op · Resend a payment the bank returned · No uses counted');
     }
     const priya = sample('User', 'name', 'Priya Raman');

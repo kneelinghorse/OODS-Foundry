@@ -148,8 +148,9 @@ describe('every public runtime timeline: a screen passed no events shows what th
   it.each(['react', 'vue'] as const)('%s, all timeline objects', async (framework) => {
     // s233-m02: the public runtime retains 16 objects; only the two comparison objects omit timelines.
     // s244-m02 (#2829): Agent, the 17th, has a timeline. s245-m02: Approval, the 18th, too. s247-m02: Task, the 19th, too. s248-m02:
-    // Grant, the 20th, too. s250-m02: Closure, the 21st, read-only, has a timeline and no workflow.
-    expect(timelines).toHaveLength(19);
+    // Grant, the 20th, too. s250-m02: Closure, the 21st, read-only, has a timeline and no workflow. s255-m03: Memory, the 22nd,
+    // read-only, too.
+    expect(timelines).toHaveLength(20);
     for (const object of timelines) {
       const timeline = await composed(object, 'timeline');
       const model = supportsWorkflow(object) ? seedPreviewModel({ schema: timeline, context: 'timeline', object, workflowSchema: await composed(object, 'workflow') }) : deriveConsumerModel(timeline);

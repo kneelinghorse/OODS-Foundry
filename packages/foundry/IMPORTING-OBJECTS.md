@@ -12,7 +12,7 @@ OODS Foundry does not fetch a URL, connect to an API/database, import a module, 
 {"action":"draft","source":{"path":"/path/to/openapi.json"}}
 ```
 
-The response gives an `importId`, counts, object names in dependency order, shipped-name clashes, trait proposal grades, the number of proposed related lists in `proposalLists`, and a diff-file path. Large listings are explicitly truncated in the response; `order.json` has the complete order and cycles. Nothing is registered at this step.
+The response gives an `importId`, counts, object names in dependency order, shipped-name clashes, trait proposal grades, the number of proposed related lists in `proposalLists`, and a diff-file path. For SQL, `tablesNotRead` names each table whose `CREATE TABLE` the reader could not parse, with its file, line, column and the parser's reason. Such a table is not drafted, and a key, `ALTER` or index aimed at it says it was not read. The key appears only when there is such a table. Large listings are explicitly truncated in the response; `order.json` has the complete order and cycles. Nothing is registered at this step.
 
 The complete bundle is in `~/.oods-foundry/imports/<importId>/`, beside your objects and traits, outside the package install. A portable installation may set `OODS_FOUNDRY_HOME` before starting the server. `objects/` holds the draft YAML, `hub.json` the normalized schemas, `report.json` every outcome, and `diff.json` the comparison with currently registered definitions. `import.json` is content-addressed and binds the hashes of its separately streamed hub and report; editing any of them invalidates the import. To hand-edit a draft, use `object_registry` to validate and `object_register` to save that YAML.
 
@@ -26,7 +26,7 @@ Call `object_import_read`:
 
 The `show` action returns one draft’s YAML, trait proposals, related-list proposals in `lists`, unmapped elements and a comparison with the registered definition. The comparison identifies field, trait and relationship changes and the screens they could affect. Fields contributed by previously accepted traits appear under `traitFields`. For related lists, `kept` names registered declarations offered again, `gone` names declarations the draft can no longer supply, and `open` names declarations proposed in the draft that differ from the registered lists. These names are list ids such as `charges`. To accept a list, find it under `lists` and pass the enclosing proposal’s `id` in `objects[].proposals`. Include the proposal ids for kept lists you want to keep when overwriting. A list id occupied by a different declaration must be resolved before acceptance, even with `overwrite: true`.
 
-A name alone is weak evidence and never raises a proposal's grade. Types, enums, formats and read-only declarations provide structural evidence. Trait parameter schemas validate trait proposals. Accepting a trait adds its canonical fields and views. List proposals are checked against the source and target fields. Each proposal carries its evidence and effects, and you can accept it when it passes validation.
+A name alone is weak evidence and never raises a proposal's grade. Types, enums, formats and read-only declarations provide structural evidence. Trait parameter schemas validate trait proposals. Accepting a trait adds its canonical fields and views. List proposals are checked against the source and target fields. Each proposal carries its evidence and effects, and you can accept it when it passes validation. A key to the record's own kind is offered as a category tree (`Classifiable`), except where it is named replaced by, superseded by, supersedes or replaces: that is a replacement pointer, proposed as `Supersedable` and bound where the key is held as text. In a record of changes (a history, event, change or audit log, revision or journal), a field named for the kind of change (event, change type, action, operation) is read as that, not as the record's lifecycle, and no other enum stands in for one: only a field named for the record's own state is proposed as `Stateful`. The report names each field set aside.
 
 ### Related lists from your keys
 
@@ -60,7 +60,7 @@ A person or other principal is a record whose name is user, account, organizatio
 
 ### Approval records
 
-An approval is a decision, not a status: one person's answer about one thing, kept as a record of its own (see [Approvals as decisions](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.20.0/docs/concepts/approvals-as-decisions.md)). Where another system keeps a table of approvals, one answer per row, the importer proposes `Decision` for it, graded on structure:
+An approval is a decision, not a status: one person's answer about one thing, kept as a record of its own (see [Approvals as decisions](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.21.0/docs/concepts/approvals-as-decisions.md)). Where another system keeps a table of approvals, one answer per row, the importer proposes `Decision` for it, graded on structure:
 
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|
@@ -80,7 +80,7 @@ The importer does not propose `Approvable`: an approval outcome kept as a field 
 
 ### Records of work
 
-A task is an ask, not a ticket: one ask to one person or agent to do one piece of work, and what became of it (see [Tasks as asks](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.20.0/docs/concepts/tasks-as-asks.md)). Where another system keeps a record of work, the importer proposes `Assignment` for it, graded on structure:
+A task is an ask, not a ticket: one ask to one person or agent to do one piece of work, and what became of it (see [Tasks as asks](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.21.0/docs/concepts/tasks-as-asks.md)). Where another system keeps a record of work, the importer proposes `Assignment` for it, graded on structure:
 
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|
@@ -128,7 +128,7 @@ Not placed, because their schemas say too little: Linear's `stale` and `stopping
 
 ### Records of a grant
 
-A grant is a standing yes, not a setting: one set of terms on which one actor may act for one person or organization, until it ends (see [Grants as standing yeses](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.20.0/docs/concepts/grants-as-standing-yeses.md)). Where another system keeps a record of a grant, a consent or a connection, the importer proposes `Mandate` for it, graded on structure:
+A grant is a standing yes, not a setting: one set of terms on which one actor may act for one person or organization, until it ends (see [Grants as standing yeses](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.21.0/docs/concepts/grants-as-standing-yeses.md)). Where another system keeps a record of a grant, a consent or a connection, the importer proposes `Mandate` for it, graded on structure:
 
 | Evidence in the schema | Proposal | Grade |
 |---|---|---|
@@ -154,6 +154,33 @@ Measured on four published grant schemas and a team's table, downloaded on 14 No
 
 **Where the evidence stops.** The published grant schemas nest their terms: FDX's resources, Stripe's usage limits, UK Open Banking's control parameters. An import fills in the state, the end, the seats held as single references and the times; it never fills the scope or the limits written inside the record. A holder held as a number or a UUID proposes no `Mandate`, and any other reference held so binds no seat. Bind the rest by hand when you accept, or keep them as the record's own fields.
 
+### Records of what an assistant keeps
+
+A memory is a claim, not a fact: what an assistant or an agent keeps about a person, which may be what they said or what it concluded on its own (see [Memories as claims](https://github.com/kneelinghorse/OODS-Foundry/blob/v0.21.0/docs/concepts/memories-as-claims.md)). Where a team's own store keeps memories, the importer proposes `Remembered`, graded on structure:
+
+| Evidence in the schema | Proposal | Grade |
+|---|---|---|
+| All three together: a person, either a reference to a person's record or a text field named `user_id`, `person_id`, `about_id` or `subject_id`; the free text a memory says, named memory, content, text, words, body or fact; and one signal: a field named for how it was made whose values map to the trait's, a boolean named synthesized, inferred or derived, or a key named replaced by or superseded by | `Remembered`, with who it is about (`about_id`) and what it says (`words`) | medium |
+| The same, with the person held only as a named text field | the same, no higher | medium |
+| Any one or two of the three | nothing | |
+
+A `scope` is never read as a person: stores use it for a user, a team or anything else. A chat table has a person and text but no signal, so it gets nothing.
+
+**How it was made.** A field named origin, origin type, provenance, source type, memory origin or created via binds as how a memory was made (`origin`), and its values read by their words: told, stated, said, explicit, user or direct reads "Said by the person it is about"; inferred, concluded, derived, implicit, assistant or guessed, "Concluded, not said by the person"; combined, synthesized, merged, consolidated or summary, "Made from other memories"; imported, import, copied or migrated, "Copied in from another store"; and added, admin, manual or operator, "Added by someone else". A value whose words name none of them, or two, reads "Not known". Accepting the proposal writes those labels on the field. Where the source has no such field, how it was made stays the trait's own field and reads "Not known": the importer never guesses it from a flag or a state.
+
+**The other seats.** A reference to an agent's own record, or a field named agent, assistant, bot or kept by, is who keeps it (`kept_by_id`). A key named replaced by or superseded by is the memory that replaced it (`replaced_by_id`); a key named supersedes or replaces names the memory this one replaced, which the trait does not hold, so it binds nothing and is no signal. A declared self-reference is also proposed as `Supersedable`, so accept the one that fits. A date-time named expires, expiry or expiration is when it expires (`expires_at`). Every other field binds only to one of its own name and type. `Remembered`'s ids bind a uuid key as well as a text one; every other trait's ids bind text only. The person and the agent it binds are not also proposed as an owner. A memory is never named by its words: where the store keeps no name of its own, the draft names it by its id, and its pages title it with the person it is about. Add a name field to name it as the shipped `Memory` does ("Memory about Ruth Adeyemi, 28 Sep 2026, 21:12 UTC").
+
+**Accepting it.** The accepted object is read-only, as the shipped `Memory` is: your product's store writes it, so it composes no form, and so no workflow, Edit or Delete. It shows on a card as well as a list and a detail page. A state named removed, forgotten, deleted or erased is read as its removal: a memory in it shows no words, no note on its source and no statement. Where the store does not say what removing a memory would leave, or what remains once it is removed, those stay the trait's own fields and read "Not reported", as how it was made reads "Not known".
+
+Measured on 27 November 2026:
+
+| The store | What arrives |
+|---|---|
+| Mem0's published API description, whole (`GET /v1/memories/{memory_id}/`, the one of its 64 drafted objects proposed): `user_id` as text, `memory`, `synthesized` and `replaced_by` | `Remembered`, medium: who it is about (`user_id`), what it says (`memory`), who keeps it (`agent_id`) and the memory that replaced it (`replaced_by`). Mem0 does not say how a memory was made, so it reads "Not known"; `synthesized` is evidence, not bound. Its `expiration_date` is a date, not a date-time, and stays unbound, and its `lifecycle_state` declares no values, so no lifecycle is proposed. |
+| A team's Postgres table: a person reference, a text column, an origin enum and a `superseded_by` key | `Remembered`, medium: who it is about (`user_id`, a uuid reference), what it says (`content`), how it was made (`origin`, its values labelled: `user_stated` reads "Said by the person it is about"), who keeps it (`agent_id`), the memory that replaced it (`superseded_by`) and when it expires (`expires_at`); with `Stateful` on its state and `Supersedable` for `superseded_by`. Its chat table gets nothing. |
+| Microsoft's published `MemoryItem`, for its agent service's memory: `memory_id`, `updated_at`, `scope`, `content` and `kind` | Nothing: it holds no person and no signal, and keeps no created time either. A team that keeps these writes its own object composing `Remembered`, binding `about_id` to the field that names the person in its own records. |
+| A store of files, as Anthropic's memory tool and Letta's memory files keep them | Nothing to import: a file has no schema. Write one object composing `Remembered` for what your product shows of each file. |
+
 ```json
 {"action":"apply","importId":"<from draft>","objects":[{"name":"YourObject","proposals":["<accepted proposal id>"]}]}
 ```
@@ -164,7 +191,7 @@ Omit `proposals` to accept the base draft with none of its proposed traits or li
 
 ## What is preserved
 
-Primitive fields, supported formats, nullability, examples, defaults and constraints become object fields. Compatible `allOf` declarations merge; conflicting intersections are reported. `oneOf`/`anyOf` alternatives remain distinct, including discriminators; a null-plus-one-type union can become a nullable field. Named object references become relationship identifier fields, including a reference wrapped in `allOf` beside nothing but annotations, the way OpenAPI 3.0 writes a described reference. Swagger 2.0's `file` type is read as a binary string. Source names and every normalized value retain file/pointer provenance.
+Primitive fields, supported formats, nullability, examples, defaults and constraints become object fields. Compatible `allOf` declarations merge; conflicting intersections are reported. `oneOf`/`anyOf` alternatives remain distinct, including discriminators; a null-plus-one-type union can become a nullable field. Named object references become relationship identifier fields, including a reference wrapped in `allOf` beside nothing but annotations, the way OpenAPI 3.0 writes a described reference. Swagger 2.0's `file` type is read as a binary string. Source names and every normalized value retain file/pointer provenance. A schema an API writes inline, in an operation, is named by its title or, failing that, by where it sits: the method, the path and its role there, so the response of `GET /v1/memories/{memory_id}/` drafts as `GetV1MemoriesMemoryIdResponse`. An inline record with the same shape as one already read, apart from its descriptions, is drafted once, and a schema that only points at a named schema is that schema, drafted under its own name; the report names each place.
 
 Read-only fields are omitted from editable forms. Write-only fields and their samples are omitted from read screens. Maps, nested documents, unconstrained values, unsupported unions and unsupported metadata remain in the hub with explicit unmapped outcomes. API operations do not become executable actions. Samples without supplied examples are illustrative, not customer records. The report's mapped, proposed and unmapped counts sum to its total.
 
@@ -195,7 +222,7 @@ Imported records use declared titles or natural keys, then identifiers. An email
 
 ## Postgres DDL and migrations
 
-Pass a `.sql` file or migration folder, or `source.format: "sql"` with inline SQL. The reader parses schema declarations and replays them in memory; it never connects to a database or executes SQL. It reads columns/types, NOT NULL, literal defaults, enum types, primary/unique keys, scalar foreign keys, comments, literal CHECK comparisons/IN lists, and direct-column view projections. `now()` supplies timestamp evidence without evaluation. Views are read-only. Composite foreign keys, complex view expressions, procedural SQL and unsupported syntax are individually reported.
+Pass a `.sql` file or migration folder, or `source.format: "sql"` with inline SQL. The reader parses schema declarations and replays them in memory; it never connects to a database or executes SQL. It reads columns/types, NOT NULL, literal defaults, enum types, primary/unique keys, scalar foreign keys, comments, literal CHECK comparisons/IN lists, and direct-column view projections. `now()` supplies timestamp evidence without evaluation. Views are read-only. A foreign key written `REFERENCES t`, with no column, is read as PostgreSQL reads it, as a key to `t`'s declared primary key, never a column guessed to be the key. It is read across files and in any order; where `t` or its primary key is declared after the key, which PostgreSQL would refuse, the report says so. Where `t` declares no primary key, or the key's columns do not match it, the key is reported and its field kept without a relationship. `DEFERRABLE`, `INITIALLY` and `NOT VALID` on a key are read, and do not change the object. Composite foreign keys, complex view expressions, procedural SQL and unsupported syntax are individually reported.
 
 Prisma migration timestamp folders, Flyway numeric versions, golang-migrate `.up.sql` files and Rails `structure.sql` work as files. Drizzle follows `meta/_journal.json`; unlisted SQL and down/undo migrations are reported and skipped. ALTER, DROP and RENAME update the replayed schema. Postgres is the supported dialect; MySQL and SQL Server dialect support remains later work, with unsupported statements reported rather than guessed.
 

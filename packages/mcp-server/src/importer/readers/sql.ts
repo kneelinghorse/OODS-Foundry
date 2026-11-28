@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { parse } from 'pgsql-ast-parser';
 import { escapePointer, type Document, type MapValue, type Origin } from '../source.js';
-import type { ReaderResult } from './types.js';
+import type { ReaderResult, UnreadTable } from './types.js';
 
 type Column = { ast: MapValue; origin: Origin; description?: string };
 type Table = { name: string; columns: Map<string, Column>; constraints: Array<{ ast: MapValue; origin: Origin }>; origin: Origin; description?: string; view?: MapValue };
@@ -69,6 +69,81 @@ function tableProjectionSql(sql: string): { sql: string; notes: string[] } {
   return { sql, notes };
 }
 
+/**
+ * s255-m01 (R4): PostgreSQL reads a key written REFERENCES t, with no column, as a key to t's primary key, and it accepts
+ * DEFERRABLE, INITIALLY and NOT VALID on a key. The grammar rejects all of these, which drops the whole statement. A table
+ * statement it rejects is therefore read once more: constraint timing is blanked (it does not change the object model),
+ * and each REFERENCES with no column list gets a placeholder column, resolved against the target's declared primary key
+ * when the schema is projected. A statement that parses today never takes this path.
+ */
+const SHORTHAND = 'oods:primary-key';
+function keyRetry(sql: string): { sql: string; timing: string[] } | undefined {
+  const mask = ddlLex(sql).mask;
+  if (!/^\s*(?:CREATE\s+(?:UNLOGGED\s+)?TABLE|ALTER\s+TABLE)\b/i.test(mask)) return undefined;
+  let text = sql;
+  const timing = new Set<string>(), inserts: number[] = [];
+  for (const match of mask.matchAll(/\b(?:NOT\s+DEFERRABLE|DEFERRABLE|INITIALLY\s+(?:DEFERRED|IMMEDIATE))\b|\bNOT\s+VALID\b(?=\s*(?:,|;|$))/gi)) {
+    timing.add(match[0].toUpperCase().replace(/\s+/g, ' '));
+    text = text.slice(0, match.index) + ' '.repeat(match[0].length) + text.slice(match.index! + match[0].length);
+  }
+  const space = (at: number) => { while (/\s/.test(text[at] ?? '')) at++; return at; };
+  const name = (at: number) => {
+    if (text[at] === '"') { for (let i = at + 1; i < text.length; i++) if (text[i] === '"') { if (text[i + 1] === '"') i++; else return i + 1; } return -1; }
+    const bare = /^[\p{L}_][\p{L}\p{N}_$]*/u.exec(text.slice(at));
+    return bare ? at + bare[0].length : -1;
+  };
+  for (const match of mask.matchAll(/\bREFERENCES\b/gi)) {
+    let end = name(space(match.index! + match[0].length));
+    if (end < 0) continue;
+    for (let next = space(end); text[next] === '.'; next = space(end)) { const part = name(space(next + 1)); if (part < 0) break; end = part; }
+    if (text[space(end)] !== '(') inserts.push(end);
+  }
+  for (const at of inserts.reverse()) text = `${text.slice(0, at)}("${SHORTHAND}")${text.slice(at)}`;
+  return timing.size || inserts.length ? { sql: text, timing: [...timing] } : undefined;
+}
+/**
+ * s255-m01 (R4 §3.4): where a statement stopped parsing, in the file's own line and column (the grammar counts from the
+ * statement's start), and the grammar's own explanation, which the first line of its message leaves out.
+ */
+function syntaxFailure(message: string, text: string, start: number): { line: number; column?: number; why: string } {
+  const lines = message.split('\n');
+  // s255-m05 (the fresh read): the grammar's message for a statement it reads more than one way asks the reader to file an
+  // issue upstream, after a skull; the reply says what happened instead.
+  // It gives no line, so the statement's own first line is named, past the blank lines before it.
+  const begin = start + Math.max(0, text.slice(start).search(/\S/));
+  if (/Ambiguous SQL syntax/.test(lines[0] ?? '')) return { line: 1 + (text.slice(0, begin).match(/\n/g)?.length ?? 0), why: 'Ambiguous SQL syntax: the SQL reader found more than one way to read the statement' };
+  const why = (lines.find(line => /^Unexpected /.test(line)) ?? lines[0]).replace(/\.\s+(?:Instead, I was expecting|I did not expect)[\s\S]*$/, '').replace(/[.:\s]+$/, '');
+  const first = 1 + (text.slice(0, start).match(/\n/g)?.length ?? 0), at = /^(?:Syntax error|invalid syntax) at line (\d+) col (\d+):/.exec(lines[0]);
+  if (!at) return { line: first, why };
+  const line = Number(at[1]), column = Number(at[2]);
+  return { line: first + line - 1, column: line === 1 ? start - text.lastIndexOf('\n', start - 1) + column - 1 : column, why };
+}
+/** The table a CREATE TABLE statement names, as the reader keys it (unquoted names lower-cased, public left off). */
+function createdTable(sql: string): string | undefined {
+  // The head is read in the syntax, not the mask: the mask blanks a quoted name, which the head would then pass over.
+  const { syntax } = ddlLex(sql);
+  const head = /^\s*CREATE\s+(?:(?:GLOBAL\s+|LOCAL\s+)?TEMP(?:ORARY)?\s+|UNLOGGED\s+)?TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?/i.exec(syntax);
+  if (!head) return undefined;
+  const parts: string[] = [];
+  for (let at = head[0].length; ;) {
+    let part: string | undefined, end = at;
+    if (syntax[at] === '"') { end = at + 1; while (end < syntax.length && !(syntax[end] === '"' && syntax[end + 1] !== '"')) end += syntax[end] === '"' ? 2 : 1; part = syntax.slice(at + 1, end); end++; }
+    else { const bare = /^[\p{L}_][\p{L}\p{N}_$]*/u.exec(syntax.slice(at)); if (bare) { part = bare[0].toLowerCase(); end = at + bare[0].length; } }
+    if (part === undefined) break;
+    parts.push(part);
+    for (at = end; /\s/.test(syntax[at] ?? ''); at++);
+    if (syntax[at] !== '.') break;
+    for (at++; /\s/.test(syntax[at] ?? ''); at++);
+  }
+  const name = parts.pop(), schema = parts.pop();
+  return name === undefined ? undefined : schema && schema !== 'public' ? `${schema}.${name}` : name;
+}
+/** The primary key columns a table declares: column-level PRIMARY KEY, then table-level or added by ALTER, in their order. */
+const declaredKey = (columns: MapValue[], constraints: MapValue[]): string[] => [
+  ...columns.filter(column => (column.constraints ?? []).some((constraint: MapValue) => constraint.type === 'primary key')).map(column => column.name.name),
+  ...constraints.filter(constraint => constraint.type === 'primary key').flatMap(constraint => (constraint.columns ?? []).map((column: MapValue) => column.name)),
+];
+
 function orderedFiles(documents: Document[], report: ReaderResult['report']): Document[] {
   const sql = documents.filter(doc => doc.text !== undefined);
   const note = (doc: Document, reason: string) => report.push({ file: doc.file, pointer: '', kind: 'keyword', outcome: 'unmapped', reason });
@@ -101,9 +176,28 @@ export function readSql(documents: Document[]): ReaderResult {
   const report: ReaderResult['report'] = [], origins: Record<string, Origin> = {}, definitions: MapValue = Object.create(null);
   const tables = new Map<string, Table>(), enums = new Map<string, string[]>();
   const note = (origin: Origin, reason: string, outcome: 'mapped' | 'unmapped' = 'unmapped') => report.push({ ...origin, kind: 'keyword', outcome, reason });
+  /** s255-m01: each table whose CREATE TABLE did not parse, for the draft reply; a key or ALTER aimed at one says so. */
+  const unread: UnreadTable[] = [];
+  const notRead = (name: string) => { const table = unread.find(item => item.table === name); return table ? `${name} was not read: its CREATE TABLE at ${table.file} line ${table.line} did not parse` : undefined; };
   const addColumn = (table: Table, ast: MapValue, origin: Origin) => {
     if (ast.kind === 'like table') { note(origin, 'LIKE table options are not projected; declare the columns explicitly.'); return; }
     table.columns.set(ast.name.name, { ast: structuredClone(ast), origin });
+  };
+  const primaryKey = (table: Table) => declaredKey([...table.columns.values()].map(column => column.ast), table.constraints.map(constraint => constraint.ast));
+  /** Marks each placeholder the retry wrote, noting whether its target declared a primary key when the statement ran. */
+  const markShorthand = (nodes: MapValue[]) => {
+    const visit = (value: unknown, statement: MapValue) => {
+      if (Array.isArray(value)) { value.forEach(item => visit(item, statement)); return; }
+      if (!value || typeof value !== 'object') return;
+      const node = value as MapValue;
+      if (Array.isArray(node.foreignColumns) && node.foreignColumns.length === 1 && node.foreignColumns[0]?.name === SHORTHAND && node.foreignTable) {
+        const target = key(node.foreignTable), own = statement.type === 'create table' && key(statement.name) === target;
+        const keyed = own ? declaredKey(statement.columns ?? [], statement.constraints ?? []) : tables.has(target) ? primaryKey(tables.get(target)!) : [];
+        node.shorthand = { keyedLater: keyed.length === 0 };
+      }
+      Object.values(node).forEach(item => visit(item, statement));
+    };
+    nodes.forEach(node => visit(node, node));
   };
   const renameReferences = (old: string, replacement: string, column?: string, nextColumn?: string) => {
     for (const table of tables.values()) for (const constraint of [...table.constraints.map(c => c.ast), ...[...table.columns.values()].flatMap(c => c.ast.constraints ?? [])]) {
@@ -114,16 +208,30 @@ export function readSql(documents: Document[]): ReaderResult {
     }
   };
   for (const doc of orderedFiles(documents, report)) {
-    const statements = sqlStatements(doc.text ?? '');
+    const statements = sqlStatements(doc.text ?? ''), starts: number[] = [];
+    statements.reduce((at, statement) => { starts.push(at); return at + statement.length; }, 0);
     for (const [index, sql] of statements.entries()) {
       const origin = { file: doc.file, pointer: `/statements/${index}` };
       let nodes: MapValue[];
       try {
         const projected = tableProjectionSql(sql);
-        nodes = parse(projected.sql) as MapValue[];
+        try { nodes = parse(projected.sql) as MapValue[]; }
+        catch (error) {
+          const retry = keyRetry(projected.sql);
+          if (!retry) throw error;
+          try { nodes = parse(retry.sql) as MapValue[]; } catch { throw error; }
+          markShorthand(nodes);
+          if (retry.timing.length) note({ ...origin, pointer: `${origin.pointer}/timing` }, `Constraint timing (${retry.timing.join(', ')}) is retained in source; it does not change the object model.`);
+        }
         for (const [i, reason] of projected.notes.entries()) note({ ...origin, pointer: `${origin.pointer}/storage/${i}` }, reason);
       }
-      catch (error) { note(origin, `SQL syntax not mapped: ${(error as Error).message.split('\n')[0]}. Statement retained in source; no SQL was executed.`); continue; }
+      catch (error) {
+        const failure = syntaxFailure((error as Error).message, doc.text ?? '', starts[index]), created = createdTable(sql);
+        const table = created !== undefined && !tables.has(created) ? created : undefined;
+        note(origin, `SQL syntax not mapped at line ${failure.line}${failure.column ? `, column ${failure.column}` : ''}: ${failure.why}. Statement retained in source; no SQL was executed.${table ? ` Table ${table} was not read.` : ''}`);
+        if (table) unread.push({ table, file: doc.file, line: failure.line, ...(failure.column ? { column: failure.column } : {}), reason: failure.why });
+        continue;
+      }
       for (const ast of nodes) {
         if (ast.type === 'create enum') { enums.set(key(ast.name), ast.values.map((v: MapValue) => v.value)); note(origin, 'Enum type retained as a field value list.', 'mapped'); }
         else if (ast.type === 'alter enum') {
@@ -136,13 +244,14 @@ export function readSql(documents: Document[]): ReaderResult {
           if (ast.ifNotExists && tables.has(name)) { note(origin, 'Existing table retained by IF NOT EXISTS.', 'mapped'); continue; }
           const table: Table = { name, columns: new Map(), constraints: [], origin, ...(ast.type !== 'create table' ? { view: ast } : {}) };
           tables.set(name, table);
+          if (unread.some(item => item.table === name)) unread.splice(unread.findIndex(item => item.table === name), 1);
           (ast.columns ?? []).forEach((column: MapValue, i: number) => addColumn(table, column, { ...origin, pointer: `${origin.pointer}/columns/${i}` }));
           table.constraints = (ast.constraints ?? []).map((constraint: MapValue, i: number) => ({ ast: constraint, origin: { ...origin, pointer: `${origin.pointer}/constraints/${i}` } }));
           if (ast.inherits?.length) note(origin, 'Table inheritance retained in source; inherited fields are not guessed.');
           note(origin, 'Table or read-only view entered the schema replay.', 'mapped');
         } else if (ast.type === 'alter table') {
           let table = tables.get(key(ast.table));
-          if (!table) { note(origin, `ALTER target ${key(ast.table)} is absent from the source schema.`); continue; }
+          if (!table) { note(origin, notRead(key(ast.table)) ? `ALTER target ${notRead(key(ast.table))}.` : `ALTER target ${key(ast.table)} is absent from the source schema.`); continue; }
           for (const [i, change] of ast.changes.entries()) {
             const at = { ...origin, pointer: `${origin.pointer}/changes/${i}` };
             const column = change.column?.name;
@@ -185,7 +294,7 @@ export function readSql(documents: Document[]): ReaderResult {
         } else if (ast.type === 'create index' && ast.unique && !ast.where && ast.expressions.every((v: MapValue) => v.expression.type === 'ref')) {
           const table = tables.get(key(ast.table));
           if (table) { table.constraints.push({ ast: { type: 'unique', columns: ast.expressions.map((v: MapValue) => ({ name: v.expression.name })) }, origin }); note(origin, 'Unique index becomes key evidence.', 'mapped'); }
-          else note(origin, 'Unique index target is absent.');
+          else note(origin, notRead(key(ast.table)) ? `Unique index target ${notRead(key(ast.table))}.` : 'Unique index target is absent.');
         } else note(origin, `${ast.type} has no object-schema projection; no code or data statement was executed.`);
       }
     }
@@ -239,8 +348,17 @@ export function readSql(documents: Document[]): ReaderResult {
         else note(at, 'Non-literal SQL default retained in source and never evaluated.');
       } else if (constraint.type === 'reference' || constraint.type === 'foreign key') {
         const target = key(constraint.foreignTable);
+        if (constraint.shorthand) {
+          // Resolved against the target's primary key in the final replayed schema, never a column guessed as its key.
+          const other = tables.get(target), primary = other ? primaryKey(other) : [];
+          if (!other) { note(at, notRead(target) ? `Foreign key target ${notRead(target)}.` : `Foreign key target ${target} is absent from this source; REFERENCES ${target} names no column, so it names the primary key of ${target}, which this source does not declare.`); return; }
+          if (!primary.length) { note(at, `REFERENCES ${target} names no column and ${target} declares no primary key in this source; PostgreSQL rejects such a key ("there is no primary key for referenced table"). The field is kept without a relationship.`); return; }
+          if (primary.length !== names.length) { note(at, `REFERENCES ${target} names no column, so it names the primary key of ${target} (${primary.join(', ')}), which has ${primary.length} column${primary.length > 1 ? 's' : ''} where this key has ${names.length}; PostgreSQL rejects it ("number of referencing and referenced columns for foreign key disagree"). The field is kept without a relationship.`); return; }
+          constraint.foreignColumns = primary.map(name => ({ name }));
+          note({ ...at, pointer: `${at.pointer}/foreignColumns` }, `Shorthand REFERENCES ${target} resolved to ${target}(${primary.join(', ')}), its declared primary key.${constraint.shorthand.keyedLater ? ` The primary key of ${target} is declared only after this key; PostgreSQL resolves the key when its statement runs, so it would reject it in this order, and the reader resolves it against the final schema, as it does a key that names its column.` : ''}`, 'mapped');
+        }
         if (names.length !== 1 || (constraint.foreignColumns?.length ?? 0) > 1) { note(at, 'Composite foreign key retained in source; a scalar picker cannot express a tuple.'); return; }
-        if (!tables.has(target)) { note(at, `Foreign key target ${target} is absent from this source.`); return; }
+        if (!tables.has(target)) { note(at, notRead(target) ? `Foreign key target ${notRead(target)}.` : `Foreign key target ${target} is absent from this source.`); return; }
         (schema['x-import-foreign-keys'] ??= []).push({ reader: 'sql', target, via: names[0], referenced: constraint.foreignColumns?.[0]?.name, origin: at });
         schema['x-oods'].relationships.push({ target, via: names[0], cardinality: 'many-to-one', label: names[0].replace(/_/g, ' ') });
         note(at, 'Foreign key becomes a declared relationship.', 'mapped');
@@ -277,5 +395,5 @@ export function readSql(documents: Document[]): ReaderResult {
   };
   for (const table of [...tables.values()].sort((a, b) => a.name < b.name ? -1 : 1)) project(table);
   // Use the same normalized-name map as the hub; references below are remapped there.
-  return { value: { $defs: definitions }, origins, report };
+  return { value: { $defs: definitions }, origins, report, ...(unread.length ? { unread } : {}) };
 }

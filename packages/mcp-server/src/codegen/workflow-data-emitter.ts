@@ -43,6 +43,13 @@ export function neutralFieldValue(field: FieldSchemaEntry): unknown {
   return '';
 }
 
+/**
+ * s255-m02/m04: a fact only its product can report (core/Remembered's, semantic type remembered.*), or a field that says
+ * in words that a value is not held (a label keyed ''): a preview never fills it from an enum or another record, so a
+ * memory whose store does not say how it was made reads "Not known", never one of the five.
+ */
+export const reportedField = (field: FieldSchemaEntry) => /^remembered\./.test(field.semanticType ?? '') || Boolean(field.valueLabels && Object.hasOwn(field.valueLabels, ''));
+
 export function workflowSampleData(schema: UiSchema): { records: Array<Record<string, unknown>>; seedTable: Array<{ recordId: string; field: string; value: unknown; rule: string }> } {
   const fields = schema.objectSchema ?? {};
   const idField = schema.workflow?.data.idField ?? Object.keys(fields).find(name => name.endsWith('_id')) ?? 'id';
@@ -71,7 +78,7 @@ export function workflowSampleData(schema: UiSchema): { records: Array<Record<st
       }
       const chart = charts.find(chart => (chart.source === 'record-array' || chart.source === 'edge-array') && chart.dataField === name);
       if (chart?.source === 'record-array' || chart?.source === 'edge-array') return value(chart.sampleRows, 'authored chart rows');
-      if (field.enum?.length) return value(field.enum[(index + rotation) % field.enum.length], 'declared field enum');
+      if (field.enum?.length && !reportedField(field)) return value(field.enum[(index + rotation) % field.enum.length], 'declared field enum');
       if (field.default !== undefined) return value(field.default, 'declared field or trait parameter default');
       return value(neutralFieldValue(field), 'neutral typed value; no authored example or default');
     }));
@@ -198,7 +205,7 @@ export function collectionSummary(entries: unknown[] | undefined): string {
 export const idField = ${JSON.stringify(idField)} as const;
 export const titleField = ${JSON.stringify(titleField)} as const;
 export const sortField = ${JSON.stringify(sortField)} as const;
-export const fieldLabels: Record<string, string> = ${JSON.stringify(Object.fromEntries(Object.keys(fields).map(name => [name, fieldLabel(name)])))};
+export const fieldLabels: Record<string, string> = ${JSON.stringify(Object.fromEntries(Object.entries(fields).map(([name, entry]) => [name, entry.displayLabel ?? fieldLabel(name)])))};
 export const fieldTypes: Record<string, string> = ${JSON.stringify(Object.fromEntries(Object.entries(fields).map(([key, value]) => [key, value.type])))};
 export const traits: readonly string[] = ${JSON.stringify(workflow.data.traits.map((name) => name.split('/').pop()))};
 /** Who is acting, when the app is told: the store signs each line it writes with them${stateActions.some(action => action.bySeat) ? ', and a declared action names them in its seat' : ''}. Not a viewer: nothing is shown or hidden by it. */
@@ -288,7 +295,7 @@ export function createStore(options: StoreOptions = {}) {
     if (Object.hasOwn(fieldTypes, 'state_history')) {
       const status = String(target${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? before${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? '');
       const moved = changed.includes(${JSON.stringify(statusField)});
-      const entry: HistoryEntry = { title: moved ? enumOptionLabel(status${fields[statusField]?.enumLabels ? ', ' + JSON.stringify(fields[statusField]!.enumLabels) : ''}) : 'Updated', from: moved ? String(before${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? '') : null, to: status, at, reason: 'Edited ' + changed.map((name) => fieldLabels[name] ?? name).join(', ')${billingCycle ? " + (restarted ? '; a new billing period started' : '')" : ''}, ...signature };
+      const entry: HistoryEntry = { title: moved ? enumOptionLabel(status${fields[statusField]?.enumLabels ? ', ' + JSON.stringify(fields[statusField]!.enumLabels) : ''}) : 'Updated', from: moved ? String(before${statusField === 'status' ? '.status' : `[${JSON.stringify(statusField)}]`} ?? '') : null, to: status, at, reason: 'Edited ' + Array.from(new Set(changed.map((name) => fieldLabels[name] ?? name))).join(', ')${billingCycle ? " + (restarted ? '; a new billing period started' : '')" : ''}, ...signature };
       target.state_history = [...history(next), entry];
     }
     const events: readonly string[] = ${JSON.stringify(eventNames)};

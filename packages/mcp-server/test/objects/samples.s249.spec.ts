@@ -12,8 +12,9 @@ import { loadObject } from '../../src/objects/object-loader.js';
 
 type Sample = Record<string, any>;
 // s250-m02: Closure, the sixteenth public object, joins both.
-const PUBLIC = ['User', 'Organization', 'Product', 'Subscription', 'Transaction', 'Relationship', 'Article', 'Media', 'Invoice', 'Plan', 'Usage', 'Agent', 'Approval', 'Task', 'Grant', 'Closure'];
-const OWN: Record<string, [string, string]> = { User: ['user_id', 'name'], Organization: ['organization_id', 'label'], Agent: ['agent_id', 'name'], Grant: ['grant_id', 'name'], Task: ['task_id', 'name'], Approval: ['approval_id', 'name'], Closure: ['closure_id', 'name'] };
+// s255-m03: Memory, the seventeenth public object, joins both.
+const PUBLIC = ['User', 'Organization', 'Product', 'Subscription', 'Transaction', 'Relationship', 'Article', 'Media', 'Invoice', 'Plan', 'Usage', 'Agent', 'Approval', 'Task', 'Grant', 'Closure', 'Memory'];
+const OWN: Record<string, [string, string]> = { User: ['user_id', 'name'], Organization: ['organization_id', 'label'], Agent: ['agent_id', 'name'], Grant: ['grant_id', 'name'], Task: ['task_id', 'name'], Approval: ['approval_id', 'name'], Closure: ['closure_id', 'name'], Memory: ['memory_id', 'name'] };
 /** A usage meter is no object (R4 1.1): its id names a meter, never a party. */
 const NOT_A_PARTY = new Set(['Usage.meter_id']);
 const samplesOf = (name: string) => (loadObject(name).samples ?? []) as Sample[];

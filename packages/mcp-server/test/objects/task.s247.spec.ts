@@ -294,8 +294,10 @@ describe('the eight Task samples tell true stories about the shipped samples the
       // f54bc01fdd86743e). s249-m05 (the fresh read): the Support Agent's last event is that 8 October update, where it
       // read its March activation (s249-m01: d15b318f0b15b758).
       Usage: 'c54a4d96226e4e98',
-      // The Order Agent acts only for the organization that granted it authority.
-      Agent: '531646cea5071cbf',
+      // The Order Agent acts only for the organization that granted it authority. s255-m03: the Billing Agent's and the
+      // Inventory Agent's go-ahead lines name keeping notes about the people they deal with, and s255-m05 (the fresh read)
+      // their skills, as every go-ahead line is among its agent's skills (0.20.0: 531646cea5071cbf).
+      Agent: '3c4adb36b576aa31',
       // Sprint 251 names Nadia Farouk. Sprint 254 names the article’s request “Sign-off for …” (0.19.0: ffbe9d5f90d90031).
       Approval: '16abf7de28a74b3d',
     };

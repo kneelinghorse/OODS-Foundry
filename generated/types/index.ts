@@ -44,6 +44,7 @@ export * from './traits/pageable.parameters';
 export * from './traits/preferenceable.parameters';
 export * from './traits/priceable.parameters';
 export * from './traits/provenanced.parameters';
+export * from './traits/remembered.parameters';
 export * from './traits/scale-linear.parameters';
 export * from './traits/scale-temporal.parameters';
 export * from './traits/scatter-plot.parameters';

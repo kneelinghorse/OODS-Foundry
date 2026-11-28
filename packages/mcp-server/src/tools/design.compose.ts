@@ -48,6 +48,7 @@ import { resolveIntentObject, fuzzyMatchObject } from '../compose/intent-object-
 import { populateCollections, populateListStates } from '../compose/collections.js';
 import { populateRelatedLists } from '../compose/related-region.js';
 import { placeEndingFields } from '../compose/ending-fields.js';
+import { placeRememberedFacts } from '../compose/remembered-facts.js';
 import { declaredActions, declaredOrder } from '../objects/state-actions.js';
 import { reconcileFormDetail, KEPT_BESIDE_PATTERN, formFactFields } from '../compose/form-detail.js';
 import { enforceApprovalFacts } from '../compose/approval-facts.js';
@@ -2222,6 +2223,8 @@ export async function handle(input: DesignComposeInput): Promise<DesignComposeOu
   // s249-m03: an ending a person makes (a grant's Revoke) reads as facts once made: on the detail, an ender the app was not
   // told of; on the form, why it ended, which a final record keeps.
   if (composed && (effectiveContext === 'detail' || effectiveContext === 'form') && layoutType !== 'dashboard') placeEndingFields(schema, composed.object.name, effectiveContext);
+  // s255-m02: a memory's removable facts are drawn while it is not removed, what remains once it is.
+  if (composed && effectiveContext && layoutType !== 'dashboard') placeRememberedFacts(schema, composed, effectiveContext);
   // Reconciled trait panels retain their slot identity; report the same confidence as their selection.
   const stampConfidence = (node: UiElement): void => {
     const slot = node.meta?.intent?.startsWith('slot:') ? node.meta.intent.slice(5) : undefined;

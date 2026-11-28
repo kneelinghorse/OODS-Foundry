@@ -986,7 +986,8 @@ async function main() {
       // Sprint 247 m01 adds core/Assignment, and m02 the Task object.
       // Sprint 248 m01 adds core/Mandate, and m02 the Grant object.
       // Sprint 250 m01 adds core/Closeout, and m02 the Closure object.
-      { components: 114, traits: 55, objects: 21 },
+      // Sprint 255 m02 adds core/Remembered, and m03 the Memory object.
+      { components: 114, traits: 56, objects: 22 },
     );
     assert.deepEqual(health.warnings ?? [], []);
     const builtScopes = await loadJson(path.join(runtimeRoot, 'packages/tokens/dist/css-variables-by-scope.json'));

@@ -1,7 +1,7 @@
 import { proposeLists, type ListProposal } from './list-proposals.js';
 import { identifierField, recordKeyField } from '../objects/record-identity.js';
 import { isMailboxAddress, sampleValue } from './samples.js';
-import { approvalRecord, grantRecord, initialStateOf, namedForEnd, namedForState, suggestTraits, workRecord } from './proposals.js';
+import { approvalRecord, changeKind, grantRecord, initialStateOf, memoryRecord, namedForEnd, namedForState, suggestTraits, workRecord } from './proposals.js';
 import { dump } from 'js-yaml';
 import { validateDefinition } from '../tools/object.validate.js';
 import { normalizeObjectDocument } from '../objects/object-loader.js';
@@ -14,7 +14,9 @@ import type { UiSchema } from '../schemas/generated.js';
 import { normalizeSource, type Hub, type Normalized, type ReportEntry } from './hub.js';
 import { canonical, escapePointer, hash, isMap, walk, wrappedReference, type MapValue, type Origin, type SourceInput } from './source.js';
 
-export type Proposal = { id: string; trait: TraitReference; grade: 'strong' | 'medium' | 'weak'; evidence: Array<Origin & { kind: 'declaration' | 'structure' | 'name'; reason: string }>; effects: string; valid: boolean; errors: string[] };
+export type Proposal = { id: string; trait: TraitReference; grade: 'strong' | 'medium' | 'weak'; evidence: Array<Origin & { kind: 'declaration' | 'structure' | 'name'; reason: string }>; effects: string; valid: boolean; errors: string[];
+  /** s255-m04: the field labels acceptance writes beside the trait (Remembered: how a source's own origin values read). */
+  semantics?: Record<string, SemanticMapping> };
 export type Draft = { name: string; sourceName: string; origin: Origin; yaml: string; definition: ObjectDefinition; proposals: Proposal[]; lists?: ListProposal[]; dependencies: string[] };
 export type ImportResult = Normalized & { drafts: Draft[]; cycles: string[][]; counts: { total: number; mapped: number; proposed: number; unmapped: number; fields: number; mappedFields: number } };
 const formats: Record<string, string> = { uuid: 'uuid', 'date-time': 'datetime', date: 'date', email: 'email', uri: 'url', url: 'url' };
@@ -170,6 +172,8 @@ export function draftSource(input: SourceInput): ImportResult {
       find(hub.$defs[name], base);
       return candidates;
     };
+    // s255-m01 (G4): a record of changes, by its name and a field named for the kind of change (MemoryHistoryEntry.event).
+    const changeRecord = Object.keys(shape.properties).some(field => changeKind(name, field));
     for (const field of Object.keys(shape.properties).sort()) {
       const raw = shape.properties[field];
       const places = fieldOrigins(field);
@@ -276,7 +280,14 @@ export function draftSource(input: SourceInput): ImportResult {
         : protobuf
           ? { ...fieldOrigin, pointer: `${fieldOrigin.pointer}/${protobuf.key}/${protobuf.index}/enum`, reason: 'A proto3 JSON enum (string values beside the UNSPECIFIED sentinel and the int32 wire form) supplies possible states; the sentinel is not a state. Lifecycle meaning and initial state require acceptance.' }
           : { ...fieldOrigin, pointer: `${fieldOrigin.pointer}/enum`, reason: 'String enum supplies possible states; lifecycle meaning and initial state require acceptance.' };
-      if (Array.isArray(validation.enum) && validation.enum.length > 1) {
+      if (Array.isArray(validation.enum) && validation.enum.length > 1 && changeRecord && !namedForState(field)) {
+        // s255-m01 (G4): in a record of changes, the kind of change is what happened to another record, not a lifecycle,
+        // and no other enum stands in for one: only a field named for the record's own state is its lifecycle.
+        const values = validation.enum as string[];
+        report.push({ ...fieldOrigin, pointer: enumEvidence.pointer, object: name, kind: 'keyword', outcome: 'unmapped', reason: changeKind(name, field)
+          ? `${field} holds the kind of change (${values.slice(0, 6).join(', ')}${values.length > 6 ? ', …' : ''}), not the lifecycle of ${name}: each ${name} record is one change to another record, so no Stateful is proposed from ${field}.`
+          : `${field} is not proposed as the lifecycle of ${name}: ${name} is a record of changes, and only a field named for its own state (state, status) is one.` });
+      } else if (Array.isArray(validation.enum) && validation.enum.length > 1) {
         // s245-m03 (d): a pending value, not an answer, is the guess for where the record starts (initialStateOf).
         const lifecycle: TraitReference = { name: 'Stateful', fieldBindings: { status: field }, parameters: { states: validation.enum, initialState: initialStateOf(validation.enum, schema.default) } };
         lifecycles.set(field, { trait: lifecycle, evidence: { ...enumEvidence, kind: 'structure' } });
@@ -311,7 +322,12 @@ export function draftSource(input: SourceInput): ImportResult {
     // s248-m03: a record of a grant (a state in force or ended, an end, the agent or app that holds it) proposes Mandate on
     // structure (grantRecord). Where it fires, the references it binds are not guessed again either.
     const grant = grantRecord(name, fields, edges, originOf, stateOrigin, Object.fromEntries(Object.entries(loadTrait('Mandate').schema).map(([field, definition]) => [field, definition.type])));
-    suggestTraits({ ...shape, title: name }, shape.properties, originOf, propose, (field, reason) => report.push({ ...originOf(field), object: name, kind: 'keyword', outcome: 'unmapped', reason }), new Set([...(work?.claimed ?? []), ...(grant?.claimed ?? [])]));
+    // s255-m04 (settled 14): a team's own record of what an assistant or an agent keeps about a person (a person, the text it
+    // says and one signal of a memory) proposes Remembered on structure (memoryRecord); its references are not guessed again.
+    const remembered = loadTrait('Remembered');
+    const memory = work || grant ? undefined : memoryRecord(name, fields, edges, originOf, Object.fromEntries(Object.entries(remembered.schema).map(([field, definition]) => [field, definition.type])),
+      (remembered.semantics.origin?.ui_hints?.enumLabels ?? {}) as Record<string, string>);
+    suggestTraits({ ...shape, title: name }, shape.properties, originOf, propose, (field, reason) => report.push({ ...originOf(field), object: name, kind: 'keyword', outcome: 'unmapped', reason }), new Set([...(work?.claimed ?? []), ...(grant?.claimed ?? []), ...(memory?.claimed ?? [])]));
     /**
      * The record keeps one state of its own (an answer, or its work's), so that enum is its lifecycle, ahead of another
      * that sorts first (Bitbucket's participant: role, then state). A declared lifecycle is never replaced.
@@ -327,6 +343,7 @@ export function draftSource(input: SourceInput): ImportResult {
     };
     if (work) { propose(work.trait, 'medium', work.evidence); preferLifecycle(work.state, 'the record keeps the state of its work'); }
     if (grant) { propose(grant.trait, 'medium', grant.evidence); preferLifecycle(grant.state, 'the record keeps the state of its grant'); }
+    if (memory) propose(memory.trait, 'medium', memory.evidence);
     // s245-m03 (c): a table of approvals, one person's answer per row, proposes Decision on structure (approvalRecord).
     // s248-m03: where all three of a grant's facts hold, the grant rule wins over an answer enum's approval reading.
     const approval = grant ? undefined : approvalRecord(fields, edges, originOf, stateOrigin);
@@ -346,12 +363,33 @@ export function draftSource(input: SourceInput): ImportResult {
       proposal.id = hash(canonical({ name, trait: proposal.trait, evidence: proposal.evidence })).slice(0, 16);
       proposal.effects = `Acceptance binds ${proposal.trait.name} to the declared source fields and omits canonical fields with null bindings. ${Object.values(proposal.trait.fieldBindings).some(Boolean) ? 'Review the bindings and audit roles.' : 'No source fields implement this trait yet; acceptance contributes no record views.'} No trait is applied to this draft.`;
     }
+    // s255-m04: how a memory was made always shows. Bound to the source's own field, acceptance also writes how each value
+    // reads; kept as the trait's own field, it reads "Not known", since the source does not say.
+    const memoryProposal = memory && proposals.find(proposal => proposal.trait.name === 'Remembered');
+    if (memory && memoryProposal) {
+      // Where the source does not say how a memory was made, the trait keeps its own field: no binding, so it reads "Not known".
+      // s255-m05 (the fresh read): so do what removing a memory would leave and what remains once it is removed, which
+      // always show and read "Not reported" where the store says nothing.
+      const bindings = memoryProposal.trait.fieldBindings;
+      const kept = bindings ? [...(!memory.semantics && !fields.origin ? ['origin'] : []), ...['removing_leaves', 'remains'].filter(field => bindings[field] === null && !fields[field])] : [];
+      for (const field of kept) delete bindings![field];
+      if (kept.length) memoryProposal.id = hash(canonical({ name, trait: memoryProposal.trait, evidence: memoryProposal.evidence })).slice(0, 16);
+      const origin = memoryProposal.trait.fieldBindings?.origin;
+      if (memory.semantics && origin && memory.semantics[origin]) {
+        memoryProposal.semantics = memory.semantics;
+        memoryProposal.effects += ` Acceptance also labels ${origin}'s values as how a memory was made: ${memory.mapping!.map(([value, made]) => `${value} reads "${made ? (memory.semantics![origin]!.ui_hints!.enumLabels as Record<string, string>)[value] : 'Not known'}"`).join(', ')}.`;
+      } else memoryProposal.effects += ' The source does not say how a memory was made, so how it was made reads "Not known".';
+      const unsaid = ['removing_leaves', 'remains'].filter(field => kept.includes(field));
+      if (unsaid.length) memoryProposal.effects += ` It does not say ${unsaid.length === 2 ? 'what removing a memory would leave or what remains once it is removed, so those read' : unsaid[0] === 'remains' ? 'what remains once a memory is removed, so that reads' : 'what removing a memory would leave, so that reads'} "Not reported".`;
+    }
     const prose = (field: string) => /^(description|summary|notes?|memo|comments?|body|details|bio|remarks)$/i.test(field)
       || /\.(text|body|content|summary|description)$/.test(semantics[field]?.semantic_type ?? '')
       || samples.some(row => typeof row[field] === 'string' && (String(row[field]).length > 100 || /[.!?]\s+\S/.test(String(row[field]))));
-    const plain = (field: string) => fields[field].type.replace(/\?$/, '') === 'string' && !sampleSchemas[field]?.format
+    // s255-m04 (settled 6): a memory is never named by its words, so where the memory rule binds them they name no record.
+    const memoryWords = memory?.trait.fieldBindings?.words ?? undefined;
+    const plain = (field: string) => field !== memoryWords && fields[field].type.replace(/\?$/, '') === 'string' && !sampleSchemas[field]?.format
       && !sampleSchemas[field]?.enum && !sampleSchemas[field]?.pattern && !/^(currency|currency_?code|ccy|locale|language|status|state)$/i.test(field) && !identifierField(field) && !relationships.some(edge => edge.via === field) && !prose(field);
-    const declaredTitle = typeof annotations?.titleField === 'string' && fields[annotations.titleField] ? annotations.titleField : undefined;
+    const declaredTitle = typeof annotations?.titleField === 'string' && fields[annotations.titleField] && annotations.titleField !== memoryWords ? annotations.titleField : undefined;
     const title = declaredTitle && !prose(declaredTitle) ? declaredTitle
       : Object.keys(fields).find(field => isMailboxAddress(name, field) && ['string', 'email'].includes(fields[field].type.replace(/\?$/, '')))
         ?? Object.keys(fields).find(field => plain(field) && /^(name|title|label|display_?name|subject|headline|handle)$/i.test(field))

@@ -1,0 +1,369 @@
+object:
+  name: Memory
+  version: 1.0.0
+  domain: core.governance
+  description: What an assistant or an agent keeps about a person, as the product that holds it shows it. A memory is a claim, not a fact.
+  tags:
+    - universal
+    - governance
+    - core
+    - memory
+
+# What an assistant or an agent keeps about a person: what it says, who made it and how, the grant it is kept under, and what
+# removing it would leave. A memory is a claim, not a fact: it may be what the person said or what the assistant
+# concluded on its own, and the page says which, or that it is not known. One memory is what its holder can remove by
+# itself, as your product shows it: an entry, a summary or a file. A memory gives no authority: a habit it records never
+# stands in for a yes. An agent keeps a memory for a party only under a grant whose lines name keeping notes, and taking
+# the grant back ends the yes, not the memory.
+#
+# Its facts are the Remembered trait's. Its lines are its history: each names who acted and when, never the words, old
+# or new. A correction, the person's own statement and a rewrite by a model that no one asked for are lines that keep
+# the state, written from: null. A memory is active or paused (kept and not used), and either is replaced when a newer
+# entry takes its place or removed when the product reports it removed; replaced moves only to removed, and removed is
+# final. An expiry that hides is a pause; one that removes is a removal by time. A removed memory holds no words, no
+# note on its source and no statement from the person: its page says who removed it and when, and what the product
+# reports remains. Removing a memory removes the entry, not what it shaped.
+#
+# It is read-only in OODS Foundry: it composes no form and so no workflow, and its page offers no Edit, no Delete and no
+# move. The memory lives in your product's own store, which writes these records. OODS Foundry models and shows the
+# record; it stores no memory, removes none, tells no one and checks nothing, and it never says what removing one leaves
+# beyond what your product reports.
+traits:
+  - name: core/Remembered
+  - name: lifecycle/Stateful
+    alias: MemoryState
+    parameters:
+      states:
+        - active
+        - paused
+        - replaced
+        - removed
+      initialState: active
+      # The order your product keeps. A memory is made active; it is paused (kept and not used) and used again; either
+      # is replaced by a newer entry or removed; replaced moves only to removed, and removed is final (an empty list).
+      transitionRules:
+        active: [paused, replaced, removed]
+        paused: [active, replaced, removed]
+        replaced: [removed]
+        removed: []
+  - name: lifecycle/Timestampable
+    alias: MemoryTimes
+    parameters:
+      recordedEvents:
+        - made
+        - changed
+        - removed
+      timezone: UTC
+
+schema:
+  memory_id:
+    type: uuid
+    required: true
+    description: Primary identifier for the memory.
+  name:
+    type: string
+    required: true
+    description: 'The name other records keep for the memory: who it is about and when it was made ("Memory about Ruth Adeyemi, 28 Sep 2026, 21:12 UTC"). Never its words.'
+    validation:
+      minLength: 1
+      maxLength: 160
+  summary:
+    type: string
+    required: false
+    description: 'One line about the memory under its name in lists: who keeps it and what last happened to it. Never its words.'
+    validation:
+      maxLength: 240
+
+semantics:
+  created_at:
+    semantic_type: audit.created_at
+    token_mapping: tokenMap(audit.created)
+    ui_hints:
+      label: Made
+  updated_at:
+    semantic_type: audit.updated_at
+    token_mapping: tokenMap(audit.updated)
+    ui_hints:
+      label: Last changed
+  memory_id:
+    semantic_type: governance.memory.id
+    token_mapping: tokenMap(identity.id.primary)
+  name:
+    semantic_type: text.label
+    token_mapping: tokenMap(identity.name.primary)
+  # The one-line summary under the memory's name in lists: who keeps it and what last happened to it.
+  summary:
+    semantic_type: text.summary
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Last happened
+
+tokens:
+  identity.id.primary: "var(--text-strong)"
+  identity.name.primary: "var(--text-strong)"
+
+metadata:
+  owners:
+    - Core team
+    - Platform team
+  steward: Design team
+  maturity: alpha
+  # Read-only: no form, so no workflow, no Edit, no Delete and no move.
+  supportedContexts:
+    - card
+    - detail
+    - inline
+    - list
+    - timeline
+  changelog:
+    - version: 1.0.0
+      date: "2026-11-27"
+      description: Initial Memory object, the seventeenth public reference object; a memory is a claim, not a fact.
+
+# Eight memories, about Ruth Adeyemi and Mei Chen of Tidewater Co-op, kept by the Billing Agent under the Tidewater grant,
+# and about Tomas Lindqvist, kept by the Inventory Agent for him under no grant, since an agent acting for its own sponsor
+# acts under none. Between them they rest in every state, are made in every way and one way not known, and show a
+# summary and a file, a correction, a replaced pair, a removal with what remains, a person's own statement, an expiry
+# and a rewrite no one asked for. No line carries a memory's words, and a name is never its words. Times are UTC.
+samples:
+  - memory_id: '9e3a7c51-2b4d-4f6e-8a1c-3d5b7e9f1a01'
+    name: Memory about Ruth Adeyemi, 28 Sep 2026, 21:12 UTC
+    summary: Kept by the Billing Agent for Tidewater Co-op; corrected by Ruth Adeyemi on 2 Oct.
+    words: Ruth Adeyemi wants an email to the finance inbox after each resend, not to her.
+    kind: entry
+    about_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02'
+    about_name: Ruth Adeyemi
+    origin: told
+    made_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01'
+    made_by_name: Billing Agent
+    made_by_kind: agent
+    kept_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01'
+    kept_by_name: Billing Agent
+    kept_in: Tidewater billing
+    kept_for_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05'
+    kept_for_name: Tidewater Co-op
+    kept_for_kind: organization
+    grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01'
+    grant_name: Tidewater invoices and payments
+    source_kind: chat
+    source_note: A chat on 28 Sep
+    if_source_goes: stays
+    removing_leaves: Removing it takes it out of the Billing Agent's memory. Emails it already sent are unchanged.
+    status: active
+    state_history:
+      - { title: Made, from: null, to: active, at: '2026-09-28T21:12:00Z', reason: Kept from what Ruth Adeyemi said in a chat, actor_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01', actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05', on_behalf_of_name: Tidewater Co-op, grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01', grant_name: Tidewater invoices and payments }
+      - { title: Corrected, from: null, to: active, at: '2026-10-02T20:00:00Z', reason: Corrected by Ruth Adeyemi, actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02', actor_name: Ruth Adeyemi, actor_kind: person }
+    created_at: '2026-09-28T21:12:00Z'
+    updated_at: '2026-10-02T20:00:00Z'
+    last_event: changed
+    last_event_at: '2026-10-02T20:00:00Z'
+  - memory_id: '9e3a7c51-2b4d-4f6e-8a1c-3d5b7e9f1a02'
+    name: Memory about Ruth Adeyemi, 28 Sep 2026, 21:15 UTC
+    summary: Removed by Ruth Adeyemi on 2 Oct 2026 at 20:05 UTC.
+    kind: entry
+    about_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02'
+    about_name: Ruth Adeyemi
+    origin: inferred
+    made_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01'
+    made_by_name: Billing Agent
+    made_by_kind: agent
+    kept_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01'
+    kept_by_name: Billing Agent
+    kept_in: Tidewater billing
+    kept_for_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05'
+    kept_for_name: Tidewater Co-op
+    kept_for_kind: organization
+    grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01'
+    grant_name: Tidewater invoices and payments
+    source_kind: action
+    removed_at: '2026-10-02T20:05:00Z'
+    removed_by_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02'
+    removed_by_name: Ruth Adeyemi
+    removed_by_kind: person
+    remains: A log of the removal is kept for 30 days. What it was concluded from is unchanged, and no copy went to another agent.
+    status: removed
+    state_history:
+      - { title: Made, from: null, to: active, at: '2026-09-28T21:15:00Z', reason: 'Concluded on its own, not said by Ruth Adeyemi', actor_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01', actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05', on_behalf_of_name: Tidewater Co-op, grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01', grant_name: Tidewater invoices and payments }
+      - { title: Removed, from: active, to: removed, at: '2026-10-02T20:05:00Z', reason: Removed by Ruth Adeyemi, actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02', actor_name: Ruth Adeyemi, actor_kind: person }
+    created_at: '2026-09-28T21:15:00Z'
+    updated_at: '2026-10-02T20:05:00Z'
+    last_event: removed
+    last_event_at: '2026-10-02T20:05:00Z'
+  - memory_id: '9e3a7c51-2b4d-4f6e-8a1c-3d5b7e9f1a03'
+    name: Memory about Tomas Lindqvist, 15 Oct 2026, 06:30 UTC
+    summary: Kept by the Inventory Agent for Tomas Lindqvist, under no grant; it stays now the agent is back in draft.
+    words: Tomas Lindqvist wants the stock counted before 06:00, Stockholm time.
+    kind: entry
+    about_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04'
+    about_name: Tomas Lindqvist
+    origin: told
+    made_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a05'
+    made_by_name: Inventory Agent
+    made_by_kind: agent
+    kept_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a05'
+    kept_by_name: Inventory Agent
+    kept_in: Lindqvist Bakery stock app
+    kept_for_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d04'
+    kept_for_name: Tomas Lindqvist
+    kept_for_kind: person
+    source_kind: message
+    source_note: A message on 15 Oct
+    if_source_goes: goes
+    removing_leaves: Removing it takes it out of the Inventory Agent's memory. Counts it already timed are unchanged.
+    status: active
+    state_history:
+      - { title: Made, from: null, to: active, at: '2026-10-15T06:30:00Z', reason: Kept from what Tomas Lindqvist said in a message, actor_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a05', actor_name: Inventory Agent, actor_kind: agent }
+      - { title: Kept after the agent went back to draft, from: null, to: active, at: '2026-10-19T07:00:00Z', reason: The Inventory Agent went back to draft; what it kept stays, actor_name: Lindqvist Bakery stock app, actor_kind: system }
+    created_at: '2026-10-15T06:30:00Z'
+    updated_at: '2026-10-19T07:00:00Z'
+    last_event: changed
+    last_event_at: '2026-10-19T07:00:00Z'
+  - memory_id: '9e3a7c51-2b4d-4f6e-8a1c-3d5b7e9f1a04'
+    name: Memory about Ruth Adeyemi, 6 Oct 2026, 09:00 UTC
+    summary: The Billing Agent's one summary about Ruth Adeyemi; rewritten on 20 Oct by Tidewater billing, though no one asked it to.
+    words: Ruth Adeyemi is Tidewater Co-op's finance manager. She approves resends herself and answers in her working hours, Tauranga time.
+    kind: summary
+    about_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02'
+    about_name: Ruth Adeyemi
+    origin: combined
+    made_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01'
+    made_by_name: Billing Agent
+    made_by_kind: agent
+    kept_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01'
+    kept_by_name: Billing Agent
+    kept_in: Tidewater billing
+    kept_for_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05'
+    kept_for_name: Tidewater Co-op
+    kept_for_kind: organization
+    grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01'
+    grant_name: Tidewater invoices and payments
+    source_kind: memory
+    source_note: The Billing Agent's memories, on 6 Oct
+    removing_leaves: Removing it takes the summary out of the Billing Agent's memory. The memories it was made from stay until each is removed.
+    status: active
+    state_history:
+      - { title: Made, from: null, to: active, at: '2026-10-06T09:00:00Z', reason: Made from the Billing Agent's other memories about Ruth Adeyemi, actor_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01', actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05', on_behalf_of_name: Tidewater Co-op, grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01', grant_name: Tidewater invoices and payments }
+      - { title: Rewritten, from: null, to: active, at: '2026-10-20T03:00:00Z', reason: Rewritten by Tidewater billing's nightly summary; no one asked, actor_name: Tidewater billing, actor_kind: system }
+    created_at: '2026-10-06T09:00:00Z'
+    updated_at: '2026-10-20T03:00:00Z'
+    last_event: changed
+    last_event_at: '2026-10-20T03:00:00Z'
+  - memory_id: '9e3a7c51-2b4d-4f6e-8a1c-3d5b7e9f1a05'
+    name: Memory about Mei Chen, 24 Sep 2026, 02:00 UTC
+    summary: Added by Ruth Adeyemi; paused when it expired at the end of 12 Nov, Tauranga time.
+    words: Mei Chen starts as field coordinator on 13 Nov; send her no invoices before then.
+    kind: entry
+    about_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d06'
+    about_name: Mei Chen
+    origin: added_by_someone_else
+    made_by_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02'
+    made_by_name: Ruth Adeyemi
+    made_by_kind: person
+    kept_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01'
+    kept_by_name: Billing Agent
+    kept_in: Tidewater billing
+    kept_for_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05'
+    kept_for_name: Tidewater Co-op
+    kept_for_kind: organization
+    grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01'
+    grant_name: Tidewater invoices and payments
+    expires_at: '2026-11-12T10:59:59Z'
+    expires_how: hides
+    status: paused
+    state_history:
+      - { title: Added, from: null, to: active, at: '2026-09-24T02:00:00Z', reason: Added by Ruth Adeyemi, actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02', actor_name: Ruth Adeyemi, actor_kind: person }
+      - { title: Paused when it expired, from: active, to: paused, at: '2026-11-12T10:59:59Z', reason: 'Its expiry hides it: Tidewater billing keeps it and no longer uses it', actor_name: Tidewater billing, actor_kind: system }
+    created_at: '2026-09-24T02:00:00Z'
+    updated_at: '2026-11-12T10:59:59Z'
+    last_event: changed
+    last_event_at: '2026-11-12T10:59:59Z'
+  - memory_id: '9e3a7c51-2b4d-4f6e-8a1c-3d5b7e9f1a06'
+    name: Memory about Ruth Adeyemi, 14 Sep 2026, 03:40 UTC
+    summary: Replaced on 30 Sep by a newer memory the Billing Agent keeps.
+    words: Ruth Adeyemi wants a call before any charge is disputed.
+    kind: entry
+    about_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02'
+    about_name: Ruth Adeyemi
+    origin: told
+    made_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01'
+    made_by_name: Billing Agent
+    made_by_kind: agent
+    kept_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01'
+    kept_by_name: Billing Agent
+    kept_in: Tidewater billing
+    kept_for_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05'
+    kept_for_name: Tidewater Co-op
+    kept_for_kind: organization
+    grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01'
+    grant_name: Tidewater invoices and payments
+    source_kind: chat
+    source_note: A chat on 14 Sep
+    replaced_by_id: '9e3a7c51-2b4d-4f6e-8a1c-3d5b7e9f1a07'
+    replaced_by_name: Memory about Ruth Adeyemi, 30 Sep 2026, 22:10 UTC
+    status: replaced
+    state_history:
+      - { title: Made, from: null, to: active, at: '2026-09-14T03:40:00Z', reason: Kept from what Ruth Adeyemi said in a chat, actor_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01', actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05', on_behalf_of_name: Tidewater Co-op, grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01', grant_name: Tidewater invoices and payments }
+      - { title: Replaced, from: active, to: replaced, at: '2026-09-30T22:10:00Z', reason: A newer memory took its place, actor_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01', actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05', on_behalf_of_name: Tidewater Co-op, grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01', grant_name: Tidewater invoices and payments }
+    created_at: '2026-09-14T03:40:00Z'
+    updated_at: '2026-09-30T22:10:00Z'
+    last_event: changed
+    last_event_at: '2026-09-30T22:10:00Z'
+  - memory_id: '9e3a7c51-2b4d-4f6e-8a1c-3d5b7e9f1a07'
+    name: Memory about Ruth Adeyemi, 30 Sep 2026, 22:10 UTC
+    summary: Kept by the Billing Agent; used again at Ruth Adeyemi's word on 7 Oct, after she paused it on 5 Oct.
+    words: Ruth Adeyemi wants an email, not a call, before any charge is disputed.
+    kind: entry
+    about_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02'
+    about_name: Ruth Adeyemi
+    made_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01'
+    made_by_name: Billing Agent
+    made_by_kind: agent
+    kept_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01'
+    kept_by_name: Billing Agent
+    kept_in: Tidewater billing
+    kept_for_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05'
+    kept_for_name: Tidewater Co-op
+    kept_for_kind: organization
+    grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01'
+    grant_name: Tidewater invoices and payments
+    status: active
+    state_history:
+      - { title: Made, from: null, to: active, at: '2026-09-30T22:10:00Z', reason: Took the place of an earlier memory about Ruth Adeyemi, actor_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01', actor_name: Billing Agent, actor_kind: agent, on_behalf_of_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05', on_behalf_of_name: Tidewater Co-op, grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01', grant_name: Tidewater invoices and payments }
+      - { title: Paused, from: active, to: paused, at: '2026-10-05T19:30:00Z', reason: Paused by Ruth Adeyemi, actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02', actor_name: Ruth Adeyemi, actor_kind: person }
+      - { title: Used again, from: paused, to: active, at: '2026-10-07T20:15:00Z', reason: Used again at Ruth Adeyemi's word, actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02', actor_name: Ruth Adeyemi, actor_kind: person }
+    created_at: '2026-09-30T22:10:00Z'
+    updated_at: '2026-10-07T20:15:00Z'
+    last_event: changed
+    last_event_at: '2026-10-07T20:15:00Z'
+  - memory_id: '9e3a7c51-2b4d-4f6e-8a1c-3d5b7e9f1a08'
+    name: Memory about Ruth Adeyemi, 2 Sep 2026, 01:00 UTC
+    summary: Copied in from a notes file by Tidewater billing; Ruth Adeyemi added her own statement on 3 Oct.
+    words: Ruth Adeyemi approves every payment over $5,000.00 herself.
+    kind: file
+    about_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02'
+    about_name: Ruth Adeyemi
+    origin: imported
+    made_by_name: Tidewater billing
+    made_by_kind: system
+    kept_by_id: '6a1e2b3c-4d5e-4f60-8a7b-9c0d1e2f3a01'
+    kept_by_name: Billing Agent
+    kept_in: Tidewater billing
+    kept_for_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05'
+    kept_for_name: Tidewater Co-op
+    kept_for_kind: organization
+    grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c01'
+    grant_name: Tidewater invoices and payments
+    source_kind: file
+    source_note: A notes file copied in on 2 Sep
+    if_source_goes: stays
+    persons_statement: That was the rule in 2025. Since July I approve payments over $10,000.00, and the team approves the rest.
+    removing_leaves: Removing it takes the file out of the Billing Agent's memory. The notes file it was copied from stays where it is.
+    status: active
+    state_history:
+      - { title: Copied in, from: null, to: active, at: '2026-09-02T01:00:00Z', reason: Copied in from a notes file when the Billing Agent started, actor_name: Tidewater billing, actor_kind: system }
+      - { title: Statement added, from: null, to: active, at: '2026-10-03T21:30:00Z', reason: Ruth Adeyemi added her own statement, actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02', actor_name: Ruth Adeyemi, actor_kind: person }
+    created_at: '2026-09-02T01:00:00Z'
+    updated_at: '2026-10-03T21:30:00Z'
+    last_event: changed
+    last_event_at: '2026-10-03T21:30:00Z'

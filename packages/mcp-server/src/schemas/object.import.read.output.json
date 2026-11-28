@@ -108,6 +108,44 @@
         "proposalLists": {
           "type": "integer",
           "minimum": 0
+        },
+        "tablesNotRead": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "table",
+              "file",
+              "line",
+              "reason"
+            ],
+            "properties": {
+              "table": {
+                "type": "string",
+                "minLength": 1
+              },
+              "file": {
+                "type": "string",
+                "minLength": 1
+              },
+              "line": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "column": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "tablesNotReadTruncated": {
+          "type": "boolean"
         }
       },
       "additionalProperties": false

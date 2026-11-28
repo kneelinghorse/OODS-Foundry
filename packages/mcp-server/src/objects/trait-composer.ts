@@ -79,6 +79,14 @@ function withoutBindings(traitDef: TraitDefinition, drop: (binding: { field: str
   return { ...traitDef, view_extensions };
 }
 
+/**
+ * s255-m04 (settled 14, G6): a memory store's references are often uuid keys, and Remembered keeps every id as text. For
+ * this trait only, an id seat (a field ending _id) binds a uuid field as well as a string one; every other trait keeps
+ * its field types exact (Mandate's ids bind text only, IMPORTING-OBJECTS.md).
+ */
+const UUID_SEATS = new Set(['Remembered']);
+const bindsUuidSeat = (ref: TraitReference, field: string, traitType: string, objectType: string) => UUID_SEATS.has(String(ref.name).split('/').pop()!) && /_id$/.test(field) && traitType === 'string' && objectType === 'uuid';
+
 /** Resolve once, before any consumer reads a trait's fields, semantics or view recipes. */
 function bindTraitFields(trait: TraitDefinition, ref: TraitReference, object: ObjectDefinition): TraitDefinition {
   const bindings = ref.fieldBindings;
@@ -90,7 +98,8 @@ function bindTraitFields(trait: TraitDefinition, ref: TraitReference, object: Ob
     if (target === null) continue;
     if (typeof target !== 'string' || !Object.hasOwn(object.schema ?? {}, target)) throw new Error(`${ref.name}.${field} must bind a declared object field or null.`);
     if (targets.has(target) || target !== field && Object.hasOwn(trait.schema, target) && !Object.hasOwn(bindings, target)) throw new Error(`${ref.name}.fieldBindings binds more than one field to ${target}.`);
-    if (trait.schema[field].type.replace(/\?$/, '') !== object.schema[target].type.replace(/\?$/, '')) throw new Error(`${ref.name}.${field} and ${target} must have the same field type.`);
+    const traitType = trait.schema[field].type.replace(/\?$/, ''), objectType = object.schema[target].type.replace(/\?$/, '');
+    if (traitType !== objectType && !bindsUuidSeat(ref, field, traitType, objectType)) throw new Error(`${ref.name}.${field} and ${target} must have the same field type.`);
     targets.add(target);
   }
   const name = (field: string) => Object.hasOwn(bindings, field) ? bindings[field] : field;

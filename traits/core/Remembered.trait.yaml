@@ -1,0 +1,593 @@
+trait:
+  name: Remembered
+  version: 1.0.0
+  description: |
+    What an assistant or an agent keeps about a person, as the product that holds it shows it: what it says, who made it
+    and how, the grant it is kept under, and what removing it would leave. A memory is a claim, not a fact: it may be
+    what the person said or what the assistant concluded on its own, and the page says which. Where your product does
+    not say how a memory was made, the page reads "Not known", never as something the person said.
+
+    One memory is what its holder can remove by itself, as your product shows it: an entry, a summary or a file. A summary
+    is one memory; OODS Foundry never splits it into facts. A memory gives no authority: a habit it records never stands in
+    for a yes.
+
+    The words appear only where the memory itself is shown, never in another record's kept name or in a history line, and
+    a removed memory holds none: no words, no note on its source and no statement from the person. Its page then says who
+    removed it and when, and what your product reports remains. Who it is about and when it was made are the only facts
+    every memory must hold. An instant is shown in UTC, labelled so.
+
+    OODS Foundry models and shows this record. The memory lives in your product's own store: OODS Foundry does not store,
+    remove, share or check a memory, and does not work out what removing it leaves. Removing a memory removes the entry,
+    not what it shaped.
+  category: core
+  # Compound tags: a trait's tags are inherited by the components it places (Text, LabelCell), and an intent's words never
+  # match a compound tag, so these describe the trait without changing how any screen picks its components.
+  tags:
+    - kept-memory
+    - stated-or-inferred
+    - removal-report
+
+# No parameter: the states are the record's own lifecycle, declared through Stateful.
+parameters: []
+
+# Every field is written by your product, so a form never edits one (readOnly). Only who a memory is about is required;
+# when it was made comes from Timestampable. The words are kept on every memory that is not removed, which the samples
+# and the page's fallback sentence hold, not this schema: a removed memory has none.
+schema:
+  words:
+    type: string
+    required: false
+    readOnly: true
+    description: What the memory says, in the words your product shows. A removed memory holds none.
+  kind:
+    type: string
+    required: false
+    readOnly: true
+    description: 'How your product keeps it: one entry, a summary or a file.'
+    validation:
+      enum:
+        - entry
+        - summary
+        - file
+  about_id:
+    type: string
+    required: true
+    readOnly: true
+    description: Who the memory is about, by the id your product knows them by. Always a person.
+  about_name:
+    type: string
+    required: true
+    readOnly: true
+    description: 'Who the memory is about, as shown ("Ruth Adeyemi"). Kept on the record.'
+  origin:
+    type: string
+    required: false
+    readOnly: true
+    description: |
+      How the memory was made: told (the person said it), inferred (concluded, not said), combined (made from other
+      memories), imported (copied in from another store) or added_by_someone_else. Where your product does not say, the
+      page reads "Not known".
+    validation:
+      enum:
+        - told
+        - inferred
+        - combined
+        - imported
+        - added_by_someone_else
+  made_by_id:
+    type: string
+    required: false
+    readOnly: true
+    description: Who made it, by the id your product knows them by.
+  made_by_name:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who made it, as shown ("Billing Agent"). Kept on the record.'
+  made_by_kind:
+    type: string
+    required: false
+    readOnly: true
+    description: 'What kind of actor made it: a person, an agent or the product''s own system.'
+    validation:
+      enum:
+        - person
+        - agent
+        - system
+  kept_by_id:
+    type: string
+    required: false
+    readOnly: true
+    description: The agent whose memory it is, by the id your product knows it by.
+  kept_by_name:
+    type: string
+    required: false
+    readOnly: true
+    description: 'The agent whose memory it is, as shown ("Billing Agent"). Kept on the record.'
+  kept_in:
+    type: string
+    required: false
+    readOnly: true
+    description: 'The product or store that holds the memory, in words ("Tidewater support desk").'
+    validation:
+      maxLength: 120
+  kept_for_id:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who it is kept for, by the id your product knows them by: a person or an organization, never an agent.'
+  kept_for_name:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who it is kept for, as shown ("Tidewater Co-op"). Kept on the record.'
+  kept_for_kind:
+    type: string
+    required: false
+    readOnly: true
+    description: Whether it is kept for a person or an organization.
+    validation:
+      enum:
+        - person
+        - organization
+  grant_id:
+    type: string
+    required: false
+    readOnly: true
+    description: The grant it is kept under, by its id. A memory an agent keeps for its own sponsor names none.
+  grant_name:
+    type: string
+    required: false
+    readOnly: true
+    description: 'The grant it is kept under, as shown. Kept on the record.'
+  source_kind:
+    type: string
+    required: false
+    readOnly: true
+    description: What it was made from.
+    validation:
+      enum:
+        - chat
+        - message
+        - file
+        - action
+        - memory
+  source_id:
+    type: string
+    required: false
+    readOnly: true
+    description: The record it was made from, where that record is one here.
+  source_note:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Where it came from, in words that say only the kind and the date ("A chat on 28 Sep"), never the topic.'
+    validation:
+      maxLength: 120
+  if_source_goes:
+    type: string
+    required: false
+    readOnly: true
+    description: 'What your product does with the memory when its source goes: it stays, or it goes too. Left undrawn where your product does not say.'
+    validation:
+      enum:
+        - stays
+        - goes
+  removing_leaves:
+    type: string
+    required: false
+    readOnly: true
+    description: 'What removing the memory would leave, in your product''s words ("Replies it shaped are unchanged."). Where your product does not say, the page reads "Not reported".'
+    validation:
+      maxLength: 400
+  replaced_by_id:
+    type: string
+    required: false
+    readOnly: true
+    description: The memory that took this one's place, by its id.
+  replaced_by_name:
+    type: string
+    required: false
+    readOnly: true
+    description: The memory that took this one's place, by its kept name. Kept on the record.
+  expires_at:
+    type: datetime
+    required: false
+    readOnly: true
+    description: When the memory expires, as your product reports it.
+    validation:
+      format: date-time
+  expires_how:
+    type: string
+    required: false
+    readOnly: true
+    description: 'What happens when it expires: your product removes it, or hides it and keeps it, which is a pause.'
+    validation:
+      enum:
+        - removes
+        - hides
+  persons_statement:
+    type: string
+    required: false
+    readOnly: true
+    description: The person's own statement about the memory, as your product reports it. A removed memory holds none.
+    validation:
+      maxLength: 400
+  removed_at:
+    type: datetime
+    required: false
+    readOnly: true
+    description: When your product reports the memory removed.
+    validation:
+      format: date-time
+  removed_by_id:
+    type: string
+    required: false
+    readOnly: true
+    description: Who removed it, by the id your product knows them by.
+  removed_by_name:
+    type: string
+    required: false
+    readOnly: true
+    description: 'Who removed it, as shown ("Ruth Adeyemi"). Kept on the record.'
+  removed_by_kind:
+    type: string
+    required: false
+    readOnly: true
+    description: 'What kind of actor removed it: a person, an agent or the product''s own system.'
+    validation:
+      enum:
+        - person
+        - agent
+        - system
+  remains:
+    type: string
+    required: false
+    readOnly: true
+    description: 'On a removed memory, what your product reports remains ("A log of the removal is kept for 30 days."). Where your product does not say, the page reads "Not reported".'
+    validation:
+      maxLength: 400
+
+semantics:
+  words:
+    semantic_type: remembered.words.text
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: What it says
+      # A label keyed '' is the words for a value the record does not hold: a memory that is not removed always has
+      # words, so its detail page says so where your product sends none.
+      valueLabels:
+        '': The product holding it reports no words.
+  kind:
+    semantic_type: remembered.kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kept as
+      enumLabels:
+        entry: One entry
+        summary: A summary
+        file: A file
+  about_id:
+    semantic_type: remembered.about_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: About
+      displayLabelField: about_name
+  about_name:
+    semantic_type: remembered.about_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: About
+  origin:
+    semantic_type: remembered.origin
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: How it was made
+      valueLabels:
+        '': Not known
+      enumLabels:
+        told: Said by the person it is about
+        inferred: Concluded, not said by the person
+        combined: Made from other memories
+        imported: Copied in from another store
+        added_by_someone_else: Added by someone else
+  made_by_id:
+    semantic_type: remembered.made_by_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Made by
+      displayLabelField: made_by_name
+  made_by_name:
+    semantic_type: remembered.made_by_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Made by
+  made_by_kind:
+    semantic_type: remembered.made_by_kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of maker
+  kept_by_id:
+    semantic_type: remembered.kept_by_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kept by
+      displayLabelField: kept_by_name
+  kept_by_name:
+    semantic_type: remembered.kept_by_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kept by
+  kept_in:
+    semantic_type: remembered.kept_in
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kept in
+  kept_for_id:
+    semantic_type: remembered.kept_for_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kept for
+      displayLabelField: kept_for_name
+  kept_for_name:
+    semantic_type: remembered.kept_for_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kept for
+  kept_for_kind:
+    semantic_type: remembered.kept_for_kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of party
+  grant_id:
+    semantic_type: remembered.grant_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kept under
+      displayLabelField: grant_name
+  grant_name:
+    semantic_type: remembered.grant_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kept under
+  source_kind:
+    semantic_type: remembered.source_kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Made from
+      enumLabels:
+        chat: A chat
+        message: A message
+        file: A file
+        action: An action
+        memory: Another memory
+  # The record it was made from is named by the note on its source, never by its id, which only Reference details lists.
+  source_id:
+    semantic_type: remembered.source_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Source record
+      displayLabelField: source_note
+  source_note:
+    semantic_type: remembered.source_note
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Where it came from
+  if_source_goes:
+    semantic_type: remembered.if_source_goes
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: If its source goes
+      enumLabels:
+        stays: This memory stays
+        goes: This memory goes too
+  removing_leaves:
+    semantic_type: remembered.removing_leaves
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Removing it would leave
+      valueLabels:
+        '': Not reported
+  replaced_by_id:
+    semantic_type: remembered.replaced_by_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Replaced by
+      displayLabelField: replaced_by_name
+  replaced_by_name:
+    semantic_type: remembered.replaced_by_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Replaced by
+  expires_at:
+    semantic_type: remembered.expires_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      label: Expires
+  expires_how:
+    semantic_type: remembered.expires_how
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: When it expires
+      enumLabels:
+        removes: It is removed
+        hides: It is paused and kept
+  persons_statement:
+    semantic_type: remembered.persons_statement
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: The person's own statement
+  removed_at:
+    semantic_type: remembered.removed_at
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: RelativeTimestamp
+      label: Removed
+  removed_by_id:
+    semantic_type: remembered.removed_by_id
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Removed by
+      displayLabelField: removed_by_name
+  removed_by_name:
+    semantic_type: remembered.removed_by_name
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Removed by
+  removed_by_kind:
+    semantic_type: remembered.removed_by_kind
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: Kind of remover
+  remains:
+    semantic_type: remembered.remains
+    token_mapping: tokenMap(text.body.*)
+    ui_hints:
+      component: Text
+      label: What remains
+      valueLabels:
+        '': Not reported
+
+view_extensions:
+  # A list row and a card place the words, how the memory was made and who keeps it, each as labelled text; the words
+  # and who keeps it are left undrawn where the record holds no value, and how it was made always shows ("Not known"
+  # where your product does not say). No instant is printed there as stored. The detail page places every fact in the
+  # order below, each in its own labelled row, and a reference by its id, which shows its kept name. The record a memory
+  # was made from is named by the note on its source, never by its id. Three places always show, reading their declared
+  # words where the record holds none: how it was made, what removing it would leave (while the memory is not removed)
+  # and what remains (once it is). The words, the note on the source and the person's statement are drawn only while the
+  # memory is not removed, so a removed memory shows none of them (compose/remembered-facts.ts).
+  list:
+    - component: LabelCell
+      position: after
+      props:
+        field: words
+        description: What it says
+        data-oods-omit-empty: true
+    - component: LabelCell
+      position: after
+      props:
+        field: origin
+        description: How it was made
+    - component: LabelCell
+      position: after
+      props:
+        field: kept_by_id
+        description: Kept by
+        data-oods-omit-empty: true
+  card:
+    - component: LabelCell
+      position: after
+      props:
+        field: words
+        description: What it says
+        data-oods-omit-empty: true
+    - component: LabelCell
+      position: after
+      props:
+        field: origin
+        description: How it was made
+    - component: LabelCell
+      position: after
+      props:
+        field: kept_by_id
+        description: Kept by
+        data-oods-omit-empty: true
+  detail:
+    - { component: Text, position: main, priority: 90, props: { field: words } }
+    - { component: Text, position: main, priority: 89, props: { field: origin } }
+    - { component: Text, position: main, priority: 88, props: { field: kind, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 87, props: { field: about_id, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 86, props: { field: about_name, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 85, props: { field: made_by_id, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 84, props: { field: made_by_name, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 83, props: { field: kept_by_id, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 82, props: { field: kept_by_name, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 81, props: { field: kept_in, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 80, props: { field: kept_for_id, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 79, props: { field: kept_for_name, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 78, props: { field: grant_id, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 77, props: { field: grant_name, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 76, props: { field: source_note, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 75, props: { field: if_source_goes, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 74, props: { field: persons_statement, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 73, props: { field: expires_at, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 72, props: { field: expires_how, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 71, props: { field: replaced_by_id, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 70, props: { field: replaced_by_name, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 69, props: { field: removing_leaves } }
+    - { component: Text, position: main, priority: 68, props: { field: removed_at, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 67, props: { field: removed_by_id, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 66, props: { field: removed_by_name, data-oods-omit-empty: true } }
+    - { component: Text, position: main, priority: 65, props: { field: remains } }
+
+  # On a form every fact is read and edited nowhere (`fact: true`, as Mandate's terms are): your product writes them. On
+  # the shipped Memory there is no form at all.
+  form:
+    - { component: Text, position: top, priority: 90, fact: true, props: { field: words, data-oods-omit-empty: true } }
+    - { component: Text, position: top, priority: 89, fact: true, props: { field: origin } }
+    - { component: Text, position: top, priority: 88, fact: true, props: { field: about_id, data-oods-omit-empty: true } }
+    - { component: Text, position: top, priority: 87, fact: true, props: { field: about_name, data-oods-omit-empty: true } }
+    - { component: Text, position: top, priority: 86, fact: true, props: { field: made_by_id, data-oods-omit-empty: true } }
+    - { component: Text, position: top, priority: 85, fact: true, props: { field: made_by_name, data-oods-omit-empty: true } }
+    - { component: Text, position: top, priority: 84, fact: true, props: { field: kept_by_id, data-oods-omit-empty: true } }
+    - { component: Text, position: top, priority: 83, fact: true, props: { field: kept_by_name, data-oods-omit-empty: true } }
+    - { component: Text, position: top, priority: 82, fact: true, props: { field: grant_id, data-oods-omit-empty: true } }
+    - { component: Text, position: top, priority: 81, fact: true, props: { field: grant_name, data-oods-omit-empty: true } }
+    - { component: Text, position: top, priority: 80, fact: true, props: { field: source_note, data-oods-omit-empty: true } }
+    - { component: Text, position: top, priority: 79, fact: true, props: { field: persons_statement, data-oods-omit-empty: true } }
+    - { component: Text, position: top, priority: 78, fact: true, props: { field: removing_leaves } }
+    - { component: Text, position: top, priority: 77, fact: true, props: { field: remains } }
+
+# The record's state is its lifecycle, and its history holds who changed it and when (never its words), so the record
+# composes Stateful beside this trait.
+dependencies:
+  - Stateful
+
+metadata:
+  created: "2026-11-27"
+  owners:
+    - Core team
+  maturity: alpha
+  accessibility:
+    keyboard: The memory's facts add no interactive control.
+    screenreader: Each fact is read with its visible label, label first on a list row, the detail page and the form ("How it was made, Said by the person it is about") and value first on a card.
+  regionsUsed:
+    - list
+    - card
+    - detail
+    - form
+  examples:
+    - Memory
+  references:
+    - "GDPR Article 15 as the EDPB reads it (Guidelines 01/2022 on the right of access): the right of access includes inferred and derived data"
+    - "Mem0's published API description (docs.mem0.ai/openapi.json, read 2026-11-26): a memory record with an id, the words, the person's id and whether it was synthesized"

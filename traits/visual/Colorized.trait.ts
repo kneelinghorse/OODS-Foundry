@@ -19,7 +19,7 @@ export type ColorMode = 'semantic' | 'custom';
 const ColorizedTrait = {
   trait: {
     name: 'Colorized',
-    version: '2.0.2',
+    version: '2.0.3',
     description:
       'Maps lifecycle states to semantic color tokens for consistent status theming. ' +
       'Bridges the Stateful trait to the OODS token system via OKLCH-based, WCAG-compliant color resolution.',
@@ -172,8 +172,13 @@ const ColorizedTrait = {
   ] as const,
 
   metadata: {
+    changelog: [
+      { version: '2.0.3', date: '2026-11-27', description: 'Records 2.0.1 and 2.0.2 in its change history.' },
+      { version: '2.0.2', date: '2026-11-23', description: 'Describes the accessible label with its supported critical state, and names the card’s ColorizedBadge and the form’s ColorStatePicker.' },
+      { version: '2.0.1', date: '2026-11-23', description: 'Uses “Past due” as its example, and describes the badge’s visible state text and the keyboard controls it places.' },
+    ],
     created: '2025-10-12',
-    updated: '2026-02-28',
+    updated: '2026-11-27',
     owners: ['Design team', 'Engineering team'],
     maturity: 'stable',
     accessibility: {

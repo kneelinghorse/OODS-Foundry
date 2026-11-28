@@ -14,7 +14,8 @@ import { fileURLToPath } from 'node:url';
 // s247-m02: + Task, the fourteenth public object; it sorts after Subscription, so Agent stays the first row.
 // s248-m02: + Grant, the fifteenth; it sorts after Finding.
 // s250-m02: + Closure, the sixteenth and the third part of the Grant story; read-only, it sorts after CapturedArtifact.
-export const OBJECTS = ['Agent', 'Approval', 'Article', 'CapturedArtifact', 'Closure', 'Comparison', 'ComparisonSignal', 'Finding', 'Grant', 'Invoice', 'Media', 'Organization', 'Plan', 'Product', 'Relationship', 'Run', 'Subscription', 'Task', 'Transaction', 'Usage', 'User'] as const;
+// s255-m03: + Memory, the seventeenth; read-only, it sorts after Media.
+export const OBJECTS = ['Agent', 'Approval', 'Article', 'CapturedArtifact', 'Closure', 'Comparison', 'ComparisonSignal', 'Finding', 'Grant', 'Invoice', 'Media', 'Memory', 'Organization', 'Plan', 'Product', 'Relationship', 'Run', 'Subscription', 'Task', 'Transaction', 'Usage', 'User'] as const;
 export const CONTEXTS = ['card', 'detail', 'form', 'inline', 'list', 'timeline'] as const;
 export const FRAMEWORKS = ['react', 'vue'] as const;
 export const BROWSER_IMAGE = 'mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a';
@@ -34,6 +35,8 @@ const RESTRICTED_CONTEXTS: Readonly<Record<string, readonly Context[]>> = {
   Comparison: ['card', 'detail', 'inline', 'list'],
   ComparisonSignal: ['card', 'detail', 'inline', 'list'],
   Finding: ['card', 'detail', 'inline', 'list', 'timeline'],
+  // s255-m03: Memory is read-only: a product's own store writes it, so it composes no form and no workflow.
+  Memory: ['card', 'detail', 'inline', 'list', 'timeline'],
   Run: ['card', 'detail', 'inline', 'list', 'timeline'],
 };
 export function contextsForObject(object: string): Context[] {

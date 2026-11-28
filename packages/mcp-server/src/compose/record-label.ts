@@ -23,9 +23,10 @@ export const isProseSemantic = (semantic: string | undefined) => /\.(text|body|c
  *   5. the first required plain string that is not an identifier, an enum or a date.
  * An object that declares none of these has no field that names a record.
  */
-export function recordNameField(objectName: string | undefined, fields: Record<string, FieldSchemaEntry>): string | undefined {
-  let definition: ObjectDefinition | undefined;
-  try { definition = objectName ? loadObject(objectName) : undefined; } catch { definition = undefined; }
+export function recordNameField(objectName: string | undefined, fields: Record<string, FieldSchemaEntry>, given?: ObjectDefinition): string | undefined {
+  // s255-m04: a definition not yet registered (one being validated before it is written) is read as given.
+  let definition: ObjectDefinition | undefined = given;
+  if (!definition) try { definition = objectName ? loadObject(objectName) : undefined; } catch { definition = undefined; }
   const own = Object.keys(definition?.schema ?? {}).filter(name => fields[name]);
   const ordered = [...own, ...Object.keys(fields).filter(name => !own.includes(name))];
   const authored = (definition?.semantics ?? {}) as Record<string, { semantic_type?: string }>;

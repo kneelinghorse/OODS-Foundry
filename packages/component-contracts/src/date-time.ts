@@ -79,9 +79,14 @@ export function formatDeclaredNumber(value: unknown, format: NumberDisplayFormat
     : new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(number);
 }
 
+/**
+ * A declared label for a stored value. s255-m02: a label keyed '' is the words for a value the record does not hold
+ * ("Not known"), so a place that always shows says so where the record holds none; without that key an absent value has
+ * no label, as before.
+ */
 export function storedValueLabel(value: unknown, labels?: Readonly<Record<string, string>>): string | undefined {
-  if (!labels || value == null || typeof value === 'object') return undefined;
-  const key = String(value);
+  if (!labels || value !== null && typeof value === 'object') return undefined;
+  const key = value == null ? '' : String(value);
   return Object.hasOwn(labels, key) ? labels[key] : undefined;
 }
 

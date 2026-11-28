@@ -1,5 +1,5 @@
 import type { Proposal } from './draft.js';
-import type { FieldDefinition, TraitReference } from '../objects/types.js';
+import type { FieldDefinition, SemanticMapping, TraitReference } from '../objects/types.js';
 import { isMap, wrappedReference, type MapValue, type Origin } from './source.js';
 
 type Propose = (trait: TraitReference, grade: Proposal['grade'], evidence: Proposal['evidence']) => void;
@@ -87,7 +87,17 @@ export function suggestTraits(shape: MapValue, fields: Record<string, MapValue>,
   for (const relationship of annotation.relationships ?? []) {
     const field = relationship.via;
     if (claimed.has(field)) continue;
-    if (relationship.target === shape.title && !annotation.history) propose({ name: 'Classifiable', parameters: { classification_mode: 'taxonomy', hierarchy_storage_model: 'adjacency_list' } }, 'medium', evidence(field, 'A declared self-referencing key can represent an adjacency hierarchy; confirm taxonomy meaning.'));
+    // s255-m01 (G3): a reference to the record's own kind named for what replaced it, or for what it replaces, is a
+    // replacement pointer, the lineage Supersedable keeps, not a category tree (R3 run D's memories.superseded_by).
+    const replacement = relationship.target === shape.title && !annotation.history ? REPLACEMENT.exec(word(field)) : null;
+    if (replacement) {
+      const backward = /^(supersedes|replaces)$/.test(replacement[1]), pointer = backward ? 'supersedes' : 'superseded_by';
+      // Supersedable keeps the pointer as text: a key held as a uuid or a number is left unbound, so the proposal stays valid.
+      const types = (Array.isArray(fields[field]?.type) ? fields[field].type : [fields[field]?.type]).filter((type: unknown) => type !== 'null');
+      const text = types.length === 1 && types[0] === 'string' && !fields[field].format;
+      propose({ name: 'Supersedable', parameters: { states: ['active', 'superseded'], initialState: 'active', recordedDirection: backward ? 'backward' : 'forward' }, fieldBindings: { [pointer]: text ? field : null } }, 'medium',
+        evidence(field, `${field} references ${shape.title}, this record's own kind, and is named for ${backward ? 'the record this one replaces' : 'the record that replaced this one'}: a replacement pointer (${pointer}), not a category tree; confirm before accepting.${text ? '' : ' It is not held as text, so it is not bound.'}`));
+    } else if (relationship.target === shape.title && !annotation.history) propose({ name: 'Classifiable', parameters: { classification_mode: 'taxonomy', hierarchy_storage_model: 'adjacency_list' } }, 'medium', evidence(field, 'A declared self-referencing key can represent an adjacency hierarchy; confirm taxonomy meaning.'));
     // s244-m03 (#2837): group and directory-object targets name principals too (Microsoft Graph's owners and sponsors).
     if (principal(relationship.target)) propose({ name: 'Ownerable', parameters: {} }, 'medium', evidence(field, 'Declared foreign key to a principal record; confirm ownership rather than another association.'));
   }
@@ -130,6 +140,19 @@ export function suggestTraits(shape: MapValue, fields: Record<string, MapValue>,
   if (annotation.sortFields?.length) propose({ name: 'Sortable', parameters: { sortableFields: annotation.sortFields, defaultSortField: annotation.sortFields[0] } }, 'strong', evidence(annotation.sortFields[0], 'Declared sortable fields.', 'declaration'));
 }
 
+/** s255-m01 (G3): a field named for the record that replaced this one, or for the one it replaces. */
+const REPLACEMENT = /^(replaced_by|superseded_by|supersedes|replaces)(?:_id)?$/;
+/** The memory that replaced this one, as `Remembered` holds it. A key named supersedes or replaces points the other way, at
+ * the memory this one replaced, which the trait does not hold, so the memory rule neither binds it nor reads it as a signal. */
+const REPLACED_BY = /^(replaced_by|superseded_by)(?:_id)?$/;
+/**
+ * s255-m01 (G4): a record of changes (a history, an event, a change or audit log, a revision, a journal) and its field
+ * named for the kind of change (event, event type, change type, action, operation). That field says what happened to
+ * another record, so it is not this record's lifecycle (R3 runs B and D: MemoryHistoryEntry.event, memory_events.event).
+ */
+const CHANGE_RECORD = /(?:^|_)(?:histor(?:y|ies)|history_entr(?:y|ies)|events?|changes?|change_?logs?|audits?|audit_(?:logs?|entr(?:y|ies)|events?|trails?)|logs?|log_entr(?:y|ies)|revisions?|journals?)$/;
+const CHANGE_KIND = /^(?:event|event_type|change|change_type|action|action_type|operation|operation_type|op|op_type)$/;
+export const changeKind = (record: string, field: string) => CHANGE_RECORD.test(word(record)) && CHANGE_KIND.test(word(field));
 /** A value or a field name in one spelling: lower case, words joined by underscores (REQUEST_CHANGES, changesRequested). */
 const word = (value: string) => value.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toLowerCase().replace(/[\s-]+/g, '_');
 const APPROVE = new Set(['approve', 'approved']);
@@ -161,7 +184,7 @@ export function answerValues(values: unknown[]): { approve: string; refuse: stri
   return approve && refuse && values.every(value => approves(value) || refuses(value) || pendingState(value) || ASK_ENDINGS.has(word(value))) ? { approve, refuse } : undefined;
 }
 
-type Edge = { target: string; via: string; cardinality: string };
+export type Edge = { target: string; via: string; cardinality: string };
 type Evidence = Proposal['evidence'][number];
 /** A reference to a person named for who asked, or who owns or wrote the thing: not the one whose answer is kept. */
 const ASKER = /^(requested_by|requester|requestor|author|creator|created_by|owners?|submitter|submitted_by|initiator|reporter)(_id)?$/;
@@ -414,4 +437,114 @@ export function grantRecord(self: string, fields: Record<string, FieldDefinition
     if (typeOf(fields[field]) !== type.replace(/\?$/, '') || Object.values(bindings).includes(field)) bindings[field] = null;
   }
   return { trait: { name: 'Mandate', parameters: {}, fieldBindings: bindings }, evidence, state, claimed };
+}
+
+/** s255-m04 (settled 14): a string field named as a person's id. A scope is never a person: stores use it for anything. */
+const PERSON_ID = /^(user_id|person_id|about_id|subject_id)$/;
+/** A record a person is named by, a user or a person, as `principal` reads a target's name (not a group or a team). */
+const personRecord = (target: string) => { const last = (target.split('.').pop() ?? target).replace(/[^A-Za-z0-9]/g, ''); return [last, last.replace(TECHNICAL, '')].some(candidate => /^(user|person|member|account)s?$/i.test(candidate)); };
+/** The free text a memory says. */
+const MEMORY_TEXT = /^(memory|content|text|words|body|fact)$/;
+/** A field named for how a memory was made. */
+const ORIGIN_NAMED = /^(origin|origin_type|provenance|source_type|memory_origin|created_via)$/;
+/** A boolean named for a memory that was made rather than said (Mem0's synthesized). */
+const MADE_FLAG = /^(is_)?(synthesi[sz]ed|inferred|derived)$/;
+/** A reference or id named for the agent whose memory it is. */
+const KEEPER = /^(agent|assistant|bot|kept_by)(_id)?$/;
+/** A date-time named for when a memory expires. */
+const EXPIRES = /^(expires|expires_at|expiry|expiry_at|expiration|expiration_at|expiration_date|valid_until)$/;
+/**
+ * How a memory was made, read from a source's own value by its words: a value whose words name one of the trait's five
+ * reads as that one ("user_stated" is told, "assistant_inferred" inferred, "admin_added" added by someone else); a value
+ * whose words name none, or two, maps to nothing and reads "Not known".
+ */
+const ORIGIN_WORDS: Array<[string, RegExp]> = [
+  ['told', /^(told|stated|said|explicit|user|direct)$/],
+  ['inferred', /^(inferred|inference|concluded|derived|implicit|assistant|guessed)$/],
+  ['combined', /^(combined|synthesi[sz]ed|merged|consolidated|summary)$/],
+  ['imported', /^(imported|import|copied|migrated)$/],
+  ['added_by_someone_else', /^(added|admin|manual|operator)$/],
+];
+export function memoryOrigin(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const words = word(value).split('_').filter(Boolean);
+  const found = new Set(ORIGIN_WORDS.filter(([, pattern]) => words.some(item => pattern.test(item))).map(([origin]) => origin));
+  return found.size === 1 ? [...found][0] : undefined;
+}
+
+/**
+ * s255-m04 (settled 14, G5): a team's own record of what an assistant or an agent keeps about a person, recognised on
+ * structure from three facts together: a person (a reference to a person's record, which binds even when the key is a
+ * uuid, for this trait only (G6), or a string field named as a person's id), the free text it says, and one signal that it
+ * is a memory and not a message (a field named for how it was made whose values map to the trait's, a boolean named for a
+ * memory made rather than said, or a key named for the memory that replaced it). Any one or two of them alone propose
+ * nothing: a chat table has a person and text and no such signal. Together they earn medium, as Mandate's do, and a person
+ * held only as a named string binds no higher; strong stays for a declaration. The trait binds the seats the source has
+ * and keeps how it was made: bound to the source's own field, whose values then read as the trait's words where they map
+ * (the labels acceptance writes, `semantics`), or to the trait's own field, which reads "Not known" where the source does
+ * not say. The person and the agent it binds are returned as claimed, so suggestTraits does not guess them again as an
+ * owner; a replacement key it binds is still read by G3, so a declared one is proposed as Supersedable too.
+ */
+/** The three facts the memory rule reads, as it reads them: the person, the text, and each kind of signal it finds. */
+export function memoryFacts(self: string, fields: Record<string, FieldDefinition>, relationships: Edge[]): { personEdge?: Edge; person?: string; text?: string; originField?: string; made?: string; replacement?: string } {
+  const names = Object.keys(fields);
+  const single = relationships.filter(edge => edge.cardinality === 'many-to-one' && fields[edge.via] && ['string', 'uuid'].includes(typeOf(fields[edge.via])));
+  const people = single.filter(edge => edge.target !== self && personRecord(edge.target) && !REQUESTER.test(word(edge.via)));
+  const personEdge = people.length === 1 ? people[0] : people.find(edge => PERSON_ID.test(word(edge.via)) || /^(user|person|about|subject)$/.test(word(edge.via)));
+  const personNamed = personEdge ? undefined : names.find(field => PERSON_ID.test(word(field)) && typeOf(fields[field]) === 'string' && !Array.isArray(fields[field].validation?.enum));
+  const person = personEdge?.via ?? personNamed;
+  const text = names.find(field => MEMORY_TEXT.test(word(field)) && typeOf(fields[field]) === 'string' && !Array.isArray(fields[field].validation?.enum) && field !== person);
+  const values = (field: string) => (Array.isArray(fields[field].validation?.enum) ? fields[field].validation!.enum! : []) as unknown[];
+  const originField = names.find(field => ORIGIN_NAMED.test(word(field)) && typeOf(fields[field]) === 'string' && values(field).some(value => memoryOrigin(value)));
+  const made = names.find(field => MADE_FLAG.test(word(field)) && typeOf(fields[field]) === 'boolean');
+  const replacement = names.find(field => REPLACED_BY.test(word(field)) && ['string', 'uuid'].includes(typeOf(fields[field])));
+  return { ...(personEdge ? { personEdge } : {}), ...(person ? { person } : {}), ...(text ? { text } : {}), ...(originField ? { originField } : {}), ...(made ? { made } : {}), ...(replacement ? { replacement } : {}) };
+}
+
+export function memoryRecord(self: string, fields: Record<string, FieldDefinition>, relationships: Edge[], originOf: (field: string) => Origin, traitTypes: Record<string, string>, originLabels: Record<string, string>): { trait: TraitReference; evidence: Proposal['evidence']; claimed: string[]; semantics?: Record<string, SemanticMapping>; mapping?: Array<[string, string | undefined]> } | undefined {
+  const names = Object.keys(fields);
+  const { personEdge, person, text, originField, made, replacement } = memoryFacts(self, fields, relationships);
+  if (!person || !text) return undefined;
+  if (!originField && !made && !replacement) return undefined;
+  const single = relationships.filter(edge => edge.cardinality === 'many-to-one' && fields[edge.via] && ['string', 'uuid'].includes(typeOf(fields[edge.via])));
+  const values = (field: string) => (Array.isArray(fields[field].validation?.enum) ? fields[field].validation!.enum! : []) as unknown[];
+  // How it was made binds the source's own field where it has one; where it has none the trait keeps its own field (the
+  // draft leaves it out of the bindings), which reads "Not known".
+  const bindings: Record<string, string | null> = { about_id: person, words: text, ...(originField ? { origin: originField } : {}) };
+  const evidence: Evidence[] = [
+    personEdge
+      ? { ...originOf(person), kind: 'structure', reason: `${person} references ${personEdge.target}, a person's record: who the memory is about (about_id).` }
+      : { ...originOf(person), kind: 'name', reason: `${person} is named for a person's id: who the memory is about (about_id). It is held as a string, not a reference, so this proposal grades no higher than medium.` },
+    { ...originOf(text), kind: 'name', reason: `${text} is free text named for what the memory says (words).` },
+  ];
+  const claimed = [person];
+  let mapping: Array<[string, string | undefined]> | undefined;
+  let semantics: Record<string, SemanticMapping> | undefined;
+  if (originField) {
+    mapping = values(originField).map(value => [String(value), memoryOrigin(value)]);
+    const said = mapping.map(([value, origin]) => `${value} as ${origin ?? 'Not known'}`).join(', ');
+    evidence.push({ ...originOf(originField), kind: 'structure', reason: `${originField} is named for how the memory was made, and its values map by their words to the trait's (${said}): how it was made (origin). A value that maps to none reads "Not known".` });
+    semantics = { [originField]: { semantic_type: 'remembered.origin', token_mapping: 'tokenMap(text.body.*)', ui_hints: {
+      enumLabels: Object.fromEntries(mapping.filter(([, origin]) => origin).map(([value, origin]) => [value, originLabels[origin!] ?? origin!])),
+      valueLabels: { '': 'Not known', ...Object.fromEntries(mapping.filter(([, origin]) => !origin).map(([value]) => [value, 'Not known'])) },
+    } } };
+  }
+  if (made) evidence.push({ ...originOf(made), kind: 'name', reason: `${made} is a boolean named for a memory made rather than said: a memory, not a message. It is not how it was made, which ${originField ? `${originField} holds` : 'reads "Not known"'}.` });
+  if (replacement) {
+    // A declared self-reference is proposed as Supersedable too (G3); the team accepts the one that fits.
+    bindings.replaced_by_id = replacement;
+    evidence.push({ ...originOf(replacement), kind: 'name', reason: `${replacement} is named for the memory that replaced this one (replaced_by_id).` });
+  }
+  const agent = single.find(edge => edge.target !== self && actorRecord(edge.target) && !claimed.includes(edge.via))?.via
+    ?? names.find(field => KEEPER.test(word(field)) && ['string', 'uuid'].includes(typeOf(fields[field])) && !claimed.includes(field));
+  if (agent) { bindings.kept_by_id = agent; claimed.push(agent); evidence.push({ ...originOf(agent), kind: 'name', reason: `${agent} names the agent whose memory it is (kept_by_id).` }); }
+  const expires = names.find(field => EXPIRES.test(word(field)) && typeOf(fields[field]) === 'datetime');
+  if (expires) { bindings.expires_at = expires; evidence.push({ ...originOf(expires), kind: 'name', reason: `${expires} is a date-time named for when the memory expires (expires_at).` }); }
+  // Bindings are filled by name after this: a same-named field of another type, or one already bound to another of the
+  // trait's fields, is left unbound here, so the proposal composes.
+  for (const [field, type] of Object.entries(traitTypes)) {
+    if (Object.hasOwn(bindings, field) || !fields[field] || field === 'origin' && !originField) continue;
+    if (typeOf(fields[field]) !== type.replace(/\?$/, '') || Object.values(bindings).includes(field)) bindings[field] = null;
+  }
+  return { trait: { name: 'Remembered', parameters: {}, fieldBindings: bindings }, evidence, claimed, ...(semantics ? { semantics, mapping } : {}) };
 }

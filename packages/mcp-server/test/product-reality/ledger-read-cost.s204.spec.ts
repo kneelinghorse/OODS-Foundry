@@ -89,12 +89,12 @@ describe('the runtime ledger is read once, not once per composition (s204 m01)',
     installLedger(ledgerFixture());
     const first = readRuntimeSummary();
     (first as { pass: number }).pass = -1;
-    expect(readRuntimeSummary().pass).toBe(266); // s244-m02 (#2829): Agent's 14 cells; s245-m02: Approval's 14; s247-m02: Task's 14; s248-m02: Grant's 14; s250-m02: Closure's 10
+    expect(readRuntimeSummary().pass).toBe(276); // s244-m02 (#2829): Agent's 14 cells; s245-m02: Approval's 14; s247-m02: Task's 14; s248-m02: Grant's 14; s250-m02: Closure's 10; s255-m03: Memory's 10
   });
 
   it('a rewritten ledger is re-read, and an invalid one still throws on every call', async () => {
     installLedger(ledgerFixture());
-    expect(readRuntimeSummary()).toMatchObject({ cells: 266, pass: 266, head: 'measured-head' });
+    expect(readRuntimeSummary()).toMatchObject({ cells: 276, pass: 276, head: 'measured-head' });
 
     const rejected = ledgerFixture();
     rejected.rows[0]!.status = 'fail';

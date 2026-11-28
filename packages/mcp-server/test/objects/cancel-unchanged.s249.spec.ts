@@ -235,11 +235,16 @@ describe("Cancel's behaviour is unchanged for the three objects that cancel (s24
       const removed = old.filter(line => !now.includes(line));
       const added = now.filter(line => !old.includes(line));
       const ordered = object === 'Task';
+      // s255-m03 (settled 15a): Task and Transaction declare labels their names do not give ("Doing it", "Approvals");
+      // Subscription's fields declare none, so its map of labels does not move.
+      const relabelled = object !== 'Subscription';
       // The lines that change: the import (the search rule, and Task's order helpers), the options and the history entry,
       // the list's search (s249-m04, one search rule), and the two lines a store writes, an edit's and a cancellation's,
-      // which now carry the signature.
+      // which now carry the signature. s255-m03 (settled 15a): the map of field labels, which reads each field's declared
+      // label, as the screens do.
       expect(removed.map(line => line.trim())).toEqual([
         expect.stringMatching(/^import \{ recordCollectionEvents, (?:restartedBillingPeriod, )?type CollectionEvent \} from/),
+        ...(relabelled ? [expect.stringMatching(/^export const fieldLabels: Record<string, string> = \{/)] : []),
         expect.stringMatching(/^export interface StoreOptions \{ empty\?: boolean; .* seed\?: DomainRecord\[\] \}$/),
         expect.stringMatching(/^export interface HistoryEntry \{ title\?: string; .* atPeriodEnd\?: boolean \}$/),
         expect.stringMatching(/^const entry: HistoryEntry = \{ title: moved/),
@@ -250,6 +255,7 @@ describe("Cancel's behaviour is unchanged for the three objects that cancel (s24
       const named: RegExp[] = [
         ordered ? /^import \{ enumOptionLabel, recordCollectionEvents, recordMatchesSearch, declaredMoveRefusal, isFinalState, type CollectionEvent, type DeclaredStateOrder \} from '@oods\/component-contracts';$/
           : /^import \{ enumOptionLabel, recordCollectionEvents, recordMatchesSearch, (?:restartedBillingPeriod, )?type CollectionEvent \} from '@oods\/component-contracts';$/,
+        ...(relabelled ? [/^export const fieldLabels: Record<string, string> = \{/] : []),
         /^\/\*\* Who is acting, when the app is told: the store signs each line it writes with them\. Not a viewer: nothing is shown or hidden by it\. \*\/$/,
         /^export interface StoreActor \{ id: string; name: string; kind: 'person' \| 'agent' \| 'system' \}$/,
         /^export interface StoreOptions \{ empty\?: boolean; fail\?: boolean; latency\?: number; now\?: \(\) => string; seed\?: DomainRecord\[\]; actor\?: StoreActor \}$/,

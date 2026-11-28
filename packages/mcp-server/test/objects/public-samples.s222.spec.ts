@@ -23,8 +23,10 @@ type Sample = Record<string, unknown>;
 //   closes (closure.s250.spec.ts holds them to the grants), and inventing grants to reach six would contradict the samples;
 // - its lines are its history, so a line after the first may report without moving the state, written as the generated
 //   store writes an edit's line: from null, to the state it stands in; such reports make a history of up to eight lines.
-const PUBLIC = ['User', 'Organization', 'Product', 'Subscription', 'Transaction', 'Relationship', 'Article', 'Media', 'Invoice', 'Plan', 'Usage', 'Agent', 'Approval', 'Task', 'Grant', 'Closure'];
-const KEEPS_STATE_IN_LINES = new Set(['Closure']);
+// s255-m03: and Memory, the seventeenth, with one of those differences: a correction, the person's own statement and a
+// rewrite no one asked for are lines that keep the state, so Memory keeps state in its lines too.
+const PUBLIC = ['User', 'Organization', 'Product', 'Subscription', 'Transaction', 'Relationship', 'Article', 'Media', 'Invoice', 'Plan', 'Usage', 'Agent', 'Approval', 'Task', 'Grant', 'Closure', 'Memory'];
+const KEEPS_STATE_IN_LINES = new Set(['Closure', 'Memory']);
 /** Grant samples that were given (a line into active) and then ended: each has one closure. */
 const givenAndEnded = () => ((loadObject('Grant').samples ?? []) as Sample[]).filter(grant =>
   (grant.state_history as Array<{ to: string }>).some(line => line.to === 'active') && ['revoked', 'expired', 'replaced'].includes(String(grant.status))).length;

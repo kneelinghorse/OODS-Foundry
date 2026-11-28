@@ -1,6 +1,6 @@
 object:
   name: Grant
-  version: 1.0.1
+  version: 1.0.2
   domain: core.governance
   description: A standing yes that one actor may act for a person or organization, on stated terms, until it ends.
   tags:
@@ -129,6 +129,9 @@ metadata:
   steward: Design team
   maturity: alpha
   changelog:
+    - version: 1.0.2
+      date: "2026-11-27"
+      description: "The Tidewater grant's go-ahead line names keeping notes about the people the Billing Agent deals with, and each memory the Billing Agent makes under it is one of its uses, its last use among them. A grant's page lists what was kept under it, and its work lists name the kinds of record they read: tasks, approvals, payments and grants."
     - version: 1.0.1
       date: "2026-11-19"
       description: Declares Revoke, Pause and Resume, related records under the grant and its closure. The closure row dates its last report, and the detail explains a stored None.
@@ -152,22 +155,31 @@ metadata:
     # The records whose lines name the grant, each with its lines, beside the product's own count where the grant holds one.
     - id: recorded
       label: Recorded under it
-      empty: No recorded change names this grant.
+      empty: No change to a task, approval, payment or grant here names this grant.
       beside: { field: uses, one: Your product counts 1 use., other: "Your product counts {value} uses." }
       sources:
         - { from: [Task, Approval, Transaction, Grant], via: "state_history[].grant_id" }
+    # s255-m04 (settled 9, 10): the memories kept under the grant, oldest first, read by the grant each names. Declared with
+    # states, not finality, so the revoke question does not read them, and kept listed after the grant ends: taking a grant
+    # back ends the yes, not the memory.
+    - id: kept
+      label: Kept under it
+      empty: No memory kept under this grant is here now.
+      rowsNote: "A summary can hold more than one thing, and a store elsewhere may keep more than is listed here."
+      sources:
+        - { from: Memory, via: grant_id, states: [active, paused, replaced], order: created_at, row: { line: [{ field: words, says: What it says }, { field: origin, says: How it was made }, { field: about_name, says: About }, { field: kept_by_name, says: Kept by }], time: created_at } }
     # The same records that are not final, or not known; on an ended grant, read at its end, with their state then and now.
     - id: under-way
       label: Still under way
-      empty: No record that names this grant is under way.
-      filtered: { one: 1 record that names this grant has reached an end., other: "{count} records that name this grant have reached an end." }
-      note: These are only the records here that name this grant; work under it elsewhere is not shown.
+      empty: No task, approval, payment or grant that names this grant is under way.
+      filtered: { one: "1 task, approval, payment or grant that names this grant has reached an end.", other: "{count} tasks, approvals, payments or grants that name this grant have reached an end." }
+      note: These are only the tasks, approvals, payments and grants here that name this grant; work under it elsewhere is not shown.
       finality: [not_final, not_known]
       sources:
         - { from: [Task, Approval, Transaction, Grant], via: "state_history[].grant_id" }
     - id: after-end
       label: Recorded after it ended
-      empty: Nothing was recorded under it after it ended.
+      empty: No task, approval, payment or grant here was recorded under it after it ended.
       afterEnd: true
       sources:
         - { from: [Task, Approval, Transaction, Grant], via: "state_history[].grant_id" }
@@ -218,15 +230,15 @@ samples:
     granted_to_kind: agent
     granted_for_id: '3f1c2a4e-5b6d-4e7f-8a9b-0c1d2e3f4a05'
     granted_for_name: Tidewater Co-op
-    allowed_actions: Look up invoices; Match payments to invoices
+    allowed_actions: Look up invoices; Match payments to invoices; Keep notes about the people it deals with
     asks_first_for: Resend a payment; Dispute a charge
     never_allowed: Change bank details; Close the account
     ends_at: '2026-12-31T10:59:59Z'
     timezone: Pacific/Auckland
     ends_note: 'At the end of 31 Dec 2026, Tauranga time'
-    uses: 6
-    last_used_at: '2026-09-28T21:05:00Z'
-    last_use: '28 Sep: asked for a standing yes to resend returned transfers'
+    uses: 11
+    last_used_at: '2026-10-06T09:00:00Z'
+    last_use: '6 Oct: kept Memory about Ruth Adeyemi, 6 Oct 2026, 09:00 UTC'
     owner_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02'
     owner_type: user
     owner_name: Ruth Adeyemi
@@ -236,9 +248,9 @@ samples:
       - { title: Requested, from: null, to: requested, at: '2026-08-20T21:30:00Z', reason: Requested to match bank transfers to invoices, actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02', actor_name: Ruth Adeyemi, actor_kind: person }
       - { title: Given, from: requested, to: active, at: '2026-09-01T21:00:00Z', reason: Given after twelve days of supervised matching, actor_id: '8b2e4d6f-1a3c-4e5b-9d7f-2c4e6a8b0d02', actor_name: Ruth Adeyemi, actor_kind: person }
     created_at: '2026-08-20T21:30:00Z'
-    updated_at: '2026-09-28T21:05:00Z'
+    updated_at: '2026-10-06T09:00:00Z'
     last_event: updated
-    last_event_at: '2026-09-28T21:05:00Z'
+    last_event_at: '2026-10-06T09:00:00Z'
   - grant_id: '4d7a9c2e-1b3f-4e6a-9c8d-5e2f7a1b3c02'
     name: Resend returned transfers
     scope: Resend a payment the bank returned

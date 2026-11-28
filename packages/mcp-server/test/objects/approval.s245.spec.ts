@@ -76,7 +76,7 @@ describe('Approval is the thirteenth public object', () => {
     expect(listTraits()).toEqual(expect.arrayContaining(['Decision', 'Approvable']));
   });
 
-  it('health_check counts 21 runtime objects and 55 traits, as the registry does, where the runtime ships without the repository folder', async () => {
+  it('health_check counts 22 runtime objects and 56 traits, as the registry does, where the runtime ships without the repository folder', async () => {
     const { handle: health } = await import('../../src/tools/health.js');
     const folders = await import('../../src/objects/definition-folders.js');
     const repository = path.resolve(import.meta.dirname, '../../../../repository-objects');
@@ -88,7 +88,8 @@ describe('Approval is the thirteenth public object', () => {
       // s247-m01: core/Assignment, the record of one ask to do one piece of work, is the 53rd trait. s247-m02: Task is the
       // 19th runtime object. s248-m01: core/Mandate, the record of a grant, is the 54th trait;
       // m02: Grant is the 20th runtime object. s250-m01: core/Closeout is the 55th trait; m02: Closure the 21st runtime object.
-      expect(result.registry).toMatchObject({ objects: 21, traits: 55 });
+      // s255-m02: core/Remembered is the 56th trait; m03: Memory the 22nd runtime object.
+      expect(result.registry).toMatchObject({ objects: 22, traits: 56 });
       expect(listObjects()).toHaveLength(result.registry.objects);
       expect(listTraits()).toHaveLength(result.registry.traits);
     } finally { spy.mockRestore(); clearObjectCache(); }
@@ -98,10 +99,11 @@ describe('Approval is the thirteenth public object', () => {
   // is doing it. s248-m01: core/Mandate's form reads a grant's terms and seats beside the status. s250-m01: core/Closeout's
   // form reads every fact of what became of the work, since the product writes them all when it reports. No other shipped
   // form view carries the mark.
-  it('marks a form view a fact only where Decision, Assignment, Closeout and Mandate say so: no other shipped form view carries the mark', () => {
+  it('marks a form view a fact only where Decision, Assignment, Closeout, Mandate and Remembered say so: no other shipped form view carries the mark', () => {
     const marked = listTraits().flatMap(name => (loadTrait(name).view_extensions.form ?? []).filter(view => view.fact !== undefined).map(view => `${name}:${String(view.props?.field)}`));
-    // s249-m03: Mandate's asked_of_id and asked_of_name are facts on the form too.
-    expect(marked).toEqual(['Assignment:instruction', 'Assignment:requested_by_id', 'Assignment:requested_by_name', 'Assignment:requested_for_id', 'Assignment:requested_for_name', 'Assignment:asked_of_id', 'Assignment:asked_of_name', 'Closeout:closes_id', 'Closeout:closes_name', 'Closeout:ended_how', 'Closeout:ended_at', 'Closeout:for_id', 'Closeout:for_name', 'Closeout:scope', 'Closeout:summary', 'Closeout:deadline_at', 'Closeout:still_works_until', 'Closeout:still_works_note', 'Closeout:receipt_sent_at', 'Closeout:receipt_sent_to_name', 'Closeout:receipt_channel', 'Decision:subject_id', 'Decision:subject_name', 'Decision:shown', 'Decision:level', 'Decision:meaning', 'Decision:requested_by_id', 'Decision:requested_by_name', 'Decision:requested_for_id', 'Decision:requested_for_name', 'Mandate:scope', 'Mandate:granted_for_id', 'Mandate:granted_for_name', 'Mandate:granted_to_id', 'Mandate:granted_to_name', 'Mandate:granted_by_id', 'Mandate:granted_by_name', 'Mandate:granted_as', 'Mandate:requested_by_id', 'Mandate:requested_by_name', 'Mandate:asked_of_id', 'Mandate:asked_of_name', 'Mandate:allowed_actions', 'Mandate:asks_first_for', 'Mandate:never_allowed', 'Mandate:amount_limit_minor', 'Mandate:period_limit_minor', 'Mandate:limit_period', 'Mandate:uses_per_period', 'Mandate:conditions', 'Mandate:ends_note', 'Mandate:ends_at', 'Mandate:within_id', 'Mandate:within_name']);
+    // s249-m03: Mandate's asked_of_id and asked_of_name are facts on the form too. s255-m02: so is every fact Remembered
+    // places on a team's own memory form; the shipped Memory has no form.
+    expect(marked).toEqual(['Assignment:instruction', 'Assignment:requested_by_id', 'Assignment:requested_by_name', 'Assignment:requested_for_id', 'Assignment:requested_for_name', 'Assignment:asked_of_id', 'Assignment:asked_of_name', 'Closeout:closes_id', 'Closeout:closes_name', 'Closeout:ended_how', 'Closeout:ended_at', 'Closeout:for_id', 'Closeout:for_name', 'Closeout:scope', 'Closeout:summary', 'Closeout:deadline_at', 'Closeout:still_works_until', 'Closeout:still_works_note', 'Closeout:receipt_sent_at', 'Closeout:receipt_sent_to_name', 'Closeout:receipt_channel', 'Decision:subject_id', 'Decision:subject_name', 'Decision:shown', 'Decision:level', 'Decision:meaning', 'Decision:requested_by_id', 'Decision:requested_by_name', 'Decision:requested_for_id', 'Decision:requested_for_name', 'Mandate:scope', 'Mandate:granted_for_id', 'Mandate:granted_for_name', 'Mandate:granted_to_id', 'Mandate:granted_to_name', 'Mandate:granted_by_id', 'Mandate:granted_by_name', 'Mandate:granted_as', 'Mandate:requested_by_id', 'Mandate:requested_by_name', 'Mandate:asked_of_id', 'Mandate:asked_of_name', 'Mandate:allowed_actions', 'Mandate:asks_first_for', 'Mandate:never_allowed', 'Mandate:amount_limit_minor', 'Mandate:period_limit_minor', 'Mandate:limit_period', 'Mandate:uses_per_period', 'Mandate:conditions', 'Mandate:ends_note', 'Mandate:ends_at', 'Mandate:within_id', 'Mandate:within_name', 'Remembered:words', 'Remembered:origin', 'Remembered:about_id', 'Remembered:about_name', 'Remembered:made_by_id', 'Remembered:made_by_name', 'Remembered:kept_by_id', 'Remembered:kept_by_name', 'Remembered:grant_id', 'Remembered:grant_name', 'Remembered:source_note', 'Remembered:persons_statement', 'Remembered:removing_leaves', 'Remembered:remains']);
     for (const name of listObjects()) expect(JSON.stringify(loadObject(name)), name).not.toContain('"fact":');
   });
 

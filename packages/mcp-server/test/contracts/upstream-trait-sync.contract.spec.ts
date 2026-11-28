@@ -67,7 +67,7 @@ describe('Colorized v2 tones reflected in structured data', () => {
     const traits = await fetchTraits();
     const colorized = findTrait(traits, 'Colorized');
 
-    expect(colorized.version).toBe('2.0.2');
+    expect(colorized.version).toBe('2.0.3');
     const paramNames = colorized.parameters.map((p) => p.name);
 
     expect(paramNames).toContain('colorStates');
@@ -111,7 +111,7 @@ describe('New traits discoverable in structured data', () => {
     const traits = await fetchTraits();
     const statusable = findTrait(traits, 'Statusable');
 
-    expect(statusable.version).toBe('1.0.1');
+    expect(statusable.version).toBe('1.0.2');
     expect(statusable.category).toBe('visual');
     const paramNames = statusable.parameters.map((p) => p.name);
     expect(paramNames).toContain('domains');

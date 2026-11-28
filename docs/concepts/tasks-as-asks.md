@@ -133,7 +133,7 @@ It models and renders. It does not run, retry, pause or expire work, and its Can
 
 - Cancel follows the declared order in generated React and Vue screens only. Cancel is not a declared action, so an HTML screen offers it whatever the state, where it offers a grant's Revoke only from the states Revoke moves from.
 - A task's form also offers fields a person would not edit there: the owner's id, type, name and role. It does not offer the task's own id, when it was created or last changed, or its last event.
-- A payment or article lists the tasks that name it. A task lists the tasks made from it. A person's page lists the tasks waiting for their answer, and an agent's page the records whose lines name it as the one who acted; there is no signed-in person, so no page says "waiting for you".
+- A payment or article lists the tasks that name it. A task lists the tasks made from it. A person's page lists the tasks waiting for their answer, and an agent's page the tasks, approvals, payments and grants whose lines name it as the one who acted; there is no signed-in person, so no page says "waiting for you".
 - The try count, what a task waits on, the first ask's name and who answers are kept by your product and checked by nothing.
 - Accepting a result through an approval that names its task is the model, and is not wired.
 - A line a generated app writes when a person changes a task names who acted only when your product passes who is acting (`createWorkflow({ actor })`).

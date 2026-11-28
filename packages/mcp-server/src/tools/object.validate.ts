@@ -18,6 +18,7 @@ import { parameterProblems } from '../objects/parameter-validation.js';
 import { composeObject } from '../objects/trait-composer.js';
 import { supportsContext } from '../objects/supported-contexts.js';
 import { populateObjectSchema } from '../compose/object-slot-filler.js';
+import { recordNameField } from '../compose/record-label.js';
 import type { UiSchema } from '../schemas/generated.js';
 import { loadComponentRegistry } from './repl.utils.js';
 import { findClosestMatch } from './object.show.js';
@@ -222,6 +223,19 @@ function checkObject(document: Record<string, unknown>, result: Checked, availab
   } catch (error) {
     errors.push({ kind: 'compose-failed', message: `Composing ${name} with its traits failed: ${(error as Error).message}` });
     return;
+  }
+  // s255-m02 (settled 6): a memory's words, its note on the source and the person's statement appear only where the
+  // memory itself is shown, never as the name other records keep for it, so an object composing core/Remembered whose
+  // records would be named by one of them is refused.
+  const remembered = composed.traits.find(trait => /(?:^|\/)Remembered$/.test(trait.ref.name));
+  if (remembered) {
+    const bindings = (remembered.ref.fieldBindings ?? {}) as Record<string, string | null>;
+    const texts = Object.fromEntries((['words', 'source_note', 'persons_statement'] as const).flatMap(field => {
+      const bound = Object.hasOwn(bindings, field) ? bindings[field] : field;
+      return typeof bound === 'string' ? [[bound, field]] : [];
+    }));
+    const named = recordNameField(definition.object.name, shape.objectSchema ?? {}, definition);
+    if (named && Object.hasOwn(texts, named)) errors.push({ kind: 'invalid-field', path: `schema.${named}`, message: `${name}'s records would be named by ${named}, the memory's ${texts[named] === 'words' ? 'words' : texts[named] === 'source_note' ? 'note on its source' : 'statement from the person'}. A memory's words, its note on its source and the person's statement appear only where the memory itself is shown, never as the name other records keep for it: give it a name field of its own that never takes them, such as "Memory about Ruth Adeyemi, 14 Oct 2026, 09:12 UTC".` });
   }
   const columns = definition.metadata.listColumns;
   if (columns !== undefined && (!Array.isArray(columns) || columns.some(column => !isMap(column) || typeof column.field !== 'string' || !Object.hasOwn(composed.schema, column.field) || (column.label !== undefined && typeof column.label !== 'string')))) {

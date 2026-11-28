@@ -12,12 +12,13 @@ const OBJECTS_ROOT = path.resolve('objects', 'core');
 const TRAIT_ROOTS = [path.resolve('traits'), path.resolve('examples/traits')];
 // s244-m02 (#2829): Agent joins objects/core and resolves through the same pipeline. s245-m02: Approval too. s247-m02:
 // Task too, its record trait with the parameter schema file the pipeline requires. s248-m02: Grant too, likewise.
-// s250-m02: Closure too, with core/Closeout's parameter schema file.
+// s250-m02: Closure too, with core/Closeout's parameter schema file. s255-m03: Memory too, with core/Remembered's.
 const CANONICAL_OBJECTS = [
   'Agent',
   'Approval',
   'Closure',
   'Grant',
+  'Memory',
   'Organization',
   'Product',
   'Relationship',

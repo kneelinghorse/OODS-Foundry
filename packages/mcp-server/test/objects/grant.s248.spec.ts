@@ -54,7 +54,8 @@ const user = (id: unknown, name: unknown) => users.find(sample => sample.user_id
 const agent = (id: unknown, name: unknown) => agents.find(sample => sample.agent_id === id && sample.name === name);
 const organization = (id: unknown, name: unknown) => organizations.find(sample => sample.organization_id === id && sample.label === name);
 const items = (line: unknown) => String(line ?? 'None') === 'None' ? [] : String(line).split('; ');
-const SHIPPED_WITH_LINES = ['Task', 'Approval', 'Transaction', 'Grant'];
+// s255-m03: a memory an agent keeps for a party names a grant active when it was made, whose lines allow it (settled 9).
+const SHIPPED_WITH_LINES = ['Task', 'Approval', 'Transaction', 'Grant', 'Memory'];
 
 /** When a record's own history says it was in one of the states: [from, to) pairs, open-ended when it still is. */
 function spans(record: Sample, states: string[]): Array<[number, number]> {
@@ -202,7 +203,8 @@ describe('the eight Grant samples tell true stories about the shipped samples th
     const tidewater = grants[0]!;
     const standing = grants[1]!;
     expect(tidewater).toMatchObject({ name: 'Tidewater invoices and payments', status: 'active', granted_by_name: 'Ruth Adeyemi', granted_as: 'Finance manager, Tidewater Co-op', granted_to_name: 'Billing Agent', granted_for_name: 'Tidewater Co-op', owner_name: 'Ruth Adeyemi' });
-    expect(tidewater).toMatchObject({ allowed_actions: 'Look up invoices; Match payments to invoices', asks_first_for: 'Resend a payment; Dispute a charge', never_allowed: 'Change bank details; Close the account' });
+    // s255-m03 (settled 9): keeping notes about the people the agent deals with is a go-ahead line, as every act is.
+    expect(tidewater).toMatchObject({ allowed_actions: 'Look up invoices; Match payments to invoices; Keep notes about the people it deals with', asks_first_for: 'Resend a payment; Dispute a charge', never_allowed: 'Change bank details; Close the account' });
     expect(tidewater).toMatchObject({ ends_at: '2026-12-31T10:59:59Z', timezone: 'Pacific/Auckland', ends_note: 'At the end of 31 Dec 2026, Tauranga time' });
     expect(standing).toMatchObject({ name: 'Resend returned transfers', status: 'active', within_id: tidewater.grant_id, within_name: tidewater.name, allowed_actions: 'Resend a payment',
       amount_limit_minor: 1200000, period_limit_minor: 3000000, limit_currency: 'USD', limit_period: 'month', uses_per_period: 3, uses: 0, requested_by_name: 'Billing Agent' });
@@ -256,7 +258,8 @@ describe('the eight Grant samples tell true stories about the shipped samples th
     ['a money limit with no currency', (s: Sample[]) => { delete s[1]!.limit_currency; }, /a money limit with no currency/],
     ['a standing grant its holder does not restate', (s: Sample[]) => { s[5]!.scope = 'Online and phone orders'; }, /its holder's acts_for does not restate it/],
     ['a last use the lines do not show', (s: Sample[]) => { s[5]!.last_used_at = '2026-10-09T15:00:00Z'; }, /its last use is 2026-10-09T15:00:00Z/],
-    ['fewer uses than the moments its lines show', (s: Sample[]) => { s[0]!.uses = 5; }, /it records 5 uses, and lines name it at 6 moments/],
+    // s255-m03: the memories kept under the Tidewater grant are uses too, so its lines name it at 11 moments.
+    ['fewer uses than the moments its lines show', (s: Sample[]) => { s[0]!.uses = 10; }, /it records 10 uses, and lines name it at 11 moments/],
     ['an agent line naming no grant', (s: Sample[]) => { delete s[1]!.state_history[0].grant_id; }, /the agent's line names no grant sample/],
     ['an agent line under a paused grant', (s: Sample[]) => { s[6]!.state_history[2].at = '2026-09-19T17:00:00Z'; }, /names a grant that was not active then/],
   ])('catches %s', (_name, mutate, says) => {
@@ -269,7 +272,8 @@ describe('the eight Grant samples tell true stories about the shipped samples th
 describe('Grant is the fifteenth public object', () => {
   it('composes the record trait, its lifecycle, its times and the one who answers, and no Cancel', () => {
     const grant = loadObject('Grant');
-    expect(grant.object).toMatchObject({ name: 'Grant', version: '1.0.1', domain: 'core.governance' });
+    // s255-m03: 1.0.2, the Tidewater grant's go-ahead line names keeping notes about people (settled 9).
+    expect(grant.object).toMatchObject({ name: 'Grant', version: '1.0.2', domain: 'core.governance' });
     expect(grant.object).not.toHaveProperty('visibility');
     expect(grant.traits.map(trait => trait.name)).toEqual(['core/Mandate', 'lifecycle/Stateful', 'lifecycle/Timestampable', 'structural/Ownerable']);
     const lifecycle = grant.traits[1]!.parameters!;
@@ -482,7 +486,8 @@ describe('what Grant changes elsewhere, and only that', () => {
 
   it('Agent\'s four rule fields read their new descriptions and stay one-line inputs on its form; its samples do not move', async () => {
     const agent = loadObject('Agent');
-    expect(agent.object.version).toBe('1.1.1');
+    // s255-m03: 1.1.2, two agents' go-ahead lines name keeping notes about the people they deal with (settled 9).
+    expect(agent.object.version).toBe('1.1.2');
     expect(agent.schema.acts_for!.description).toContain('restating the grant it holds for that party');
     expect(agent.schema.asks_first_for!.description).toContain('asked each time or given in advance by a standing yes under a grant');
     const { schema } = await compose({ object: 'Agent', context: 'form', options: { transient: true } } as never) as { schema: UiSchema };

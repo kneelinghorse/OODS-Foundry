@@ -4,7 +4,7 @@ import { snakeToCamel } from './binding-utils.js';
 import { recordEventsProjection, recordEventAliases } from './collection-emitter.js';
 import { recordTitleField } from '../compose/record-label.js';
 import { resolveRelatedLists } from '../compose/related-records.js';
-import { neutralFieldValue, shownSampleRecord, sortRecordsAsStated, statedListSortField, workflowSampleRecords } from './workflow-data-emitter.js';
+import { neutralFieldValue, reportedField, shownSampleRecord, sortRecordsAsStated, statedListSortField, workflowSampleRecords } from './workflow-data-emitter.js';
 
 /** Every element of a UiSchema in document order. */
 export function schemaNodes(schema: UiSchema): UiElement[] {
@@ -22,17 +22,26 @@ const camel = (name: string) => name.replace(/_([a-z])/g, (_match, letter: strin
  * preview and the design loop mount the same deterministic field model; the script re-exports it.
  */
 export function deriveConsumerModel(schema: UiSchema, established: Record<string, unknown> = {}): Record<string, unknown> {
+  // s255-m02: a memory's facts (core/Remembered's, semantic type remembered.*), and any field that says in words that its
+  // value is not held (a label keyed '', storedValueLabel), are what the given record holds: never another record's value
+  // or an enum member. A memory whose product does not say how it was made reads "Not known", never as something the
+  // person said, and one it does not say is kept as a summary is not shown as one. With no record given, the preview
+  // still shows the first sample.
+  const fieldKeys = new Set(Object.keys(schema.objectSchema ?? {}).map(camel));
+  const given = Object.keys(established).some(key => fieldKeys.has(key));
+  const reported = reportedField;
   const model = Object.fromEntries(Object.entries(schema.objectSchema ?? {}).sort(([a], [b]) => a.localeCompare(b)).map(([name, field]) => {
     const key = camel(name);
     const previous = established[key];
     let value: unknown;
-    if (Object.hasOwn(established, key) && (!field.enum?.length || field.enum.includes(previous as string))) value = previous;
+    if (given && reported(field)) value = Object.hasOwn(established, key) ? previous : undefined;
+    else if (Object.hasOwn(established, key) && (!field.enum?.length || field.enum.includes(previous as string))) value = previous;
     else if (field.examples?.length) {
       const example = structuredClone(field.examples[0]);
       value = example === null && !field.required && !field.type.endsWith('?') ? undefined : example;
     }
     else if (field.default !== undefined) value = structuredClone(field.default);
-    else if (field.enum?.length) value = field.enum[0];
+    else if (field.enum?.length && !reported(field)) value = field.enum[0];
     else value = neutralFieldValue(field);
     return [key, value];
   }));

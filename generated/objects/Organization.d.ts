@@ -62,7 +62,7 @@ export interface Organization {
   billing_contact_email?: string;
 
   /**
-   * Coarse account-level financial standing used by the billing subsystem. Intentionally coarser than the subscription lifecycle: this is a 4-state account vocabulary {good_standing, past_due, unpaid, suspended}, NOT the 8-state billing.subscription.status set. See docs/billing/lifecycle-states.md.
+   * The account's standing with billing, coarser than a subscription's status: good standing, past due, unpaid or suspended. Each subscription keeps its own status.
    *
    * Source: Organization (object override)
    *
